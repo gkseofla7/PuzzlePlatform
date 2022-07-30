@@ -11,7 +11,7 @@
 #include "MenuSystem/QuitMenu.h"
 #include "MenuSystem/MainMenu.h"
 
-const static FName SESSION_NAME = TEXT("My Session Game");
+const static FName SESSION_NAME = NAME_GameSession;
 
 UPuzzlePlatformsGameInstance::UPuzzlePlatformsGameInstance(const FObjectInitializer & ObjectInitializer)
 {
@@ -47,6 +47,11 @@ void UPuzzlePlatformsGameInstance::Init()
 		SessionInterface->OnJoinSessionCompleteDelegates.AddUObject(this, &UPuzzlePlatformsGameInstance::OnJoinSessionComplete);
 
 
+	}
+
+	if (GEngine != nullptr)
+	{
+		GEngine->OnNetworkFailure().AddUObject(this, &UPuzzlePlatformsGameInstance::OnNetworkFailure);
 	}
 }
 void UPuzzlePlatformsGameInstance::LoadMenuWidget()
@@ -84,7 +89,7 @@ void UPuzzlePlatformsGameInstance::CreateSession()
 		}
 		
 	
-		SessionSettings.NumPublicConnections = 2;
+		SessionSettings.NumPublicConnections = 5;
 		SessionSettings.bShouldAdvertise = true;
 		SessionSettings.bUsesPresence = true;
 		SessionSettings.bUseLobbiesIfAvailable = true;
@@ -110,8 +115,8 @@ void UPuzzlePlatformsGameInstance::OnCreateSessionComplete(FName SessionName, bo
 
 	UWorld* World = GetWorld();
 	if (!ensure(World != nullptr))return;
-
-	World->ServerTravel("/Game/ThirdPersonCPP/Maps/ThirdPersonExampleMap?listen");
+	
+	World->ServerTravel("/Game/PuzzlePlatforms/Maps/Lobby?listen");
 }
 void UPuzzlePlatformsGameInstance::OnDestroySessionComplete(FName SessionName, bool Success)
 {
@@ -156,6 +161,11 @@ void UPuzzlePlatformsGameInstance::OnFindSessionsComplete(bool Success)
 
 }
 
+void UPuzzlePlatformsGameInstance::OnNetworkFailure(UWorld* World, UNetDriver* NetDriver, ENetworkFailure::Type FailureType, const FString& ErrorString)
+{
+	LoadMainMenu();
+}
+
 void UPuzzlePlatformsGameInstance::Host(FText _HostName)
 {
 	HostName = _HostName;
@@ -195,6 +205,14 @@ void UPuzzlePlatformsGameInstance::Join(uint32 Index)
 	SessionInterface->JoinSession(0, SESSION_NAME, SessionSearch->SearchResults[Index]);
 
 
+}
+
+void UPuzzlePlatformsGameInstance::StartSession()
+{
+	if (SessionInterface.IsValid())
+	{
+		SessionInterface->StartSession(SESSION_NAME);
+	}
 }
 
 void UPuzzlePlatformsGameInstance::OnJoinSessionComplete(FName SessionName, EOnJoinSessionCompleteResult::Type Result)

@@ -128,8 +128,7 @@ void UMainMenu::OpenHostMenu()
 void UMainMenu::OpenJoinMenu()
 {
 	if (!ensure(MenuSwitcher != nullptr)) return;
-	if (!ensure(JoinMenu != nullptr)) return;
-	MenuSwitcher->SetActiveWidget(JoinMenu);
+	if (!ensure(JoinMenu != nullptr)) return;	MenuSwitcher->SetActiveWidget(JoinMenu);
 
 
 	if (MenuInterface != nullptr)

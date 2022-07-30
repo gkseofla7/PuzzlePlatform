@@ -1,6 +1,9 @@
 // Copyright Epic Games, Inc. All Rights Reserved.
 
 #include "PuzzlePlatformsCharacter.h"
+#include "Cars/GoKart.h"
+
+
 #include "HeadMountedDisplayFunctionLibrary.h"
 #include "Camera/CameraComponent.h"
 #include "Components/CapsuleComponent.h"
@@ -8,10 +11,28 @@
 #include "GameFramework/CharacterMovementComponent.h"
 #include "GameFramework/Controller.h"
 #include "GameFramework/SpringArmComponent.h"
+#include "DrawDebugHelpers.h"
 
 //////////////////////////////////////////////////////////////////////////
 // APuzzlePlatformsCharacter
 
+
+FString GetEnumText(ENetRole Role)
+{
+	switch (Role)
+	{
+	case ROLE_None:
+		return "None";
+	case ROLE_SimulatedProxy:
+		return "SimulatedProxy";
+	case ROLE_AutonomousProxy:
+		return "AutonomousProxy";
+	case ROLE_Authority:
+		return "Authority";
+	default:
+		return "Error";
+	}
+}
 APuzzlePlatformsCharacter::APuzzlePlatformsCharacter()
 {
 	// Set size for collision capsule
@@ -45,10 +66,13 @@ APuzzlePlatformsCharacter::APuzzlePlatformsCharacter()
 
 	// Note: The skeletal mesh and anim blueprint references on the Mesh component (inherited from Character) 
 	// are set in the derived blueprint asset named MyCharacter (to avoid direct content references in C++)
+
+	SetActorTickEnabled(true);
 }
 
 //////////////////////////////////////////////////////////////////////////
 // Input
+
 
 void APuzzlePlatformsCharacter::SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent)
 {
@@ -56,6 +80,7 @@ void APuzzlePlatformsCharacter::SetupPlayerInputComponent(class UInputComponent*
 	check(PlayerInputComponent);
 	PlayerInputComponent->BindAction("Jump", IE_Pressed, this, &ACharacter::Jump);
 	PlayerInputComponent->BindAction("Jump", IE_Released, this, &ACharacter::StopJumping);
+	PlayerInputComponent->BindAction("GetInTheCar", IE_Pressed, this, &APuzzlePlatformsCharacter::GetInTheCar);
 
 	PlayerInputComponent->BindAxis("MoveForward", this, &APuzzlePlatformsCharacter::MoveForward);
 	PlayerInputComponent->BindAxis("MoveRight", this, &APuzzlePlatformsCharacter::MoveRight);
@@ -76,6 +101,56 @@ void APuzzlePlatformsCharacter::SetupPlayerInputComponent(class UInputComponent*
 	PlayerInputComponent->BindAction("ResetVR", IE_Pressed, this, &APuzzlePlatformsCharacter::OnResetVR);
 }
 
+void APuzzlePlatformsCharacter::Tick(float DeltaTime)
+{
+	DrawDebugString(GetWorld(), FVector(0, 0, 100), GetEnumText(GetLocalRole()), this, FColor::White, DeltaTime);
+}
+
+void APuzzlePlatformsCharacter::GetInTheCar()
+{
+	FHitResult HitResult;
+	FCollisionQueryParams Params(NAME_None, false, this);
+
+	float AttackRange = 100.f;
+	float AttackRadius = 50.f;
+
+
+	bool bResult = GetWorld()->SweepSingleByChannel(
+		OUT HitResult,
+		GetActorLocation(),
+		GetActorLocation() + GetActorForwardVector() * AttackRange,
+		FQuat::Identity,
+		ECollisionChannel::ECC_GameTraceChannel2,
+		FCollisionShape::MakeSphere(AttackRadius),
+		Params);
+	FVector Vec = GetActorForwardVector() * AttackRange;
+	FVector Center = GetActorLocation() + Vec * 0.5f;
+	float HalfHeight = AttackRange * 0.5f + AttackRadius;
+	FQuat Rotation = FRotationMatrix::MakeFromZ(Vec).ToQuat();
+	FColor DrawColor;
+	if (bResult)
+		DrawColor = FColor::Green;
+	else
+		DrawColor = FColor::Red;
+
+
+	DrawDebugCapsule(GetWorld(), Center, HalfHeight, AttackRadius,
+		Rotation, DrawColor, false, 5.f);
+	if (bResult && HitResult.Actor.IsValid())
+	{
+
+		auto Car = Cast<AGoKart>(HitResult.Actor);
+
+		if (Car != nullptr)
+		{
+			DisableActor(true);
+			//OtherActor->SetHidden(true);
+			GetController()->Possess(Car);
+			Car->SetRider(this);
+			Server_SendRide(Car, this);
+		}
+	}
+}
 
 void APuzzlePlatformsCharacter::OnResetVR()
 {
@@ -137,4 +212,43 @@ void APuzzlePlatformsCharacter::MoveRight(float Value)
 		// add movement in that direction
 		AddMovementInput(Direction, Value);
 	}
+}
+
+
+void APuzzlePlatformsCharacter::DisableActor(bool toHide)
+{
+	// Hides visible components
+	SetActorHiddenInGame(toHide);
+
+	// Disables collision components
+	SetActorEnableCollision(!toHide);
+
+	// Stops the Actor from ticking
+	SetActorTickEnabled(!toHide);
+}
+
+void APuzzlePlatformsCharacter::Server_SendRide_Implementation(AActor* _Car, APawn* _Rider)
+{//서버에게 부탁
+	//if (OurMovementComponent == nullptr)
+	//	return;
+	//ClientSimulatedTime += Move.DeltaTime;
+
+	//OurMovementComponent->SimulateMove(Move);
+	//UpdateServerState(Move);
+
+	auto Car = Cast<AGoKart>(_Car);
+	auto Rider = Cast<APuzzlePlatformsCharacter>(_Rider);
+	if (Car != nullptr)
+	{
+		Rider->DisableActor(true);
+		//OtherActor->SetHidden(true);
+		Rider->GetController()->Possess(Car);
+		Car->SetRider(Rider);
+	}
+}
+
+bool APuzzlePlatformsCharacter::Server_SendRide_Validate(AActor* Car, APawn* Rider)
+{
+	return true;
+
 }

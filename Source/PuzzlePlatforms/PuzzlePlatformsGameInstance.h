@@ -37,7 +37,9 @@ public:
 		void Host(FText HostName) override;
 	UFUNCTION(exec)
 		void  Join(uint32 Index) override;
+	void StartSession();
 
+	
 	virtual void LoadMainMenu() override;
 
 	virtual void RefreshServerList() override;
@@ -56,5 +58,7 @@ private:
 	void OnDestroySessionComplete(FName SessionName, bool Success);
 	void OnFindSessionsComplete(bool Success);
 	void OnJoinSessionComplete(FName SessionName, EOnJoinSessionCompleteResult::Type Result);
+	void OnNetworkFailure(UWorld* World, UNetDriver* NetDriver, ENetworkFailure::Type FailureType, const FString& ErrorString);
+
 	void CreateSession();
 };

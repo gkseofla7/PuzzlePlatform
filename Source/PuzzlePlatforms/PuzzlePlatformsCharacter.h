@@ -31,6 +31,10 @@ public:
 
 protected:
 
+	virtual void Tick(float DeltaTime) override;
+
+	void GetInTheCar();
+
 	/** Resets HMD orientation in VR. */
 	void OnResetVR();
 
@@ -68,5 +72,11 @@ public:
 	FORCEINLINE class USpringArmComponent* GetCameraBoom() const { return CameraBoom; }
 	/** Returns FollowCamera subobject **/
 	FORCEINLINE class UCameraComponent* GetFollowCamera() const { return FollowCamera; }
+	UFUNCTION(BlueprintCallable, Category = "Disable")
+		void DisableActor(bool toHide);
+
+public:
+	UFUNCTION(Server, Reliable, WithValidation)
+		void Server_SendRide(AActor* _Car, APawn* _Rider);
 };
 
