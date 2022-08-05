@@ -1,8 +1,11 @@
 // Copyright Epic Games, Inc. All Rights Reserved.
 
 #include "PuzzlePlatformsCharacter.h"
-#include "Cars/GoKart.h"
 
+#include"MyCharacterStatComponent.h"
+#include "PlayerAnimInstance.h"
+#include "PlayersComponent/PlayersMotionReplicator.h"
+#include "Cars/GoKart.h"
 
 #include "HeadMountedDisplayFunctionLibrary.h"
 #include "Camera/CameraComponent.h"
@@ -12,6 +15,10 @@
 #include "GameFramework/Controller.h"
 #include "GameFramework/SpringArmComponent.h"
 #include "DrawDebugHelpers.h"
+#include "GameFramework/PlayerState.h"
+
+#include "Net/UnrealNetwork.h"
+
 
 //////////////////////////////////////////////////////////////////////////
 // APuzzlePlatformsCharacter
@@ -37,7 +44,20 @@ APuzzlePlatformsCharacter::APuzzlePlatformsCharacter()
 {
 	// Set size for collision capsule
 	GetCapsuleComponent()->InitCapsuleSize(42.f, 96.0f);
+	//추가하는 코드
 
+	bReplicates = true;
+	GetMesh()->SetAnimationMode(EAnimationMode::AnimationBlueprint);
+	//IsAttacking = false;
+
+	CharacterStat = CreateDefaultSubobject<UMyCharacterStatComponent>(TEXT("CHARACTERSTAT"));
+	MotionReplicator = CreateDefaultSubobject<UPlayersMotionReplicator>(TEXT("MOTIOREPLICATOR"));
+	static ConstructorHelpers::FClassFinder<UAnimInstance> WARRIO_ANIM((TEXT("/Game/Mannequin/Animations/ThirdPerson_AnimBP")));
+
+	if (WARRIO_ANIM.Succeeded())
+	{
+		GetMesh()->SetAnimInstanceClass(WARRIO_ANIM.Class);
+	}
 	// set our turn rates for input
 	BaseTurnRate = 45.f;
 	BaseLookUpRate = 45.f;
@@ -68,10 +88,11 @@ APuzzlePlatformsCharacter::APuzzlePlatformsCharacter()
 	// are set in the derived blueprint asset named MyCharacter (to avoid direct content references in C++)
 
 	SetActorTickEnabled(true);
-}
 
-//////////////////////////////////////////////////////////////////////////
-// Input
+
+	
+
+}
 
 
 void APuzzlePlatformsCharacter::SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent)
@@ -98,13 +119,36 @@ void APuzzlePlatformsCharacter::SetupPlayerInputComponent(class UInputComponent*
 	PlayerInputComponent->BindTouch(IE_Released, this, &APuzzlePlatformsCharacter::TouchStopped);
 
 	// VR headset functionality
+	
+	PlayerInputComponent->BindAction("Attack", IE_Pressed, this, &APuzzlePlatformsCharacter::Attack);
 	PlayerInputComponent->BindAction("ResetVR", IE_Pressed, this, &APuzzlePlatformsCharacter::OnResetVR);
 }
 
-void APuzzlePlatformsCharacter::Tick(float DeltaTime)
+
+void APuzzlePlatformsCharacter::PostInitializeComponents()
 {
-	DrawDebugString(GetWorld(), FVector(0, 0, 100), GetEnumText(GetLocalRole()), this, FColor::White, DeltaTime);
+	Super::PostInitializeComponents();
+	MyAnim = Cast<UPlayerAnimInstance>(GetMesh()->GetAnimInstance());
+	ABCHECK(nullptr != MyAnim);
+
+	//MyAnim->OnMontageEnded.AddDynamic(this, &APuzzlePlatformsCharacter::OnAttackMontageEnded);
+
+
 }
+
+void APuzzlePlatformsCharacter::Tick(float DeltaTime)
+{//시작하자마자 로그인되는거임;;ㅋㅋ
+
+	DrawDebugString(GetWorld(), FVector(0, 0, 150), GetEnumText(GetLocalRole()), this, FColor::White, DeltaTime);
+	if (GetController() != nullptr)
+	{
+		//FString Output = GetController()->GetPlayerState<APlayerState>()->GetPlayerName();//여기가 왜 nullptr일까?
+		//DrawDebugString(GetWorld(), FVector(0, 0, 100), Output, this, FColor::White, DeltaTime);
+	}
+
+
+}
+
 
 void APuzzlePlatformsCharacter::GetInTheCar()
 {
@@ -143,11 +187,14 @@ void APuzzlePlatformsCharacter::GetInTheCar()
 
 		if (Car != nullptr)
 		{
-			DisableActor(true);
+			//DisableActor(true);
 			//OtherActor->SetHidden(true);
-			GetController()->Possess(Car);
-			Car->SetRider(this);
-			Server_SendRide(Car, this);
+			//GetController()->Possess(Car);
+			UE_LOG(LogTemp, Warning, TEXT("In Client"));
+			//Car->SetRider(this);
+			Car->OurMovementComponent_->ItsMe = false;
+			Car->OurMovementComponent_->riden = true;
+			MotionReplicator->Server_SendRide(Car, this);
 		}
 	}
 }
@@ -214,41 +261,33 @@ void APuzzlePlatformsCharacter::MoveRight(float Value)
 	}
 }
 
-
-void APuzzlePlatformsCharacter::DisableActor(bool toHide)
+void APuzzlePlatformsCharacter::Attack()
 {
-	// Hides visible components
-	SetActorHiddenInGame(toHide);
+		MotionReplicator->Server_SendAttack();
+	//if (MyAnim->IsAttacking == true)
+	//{
+	//	if (CanNextCombo)
+	//	{
+	//		UE_LOG(LogTemp, Warning, TEXT("CanNextCombo"));
+	//		IsComboInputOn = true;//다음걸로 넘어갈 수 있게
+	//	}
+	//}
+	//else if (MyAnim->IsAttacking == false)
+	//{
+	//	MyAnim->IsAttacking = true;
 
-	// Disables collision components
-	SetActorEnableCollision(!toHide);
+	//	ABCHECK(CurrentCombo == 0);
+	//	AttackStartComboState();//다음꺼로 넘어감
+	//	MyAnim->PlaySwordAttackMontage();
+	//	MyAnim->JumpToAttackMontageSection(CurrentCombo);
 
-	// Stops the Actor from ticking
-	SetActorTickEnabled(!toHide);
-}
+	//	NextAttack = false;
+	//}
+	
 
-void APuzzlePlatformsCharacter::Server_SendRide_Implementation(AActor* _Car, APawn* _Rider)
-{//서버에게 부탁
-	//if (OurMovementComponent == nullptr)
-	//	return;
-	//ClientSimulatedTime += Move.DeltaTime;
-
-	//OurMovementComponent->SimulateMove(Move);
-	//UpdateServerState(Move);
-
-	auto Car = Cast<AGoKart>(_Car);
-	auto Rider = Cast<APuzzlePlatformsCharacter>(_Rider);
-	if (Car != nullptr)
-	{
-		Rider->DisableActor(true);
-		//OtherActor->SetHidden(true);
-		Rider->GetController()->Possess(Car);
-		Car->SetRider(Rider);
-	}
-}
-
-bool APuzzlePlatformsCharacter::Server_SendRide_Validate(AActor* Car, APawn* Rider)
-{
-	return true;
 
 }
+
+
+
+

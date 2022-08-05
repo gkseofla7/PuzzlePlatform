@@ -8,7 +8,7 @@
 #include "Net/UnrealNetwork.h"
 #include "Misc/DateTime.h"
 #include "GameFramework/Pawn.h"
-
+#include "AIController.h"
 
 // Sets default values for this component's properties
 UGoKartMovementReplicator::UGoKartMovementReplicator()
@@ -42,6 +42,7 @@ void UGoKartMovementReplicator::GetLifetimeReplicatedProps(TArray< FLifetimeProp
 {
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
 	DOREPLIFETIME(UGoKartMovementReplicator, ServerState);
+
 }
 
 // Called when the game starts
@@ -59,6 +60,7 @@ void UGoKartMovementReplicator::BeginPlay()
 // Called every frame
 void UGoKartMovementReplicator::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
 {
+	
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
 	FGoKartMove LastMove = OurMovementComponent->GetLastMove();
 	if (GetOwnerRole() == ROLE_AutonomousProxy)//일단 서버 아니고 자기꺼 있을때 자기꺼 움직이고 서버한테 정보보냄
@@ -67,17 +69,23 @@ void UGoKartMovementReplicator::TickComponent(float DeltaTime, ELevelTick TickTy
 		Server_SendMove(LastMove);//일단 서버한테보냄(서버가 다시 모두에게 보내게)
 	}
 	//We are the server and in control of the pawn
-	if (GetOwnerRole() == ROLE_Authority && (Cast<APawn>(GetOwner()))->IsLocallyControlled())//서버고 자기꺼일때 
+	if ((OurMovementComponent->ItsMe == true && GetOwnerRole() == ROLE_Authority)
+		|| (GetOwnerRole() == ROLE_Authority && (Cast<APawn>(GetOwner()))->IsLocallyControlled()))//서버고 자기꺼일때 
 	{
 		UpdateServerState(LastMove);
 	}
 
-	//if (GetOwnerRole() != ROLE_Authority && !(Cast<APawn>(GetOwner()))->IsLocallyControlled())//누구든 자기꺼 아닐때
-	//{
-	//	OurMovementComponent->SimulateMove(GetServerState().LastMove);
-	//}
-	if (GetOwnerRole() == ROLE_SimulatedProxy)//누구든 자기꺼 아닐때
+	//서버고 아무도 안타고 자기꺼 아닐때는?
+	if ((OurMovementComponent->riden == false && GetOwnerRole() == ROLE_Authority)
+		 && (Cast<APawn>(GetOwner()))->IsLocallyControlled())//서버고 자기꺼일때 
 	{
+		UpdateServerState(LastMove);
+	}
+
+
+	if (OurMovementComponent->ItsMe == false&&GetOwnerRole() == ROLE_SimulatedProxy)//누구든 자기꺼 아닐때
+	{
+
 		ClientTick(DeltaTime);
 	}
 
@@ -94,17 +102,21 @@ void UGoKartMovementReplicator::UpdateServerState(FGoKartMove Move)
 
 void UGoKartMovementReplicator::ClientTick(float DeltaTime)
 {
-	ClientTimeSinceUpdate += DeltaTime;
 
+	ClientTimeSinceUpdate += DeltaTime;
+	//UE_LOG(LogTemp, Warning, TEXT("Back"));
 	if (ClientTimeBetweenLastUpdates < KINDA_SMALL_NUMBER) return;
 	if (OurMovementComponent == nullptr) return;
 
-
-
+	//UE_LOG(LogTemp, Warning, TEXT("Delta %f"), DeltaTime);
+	//UE_LOG(LogTemp, Warning, TEXT("Total %f"), ClientTimeBetweenLastUpdates);
 	float LerpRatio = ClientTimeSinceUpdate / ClientTimeBetweenLastUpdates;
-	float VelocityToDeriavative = ClientTimeBetweenLastUpdates * 100;
+	
+	if (LerpRatio > 1)
+		LerpRatio = 1;
 
 	FHermitCubicSpline Spline = CreateSpline();
+
 	InterpolateLocation(Spline, LerpRatio);
 	InterpolateVelocity(Spline, LerpRatio);
 	InterpolateRotation(LerpRatio);
@@ -120,13 +132,17 @@ FHermitCubicSpline UGoKartMovementReplicator::CreateSpline()
 	Spline.StartDerivative = ClientStartVelocity * VelocityToDeriavative;
 
 	Spline.TargetLocatioin = ServerState.Transform.GetLocation();
+
 	Spline.TargetDerivative = ServerState.Velocity * VelocityToDeriavative;
+	//UE_LOG(LogTemp, Warning, TEXT("Start Velocity %f, %f, %f"), Spline.StartDerivative.X, Spline.StartDerivative.Y, Spline.StartDerivative.Z);
+	//UE_LOG(LogTemp, Warning, TEXT("End Velocity %f, %f, %f"), Spline.TargetDerivative.X, Spline.TargetDerivative.Y, Spline.TargetDerivative.Z);
 	return Spline;
 }
 
 void UGoKartMovementReplicator::InterpolateLocation(FHermitCubicSpline Spline, float LerpRatio)
 {
 	FVector NextLocation = Spline.InterpolateLocation(LerpRatio);
+
 
 	FVector LocalNextLocation = GetOwner()->GetActorTransform().InverseTransformPosition(NextLocation);
 	MeshOffsetRoot->SetRelativeLocation(LocalNextLocation);
@@ -177,7 +193,7 @@ void UGoKartMovementReplicator::ClearAcknowledgedMoves(FGoKartMove LastMove)
 }
 
 void UGoKartMovementReplicator::Server_SendMove_Implementation(FGoKartMove Move)
-{//서버에게 부탁
+{//서버에게 부탁, 서버는 바로바로 실행
 	if (OurMovementComponent == nullptr)
 		return;
 	ClientSimulatedTime += Move.DeltaTime;
@@ -193,12 +209,12 @@ bool UGoKartMovementReplicator::Server_SendMove_Validate(FGoKartMove Move)
 	bool ClientNotRunningAhead = ProposedTime < GetWorld()->TimeSeconds;
 	if (!ClientNotRunningAhead)
 	{
-		UE_LOG(LogTemp, Warning, TEXT("Client is running too fast"));
+		//UE_LOG(LogTemp, Warning, TEXT("Client is running too fast"));
 		return false;
 	}
 	if (!Move.IsValid())
 	{
-		UE_LOG(LogTemp, Warning, TEXT("Recieve Invalid Move"));
+		//UE_LOG(LogTemp, Warning, TEXT("Recieve Invalid Move"));
 		return false;
 	}
 	return true;
@@ -215,6 +231,7 @@ void UGoKartMovementReplicator::OnRep_ServerState()//약간 모두한테 실행되는듯?
 		AutonomousProxy_OnRep_ServerState();
 		break;
 	case ROLE_SimulatedProxy:
+		//UE_LOG(LogTemp, Warning, TEXT("On Rep ServerState %f *************************"), ClientTimeSinceUpdate);
 		SimulatedProxy_OnRep_ServerState();
 
 		break;
@@ -226,19 +243,40 @@ void UGoKartMovementReplicator::OnRep_ServerState()//약간 모두한테 실행되는듯?
 
 void UGoKartMovementReplicator::SimulatedProxy_OnRep_ServerState()
 {
+	//아니 바뀌면 실행되는게 아니라 그냥 계속 주기적으로 실행되는거였어..?
+	//UE_LOG(LogTemp, Warning, TEXT("Here is Simulate Update"));
 	if (OurMovementComponent == nullptr) return;
-	ClientTimeBetweenLastUpdates = ClientTimeSinceUpdate;
-	ClientTimeSinceUpdate = 0;
+	if (ClientTimeBetweenLastUpdates > ClientTimeSinceUpdate)//총시간에 도달못하면
+	{
+		float tmp = ClientTimeBetweenLastUpdates - ClientTimeSinceUpdate;
+		ClientTimeBetweenLastUpdates = ClientTimeSinceUpdate + tmp;
+		ClientTimeSinceUpdate = 0;
+	}
+	else
+	{
+		ClientTimeBetweenLastUpdates = ClientTimeSinceUpdate;
+		ClientTimeSinceUpdate = 0;
+	}
+
 
 	//ClientStartTransform = GetOwner()->GetActorTransform();
 	if (MeshOffsetRoot != nullptr)
 	{
+
+	
 		ClientStartTransform.SetLocation(MeshOffsetRoot->GetComponentLocation());
+		//UE_LOG(LogTemp, Warning, TEXT("Start Location %f, %f, %f"), ClientStartTransform.GetLocation().X, ClientStartTransform.GetLocation().Y, ClientStartTransform.GetLocation().Z);
 		ClientStartTransform.SetRotation(MeshOffsetRoot->GetComponentQuat());
 	}
+	else
+	{
+		//UE_LOG(LogTemp, Warning, TEXT("WTF"));
+	}
 	ClientStartVelocity = OurMovementComponent->GetVelocity();
-
 	GetOwner()->SetActorTransform(ServerState.Transform);
+	
+	//UE_LOG(LogTemp, Warning, TEXT("End Location %f, %f, %f"), ServerState.Transform.GetLocation().X, ServerState.Transform.GetLocation().Y, ServerState.Transform.GetLocation().Z);
+	
 }
 
 void UGoKartMovementReplicator::AutonomousProxy_OnRep_ServerState()
@@ -247,7 +285,6 @@ void UGoKartMovementReplicator::AutonomousProxy_OnRep_ServerState()
 		return;
 	GetOwner()->SetActorTransform(ServerState.Transform);//다시 돌리는거 아니냐..?
 	OurMovementComponent->SetVelocity(ServerState.Velocity);
-	//OurMovementComponent->Velocity = ServerState.Velocity;
 	ClearAcknowledgedMoves(ServerState.LastMove);
 
 	for (const FGoKartMove& Move : UnacknowledgeMoves)//결국엔 클라에서 나오는거였냐..ㅋ

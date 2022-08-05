@@ -32,8 +32,9 @@ void UGoKartMovementComponent::TickComponent(float DeltaTime, ELevelTick TickTyp
 
 	//FGoKartMove Move =CreateMove(DeltaTime);
 	//SimulateMove(Move);
-
-	if (GetOwnerRole() == ROLE_AutonomousProxy)//일단 서버 아니고 자기꺼 있을때 자기꺼 움직이고 서버한테 정보보냄
+	if (Velocity == FVector::ZeroVector)
+		ItsMe = false;
+	if ((ItsMe == true ) ||GetOwnerRole() == ROLE_AutonomousProxy)//일단 서버 아니고 자기꺼 있을때 자기꺼 움직이고 서버한테 정보보냄
 	{
 		LastMove = CreateMove(DeltaTime);
 		SimulateMove(LastMove);
@@ -63,12 +64,15 @@ void UGoKartMovementComponent::SimulateMove(const FGoKartMove& Move)//애초에 서�
 
 FGoKartMove UGoKartMovementComponent::CreateMove(float DeltaTime)
 {
-
+	if (riden == false)
+	{
+		Throttle = 0;
+		SteeringThrow = 0;
+	}
 	FGoKartMove Move;
 	Move.DeltaTime = DeltaTime;
 	Move.Throttle = Throttle;
 	Move.SteeringThrow = SteeringThrow;
-
 	Move.Time = GetOwner()->GetWorld()->GetGameState()->GetServerWorldTimeSeconds();
 	return Move;
 }

@@ -2,7 +2,8 @@
 
 #pragma once
 
-#include "CoreMinimal.h"
+//#include "CoreMinimal.h"
+#include "PuzzlePlatforms.h"
 #include "GameFramework/GameModeBase.h"
 #include "PuzzlePlatformsGameMode.generated.h"
 
@@ -13,6 +14,12 @@ class APuzzlePlatformsGameMode : public AGameModeBase
 
 public:
 	APuzzlePlatformsGameMode();
+
+	virtual void PostLogin(APlayerController* NewPlayer) override;
+
+
+private:
+
 };
 
 

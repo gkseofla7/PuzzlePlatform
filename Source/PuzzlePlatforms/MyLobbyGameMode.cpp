@@ -6,20 +6,7 @@
 #include "PuzzlePlatformsGameInstance.h"
 
 #include "TimerManager.h"
-void AMyLobbyGameMode::PostLogin(APlayerController* NewPlayer) 
-{
-	Super::PostLogin(NewPlayer);
-	++NumberOfPlayers;
 
-	
-
-	if (NumberOfPlayers >= 2)
-	{
-		//FTimerDelegate RespawnDelegate = FTimerDelegate::CreateUObject(this, &AMyLobbyGameMode::StartPlay,);
-		GetWorldTimerManager().SetTimer(GameStartTimer, this, &AMyLobbyGameMode::StartGame, 5.0f);
-
-	}
-}
 
 void AMyLobbyGameMode::Logout(AController* Exiting)
 {
@@ -37,4 +24,19 @@ void AMyLobbyGameMode::StartGame()
 
 	GameInstance->StartSession();
 	World->ServerTravel("/Game/PuzzlePlatforms/Maps/Game?listen");
+}
+
+void AMyLobbyGameMode::PostLogin(APlayerController* NewPlayer)
+{
+	Super::PostLogin(NewPlayer);
+	++NumberOfPlayers;
+
+
+	Cast<UPuzzlePlatformsGameInstance>(GetGameInstance())->LoadSetNameMenu(NewPlayer);
+	if (NumberOfPlayers >= 2)
+	{
+		//FTimerDelegate RespawnDelegate = FTimerDelegate::CreateUObject(this, &AMyLobbyGameMode::StartPlay,);
+		GetWorldTimerManager().SetTimer(GameStartTimer, this, &AMyLobbyGameMode::StartGame, 20.0f);
+
+	}
 }

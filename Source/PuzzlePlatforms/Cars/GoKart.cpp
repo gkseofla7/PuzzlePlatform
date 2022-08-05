@@ -4,6 +4,7 @@
 #include "GoKart.h"
 #include "GameFramework/GameStateBase.h"
 #include "../PuzzlePlatformsCharacter.h"
+#include "../PlayersComponent/PlayersMotionReplicator.h"
 
 #include "DrawDebugHelpers.h"
 #include "Engine/World.h"
@@ -12,10 +13,25 @@
 #include "GoKartMovementComponent.h"
 #include "Components/BoxComponent.h"
 #include "Math/Rotator.h"
+#include "AIController.h"
 
 // Sets default values
-
-
+FString GetEnumText2(ENetRole Role)
+{
+	switch (Role)
+	{
+	case ROLE_None:
+		return "None";
+	case ROLE_SimulatedProxy:
+		return "SimulatedProxy";
+	case ROLE_AutonomousProxy:
+		return "AutonomousProxy";
+	case ROLE_Authority:
+		return "Authority";
+	default:
+		return "Error";
+	}
+}
 
 AGoKart::AGoKart()
 {
@@ -38,6 +54,12 @@ AGoKart::AGoKart()
 
 }
 
+void AGoKart::GetLifetimeReplicatedProps(TArray< FLifetimeProperty >& OutLifetimeProps) const
+{
+	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
+	DOREPLIFETIME(AGoKart, Rider);
+}
+
 // Called when the game starts or when spawned
 void AGoKart::BeginPlay()
 {
@@ -46,7 +68,6 @@ void AGoKart::BeginPlay()
 	{
 		NetUpdateFrequency = 1;
 	}
-	Ridden = false;
 	TriggerVolume->OnComponentBeginOverlap.AddDynamic(this, &AGoKart::OnOverlapBegin);
 	TriggerVolume->OnComponentEndOverlap.AddDynamic(this, &AGoKart::OnOverlapEnd);
 }
@@ -56,14 +77,7 @@ void AGoKart::OnOverlapBegin(UPrimitiveComponent* OverlappedComp, AActor* OtherA
 	//주변에 들어오면 차에 타게 일단 하기
 	if (Cast<APuzzlePlatformsCharacter>(OtherActor) == nullptr)
 		return;
-	if (Ridden == false)
-	{
-		//OtherActor->SetActorHiddenInGame(true);
-		////OtherActor->SetHidden(true);
-		//Cast<APawn>(OtherActor)->GetController()->Possess(this);
-		//Ridden = true;
 
-	}
 }
 
 void AGoKart::OnOverlapEnd(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex)
@@ -79,9 +93,9 @@ void AGoKart::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
+	DrawDebugString(GetWorld(), FVector(0, 0, 150), GetEnumText2(GetLocalRole()), this, FColor::White, DeltaTime);
 
 
-	
 
 }
 
@@ -107,17 +121,39 @@ void AGoKart::MoveRight(float Value)
 
 void AGoKart::GetOutTheCar()
 {
+	OurMovementComponent_->SetThrottle(0);
+	OurMovementComponent_->SetSteeringThrow(0);
+	Server_SendGetOutTheCar();
+	OurMovementComponent_->ItsMe = true;
+	OurMovementComponent_->riden = false;
 
-	if (Rider != nullptr&&Cast<APuzzlePlatformsCharacter>(Rider) != nullptr)
+}
+
+void AGoKart::Server_SendGetOutTheCar_Implementation()
+{
+	if (Rider != nullptr && Cast<APuzzlePlatformsCharacter>(Rider) != nullptr)
 	{
+
 		//+ GetActorUpVector()*50
-		Cast<APuzzlePlatformsCharacter>(Rider)->DisableActor(false);
-		FVector Place = this->GetTransform().GetLocation() +200*(GetActorForwardVector().RotateAngleAxis(270.0, GetActorUpVector())) ;
+		Cast<APuzzlePlatformsCharacter>(Rider)->MotionReplicator->DisableActor(false);
+		FVector Place = GetTransform().GetLocation() + 200 * (GetActorForwardVector().RotateAngleAxis(270.0, GetActorUpVector()));
 		Rider->SetActorLocation(Place);
 
 		//OtherActor->SetHidden(true);
 		GetController()->Possess(Rider);
+		//컨트롤러가 아예 없어져서;;ㅋㅋ
+		if (AIController == nullptr)
+		{
+			UE_LOG(LogTemp, Warning, TEXT("No Controller"));
+		}
+		AIController->Possess(this);
 
+
+		
 	}
 }
 
+bool AGoKart::Server_SendGetOutTheCar_Validate()
+{
+	return true;
+}

@@ -49,10 +49,11 @@ protected:
 	virtual void BeginPlay() override;
 
 public:
+
 	// Called every frame
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 
-
+	float GetVelocityToDeriavative() { return  ClientTimeBetweenLastUpdates * 100; }
 
 
 	void ClearAcknowledgedMoves(FGoKartMove LastMove);
@@ -88,7 +89,7 @@ private:
 	FVector ClientStartVelocity;
 
 
-
+	//임시방편으로 
 	//보간
 	FHermitCubicSpline CreateSpline();
 	void InterpolateLocation(FHermitCubicSpline Input, float LerpRatio);
@@ -101,4 +102,7 @@ private:
 
 	UFUNCTION(BlueprintCallable)
 		void SetMeshOffsetRoot(USceneComponent* Root) { MeshOffsetRoot = Root; }
+
+
+
 };

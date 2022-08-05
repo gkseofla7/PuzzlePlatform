@@ -10,12 +10,13 @@
 #include "PlatformTrigger.h"
 #include "MenuSystem/QuitMenu.h"
 #include "MenuSystem/MainMenu.h"
+#include "MenuSystem/SetNameMenu.h"
 
 const static FName SESSION_NAME = NAME_GameSession;
 
-UPuzzlePlatformsGameInstance::UPuzzlePlatformsGameInstance(const FObjectInitializer & ObjectInitializer)
+UPuzzlePlatformsGameInstance::UPuzzlePlatformsGameInstance(const FObjectInitializer& ObjectInitializer)
 {
-	
+
 	ConstructorHelpers::FClassFinder<UUserWidget> MenuBPClass(TEXT("/Game/PuzzlePlatforms/MenuSystem/WBP_MainMenu"));
 	if (!ensure(MenuBPClass.Class != nullptr)) return;
 	MenuClass = MenuBPClass.Class;
@@ -24,10 +25,22 @@ UPuzzlePlatformsGameInstance::UPuzzlePlatformsGameInstance(const FObjectInitiali
 	if (!ensure(CloseMenuBPClass.Class != nullptr)) return;
 	CloseMenuClass = CloseMenuBPClass.Class;
 
+	ConstructorHelpers::FClassFinder<UUserWidget> SetNameMenuBPClass(TEXT("/Game/PuzzlePlatforms/MenuSystem/WBP_SetName"));
+	if (!ensure(SetNameMenuBPClass.Class != nullptr)) return;
+	SetNameMenuClass = SetNameMenuBPClass.Class;
+
+	static ConstructorHelpers::FObjectFinder<UDataTable> DT_MYCHARACTER(TEXT("/Game/PlayerData/MyPlayerData"));
+	if (DT_MYCHARACTER.Succeeded()) {
+		MyCharacterTable = DT_MYCHARACTER.Object;
+		ABCHECK(MyCharacterTable->GetRowMap().Num() > 0);
+	}
 }
 
 void UPuzzlePlatformsGameInstance::Init()
 {
+	//이게 무엇보다 일찍 시작함
+	// UGameInstance::Init -> AActor::PostInitializeComponents -> AGameMode::PostLogin -> AGameMode::StartPlay
+	// ->AActor::BeginPlay
 	//UE_LOG(LogTemp, Warning, TEXT("Found class %s"), *MenuClass->GetName());
 	auto Subsystem = IOnlineSubsystem::Get();
 	if (Subsystem != nullptr)
@@ -48,12 +61,19 @@ void UPuzzlePlatformsGameInstance::Init()
 
 
 	}
-
 	if (GEngine != nullptr)
 	{
 		GEngine->OnNetworkFailure().AddUObject(this, &UPuzzlePlatformsGameInstance::OnNetworkFailure);
 	}
+
+
+	UE_LOG(LogTemp, Warning, TEXT("Character Level 3 DropExp %d"), GetMyCharacterData(3)->DropExp);
 }
+FMyCharacterrData* UPuzzlePlatformsGameInstance::GetMyCharacterData(int32 Level)
+{
+	return MyCharacterTable->FindRow<FMyCharacterrData>(*FString::FromInt(Level), TEXT(""));
+}
+
 void UPuzzlePlatformsGameInstance::LoadMenuWidget()
 {
 	if (!ensure(MenuClass != nullptr)) return;
@@ -62,6 +82,10 @@ void UPuzzlePlatformsGameInstance::LoadMenuWidget()
 	Menu->Setup();
 
 	Menu->SetMenuInterface(this);
+	APlayerController* PlayerController = GetWorld()->GetFirstPlayerController();
+	auto Pawn = PlayerController->GetPawn();
+	Pawn->DisableInput(PlayerController);
+	
 }
 
 void UPuzzlePlatformsGameInstance::LoadCloseMenu()
@@ -73,6 +97,17 @@ void UPuzzlePlatformsGameInstance::LoadCloseMenu()
 	QuitMenu->Setup();
 
 	QuitMenu->SetMenuInterface(this);
+}
+
+void UPuzzlePlatformsGameInstance::LoadSetNameMenu(APlayerController* NewPlayer)
+{
+	if (!ensure(SetNameMenuClass != nullptr)) return;
+
+	SetNameMenu = CreateWidget<USetNameMenu>(this, SetNameMenuClass);
+
+	SetNameMenu->Setup();
+
+	SetNameMenu->PlayerController = NewPlayer;
 }
 void UPuzzlePlatformsGameInstance::CreateSession()
 {

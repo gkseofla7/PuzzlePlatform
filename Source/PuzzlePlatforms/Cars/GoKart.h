@@ -55,13 +55,16 @@ public:
 	UFUNCTION()
 		void OnOverlapEnd(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex);
 
-	UPROPERTY(EditAnywhere)
-	bool Ridden = false;
+
 
 	void GetOutTheCar();
 
-
-
+	UFUNCTION(Server, Reliable, WithValidation)
+		void Server_SendGetOutTheCar();
+	class AController* AIController;
 private:
+	UPROPERTY(VisibleAnywhere, replicated)
 	APawn* Rider;
+
+
 };

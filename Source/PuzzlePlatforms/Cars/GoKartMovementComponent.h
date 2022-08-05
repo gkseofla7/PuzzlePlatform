@@ -49,10 +49,14 @@ public:
 
 
 public:
+
+	bool ItsMe = false;
+	bool riden = false;
 	void SimulateMove(const FGoKartMove& Move);
 	FGoKartMove CreateMove(float DeltaTime);
 
 	void UpdateForce(float Throttle);
+
 
 	void UpdatesLocationFromVelocity(float DeltaTime);
 	void ApplyRotation(float DeltaTime, float SteeringThrow);
