@@ -29,6 +29,9 @@ private:
 	UFUNCTION()
 		void ConfirmID();
 
+
+
 public:
-	APlayerController* PlayerController;
+
+	//APlayerController* PlayerController;
 };

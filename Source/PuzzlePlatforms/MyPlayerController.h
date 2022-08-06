@@ -28,7 +28,7 @@ protected:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = UI)
 		TSubclassOf<class UPlayerInfoWidget> HUDWidgetClass;
 
-private:
+public:
 	UPROPERTY()
 	class UPlayerInfoWidget* HUDWidget;
 };

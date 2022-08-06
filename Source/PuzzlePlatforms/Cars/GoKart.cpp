@@ -51,7 +51,8 @@ AGoKart::AGoKart()
 
 	//auto BoxComponent = GetOwner()->FindComponentByClass<USceneComponent>();
 	//TriggerVolume->SetupAttachment(BoxComponent);
-
+	
+	TriggerVolume->SetCollisionProfileName(TEXT("Vehicle"));
 }
 
 void AGoKart::GetLifetimeReplicatedProps(TArray< FLifetimeProperty >& OutLifetimeProps) const

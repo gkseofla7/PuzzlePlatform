@@ -7,7 +7,5 @@ AMainMenuGameMode::AMainMenuGameMode()
 {
 
 	DefaultPawnClass = ANoPawn::StaticClass();
-
-
 	PlayerControllerClass = APlayerController::StaticClass();
 }

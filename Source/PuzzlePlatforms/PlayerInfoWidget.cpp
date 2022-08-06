@@ -3,7 +3,10 @@
 
 #include "PlayerInfoWidget.h"
 #include "MyCharacterStatComponent.h"
+#include "MyPlayerState.h"
 
+
+#include "Components/TextBlock.h"
 #include "Components/ProgressBar.h"
 bool UPlayerInfoWidget::Initialize()
 {
@@ -22,6 +25,8 @@ void UPlayerInfoWidget::BindCharacterStat(class UMyCharacterStatComponent* NewCh
 
 	CurrentCharacterStat = NewCharacterStat;
 	CurrentCharacterStat->SetHP(80);
+	
+	PlayerName->SetText(FText::FromString(TEXT("Not Yet")));
 	HpBar->SetPercent(CurrentCharacterStat->GetHPRatio());
 	NewCharacterStat->OnHPChanged.AddLambda([this]() -> void {
 		if (CurrentCharacterStat.IsValid())
@@ -38,4 +43,9 @@ void UPlayerInfoWidget::BindCharacterStat(class UMyCharacterStatComponent* NewCh
 		}
 		});
 
+}
+
+void UPlayerInfoWidget::BindCharacterName(FText NewName)
+{
+	PlayerName->SetText(NewName);
 }

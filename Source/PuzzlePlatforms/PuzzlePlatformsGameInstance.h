@@ -39,7 +39,7 @@ public:
 		void LoadCloseMenu();
 
 	UFUNCTION(BlueprintCallable)
-		void LoadSetNameMenu(APlayerController* NewPlayer);
+		void LoadSetNameMenu();
 
 	UFUNCTION(exec)
 		void Host(FText HostName) override;

@@ -10,7 +10,6 @@
 
 DECLARE_MULTICAST_DELEGATE(FOnHPChangedDelegate);
 
-
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
 class PUZZLEPLATFORMS_API UMyCharacterStatComponent : public UActorComponent
 {
@@ -21,7 +20,7 @@ public:
 	UMyCharacterStatComponent();
 
 	void SetHP(float NewHP);
-
+	float GetHP() { return CurrentHP; }
 	float GetHPRatio();
 
 	FOnHPChangedDelegate OnHPChanged;
@@ -42,7 +41,12 @@ private:
 		int32 Level;
 
 public:
-	UPROPERTY(Transient, VisibleInstanceOnly, Category = Stat, Meta = (AllowPrivateAccess = true))
+	UPROPERTY(ReplicatedUsing = OnRep_HP, Transient, VisibleInstanceOnly, Category = Stat, Meta = (AllowPrivateAccess = true))
 		float CurrentHP;
+
+	UFUNCTION()
+	void OnRep_HP();
+
+
 	//언리얼 오브젝트에는 직렬화 기능이 있어서 오브젝트의 UPROPERTPY 속성을 저장하고 로딩할 수 있음
 };

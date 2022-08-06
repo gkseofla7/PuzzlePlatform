@@ -21,7 +21,7 @@ public:
 
 
 public:
-	void Setup();
+	virtual void Setup();
 	void Teardown();
 	
 

@@ -17,14 +17,18 @@ class PUZZLEPLATFORMS_API UPlayerInfoWidget : public UUserWidget
 protected:
 	virtual bool Initialize();
 private:
+public:
 
 	UPROPERTY(meta = (BindWidget))
 		class UProgressBar* HpBar;
 	UPROPERTY(meta = (BindWidget))
 		class UProgressBar* MpBar;
+	UPROPERTY(meta = (BindWidget))
+		class UTextBlock* PlayerName;
 
 public:
 	void BindCharacterStat(class UMyCharacterStatComponent* NewCharacterStat);
+	void BindCharacterName(FText NewName);
 
 private:
 	TWeakObjectPtr<class UMyCharacterStatComponent> CurrentCharacterStat;

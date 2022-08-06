@@ -4,6 +4,8 @@
 #include "MyPlayerController.h"
 #include "PlayerInfoWidget.h"
 #include "PuzzlePlatformsCharacter.h"
+
+#include "MyLobbyGameMode.h"
 AMyPlayerController::AMyPlayerController()
 {
 	static ConstructorHelpers::FClassFinder< UPlayerInfoWidget> UI_HUD_C(TEXT("/Game/PuzzlePlatforms/Widget/WBP_PlayerInfo"));
@@ -30,7 +32,9 @@ void AMyPlayerController::OnPossess(APawn* aPawn)
 void AMyPlayerController::BeginPlay()
 {
 	Super::BeginPlay();
-	if (IsLocalController())
+	
+
+	if (IsLocalController() )
 	{
 		FInputModeGameOnly InputMode;
 		SetInputMode(InputMode);
@@ -43,7 +47,6 @@ void AMyPlayerController::BeginPlay()
 			auto MyPawn = Cast<APuzzlePlatformsCharacter>(GetPawn());
 			if (MyPawn != nullptr)
 			{
-
 				HUDWidget->BindCharacterStat(MyPawn->CharacterStat);
 			}
 			

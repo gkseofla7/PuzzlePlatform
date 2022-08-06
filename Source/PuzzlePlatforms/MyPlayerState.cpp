@@ -21,7 +21,7 @@ int32 AMyPlayerState::GetCharacterLevel() const
 
 void AMyPlayerState::InitPlayerData()
 {
-	SetPlayerName(TEXT("Destiny"));
+	//SetPlayerName(TEXT("Destiny"));
 	CharacterLevel = 5;
 	GameScore = 0;
 }

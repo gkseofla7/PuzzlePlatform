@@ -5,6 +5,8 @@
 #include "PuzzlePlatformsGameInstance.h"
 #include "MyPlayerData.h"
 
+#include "Net/UnrealNetwork.h"
+
 // Sets default values for this component's properties
 UMyCharacterStatComponent::UMyCharacterStatComponent()
 {
@@ -18,12 +20,18 @@ UMyCharacterStatComponent::UMyCharacterStatComponent()
 	// ...
 }
 
+void UMyCharacterStatComponent::GetLifetimeReplicatedProps(TArray< FLifetimeProperty >& OutLifetimeProps) const
+{
+	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
+	DOREPLIFETIME(UMyCharacterStatComponent, CurrentHP);
+
+}
 
 // Called when the game starts
 void UMyCharacterStatComponent::BeginPlay()
 {
 	Super::BeginPlay();
-
+	SetIsReplicated(true);
 	// ...
 	
 }
@@ -71,3 +79,8 @@ float UMyCharacterStatComponent::GetHPRatio()
 	return (CurrentStatData->MaxHP < KINDA_SMALL_NUMBER) ? 0.0f : (CurrentHP / CurrentStatData->MaxHP);
 }
 
+
+void UMyCharacterStatComponent::OnRep_HP()
+{
+	OnHPChanged.Broadcast();
+}

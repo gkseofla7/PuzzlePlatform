@@ -6,6 +6,9 @@
 #include "PlayerAnimInstance.h"
 #include "PlayersComponent/PlayersMotionReplicator.h"
 #include "Cars/GoKart.h"
+#include "PuzzlePlatformsGameInstance.h"
+#include "MyPlayerController.h"
+#include "PlayerInfoWidget.h"
 
 #include "HeadMountedDisplayFunctionLibrary.h"
 #include "Camera/CameraComponent.h"
@@ -16,6 +19,8 @@
 #include "GameFramework/SpringArmComponent.h"
 #include "DrawDebugHelpers.h"
 #include "GameFramework/PlayerState.h"
+#include "Components/TextBlock.h"
+
 
 #include "Net/UnrealNetwork.h"
 
@@ -53,6 +58,8 @@ APuzzlePlatformsCharacter::APuzzlePlatformsCharacter()
 	CharacterStat = CreateDefaultSubobject<UMyCharacterStatComponent>(TEXT("CHARACTERSTAT"));
 	MotionReplicator = CreateDefaultSubobject<UPlayersMotionReplicator>(TEXT("MOTIOREPLICATOR"));
 	static ConstructorHelpers::FClassFinder<UAnimInstance> WARRIO_ANIM((TEXT("/Game/Mannequin/Animations/ThirdPerson_AnimBP")));
+
+	GetCapsuleComponent()->SetCollisionProfileName(TEXT("ABCharacter"));
 
 	if (WARRIO_ANIM.Succeeded())
 	{
@@ -97,6 +104,7 @@ APuzzlePlatformsCharacter::APuzzlePlatformsCharacter()
 
 void APuzzlePlatformsCharacter::SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent)
 {
+	Super::SetupPlayerInputComponent(PlayerInputComponent);
 	// Set up gameplay key bindings
 	check(PlayerInputComponent);
 	PlayerInputComponent->BindAction("Jump", IE_Pressed, this, &ACharacter::Jump);
@@ -132,13 +140,27 @@ void APuzzlePlatformsCharacter::PostInitializeComponents()
 	ABCHECK(nullptr != MyAnim);
 
 	//MyAnim->OnMontageEnded.AddDynamic(this, &APuzzlePlatformsCharacter::OnAttackMontageEnded);
+	MyAnim->OnAttackHitCheck.AddUObject(this, &APuzzlePlatformsCharacter::AttackCheck);
 
+}
 
+void APuzzlePlatformsCharacter::BeginPlay()
+{
+	Super::BeginPlay();
+	
+
+	FName identifier = TEXT("Not Yet");
+	if (IsLocallyControlled())
+	{
+		FText Name = Cast<AMyPlayerController>(GetController())->HUDWidget->PlayerName->GetText();
+		if(Name.EqualTo(FText::FromName(identifier)))
+			Cast<UPuzzlePlatformsGameInstance>(GetGameInstance())->LoadSetNameMenu();
+	}
 }
 
 void APuzzlePlatformsCharacter::Tick(float DeltaTime)
 {//시작하자마자 로그인되는거임;;ㅋㅋ
-
+	Super::Tick(DeltaTime);
 	DrawDebugString(GetWorld(), FVector(0, 0, 150), GetEnumText(GetLocalRole()), this, FColor::White, DeltaTime);
 	if (GetController() != nullptr)
 	{
@@ -155,21 +177,21 @@ void APuzzlePlatformsCharacter::GetInTheCar()
 	FHitResult HitResult;
 	FCollisionQueryParams Params(NAME_None, false, this);
 
-	float AttackRange = 100.f;
-	float AttackRadius = 50.f;
+	float CarRange = 100.f;
+	float CarRadius = 50.f;
 
 
 	bool bResult = GetWorld()->SweepSingleByChannel(
 		OUT HitResult,
 		GetActorLocation(),
-		GetActorLocation() + GetActorForwardVector() * AttackRange,
+		GetActorLocation() + GetActorForwardVector() * CarRange,
 		FQuat::Identity,
-		ECollisionChannel::ECC_GameTraceChannel2,
-		FCollisionShape::MakeSphere(AttackRadius),
+		ECollisionChannel::ECC_GameTraceChannel3,
+		FCollisionShape::MakeSphere(CarRadius),
 		Params);
-	FVector Vec = GetActorForwardVector() * AttackRange;
-	FVector Center = GetActorLocation() + Vec * 0.5f;
-	float HalfHeight = AttackRange * 0.5f + AttackRadius;
+	FVector Vec = GetActorForwardVector() * CarRange;
+	FVector Center = GetActorLocation() + CarRadius * 0.5f;
+	float HalfHeight = CarRange * 0.5f + CarRadius;
 	FQuat Rotation = FRotationMatrix::MakeFromZ(Vec).ToQuat();
 	FColor DrawColor;
 	if (bResult)
@@ -178,7 +200,7 @@ void APuzzlePlatformsCharacter::GetInTheCar()
 		DrawColor = FColor::Red;
 
 
-	DrawDebugCapsule(GetWorld(), Center, HalfHeight, AttackRadius,
+	DrawDebugCapsule(GetWorld(), Center, HalfHeight, CarRadius,
 		Rotation, DrawColor, false, 5.f);
 	if (bResult && HitResult.Actor.IsValid())
 	{
@@ -263,7 +285,8 @@ void APuzzlePlatformsCharacter::MoveRight(float Value)
 
 void APuzzlePlatformsCharacter::Attack()
 {
-		MotionReplicator->Server_SendAttack();
+	MotionReplicator->Server_SendAttack();
+	{
 	//if (MyAnim->IsAttacking == true)
 	//{
 	//	if (CanNextCombo)
@@ -283,11 +306,73 @@ void APuzzlePlatformsCharacter::Attack()
 
 	//	NextAttack = false;
 	//}
-	
+	}
 
 
 }
 
+void APuzzlePlatformsCharacter::AttackCheck()
+{
+	UE_LOG(LogTemp, Warning, TEXT("AttackCheck"));
+	if (HasAuthority())
+	{
+		FHitResult HitResult;
+		FCollisionQueryParams Params(NAME_None, false, this);
+
+		float AttackRange = 200.f;
+		float AttackRadius = 50.f;
 
 
+		bool bResult = GetWorld()->SweepSingleByChannel(
+			OUT HitResult,
+			GetActorLocation(),
+			GetActorLocation() + GetActorForwardVector() * AttackRange,
+			FQuat::Identity,
+			ECollisionChannel::ECC_GameTraceChannel2,
+			FCollisionShape::MakeSphere(AttackRadius),
+			Params);
+		FVector Vec = GetActorForwardVector() * AttackRange;
+		FVector Center = GetActorLocation() + Vec * 0.5f;
+		float HalfHeight = AttackRange * 0.5f + AttackRadius;
+		FQuat Rotation = FRotationMatrix::MakeFromZ(Vec).ToQuat();
+		FColor DrawColor;
+		if (bResult)
+			DrawColor = FColor::Green;
+		else
+			DrawColor = FColor::Red;
 
+
+		DrawDebugCapsule(GetWorld(), Center, HalfHeight, AttackRadius,
+			Rotation, DrawColor, false, 5.f);
+		if (bResult && HitResult.Actor.IsValid())
+		{
+			UE_LOG(LogTemp, Warning, TEXT("Hit Actor Name : %s"), *HitResult.Actor->GetName());
+			FDamageEvent DamageEvent;
+			HitResult.Actor->TakeDamage(50.0f, DamageEvent, GetController(), this);
+			
+		}
+	}
+}
+
+
+//void APuzzlePlatformsCharacter::OnRep_TakeDamage()
+//{
+//	FDamageEvent DamageEvent;
+//	TakeDamage(50.0f, DamageEvent, GetController(), this);
+//}
+
+
+float APuzzlePlatformsCharacter::TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent,
+	AController* EventInstigator, AActor* DamageCauser)
+{
+	//UE_LOG(LogTemp, Warning, TEXT("Actor : %s took Damage : %f"), *GetName(), DamageAmount);
+	float FinalDamage = Super::TakeDamage(DamageAmount, DamageEvent, EventInstigator, DamageCauser);
+	
+	float HP =  CharacterStat->GetHP();
+	CharacterStat->SetHP(HP - FinalDamage);
+
+	UE_LOG(LogTemp, Warning, TEXT("Actor : %s took Damage : %f"), *GetName(), FinalDamage);
+	return FinalDamage;
+
+
+}

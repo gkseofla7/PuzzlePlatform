@@ -32,7 +32,7 @@ void AMyLobbyGameMode::PostLogin(APlayerController* NewPlayer)
 	++NumberOfPlayers;
 
 
-	Cast<UPuzzlePlatformsGameInstance>(GetGameInstance())->LoadSetNameMenu(NewPlayer);
+	//Cast<UPuzzlePlatformsGameInstance>(GetGameInstance())->LoadSetNameMenu(NewPlayer);
 	if (NumberOfPlayers >= 2)
 	{
 		//FTimerDelegate RespawnDelegate = FTimerDelegate::CreateUObject(this, &AMyLobbyGameMode::StartPlay,);

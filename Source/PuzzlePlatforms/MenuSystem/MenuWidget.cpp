@@ -17,7 +17,8 @@ void UMenuWidget::Setup()
 	FInputModeUIOnly UIOnly;
 
 	this->bIsFocusable = true;
-	//UIOnly.SetWidgetToFocus(Menu->TakeWidget());
+
+	UIOnly.SetWidgetToFocus(TakeWidget());
 	UIOnly.SetLockMouseToViewportBehavior(EMouseLockMode::DoNotLock);
 	PlayerController->SetInputMode(UIOnly);
 

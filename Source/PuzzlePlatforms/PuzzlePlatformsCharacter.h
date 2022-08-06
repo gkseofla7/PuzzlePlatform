@@ -26,6 +26,7 @@ public:
 
 protected:
 	virtual void PostInitializeComponents() override;
+	virtual void BeginPlay() override;
 	virtual void Tick(float DeltaTime) override;
 	void OnResetVR();
 	void MoveForward(float Value);
@@ -40,6 +41,7 @@ protected:
 	void TouchStopped(ETouchIndex::Type FingerIndex, FVector Location);
 	void Attack();
 
+	void AttackCheck();
 	//UFUNCTION()
 	//	void OnAttackMontageEnded(UAnimMontage* Montage, bool bInterrupted);
 
@@ -56,6 +58,9 @@ public:
 	/** Returns FollowCamera subobject **/
 	FORCEINLINE class UCameraComponent* GetFollowCamera() const { return FollowCamera; }
 
+	virtual float TakeDamage(float DamageAmount, struct FDamageEvent const& DamageEvent,
+		class AController* EventInstigator, AActor* DamageCauser) override;
+
 public:
 
 	UPROPERTY(VisibleAnywhere, Category = Stat)
@@ -63,6 +68,9 @@ public:
 	UPROPERTY(VisibleAnywhere, Category = Replicator)
 		class UPlayersMotionReplicator* MotionReplicator;
 
+
+
+	
 
 private:
 	//UPROPERTY(replicated,VisibleInstanceOnly, BlueprintReadOnly, Category = Attack, Meta = (AllowPrivateAccess = true))

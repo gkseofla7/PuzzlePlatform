@@ -99,7 +99,7 @@ void UPuzzlePlatformsGameInstance::LoadCloseMenu()
 	QuitMenu->SetMenuInterface(this);
 }
 
-void UPuzzlePlatformsGameInstance::LoadSetNameMenu(APlayerController* NewPlayer)
+void UPuzzlePlatformsGameInstance::LoadSetNameMenu()
 {
 	if (!ensure(SetNameMenuClass != nullptr)) return;
 
@@ -107,7 +107,9 @@ void UPuzzlePlatformsGameInstance::LoadSetNameMenu(APlayerController* NewPlayer)
 
 	SetNameMenu->Setup();
 
-	SetNameMenu->PlayerController = NewPlayer;
+	//SetNameMenu->PlayerController = NewPlayer;
+
+
 }
 void UPuzzlePlatformsGameInstance::CreateSession()
 {
