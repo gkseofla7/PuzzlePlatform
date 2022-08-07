@@ -2,7 +2,7 @@
 
 #pragma once
 
-#include "PuzzlePlatforms.h"
+#include "../PuzzlePlatforms.h"
 #include "Animation/AnimInstance.h"
 #include "PlayerAnimInstance.generated.h"
 

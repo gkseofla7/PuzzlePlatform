@@ -4,11 +4,12 @@
 
 #include "CoreMinimal.h"
 #include "Components/ActorComponent.h"
+#include "MotionReplicatorInterface.h"
 #include "PlayersMotionReplicator.generated.h"
 
 
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
-class PUZZLEPLATFORMS_API UPlayersMotionReplicator : public UActorComponent
+class PUZZLEPLATFORMS_API UPlayersMotionReplicator : public UActorComponent, public IMotionReplicatorInterface
 {
 	GENERATED_BODY()
 
@@ -29,9 +30,9 @@ public:
 		void DisableActor(bool toHide);
 
 	UFUNCTION(Server, Reliable, WithValidation)
-		void Server_SendRide(AActor* _Car, APawn* _Rider);
+		void Server_SendRide(AActor* _Car, APawn* _Rider) override;
 	UFUNCTION(Server, Reliable, WithValidation)
-		void Server_SendAttack();
+		void Server_SendAttack() override;
 	UFUNCTION()
 		void OnRep_Attack();
 	UPROPERTY(ReplicatedUsing = OnRep_Attack)
@@ -41,7 +42,7 @@ public:
 
 private:
 	UPROPERTY()
-	class UPlayerAnimInstance* MyAnim;
+		class UPlayerAnimInstance* MyAnim;
 
 
 	//¿©±â

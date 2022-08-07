@@ -4,6 +4,7 @@
 
 #include"PuzzlePlatforms.h"
 #include "GameFramework/Character.h"
+#include "PlayersComponent/MotionReplicatorInterface.h"
 #include "PuzzlePlatformsCharacter.generated.h"
 
 UCLASS(config=Game)
@@ -41,7 +42,7 @@ protected:
 	void TouchStopped(ETouchIndex::Type FingerIndex, FVector Location);
 	void Attack();
 
-	void AttackCheck();
+
 	//UFUNCTION()
 	//	void OnAttackMontageEnded(UAnimMontage* Montage, bool bInterrupted);
 
@@ -65,17 +66,16 @@ public:
 
 	UPROPERTY(VisibleAnywhere, Category = Stat)
 		class UMyCharacterStatComponent* CharacterStat;
+	//UPROPERTY(VisibleAnywhere, Category = Replicator)
+	//	class UPlayersMotionReplicator* MotionReplicator;
+	//UPROPERTY에서 돌아가려면
 	UPROPERTY(VisibleAnywhere, Category = Replicator)
-		class UPlayersMotionReplicator* MotionReplicator;
-
-
+	TScriptInterface<IMotionReplicatorInterface> MotionReplicator;
+		//IMotionReplicatorInterface* MotionReplicator;
 
 	
 
-private:
-	//UPROPERTY(replicated,VisibleInstanceOnly, BlueprintReadOnly, Category = Attack, Meta = (AllowPrivateAccess = true))
-		//bool IsAttacking;
-
+protected:
 	UPROPERTY()
 		class UPlayerAnimInstance* MyAnim;
 	

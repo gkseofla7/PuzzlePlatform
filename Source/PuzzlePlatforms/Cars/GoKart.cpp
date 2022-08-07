@@ -136,7 +136,7 @@ void AGoKart::Server_SendGetOutTheCar_Implementation()
 	{
 
 		//+ GetActorUpVector()*50
-		Cast<APuzzlePlatformsCharacter>(Rider)->MotionReplicator->DisableActor(false);
+		Cast<UPlayersMotionReplicator>(Cast<APuzzlePlatformsCharacter>(Rider)->MotionReplicator.GetObjectRef())->DisableActor(false);
 		FVector Place = GetTransform().GetLocation() + 200 * (GetActorForwardVector().RotateAngleAxis(270.0, GetActorUpVector()));
 		Rider->SetActorLocation(Place);
 

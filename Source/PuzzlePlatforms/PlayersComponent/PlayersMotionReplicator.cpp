@@ -2,7 +2,7 @@
 
 
 #include "PlayersMotionReplicator.h"
-#include "../PlayerAnimInstance.h"
+#include "../AnimInstance/PlayerAnimInstance.h"
 #include "../Cars/GoKart.h"
 
 #include "Net/UnrealNetwork.h"

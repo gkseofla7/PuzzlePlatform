@@ -2,8 +2,8 @@
 
 
 #include "PlayerAnimInstance.h"
-#include "PuzzlePlatformsCharacter.h"
-#include "PlayersComponent/PlayersMotionReplicator.h"
+#include "../PuzzlePlatformsCharacter.h"
+#include "../PlayersComponent/PlayersMotionReplicator.h"
 UPlayerAnimInstance::UPlayerAnimInstance()
 {
 	CurrenPawnSpeed = 0.0f;
@@ -41,10 +41,10 @@ void UPlayerAnimInstance::PlaySwordAttackMontage()
 	auto Pawn = TryGetPawnOwner();
 	if (Pawn ==nullptr)
 		return;
-	auto Character = Cast<APuzzlePlatformsCharacter>(Pawn);
-	int tmp = Character->MotionReplicator->CurrentCombo;
+	//auto Character = Cast<APuzzlePlatformsCharacter>(Pawn);
+	//int tmp = Cast<Character->MotionReplicator->CurrentCombo;
 
-	UE_LOG(LogTemp, Warning, TEXT("CurrentCombo : %d"), tmp);
+	//UE_LOG(LogTemp, Warning, TEXT("CurrentCombo : %d"), tmp);
 	Montage_Play(SwordAttackMontage, 1.0);
 	
 }

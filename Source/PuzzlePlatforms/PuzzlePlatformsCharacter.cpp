@@ -3,8 +3,8 @@
 #include "PuzzlePlatformsCharacter.h"
 
 #include"MyCharacterStatComponent.h"
-#include "PlayerAnimInstance.h"
-#include "PlayersComponent/PlayersMotionReplicator.h"
+#include "AnimInstance/PlayerAnimInstance.h"
+#include "PlayersComponent/MotionReplicatorInterface.h"
 #include "Cars/GoKart.h"
 #include "PuzzlePlatformsGameInstance.h"
 #include "MyPlayerController.h"
@@ -56,15 +56,11 @@ APuzzlePlatformsCharacter::APuzzlePlatformsCharacter()
 	//IsAttacking = false;
 
 	CharacterStat = CreateDefaultSubobject<UMyCharacterStatComponent>(TEXT("CHARACTERSTAT"));
-	MotionReplicator = CreateDefaultSubobject<UPlayersMotionReplicator>(TEXT("MOTIOREPLICATOR"));
-	static ConstructorHelpers::FClassFinder<UAnimInstance> WARRIO_ANIM((TEXT("/Game/Mannequin/Animations/ThirdPerson_AnimBP")));
+
+
 
 	GetCapsuleComponent()->SetCollisionProfileName(TEXT("ABCharacter"));
 
-	if (WARRIO_ANIM.Succeeded())
-	{
-		GetMesh()->SetAnimInstanceClass(WARRIO_ANIM.Class);
-	}
 	// set our turn rates for input
 	BaseTurnRate = 45.f;
 	BaseLookUpRate = 45.f;
@@ -140,7 +136,7 @@ void APuzzlePlatformsCharacter::PostInitializeComponents()
 	ABCHECK(nullptr != MyAnim);
 
 	//MyAnim->OnMontageEnded.AddDynamic(this, &APuzzlePlatformsCharacter::OnAttackMontageEnded);
-	MyAnim->OnAttackHitCheck.AddUObject(this, &APuzzlePlatformsCharacter::AttackCheck);
+	//MyAnim->OnAttackHitCheck.AddUObject(this, &APuzzlePlatformsCharacter::AttackCheck);
 
 }
 
@@ -148,13 +144,13 @@ void APuzzlePlatformsCharacter::BeginPlay()
 {
 	Super::BeginPlay();
 	
-
-	FName identifier = TEXT("Not Yet");
+	//Not Working
+	//FName identifier = TEXT("Not Yet");
 	if (IsLocallyControlled())
 	{
-		FText Name = Cast<AMyPlayerController>(GetController())->HUDWidget->PlayerName->GetText();
-		if(Name.EqualTo(FText::FromName(identifier)))
-			Cast<UPuzzlePlatformsGameInstance>(GetGameInstance())->LoadSetNameMenu();
+		//FText Name = Cast<AMyPlayerController>(GetController())->HUDWidget->PlayerName->GetText();
+		//if(Name.EqualTo(FText::FromName(identifier)))
+		Cast<UPuzzlePlatformsGameInstance>(GetGameInstance())->LoadSetNameMenu();
 	}
 }
 
@@ -162,11 +158,6 @@ void APuzzlePlatformsCharacter::Tick(float DeltaTime)
 {//시작하자마자 로그인되는거임;;ㅋㅋ
 	Super::Tick(DeltaTime);
 	DrawDebugString(GetWorld(), FVector(0, 0, 150), GetEnumText(GetLocalRole()), this, FColor::White, DeltaTime);
-	if (GetController() != nullptr)
-	{
-		//FString Output = GetController()->GetPlayerState<APlayerState>()->GetPlayerName();//여기가 왜 nullptr일까?
-		//DrawDebugString(GetWorld(), FVector(0, 0, 100), Output, this, FColor::White, DeltaTime);
-	}
 
 
 }
@@ -174,6 +165,7 @@ void APuzzlePlatformsCharacter::Tick(float DeltaTime)
 
 void APuzzlePlatformsCharacter::GetInTheCar()
 {
+	ABCHECK(MotionReplicator!=nullptr)
 	FHitResult HitResult;
 	FCollisionQueryParams Params(NAME_None, false, this);
 
@@ -285,74 +277,12 @@ void APuzzlePlatformsCharacter::MoveRight(float Value)
 
 void APuzzlePlatformsCharacter::Attack()
 {
+	//만약 종족이 두개있다면..?
 	MotionReplicator->Server_SendAttack();
-	{
-	//if (MyAnim->IsAttacking == true)
-	//{
-	//	if (CanNextCombo)
-	//	{
-	//		UE_LOG(LogTemp, Warning, TEXT("CanNextCombo"));
-	//		IsComboInputOn = true;//다음걸로 넘어갈 수 있게
-	//	}
-	//}
-	//else if (MyAnim->IsAttacking == false)
-	//{
-	//	MyAnim->IsAttacking = true;
-
-	//	ABCHECK(CurrentCombo == 0);
-	//	AttackStartComboState();//다음꺼로 넘어감
-	//	MyAnim->PlaySwordAttackMontage();
-	//	MyAnim->JumpToAttackMontageSection(CurrentCombo);
-
-	//	NextAttack = false;
-	//}
-	}
-
 
 }
 
-void APuzzlePlatformsCharacter::AttackCheck()
-{
-	UE_LOG(LogTemp, Warning, TEXT("AttackCheck"));
-	if (HasAuthority())
-	{
-		FHitResult HitResult;
-		FCollisionQueryParams Params(NAME_None, false, this);
 
-		float AttackRange = 200.f;
-		float AttackRadius = 50.f;
-
-
-		bool bResult = GetWorld()->SweepSingleByChannel(
-			OUT HitResult,
-			GetActorLocation(),
-			GetActorLocation() + GetActorForwardVector() * AttackRange,
-			FQuat::Identity,
-			ECollisionChannel::ECC_GameTraceChannel2,
-			FCollisionShape::MakeSphere(AttackRadius),
-			Params);
-		FVector Vec = GetActorForwardVector() * AttackRange;
-		FVector Center = GetActorLocation() + Vec * 0.5f;
-		float HalfHeight = AttackRange * 0.5f + AttackRadius;
-		FQuat Rotation = FRotationMatrix::MakeFromZ(Vec).ToQuat();
-		FColor DrawColor;
-		if (bResult)
-			DrawColor = FColor::Green;
-		else
-			DrawColor = FColor::Red;
-
-
-		DrawDebugCapsule(GetWorld(), Center, HalfHeight, AttackRadius,
-			Rotation, DrawColor, false, 5.f);
-		if (bResult && HitResult.Actor.IsValid())
-		{
-			UE_LOG(LogTemp, Warning, TEXT("Hit Actor Name : %s"), *HitResult.Actor->GetName());
-			FDamageEvent DamageEvent;
-			HitResult.Actor->TakeDamage(50.0f, DamageEvent, GetController(), this);
-			
-		}
-	}
-}
 
 
 //void APuzzlePlatformsCharacter::OnRep_TakeDamage()
@@ -365,7 +295,9 @@ void APuzzlePlatformsCharacter::AttackCheck()
 float APuzzlePlatformsCharacter::TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent,
 	AController* EventInstigator, AActor* DamageCauser)
 {
-	//UE_LOG(LogTemp, Warning, TEXT("Actor : %s took Damage : %f"), *GetName(), DamageAmount);
+
+	//ABCHECK(MotionReplicator != nullptr)
+	
 	float FinalDamage = Super::TakeDamage(DamageAmount, DamageEvent, EventInstigator, DamageCauser);
 	
 	float HP =  CharacterStat->GetHP();
