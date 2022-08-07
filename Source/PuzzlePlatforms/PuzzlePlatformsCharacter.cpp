@@ -132,7 +132,7 @@ void APuzzlePlatformsCharacter::SetupPlayerInputComponent(class UInputComponent*
 void APuzzlePlatformsCharacter::PostInitializeComponents()
 {
 	Super::PostInitializeComponents();
-	MyAnim = Cast<UPlayerAnimInstance>(GetMesh()->GetAnimInstance());
+	MyAnim =GetMesh()->GetAnimInstance();
 	ABCHECK(nullptr != MyAnim);
 
 	//MyAnim->OnMontageEnded.AddDynamic(this, &APuzzlePlatformsCharacter::OnAttackMontageEnded);
@@ -165,7 +165,7 @@ void APuzzlePlatformsCharacter::Tick(float DeltaTime)
 
 void APuzzlePlatformsCharacter::GetInTheCar()
 {
-	ABCHECK(MotionReplicator!=nullptr)
+	ABCHECK(MotionReplicator_ !=nullptr)
 	FHitResult HitResult;
 	FCollisionQueryParams Params(NAME_None, false, this);
 
@@ -208,7 +208,7 @@ void APuzzlePlatformsCharacter::GetInTheCar()
 			//Car->SetRider(this);
 			Car->OurMovementComponent_->ItsMe = false;
 			Car->OurMovementComponent_->riden = true;
-			MotionReplicator->Server_SendRide(Car, this);
+			MotionReplicator_->Server_SendRide(Car, this);
 		}
 	}
 }
@@ -278,7 +278,8 @@ void APuzzlePlatformsCharacter::MoveRight(float Value)
 void APuzzlePlatformsCharacter::Attack()
 {
 	//만약 종족이 두개있다면..?
-	MotionReplicator->Server_SendAttack();
+	if(MotionReplicator_ != nullptr)
+		MotionReplicator_->Server_SendAttack();
 
 }
 

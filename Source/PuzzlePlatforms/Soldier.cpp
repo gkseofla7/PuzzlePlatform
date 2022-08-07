@@ -2,14 +2,27 @@
 
 
 #include "Soldier.h"
-
+#include "PlayersComponent/SoldierMotionReplicator.h"
+#include "AnimInstance/SoldierAnimInstance.h"
 ASoldier::ASoldier()
 {
-	//MotionReplicator = CreateDefaultSubobject<UPlayersMotionReplicator>(TEXT("MOTIOREPLICATOR"));
+	MotionReplicator_ = CreateDefaultSubobject<USoldierMotionReplicator>(TEXT("SoldierMotionReplicator"));
 
-	static ConstructorHelpers::FClassFinder<UAnimInstance> WARRIO_ANIM((TEXT("/Game/Animation/Soldier_Anim_BP")));
-	if (WARRIO_ANIM.Succeeded())
+	if (MotionReplicator_ != nullptr)
+		UE_LOG(LogTemp, Warning, TEXT("Here Is the problem"));
+	static ConstructorHelpers::FClassFinder<USoldierAnimInstance> SOLDIER_ANIM((TEXT("/Game/Animation/BP_SoldierAnim")));
+	if (SOLDIER_ANIM.Succeeded())
 	{
-		GetMesh()->SetAnimInstanceClass(WARRIO_ANIM.Class);
+		GetMesh()->SetAnimInstanceClass(SOLDIER_ANIM.Class);
 	}
+}
+
+void ASoldier::PostInitializeComponents()
+{
+	Super::PostInitializeComponents();
+
+	MyAnim = Cast<USoldierAnimInstance>(GetMesh()->GetAnimInstance());
+	ABCHECK(nullptr != MyAnim);
+
+
 }

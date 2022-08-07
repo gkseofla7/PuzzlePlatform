@@ -69,15 +69,15 @@ public:
 	//UPROPERTY(VisibleAnywhere, Category = Replicator)
 	//	class UPlayersMotionReplicator* MotionReplicator;
 	//UPROPERTY에서 돌아가려면
-	UPROPERTY(VisibleAnywhere, Category = Replicator)
-	TScriptInterface<IMotionReplicatorInterface> MotionReplicator;
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Replicator)
+	TScriptInterface<IMotionReplicatorInterface> MotionReplicator_;
 		//IMotionReplicatorInterface* MotionReplicator;
 
 	
 
 protected:
 	UPROPERTY()
-		class UPlayerAnimInstance* MyAnim;
+		UAnimInstance* MyAnim;
 	
 
 

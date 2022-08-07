@@ -15,4 +15,10 @@ class PUZZLEPLATFORMS_API ASoldier : public APuzzlePlatformsCharacter
 	GENERATED_BODY()
 public:
 	ASoldier();
+
+protected:
+	virtual void PostInitializeComponents() override;
+
+private:
+
 };

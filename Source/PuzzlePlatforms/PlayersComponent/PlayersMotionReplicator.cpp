@@ -2,10 +2,12 @@
 
 
 #include "PlayersMotionReplicator.h"
+
 #include "../AnimInstance/PlayerAnimInstance.h"
 #include "../Cars/GoKart.h"
 
 #include "Net/UnrealNetwork.h"
+
 // Sets default values for this component's properties
 UPlayersMotionReplicator::UPlayersMotionReplicator()
 {
@@ -49,18 +51,6 @@ void UPlayersMotionReplicator::BeginPlay()
 	auto Character = Cast<ACharacter>(GetOwner());
 	MyAnim = Cast<UPlayerAnimInstance>(Character->GetMesh()->GetAnimInstance());
 
-	//MyAnim->OnNextAttackCheck.AddLambda([this]() -> void {
-
-	//	CanNextCombo = false;//여기 전까지 실행해야됨
-
-	//	if (IsComboInputOn)
-	//	{
-	//		AttackStartComboState();
-	//		UE_LOG(LogTemp, Warning, TEXT("CurrentCombo : %d"), CurrentCombo);
-	//		MyAnim->JumpToAttackMontageSection(CurrentCombo);
-	//		NextAttack = true;
-	//	}
-	//	});
 
 	MyAnim->OnAttackEndCheck.AddLambda([this]()->void {
 		OnAttackMontageEnded();
