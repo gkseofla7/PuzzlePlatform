@@ -4,7 +4,8 @@
 
 #include "CoreMinimal.h"
 #include "Components/ActorComponent.h"
-#include "GoKartMovementComponent.h"
+//#include "GoKartMovementComponent.h"
+#include "UpgradeMovementComponent.h"
 #include "GoKartMovementReplicator.generated.h"
 
 
@@ -84,8 +85,10 @@ private:
 
 	UPROPERTY(ReplicatedUsing = OnRep_ServerState)
 		FGoKartState ServerState;
+	//UPROPERTY(VisibleAnywhere)
+	//	UGoKartMovementComponent* OurMovementComponent;
 	UPROPERTY(VisibleAnywhere)
-		UGoKartMovementComponent* OurMovementComponent;
+		UUpgradeMovementComponent* OurMovementComponent;
 	FVector ClientStartVelocity;
 
 

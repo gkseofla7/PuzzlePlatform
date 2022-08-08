@@ -50,7 +50,8 @@ void UGoKartMovementReplicator::BeginPlay()
 {
 	Super::BeginPlay();
 	SetIsReplicated(true);
-	OurMovementComponent = GetOwner()->FindComponentByClass<UGoKartMovementComponent>();
+	//OurMovementComponent = GetOwner()->FindComponentByClass<UGoKartMovementComponent>();
+	OurMovementComponent = GetOwner()->FindComponentByClass<UUpgradeMovementComponent>();
 	// Áö·È´Ù;;¤»¤»
 
 }

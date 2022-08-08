@@ -5,6 +5,7 @@
 #include "GameFramework/GameStateBase.h"
 #include "../PuzzlePlatformsCharacter.h"
 #include "../PlayersComponent/PlayersMotionReplicator.h"
+#include "../PlayersComponent/MotionInterfaceComponent.h"
 
 #include "DrawDebugHelpers.h"
 #include "Engine/World.h"
@@ -41,18 +42,21 @@ AGoKart::AGoKart()
 
 	bReplicates = true;
 	SetReplicateMovement(false);
-	OurMovementComponent_ = CreateDefaultSubobject<UGoKartMovementComponent>(TEXT("CustomMovement_Component"));
+	//OurMovementComponent__ = CreateDefaultSubobject<UGoKartMovementComponent>(TEXT("CustomMovement_Component"));
+	OurMovementComponent__ = CreateDefaultSubobject<UUpgradeMovementComponent>(TEXT("UpgradeMovementComponent"));
+	if (OurMovementComponent__ == nullptr)
+		UE_LOG(LogTemp, Warning, TEXT("Null PTR"));
 	MovementReplicator = CreateDefaultSubobject<UGoKartMovementReplicator>(TEXT("Movement_Replicator"));
 	//AddOwnedComponent(OurMovementComponent);
 	
 
-	TriggerVolume = CreateDefaultSubobject<UBoxComponent>(FName("TriggerVolume"));
-	if (!ensure(TriggerVolume != nullptr)) return;
+	//TriggerVolume = CreateDefaultSubobject<UBoxComponent>(FName("TriggerVolume"));
+	//if (!ensure(TriggerVolume != nullptr)) return;
 
-	//auto BoxComponent = GetOwner()->FindComponentByClass<USceneComponent>();
-	//TriggerVolume->SetupAttachment(BoxComponent);
-	
-	TriggerVolume->SetCollisionProfileName(TEXT("Vehicle"));
+	////auto BoxComponent = GetOwner()->FindComponentByClass<USceneComponent>();
+	////TriggerVolume->SetupAttachment(BoxComponent);
+	//
+	//TriggerVolume->SetCollisionProfileName(TEXT("Vehicle"));
 }
 
 void AGoKart::GetLifetimeReplicatedProps(TArray< FLifetimeProperty >& OutLifetimeProps) const
@@ -69,22 +73,10 @@ void AGoKart::BeginPlay()
 	{
 		NetUpdateFrequency = 1;
 	}
-	TriggerVolume->OnComponentBeginOverlap.AddDynamic(this, &AGoKart::OnOverlapBegin);
-	TriggerVolume->OnComponentEndOverlap.AddDynamic(this, &AGoKart::OnOverlapEnd);
+	//TriggerVolume->OnComponentBeginOverlap.AddDynamic(this, &AGoKart::OnOverlapBegin);
+	//TriggerVolume->OnComponentEndOverlap.AddDynamic(this, &AGoKart::OnOverlapEnd);
 }
 
-void AGoKart::OnOverlapBegin(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
-{
-	//주변에 들어오면 차에 타게 일단 하기
-	if (Cast<APuzzlePlatformsCharacter>(OtherActor) == nullptr)
-		return;
-
-}
-
-void AGoKart::OnOverlapEnd(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex)
-{
-
-}
 
 
 
@@ -112,21 +104,21 @@ void AGoKart::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 }
 void AGoKart::MoveForward(float Value)
 {
-	OurMovementComponent_->SetThrottle(Value);
+	OurMovementComponent__->SetThrottle(Value);
 
 }
 void AGoKart::MoveRight(float Value)
 {
-	OurMovementComponent_->SetSteeringThrow(Value);
+	OurMovementComponent__->SetSteeringThrow(Value);
 }
 
 void AGoKart::GetOutTheCar()
 {
-	OurMovementComponent_->SetThrottle(0);
-	OurMovementComponent_->SetSteeringThrow(0);
+	OurMovementComponent__->SetThrottle(0);
+	OurMovementComponent__->SetSteeringThrow(0);
 	Server_SendGetOutTheCar();
-	OurMovementComponent_->ItsMe = true;
-	OurMovementComponent_->riden = false;
+	OurMovementComponent__->ItsMe = true;
+	OurMovementComponent__->riden = false;
 
 }
 
@@ -136,7 +128,8 @@ void AGoKart::Server_SendGetOutTheCar_Implementation()
 	{
 
 		//+ GetActorUpVector()*50
-		Cast<UPlayersMotionReplicator>(Cast<APuzzlePlatformsCharacter>(Rider)->MotionReplicator_.GetObjectRef())->DisableActor(false);
+		Cast<UMotionInterfaceComponent>(Cast<APuzzlePlatformsCharacter>(Rider)->DaerimMotionReplicator)->DisableActor(false);
+		//Cast<UPlayersMotionReplicator>(Cast<APuzzlePlatformsCharacter>(Rider)->DaerimMotionReplicator.GetObjectRef())->DisableActor(false);
 		FVector Place = GetTransform().GetLocation() + 200 * (GetActorForwardVector().RotateAngleAxis(270.0, GetActorUpVector()));
 		Rider->SetActorLocation(Place);
 

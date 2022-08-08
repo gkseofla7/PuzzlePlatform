@@ -8,6 +8,7 @@
 #include "MyPlayerState.h"
 #include "PuzzlePlatformsGameInstance.h"
 #include "MyPlayerController.h"
+#include "Cars/MyProjectPawn.h"
 
 APuzzlePlatformsGameMode::APuzzlePlatformsGameMode()
 {
@@ -16,10 +17,12 @@ APuzzlePlatformsGameMode::APuzzlePlatformsGameMode()
 	//static ConstructorHelpers::FClassFinder<APawn> PlayerPawnBPClass(TEXT("/Game/ThirdPersonCPP/Blueprints/ThirdPersonCharacter"));
 	//static ConstructorHelpers::FClassFinder<APawn> PlayerPawnBPClass(TEXT("/Game/Karts/BP_GoKart"));
 	static ConstructorHelpers::FClassFinder<APawn> PlayerPawnBPClass(TEXT("/Game/ThirdPersonCPP/Blueprints/BP_Soldier"));
+	//static ConstructorHelpers::FClassFinder<APawn> PlayerPawnBPClass(TEXT("/Game/ThirdPersonCPP/Blueprints/BP_Warrior"));
 	if (PlayerPawnBPClass.Class != NULL)
 	{
 		DefaultPawnClass = PlayerPawnBPClass.Class;
 	}
+	//DefaultPawnClass = AMyProjectPawn::StaticClass();
 	PlayerStateClass = AMyPlayerState::StaticClass();
 	PlayerControllerClass = AMyPlayerController::StaticClass();
 }

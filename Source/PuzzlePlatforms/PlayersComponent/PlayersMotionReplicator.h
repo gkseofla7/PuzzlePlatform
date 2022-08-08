@@ -5,11 +5,12 @@
 #include "CoreMinimal.h"
 #include "Components/ActorComponent.h"
 #include "MotionReplicatorInterface.h"
+#include "MotionInterfaceComponent.h"
 #include "PlayersMotionReplicator.generated.h"
 
-
+//public UActorComponent, public IMotionReplicatorInterface
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
-class PUZZLEPLATFORMS_API UPlayersMotionReplicator : public UActorComponent, public IMotionReplicatorInterface
+class PUZZLEPLATFORMS_API UPlayersMotionReplicator : public UMotionInterfaceComponent 
 {
 	GENERATED_BODY()
 

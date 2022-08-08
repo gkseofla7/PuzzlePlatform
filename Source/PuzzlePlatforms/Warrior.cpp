@@ -7,18 +7,20 @@
 
 AWarrior::AWarrior()
 {
-	MotionReplicator_ = CreateDefaultSubobject<UPlayersMotionReplicator>(TEXT("MOTIOREPLICATOR"));
+	DaerimMotionReplicator = CreateDefaultSubobject<UPlayersMotionReplicator>(TEXT("MOTIOREPLICATOR"));
 
 	static ConstructorHelpers::FClassFinder<UAnimInstance> WARRIO_ANIM((TEXT("/Game/Animation/ThirdPerson_AnimBP")));
 	if (WARRIO_ANIM.Succeeded())
 	{
+		
 		GetMesh()->SetAnimInstanceClass(WARRIO_ANIM.Class);
+
 	}
 }
 void AWarrior::PostInitializeComponents()
 {
 	Super::PostInitializeComponents();
-	auto Anim = Cast<UPlayerAnimInstance>(MyAnim);
+	auto Anim = Cast<UPlayerAnimInstance>(GetMesh()->GetAnimInstance());
 	ABCHECK(nullptr != MyAnim);
 
 

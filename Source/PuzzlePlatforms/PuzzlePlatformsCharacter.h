@@ -4,7 +4,9 @@
 
 #include"PuzzlePlatforms.h"
 #include "GameFramework/Character.h"
-#include "PlayersComponent/MotionReplicatorInterface.h"
+//#include "PlayersComponent/MotionReplicatorInterface.h"
+#include "PlayersComponent/SoldierMotionReplicator.h"
+#include "PlayersComponent/MotionInterfaceComponent.h"
 #include "PuzzlePlatformsCharacter.generated.h"
 
 UCLASS(config=Game)
@@ -69,8 +71,10 @@ public:
 	//UPROPERTY(VisibleAnywhere, Category = Replicator)
 	//	class UPlayersMotionReplicator* MotionReplicator;
 	//UPROPERTY에서 돌아가려면
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Replicator)
-	TScriptInterface<IMotionReplicatorInterface> MotionReplicator_;
+	//UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Replicator)
+	//TScriptInterface<IMotionReplicatorInterface> DaerimMotionReplicator;
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Replicator)
+		UMotionInterfaceComponent* DaerimMotionReplicator;
 		//IMotionReplicatorInterface* MotionReplicator;
 
 	

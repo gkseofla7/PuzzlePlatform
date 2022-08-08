@@ -6,6 +6,7 @@
 #include "GameFramework/Pawn.h"
 #include "GoKartMovementComponent.h"
 #include "GoKartMovementReplicator.h"
+#include "UpgradeMovementComponent.h"
 #include "GoKart.generated.h"
 
 UCLASS()
@@ -41,21 +42,17 @@ private:
 
 
 public:
+	//UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
+	//	UGoKartMovementComponent* OurMovementComponent__;	
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
-		UGoKartMovementComponent* OurMovementComponent_;
+		UUpgradeMovementComponent* OurMovementComponent__;
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
 		UGoKartMovementReplicator* MovementReplicator;
 
-	UPROPERTY(VisibleAnywhere)
-		class UBoxComponent* TriggerVolume;
+	//UPROPERTY(VisibleAnywhere)
+	//	class UBoxComponent* TriggerVolume;
 
-	UFUNCTION()
-		void OnOverlapBegin(class UPrimitiveComponent* OverlappedComp, class AActor* OtherActor, class UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
-
-	UFUNCTION()
-		void OnOverlapEnd(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex);
-
-
+	
 
 	void GetOutTheCar();
 

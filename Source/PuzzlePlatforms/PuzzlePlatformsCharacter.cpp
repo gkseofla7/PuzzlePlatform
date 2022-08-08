@@ -5,10 +5,11 @@
 #include"MyCharacterStatComponent.h"
 #include "AnimInstance/PlayerAnimInstance.h"
 #include "PlayersComponent/MotionReplicatorInterface.h"
-#include "Cars/GoKart.h"
+#include "Cars/MyProjectPawn.h"
 #include "PuzzlePlatformsGameInstance.h"
 #include "MyPlayerController.h"
 #include "PlayerInfoWidget.h"
+#include "PlayersComponent/SoldierMotionReplicator.h"
 
 #include "HeadMountedDisplayFunctionLibrary.h"
 #include "Camera/CameraComponent.h"
@@ -54,7 +55,7 @@ APuzzlePlatformsCharacter::APuzzlePlatformsCharacter()
 	bReplicates = true;
 	GetMesh()->SetAnimationMode(EAnimationMode::AnimationBlueprint);
 	//IsAttacking = false;
-
+	//DaerimMotionReplicator = CreateDefaultSubobject<USoldierMotionReplicator>(TEXT("SoldierMotionReplicator"));
 	CharacterStat = CreateDefaultSubobject<UMyCharacterStatComponent>(TEXT("CHARACTERSTAT"));
 
 
@@ -132,8 +133,8 @@ void APuzzlePlatformsCharacter::SetupPlayerInputComponent(class UInputComponent*
 void APuzzlePlatformsCharacter::PostInitializeComponents()
 {
 	Super::PostInitializeComponents();
-	MyAnim =GetMesh()->GetAnimInstance();
-	ABCHECK(nullptr != MyAnim);
+	//MyAnim =GetMesh()->GetAnimInstance();
+	//ABCHECK(nullptr != MyAnim);
 
 	//MyAnim->OnMontageEnded.AddDynamic(this, &APuzzlePlatformsCharacter::OnAttackMontageEnded);
 	//MyAnim->OnAttackHitCheck.AddUObject(this, &APuzzlePlatformsCharacter::AttackCheck);
@@ -150,6 +151,8 @@ void APuzzlePlatformsCharacter::BeginPlay()
 	{
 		//FText Name = Cast<AMyPlayerController>(GetController())->HUDWidget->PlayerName->GetText();
 		//if(Name.EqualTo(FText::FromName(identifier)))
+
+		UE_LOG(LogTemp, Warning, TEXT("LoadSetNameMenu"));
 		Cast<UPuzzlePlatformsGameInstance>(GetGameInstance())->LoadSetNameMenu();
 	}
 }
@@ -165,7 +168,7 @@ void APuzzlePlatformsCharacter::Tick(float DeltaTime)
 
 void APuzzlePlatformsCharacter::GetInTheCar()
 {
-	ABCHECK(MotionReplicator_ !=nullptr)
+	ABCHECK(DaerimMotionReplicator !=nullptr)
 	FHitResult HitResult;
 	FCollisionQueryParams Params(NAME_None, false, this);
 
@@ -197,30 +200,24 @@ void APuzzlePlatformsCharacter::GetInTheCar()
 	if (bResult && HitResult.Actor.IsValid())
 	{
 
-		auto Car = Cast<AGoKart>(HitResult.Actor);
+		auto Car = Cast<AMyProjectPawn>(HitResult.Actor);
 
 		if (Car != nullptr)
 		{
 			//DisableActor(true);
 			//OtherActor->SetHidden(true);
 			//GetController()->Possess(Car);
-			UE_LOG(LogTemp, Warning, TEXT("In Client"));
+
 			//Car->SetRider(this);
-			Car->OurMovementComponent_->ItsMe = false;
-			Car->OurMovementComponent_->riden = true;
-			MotionReplicator_->Server_SendRide(Car, this);
+			//Car->OurMovementComponent__->ItsMe = false;
+			//Car->OurMovementComponent__->riden = true;
+			DaerimMotionReplicator->Server_SendRide(Car, this);
 		}
 	}
 }
 
 void APuzzlePlatformsCharacter::OnResetVR()
 {
-	// If PuzzlePlatforms is added to a project via 'Add Feature' in the Unreal Editor the dependency on HeadMountedDisplay in PuzzlePlatforms.Build.cs is not automatically propagated
-	// and a linker error will result.
-	// You will need to either:
-	//		Add "HeadMountedDisplay" to [YourProject].Build.cs PublicDependencyModuleNames in order to build successfully (appropriate if supporting VR).
-	// or:
-	//		Comment or delete the call to ResetOrientationAndPosition below (appropriate if not supporting VR)
 	UHeadMountedDisplayFunctionLibrary::ResetOrientationAndPosition();
 }
 
@@ -278,8 +275,8 @@ void APuzzlePlatformsCharacter::MoveRight(float Value)
 void APuzzlePlatformsCharacter::Attack()
 {
 	//만약 종족이 두개있다면..?
-	if(MotionReplicator_ != nullptr)
-		MotionReplicator_->Server_SendAttack();
+	if(DaerimMotionReplicator != nullptr)
+		DaerimMotionReplicator->Server_SendAttack();
 
 }
 

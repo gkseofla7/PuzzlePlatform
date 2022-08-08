@@ -6,9 +6,9 @@
 #include "AnimInstance/SoldierAnimInstance.h"
 ASoldier::ASoldier()
 {
-	MotionReplicator_ = CreateDefaultSubobject<USoldierMotionReplicator>(TEXT("SoldierMotionReplicator"));
+	DaerimMotionReplicator = CreateDefaultSubobject<USoldierMotionReplicator>(TEXT("SoldierMotionReplicator"));
 
-	if (MotionReplicator_ != nullptr)
+	if (DaerimMotionReplicator != nullptr)
 		UE_LOG(LogTemp, Warning, TEXT("Here Is the problem"));
 	static ConstructorHelpers::FClassFinder<USoldierAnimInstance> SOLDIER_ANIM((TEXT("/Game/Animation/BP_SoldierAnim")));
 	if (SOLDIER_ANIM.Succeeded())

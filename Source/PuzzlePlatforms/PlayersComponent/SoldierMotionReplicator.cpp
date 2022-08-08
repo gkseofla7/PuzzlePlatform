@@ -3,7 +3,7 @@
 
 #include "SoldierMotionReplicator.h"
 
-#include "../Cars/GoKart.h"
+#include "../Cars/MyProjectPawn.h"
 #include "../AnimInstance/SoldierAnimInstance.h"
 
 #include "Net/UnrealNetwork.h"
@@ -45,7 +45,7 @@ void USoldierMotionReplicator::TickComponent(float DeltaTime, ELevelTick TickTyp
 
 void USoldierMotionReplicator::Server_SendRide_Implementation(AActor* _Car, APawn* _Rider)
 {
-	auto Car = Cast<AGoKart>(_Car);
+	auto Car = Cast<AMyProjectPawn>(_Car);
 
 	//auto Rider = Cast<APuzzlePlatformsCharacter>(this);
 
