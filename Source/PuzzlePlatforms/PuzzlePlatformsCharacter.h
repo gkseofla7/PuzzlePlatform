@@ -9,7 +9,7 @@
 #include "PlayersComponent/MotionInterfaceComponent.h"
 #include "PuzzlePlatformsCharacter.generated.h"
 
-UCLASS(config=Game)
+UCLASS(config=Game, BlueprintType)
 class APuzzlePlatformsCharacter : public ACharacter
 {
 	GENERATED_BODY()
@@ -77,7 +77,6 @@ public:
 		UMotionInterfaceComponent* DaerimMotionReplicator;
 		//IMotionReplicatorInterface* MotionReplicator;
 
-	
 
 protected:
 	UPROPERTY()

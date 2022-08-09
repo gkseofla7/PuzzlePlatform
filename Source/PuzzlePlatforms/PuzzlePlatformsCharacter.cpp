@@ -10,6 +10,7 @@
 #include "MyPlayerController.h"
 #include "PlayerInfoWidget.h"
 #include "PlayersComponent/SoldierMotionReplicator.h"
+#include "MyLobbyGameMode.h"
 
 #include "HeadMountedDisplayFunctionLibrary.h"
 #include "Camera/CameraComponent.h"
@@ -147,7 +148,8 @@ void APuzzlePlatformsCharacter::BeginPlay()
 	
 	//Not Working
 	//FName identifier = TEXT("Not Yet");
-	if (IsLocallyControlled())
+	auto gamemode = Cast<AMyLobbyGameMode>(UGameplayStatics::GetGameMode(GetWorld()));
+	if (IsLocallyControlled()&& gamemode != nullptr)
 	{
 		//FText Name = Cast<AMyPlayerController>(GetController())->HUDWidget->PlayerName->GetText();
 		//if(Name.EqualTo(FText::FromName(identifier)))

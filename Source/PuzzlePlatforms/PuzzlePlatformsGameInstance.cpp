@@ -154,6 +154,7 @@ void UPuzzlePlatformsGameInstance::OnCreateSessionComplete(FName SessionName, bo
 	if (!ensure(World != nullptr))return;
 	
 	World->ServerTravel("/Game/PuzzlePlatforms/Maps/Lobby?listen");
+	//World->ServerTravel("/Game/PuzzlePlatforms/Maps/L_Menu'?listen");
 }
 void UPuzzlePlatformsGameInstance::OnDestroySessionComplete(FName SessionName, bool Success)
 {

@@ -23,7 +23,8 @@ void AMyLobbyGameMode::StartGame()
 	bUseSeamlessTravel = true;
 
 	GameInstance->StartSession();
-	World->ServerTravel("/Game/PuzzlePlatforms/Maps/Game?listen");
+	//World->ServerTravel("/Game/PuzzlePlatforms/Maps/Game?listen");
+	World->ServerTravel("/Game/PuzzlePlatforms/Maps/L_MainLevel?listen");
 }
 
 void AMyLobbyGameMode::PostLogin(APlayerController* NewPlayer)
