@@ -2,8 +2,12 @@
 
 
 #include "Soldier.h"
+#include "Weapons/Weapon_Master.h"
+#include "Weapons/FPSHudWidget.h"
+
 #include "PlayersComponent/SoldierMotionReplicator.h"
 #include "AnimInstance/SoldierAnimInstance.h"
+#include "Kismet/KismetMathLibrary.h"
 ASoldier::ASoldier()
 {
 	DaerimMotionReplicator = CreateDefaultSubobject<USoldierMotionReplicator>(TEXT("SoldierMotionReplicator"));
@@ -15,6 +19,19 @@ ASoldier::ASoldier()
 	{
 		GetMesh()->SetAnimInstanceClass(SOLDIER_ANIM.Class);
 	}
+
+	ConstructorHelpers::FClassFinder<AWeapon_Master> WeaponBPClass(TEXT("/Game/Weapons/BP_Weapon_Master"));
+	if (!ensure(WeaponBPClass.Class != nullptr)) return;
+	WeaponMasterClass = WeaponBPClass.Class;
+
+	FPPCam_ = CreateDefaultSubobject<UCameraComponent>(TEXT("FPPCam"));
+	SpringArm_ = CreateDefaultSubobject<USpringArmComponent>(TEXT("SpringArm"));
+	AimObejctFPP = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("AimObejctFPP"));
+	FPPCam_->SetupAttachment(GetMesh(),"head");
+	SpringArm_->SetupAttachment(FPPCam_);
+	AimObejctFPP->SetupAttachment(SpringArm_, USpringArmComponent::SocketName);
+	
+	
 }
 
 void ASoldier::PostInitializeComponents()
@@ -25,4 +42,45 @@ void ASoldier::PostInitializeComponents()
 	ABCHECK(nullptr != MyAnim);
 
 
+}
+
+void ASoldier::BeginPlay()
+{
+	Super::BeginPlay();
+	FTransform WeaponTransform;
+	EquippedItem = GetWorld()->SpawnActor<AWeapon_Master>(WeaponMasterClass, WeaponTransform);
+	FAttachmentTransformRules ItemTransformRules(EAttachmentRule::SnapToTarget, true);
+	//FAttachmentTransformRules ItemTransformRules(EAttachmentRule::SnapToTarget, EAttachmentRule::SnapToTarget,  EAttachmentRule::SnapToTarget);
+
+
+	EquippedItem->AttachToComponent(GetMesh(), ItemTransformRules,"GripPoint");
+
+
+	//HudWidget = CreateWidget<UFPSHudWidget>(GetController(), FPSHudClass);
+	//ABCHECK(FPSHudClass != nullptr);
+
+
+	if (FPSHudClass != nullptr)
+	{
+
+		HudWidget = CreateWidget<UFPSHudWidget>(GetWorld(), FPSHudClass);
+		HudWidget->AddToViewport();
+
+	}
+	
+}
+
+
+
+void ASoldier::SetMuzzleRotation()
+{
+	FVector Start = EquippedItem->GetSkeletalMesh()->GetSocketLocation("Muzzle");
+	FVector Target = AimObejctFPP->GetComponentLocation();
+	EquippedItem->MuzzleRotation = UKismetMathLibrary::FindLookAtRotation(Start, Target);
+
+}
+
+void ASoldier::AimDownSights()
+{
+	
 }

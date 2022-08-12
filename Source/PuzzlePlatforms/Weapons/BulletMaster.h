@@ -4,31 +4,23 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
-
-
-#include "Object_Master.generated.h"
+#include "BulletMaster.generated.h"
 
 UCLASS()
-class PUZZLEPLATFORMS_API AObject_Master : public AActor
+class PUZZLEPLATFORMS_API ABulletMaster : public AActor
 {
 	GENERATED_BODY()
 	
 public:	
 	// Sets default values for this actor's properties
-	AObject_Master();
+	ABulletMaster();
 
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
-	UPROPERTY(BlueprintReadWrite, EditAnywhere)
-	class USkeletalMeshComponent * SkeletalMeshComponent;
-
 public:	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
-
-	class USkeletalMeshComponent* GetSkeletalMesh() {	return SkeletalMeshComponent;}
-
 
 };

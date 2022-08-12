@@ -9,6 +9,14 @@
 /**
  * 
  */
+
+UENUM(BlueprintType)
+enum class ECamInUse : uint8
+{
+	TE_FPCam UMETA(DisplayName = "FPCam"),
+	TE_TPCam UMETA(DisplayName = "TPCam"),
+
+};
 UCLASS()
 class PUZZLEPLATFORMS_API ASoldier : public APuzzlePlatformsCharacter
 {
@@ -16,9 +24,49 @@ class PUZZLEPLATFORMS_API ASoldier : public APuzzlePlatformsCharacter
 public:
 	ASoldier();
 
+	UFUNCTION(BlueprintCallable)
+	void SetMuzzleRotation();
+	UFUNCTION(BlueprintCallable)
+		void AimDownSights();
 protected:
 	virtual void PostInitializeComponents() override;
+	virtual void BeginPlay() override;
+
+
 
 private:
 
+
+
+
+
+private:
+	TSubclassOf<class AWeapon_Master>WeaponMasterClass;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Camera, meta = (AllowPrivateAccess = "true"))
+		class UCameraComponent* FPPCam_;
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
+		class USpringArmComponent* SpringArm_;
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
+		class UStaticMeshComponent* AimObejctFPP;
+
+
+public:
+	UPROPERTY(BlueprintReadWrite, EditAnywhere)
+		class AWeapon_Master* EquippedItem;
+	UPROPERTY(BlueprintReadWrite, EditAnywhere)
+		TSubclassOf<class UFPSHudWidget>FPSHudClass;
+	UPROPERTY(BlueprintReadWrite, EditAnywhere)
+		class UFPSHudWidget* HudWidget;
+	UPROPERTY(BlueprintReadWrite, EditAnywhere)
+		bool IsAiming = false;
+	UPROPERTY(BlueprintReadWrite, EditAnywhere)
+		bool UseTPSMovement = false;
+	UPROPERTY(BlueprintReadWrite, EditAnywhere)
+		ECamInUse CamInUse = ECamInUse::TE_FPCam;
+	UPROPERTY(BlueprintReadWrite, EditAnywhere)
+		bool IsItemEquipped = true;
+	UPROPERTY(BlueprintReadWrite, EditAnywhere)
+		bool IsFiring = false;
+	UPROPERTY(BlueprintReadWrite, EditAnywhere)
+		bool IsReloading = false;
 };
