@@ -28,16 +28,22 @@ public:
 	void SetMuzzleRotation();
 	UFUNCTION(BlueprintCallable)
 		void AimDownSights();
+	UFUNCTION(BlueprintCallable)
+		void UnAim();
 protected:
 	virtual void PostInitializeComponents() override;
 	virtual void BeginPlay() override;
-
-
+	virtual void Tick(float DeltaTime) override;
+	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
 private:
+	void WeaponPrimaryPressed();
+	void WeaponPrimaryReleased();
 
+	void WeaponSecondaryPressed();
+	void WeaponSecondaryReleased();
 
-
+	void WeaponReload();
 
 
 private:
@@ -48,6 +54,9 @@ private:
 		class USpringArmComponent* SpringArm_;
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
 		class UStaticMeshComponent* AimObejctFPP;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Camera, meta = (AllowPrivateAccess = "true"))
+		class UCameraComponent* ADSCam_;
 
 
 public:

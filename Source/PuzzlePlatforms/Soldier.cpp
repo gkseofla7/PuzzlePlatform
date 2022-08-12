@@ -30,8 +30,22 @@ ASoldier::ASoldier()
 	FPPCam_->SetupAttachment(GetMesh(),"head");
 	SpringArm_->SetupAttachment(FPPCam_);
 	AimObejctFPP->SetupAttachment(SpringArm_, USpringArmComponent::SocketName);
-	
-	
+	ADSCam_ = CreateDefaultSubobject<UCameraComponent>(TEXT("ADSCam"));
+	ADSCam_->SetupAttachment(GetMesh());
+}
+
+void ASoldier::SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent)
+{
+	Super::SetupPlayerInputComponent(PlayerInputComponent);
+	// Set up gameplay key bindings
+	PlayerInputComponent->BindAction("WeaponPrimary", IE_Pressed, this, &ASoldier::WeaponPrimaryPressed);
+	PlayerInputComponent->BindAction("WeaponPrimary", IE_Released, this, &ASoldier::WeaponPrimaryReleased);
+
+	PlayerInputComponent->BindAction("WeaponSecondary", IE_Pressed, this, &ASoldier::WeaponSecondaryPressed);
+	PlayerInputComponent->BindAction("WeaponSecondary", IE_Released, this, &ASoldier::WeaponSecondaryReleased);
+
+	PlayerInputComponent->BindAction("WeaponReload", IE_Pressed, this, &ASoldier::WeaponReload);
+
 }
 
 void ASoldier::PostInitializeComponents()
@@ -70,6 +84,19 @@ void ASoldier::BeginPlay()
 	
 }
 
+void ASoldier::Tick(float DeltaTime)
+{
+	Super::Tick(DeltaTime);
+	SetMuzzleRotation();
+
+	if (IsAiming)
+	{
+		AimDownSights();
+	}
+	else
+		UnAim();
+}
+
 
 
 void ASoldier::SetMuzzleRotation()
@@ -82,5 +109,80 @@ void ASoldier::SetMuzzleRotation()
 
 void ASoldier::AimDownSights()
 {
-	
+	FPPCam_->Deactivate();
+	ADSCam_->Activate();
+	FVector VCurrent = ADSCam_->GetComponentLocation();
+	FVector VTarget = EquippedItem->GetCamera()->GetComponentLocation();
+
+	FRotator RCurrent = ADSCam_->GetComponentRotation();
+	FRotator RTarget = EquippedItem->GetCamera()->GetComponentRotation();
+
+	float Deltatime = UGameplayStatics::GetWorldDeltaSeconds(GetWorld());
+	FVector NextLoc = FMath::VInterpTo(VCurrent, VTarget, Deltatime, 15);
+	FRotator NexRot = FMath::RInterpTo(RCurrent, RTarget, Deltatime, 15);
+
+	ADSCam_->SetWorldLocationAndRotation(NextLoc, NexRot);
+
+}
+
+void ASoldier::UnAim()
+{
+	FVector VCurrent = ADSCam_->GetComponentLocation();
+	FVector VTarget = FPPCam_->GetComponentLocation();
+
+	FRotator RCurrent = ADSCam_->GetComponentRotation();
+	FRotator RTarget = FPPCam_ ->GetComponentRotation();
+
+	float Deltatime = UGameplayStatics::GetWorldDeltaSeconds(GetWorld());
+	FVector NextLoc = FMath::VInterpTo(VCurrent, VTarget, Deltatime, 15);
+	FRotator NexRot = FMath::RInterpTo(RCurrent, RTarget, Deltatime, 15);
+
+	ADSCam_->SetWorldLocationAndRotation(NextLoc, NexRot);
+
+	if (FPPCam_->GetComponentLocation().Equals(ADSCam_->GetComponentLocation(), 0.01))
+	{
+		ADSCam_->Deactivate();
+		FPPCam_->Activate();
+	}
+}
+
+void ASoldier::WeaponPrimaryPressed()
+{
+	SetMuzzleRotation();
+	EquippedItem->StartFire();
+	IsFiring = true;
+}
+
+void ASoldier::WeaponPrimaryReleased()
+{
+
+	EquippedItem->StopFire();
+	IsFiring = false;
+}
+
+void ASoldier::WeaponSecondaryPressed()
+{
+	if (EquippedItem != nullptr)
+		IsAiming = true;
+
+}
+void ASoldier::WeaponSecondaryReleased()
+{
+	if (EquippedItem != nullptr)
+		IsAiming = false;
+}
+void ASoldier::WeaponReload()
+{
+	if (EquippedItem->CanReload == true && IsFiring == false && IsReloading == false && IsItemEquipped == true)
+	{
+		IsReloading = true;
+		EquippedItem->Reload();
+		FTimerHandle WaitHandle;
+		float WaitTime =EquippedItem->ReloadDelay; //시간을 설정하고
+		GetWorld()->GetTimerManager().SetTimer(WaitHandle, FTimerDelegate::CreateLambda([&]()
+			{
+				// 여기에 코드를 치면 된다.
+				IsReloading = false;
+			}), WaitTime, false); //반복도 여기서 추가 변수를 선언해 설정가능
+	}
 }

@@ -42,6 +42,7 @@ public:
 	UFUNCTION(BlueprintCallable)
 		void Reload();
 
+	class UCameraComponent* GetCamera() { return Camera_; }
 
 public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
@@ -91,4 +92,7 @@ public:
 private:
 
 	TSubclassOf<class ABulletMaster>BulletMasterClass;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Camera, meta = (AllowPrivateAccess = "true"))
+		class UCameraComponent* Camera_;
+
 };

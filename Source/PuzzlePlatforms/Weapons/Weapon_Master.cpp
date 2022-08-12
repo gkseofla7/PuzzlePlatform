@@ -5,11 +5,15 @@
 #include "BulletMaster.h"
 
 #include "Kismet/KismetSystemLibrary.h"
+#include "Camera/CameraComponent.h"
 AWeapon_Master::AWeapon_Master()
 {
     ConstructorHelpers::FClassFinder<ABulletMaster> BulletBPClass(TEXT("/Game/Weapons/Projectiles/BP_Bullet_Master"));
     if (!ensure(BulletBPClass.Class != nullptr)) return;
     BulletMasterClass = BulletBPClass.Class;
+
+    Camera_ = CreateDefaultSubobject<UCameraComponent>(TEXT("Camera"));
+    Camera_->SetupAttachment(GetSkeletalMesh());
 }
 void AWeapon_Master::FireModeSwitch()
 {
