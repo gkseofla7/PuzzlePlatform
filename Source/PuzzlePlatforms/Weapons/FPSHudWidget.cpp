@@ -3,3 +3,9 @@
 
 #include "FPSHudWidget.h"
 
+#include "Weapon_Master.h"
+void UFPSHudWidget::UpdateWeapon(AWeapon_Master* NewWeapon)
+{
+	Weapon = NewWeapon;
+
+}

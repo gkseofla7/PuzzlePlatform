@@ -13,7 +13,8 @@ UCLASS(config=Game, BlueprintType)
 class APuzzlePlatformsCharacter : public ACharacter
 {
 	GENERATED_BODY()
-
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
+	class USphereComponent* NearObjectCollisionDetector;
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
 	class USpringArmComponent* CameraBoom;
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
@@ -42,7 +43,7 @@ protected:
 	void TouchStarted(ETouchIndex::Type FingerIndex, FVector Location);
 	/** Handler for when a touch input stops. */
 	void TouchStopped(ETouchIndex::Type FingerIndex, FVector Location);
-	void Attack();
+	virtual void Attack();
 
 
 	//UFUNCTION()

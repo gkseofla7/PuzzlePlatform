@@ -18,7 +18,7 @@ UMotionInterfaceComponent::UMotionInterfaceComponent()
 void UMotionInterfaceComponent::BeginPlay()
 {
 	Super::BeginPlay();
-
+	SetIsReplicated(true);
 	// ...
 	
 }

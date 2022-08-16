@@ -8,12 +8,12 @@
 #include "PlayersComponent/SoldierMotionReplicator.h"
 #include "AnimInstance/SoldierAnimInstance.h"
 #include "Kismet/KismetMathLibrary.h"
+
 ASoldier::ASoldier()
 {
 	DaerimMotionReplicator = CreateDefaultSubobject<USoldierMotionReplicator>(TEXT("SoldierMotionReplicator"));
 
-	if (DaerimMotionReplicator != nullptr)
-		UE_LOG(LogTemp, Warning, TEXT("Here Is the problem"));
+
 	static ConstructorHelpers::FClassFinder<USoldierAnimInstance> SOLDIER_ANIM((TEXT("/Game/Animation/BP_SoldierAnim")));
 	if (SOLDIER_ANIM.Succeeded())
 	{
@@ -32,12 +32,14 @@ ASoldier::ASoldier()
 	AimObejctFPP->SetupAttachment(SpringArm_, USpringArmComponent::SocketName);
 	ADSCam_ = CreateDefaultSubobject<UCameraComponent>(TEXT("ADSCam"));
 	ADSCam_->SetupAttachment(GetMesh());
+	IsItemEquipped = false;
 }
 
 void ASoldier::SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent)
 {
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
 	// Set up gameplay key bindings
+
 	PlayerInputComponent->BindAction("WeaponPrimary", IE_Pressed, this, &ASoldier::WeaponPrimaryPressed);
 	PlayerInputComponent->BindAction("WeaponPrimary", IE_Released, this, &ASoldier::WeaponPrimaryReleased);
 
@@ -46,6 +48,7 @@ void ASoldier::SetupPlayerInputComponent(class UInputComponent* PlayerInputCompo
 
 	PlayerInputComponent->BindAction("WeaponReload", IE_Pressed, this, &ASoldier::WeaponReload);
 
+	PlayerInputComponent->BindAction("Interact", IE_Pressed, this, &ASoldier::InteractPressed);
 }
 
 void ASoldier::PostInitializeComponents()
@@ -61,19 +64,28 @@ void ASoldier::PostInitializeComponents()
 void ASoldier::BeginPlay()
 {
 	Super::BeginPlay();
-	FTransform WeaponTransform;
-	EquippedItem = GetWorld()->SpawnActor<AWeapon_Master>(WeaponMasterClass, WeaponTransform);
-	FAttachmentTransformRules ItemTransformRules(EAttachmentRule::SnapToTarget, true);
-	//FAttachmentTransformRules ItemTransformRules(EAttachmentRule::SnapToTarget, EAttachmentRule::SnapToTarget,  EAttachmentRule::SnapToTarget);
+	//{
+	//	FTransform WeaponTransform;
+	//	EquippedItem = GetWorld()->SpawnActor<AWeapon_Master>(WeaponMasterClass, WeaponTransform);
+	//	EquippedItem->Soldier = this;
+	//	FAttachmentTransformRules ItemTransformRules(EAttachmentRule::SnapToTarget, true);
 
-
-	EquippedItem->AttachToComponent(GetMesh(), ItemTransformRules,"GripPoint");
-
+	//	EquippedItem->AttachToComponent(GetMesh(), ItemTransformRules, "GripPoint");
+	//	IsItemEquipped = true;
+	//}
 
 	//HudWidget = CreateWidget<UFPSHudWidget>(GetController(), FPSHudClass);
 	//ABCHECK(FPSHudClass != nullptr);
 
+	if (EquippedItem == nullptr)
+	{
+		IsItemEquipped = false;
+	}
 
+	
+}
+void ASoldier::SetFPSHudWidget()
+{
 	if (FPSHudClass != nullptr)
 	{
 
@@ -81,13 +93,12 @@ void ASoldier::BeginPlay()
 		HudWidget->AddToViewport();
 
 	}
-	
 }
 
 void ASoldier::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
-	SetMuzzleRotation();
+	//SetMuzzleRotation();
 
 	if (IsAiming)
 	{
@@ -101,11 +112,40 @@ void ASoldier::Tick(float DeltaTime)
 
 void ASoldier::SetMuzzleRotation()
 {
+	if (EquippedItem == nullptr)
+		return;
 	FVector Start = EquippedItem->GetSkeletalMesh()->GetSocketLocation("Muzzle");
 	FVector Target = AimObejctFPP->GetComponentLocation();
-	EquippedItem->MuzzleRotation = UKismetMathLibrary::FindLookAtRotation(Start, Target);
+	FRotator temp = UKismetMathLibrary::FindLookAtRotation(Start, Target);
+
+	Server_SetMuzzleRotation(temp);
+	Everyone_SetMuzzleRotation(temp);
+}
+
+void ASoldier::Everyone_SetMuzzleRotation_Implementation(FRotator NewRotator)
+{
+
+	EquippedItem->SetMuzzleRotation(NewRotator);
+	
+}
+bool ASoldier::Everyone_SetMuzzleRotation_Validate(FRotator NewRotator)
+{
+	return true;
+}
+
+bool ASoldier::Server_SetMuzzleRotation_Validate(FRotator NewRotator)
+{
+	return true;
+}
+
+void ASoldier::Server_SetMuzzleRotation_Implementation(FRotator NewRotator)
+{
+
+	EquippedItem->SetMuzzleRotation(NewRotator);
 
 }
+
+
 
 void ASoldier::AimDownSights()
 {
@@ -148,32 +188,54 @@ void ASoldier::UnAim()
 
 void ASoldier::WeaponPrimaryPressed()
 {
-	SetMuzzleRotation();
-	EquippedItem->StartFire();
-	IsFiring = true;
+
+	//SetMuzzleRotation();
+	//EquippedItem->StartFire();
+	//Cast<USoldierMotionReplicator>(DaerimMotionReplicator)->IsFiring = true;
+	
+	//IsFiring = true;
+	//Cast<USoldierMotionReplicator>(DaerimMotionReplicator)->Server_SendAttack();
+}
+
+void ASoldier::Attack()
+{
+	if (EquippedItem == nullptr)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("EquippedItem null"));
+		return;
+	}
+		SetMuzzleRotation();
+	Super::Attack();
+
 }
 
 void ASoldier::WeaponPrimaryReleased()
 {
 
-	EquippedItem->StopFire();
-	IsFiring = false;
+	if (EquippedItem == nullptr)
+		return;
+	Cast<USoldierMotionReplicator>(DaerimMotionReplicator)->Server_SendAttackStop();
+
 }
 
 void ASoldier::WeaponSecondaryPressed()
 {
+	if (CanAim == false)
+		return;
 	if (EquippedItem != nullptr)
 		IsAiming = true;
 
 }
 void ASoldier::WeaponSecondaryReleased()
 {
+
 	if (EquippedItem != nullptr)
 		IsAiming = false;
 }
 void ASoldier::WeaponReload()
 {
-	if (EquippedItem->CanReload == true && IsFiring == false && IsReloading == false && IsItemEquipped == true)
+	bool IsFiring__ = Cast<USoldierMotionReplicator>(DaerimMotionReplicator)->IsFiring;
+	if (EquippedItem->CanReload == true && IsFiring__ == false && IsReloading == false && IsItemEquipped == true)
 	{
 		IsReloading = true;
 		EquippedItem->Reload();
@@ -185,4 +247,63 @@ void ASoldier::WeaponReload()
 				IsReloading = false;
 			}), WaitTime, false); //반복도 여기서 추가 변수를 선언해 설정가능
 	}
+}
+
+void ASoldier::EquipItem(AObject_Master* Item, bool EquipAndHold)
+{
+	if (EquipAndHold == false)
+	{
+		auto weapon = Cast<AWeapon_Master>(Item);
+		if (weapon != nullptr)
+		{
+			EquippedItem = weapon;
+			PrimaryWeapon = weapon;
+			EquippedItem->Soldier = this;
+			EquippedItem->GetSkeletalMesh()->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+			EquippedItem->AttachToSoldier(this ,"GripPoint");
+			IsItemEquipped = true;
+			bUseControllerRotationYaw= true;
+			//자연스럽게 원하는 방향으로 회전
+			GetCharacterMovement()->bOrientRotationToMovement = false;
+			// 자동적으로 캐릭터의 이동방향을 움직이는 방향에 맞춰주며 회전보간을 해줌
+			SetFPSHudWidget();
+			WeaponSlotUse = EWeaponSlot::TE_PrimaryWeapon;
+		}
+	}
+	else
+	{
+		UE_LOG(LogTemp, Warning, TEXT("Wiered Things happen"))
+		auto weapon = Cast<AWeapon_Master>(Item);
+		if (weapon != nullptr)
+		{
+			SecondaryWeapon = weapon;
+			SecondaryWeapon->Soldier = this;
+			SecondaryWeapon->GetSkeletalMesh()->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+			SecondaryWeapon->AttachToSoldier(this, "RifleHolster");
+			
+		}
+	}
+}
+
+void ASoldier::InteractPressed()
+{
+
+	Cast<USoldierMotionReplicator>(DaerimMotionReplicator)->Server_SendGetItem(PickupItem);
+	//if (DoPickupLinetrace)
+	//{
+	//	if (PickupItem != nullptr)
+	//	{
+
+	//		EquipItem(PickupItem, IsItemEquipped);
+
+	//		FTimerHandle WaitHandle;
+	//		float WaitTime = 1.73; //시간을 설정하고
+	//		GetWorld()->GetTimerManager().SetTimer(WaitHandle, FTimerDelegate::CreateLambda([&]()
+	//			{
+	//				CanAim = true;
+	//				// 여기에 코드를 치면 된다.
+	//			}), WaitTime, false); //반복도 여기서 추가 변수를 선언해 설정가능
+	//		
+	//	}
+	//}
 }

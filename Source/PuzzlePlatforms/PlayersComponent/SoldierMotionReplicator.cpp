@@ -5,6 +5,8 @@
 
 #include "../Cars/MyProjectPawn.h"
 #include "../AnimInstance/SoldierAnimInstance.h"
+#include "../Soldier.h"
+#include "../Weapons/Weapon_Master.h"
 
 #include "Net/UnrealNetwork.h"
 #include "GameFramework/Character.h"
@@ -19,11 +21,18 @@ USoldierMotionReplicator::USoldierMotionReplicator()
 	// ...
 }
 
+void USoldierMotionReplicator::GetLifetimeReplicatedProps(TArray< FLifetimeProperty >& OutLifetimeProps) const
+{
+	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
+	DOREPLIFETIME(USoldierMotionReplicator, IsFiring);
+	DOREPLIFETIME(USoldierMotionReplicator, PickupItem);
 
+}
 // Called when the game starts
 void USoldierMotionReplicator::BeginPlay()
 {
 	Super::BeginPlay();
+	SetIsReplicated(true);
 	auto Character = Cast<ACharacter>(GetOwner());
 	MyAnim = Cast<USoldierAnimInstance>(Character->GetMesh()->GetAnimInstance());
 	// ...
@@ -69,13 +78,13 @@ bool USoldierMotionReplicator::Server_SendRide_Validate(AActor* Car, APawn* Ride
 
 void USoldierMotionReplicator::Server_SendAttack_Implementation()
 {
-	//if (MyAnim->IsAttacking == false)
-	//{
-	//	//MyAnim->IsAttacking = true;
-	//	//PlaySwordAttackMontage();
-	//	//AttackToggle = !AttackToggle;
 
-	//}
+	auto MyOwner = Cast<ASoldier>(GetOwner());
+	//MyOwner ->SetMuzzleRotation();
+	MyOwner->EquippedItem->StartFire();
+	UE_LOG(LogTemp, Warning, TEXT("False!!"));
+	IsFiring = true;
+	
 
 }
 
@@ -84,15 +93,60 @@ bool USoldierMotionReplicator::Server_SendAttack_Validate()
 	return true;
 }
 
-//void USoldierMotionReplicator::PlaySwordAttackMontage()
-//{
-//	if (MyAnim == nullptr)
-//	{
-//		//MyAnim->IsAttacking = false;
-//		return;
-//	}
-//	//MyAnim->PlaySwordAttackMontage();
-//}
+void USoldierMotionReplicator::Server_SendAttackStop_Implementation()
+{
+	auto MyOwner = Cast<ASoldier>(GetOwner());
+	MyOwner->EquippedItem->StopFire();
+	IsFiring = false;
+}
+
+bool USoldierMotionReplicator::Server_SendAttackStop_Validate()
+{
+	return true;
+}
+
+
+void USoldierMotionReplicator::Server_SendGetItem_Implementation(class AObject_Master* NewWeapon)
+{
+	PickupItem = NewWeapon;
+
+	if (PickupItem == nullptr)
+		return;
+
+	Multicast_SendGetItem();
+
+}
+
+bool USoldierMotionReplicator::Server_SendGetItem_Validate(class AObject_Master* NewWeapon)
+{
+	return true;
+}
+
+void USoldierMotionReplicator::Multicast_SendGetItem_Implementation()
+{
+
+	auto MyOwner = Cast<ASoldier>(GetOwner());
+	if (MyOwner->HasAuthority())
+		return;
+	if (MyOwner->DoPickupLinetrace)
+	{
+		if (PickupItem != nullptr)
+		{
+
+			MyOwner->EquipItem(PickupItem, MyOwner->IsItemEquipped);
+			//FTimerHandle WaitHandle;
+			//float WaitTime = 1.73; //시간을 설정하고
+			MyOwner->CanAim = true;//나중에 애니메이션 노티파이로변환
+
+		}
+	}
+}
+
+bool USoldierMotionReplicator::Multicast_SendGetItem_Validate()
+{
+	return true;
+}
+
 
 void USoldierMotionReplicator::DisableActor(bool toHide)
 {
@@ -104,4 +158,19 @@ void USoldierMotionReplicator::DisableActor(bool toHide)
 
 	// Stops the Actor from ticking
 	GetOwner()->SetActorTickEnabled(!toHide);
+}
+
+void USoldierMotionReplicator::OnRep_Attack()
+{
+	auto MyOwner = Cast<ASoldier>(GetOwner());
+	if (IsFiring == true)
+	{
+		
+		MyOwner->EquippedItem->StartFire();
+
+	}
+	else
+	{
+		MyOwner->EquippedItem->StopFire();
+	}
 }

@@ -13,5 +13,13 @@ UCLASS()
 class PUZZLEPLATFORMS_API UFPSHudWidget : public UUserWidget
 {
 	GENERATED_BODY()
-	
+
+public:
+	UFUNCTION(BlueprintCallable)
+	void UpdateWeapon(class AWeapon_Master* NewWeapon);
+
+public:
+	UPROPERTY(BlueprintReadWrite, EditAnywhere)
+	class AWeapon_Master * Weapon;
+
 };

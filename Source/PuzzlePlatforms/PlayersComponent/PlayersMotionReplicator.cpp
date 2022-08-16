@@ -71,18 +71,10 @@ void UPlayersMotionReplicator::TickComponent(float DeltaTime, ELevelTick TickTyp
 
 
 void UPlayersMotionReplicator::Server_SendRide_Implementation(AActor* _Car, APawn* _Rider)
-{//서버에게 부탁
-	//if (OurMovementComponent == nullptr)
-	//	return;
-	//ClientSimulatedTime += Move.DeltaTime;
+{
 
-	//OurMovementComponent->SimulateMove(Move);
-	//UpdateServerState(Move);
 
 	auto Car = Cast<AGoKart>(_Car);
-	
-	//auto Rider = Cast<APuzzlePlatformsCharacter>(this);
-	
 	auto Rider = Cast<APawn>(GetOwner());
 	if (Car != nullptr)
 	{
@@ -118,10 +110,6 @@ void UPlayersMotionReplicator::Server_SendAttack_Implementation()
 		MyAnim->JumpToAttackMontageSection(CurrentCombo);
 		AttackToggle = !AttackToggle;
 
-
-
-
-
 	}
 
 }
@@ -135,7 +123,6 @@ void UPlayersMotionReplicator::PlaySwordAttackMontage()
 {
 	if (MyAnim == nullptr)
 	{
-		//MyAnim->IsAttacking = false;
 		return;
 	}
 	MyAnim->PlaySwordAttackMontage();

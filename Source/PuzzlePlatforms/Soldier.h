@@ -17,6 +17,15 @@ enum class ECamInUse : uint8
 	TE_TPCam UMETA(DisplayName = "TPCam"),
 
 };
+
+UENUM(BlueprintType)
+enum class EWeaponSlot : uint8
+{
+	TE_PrimaryWeapon UMETA(DisplayName = "PrimaryWeapon"),
+	TE_SecondaryWeapon UMETA(DisplayName = "SecondaryWeapon"),
+
+};
+
 UCLASS()
 class PUZZLEPLATFORMS_API ASoldier : public APuzzlePlatformsCharacter
 {
@@ -30,12 +39,16 @@ public:
 		void AimDownSights();
 	UFUNCTION(BlueprintCallable)
 		void UnAim();
+	UFUNCTION(BlueprintCallable)
+		void EquipItem(class AObject_Master* Item, bool EquipandHold);
+	void SetFPSHudWidget();
+
 protected:
 	virtual void PostInitializeComponents() override;
 	virtual void BeginPlay() override;
 	virtual void Tick(float DeltaTime) override;
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
-
+	virtual void Attack() override;
 private:
 	void WeaponPrimaryPressed();
 	void WeaponPrimaryReleased();
@@ -43,7 +56,13 @@ private:
 	void WeaponSecondaryPressed();
 	void WeaponSecondaryReleased();
 
+	void InteractPressed();
+
 	void WeaponReload();
+	UFUNCTION(NetMulticast, Reliable, WithValidation)
+		void Everyone_SetMuzzleRotation(FRotator NewRotator);
+	UFUNCTION(Server, Reliable, WithValidation)
+		void Server_SetMuzzleRotation(FRotator NewRotator);
 
 
 private:
@@ -63,6 +82,10 @@ public:
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
 		class AWeapon_Master* EquippedItem;
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
+		class AWeapon_Master* PrimaryWeapon;
+	UPROPERTY(BlueprintReadWrite, EditAnywhere)
+		class AWeapon_Master* SecondaryWeapon;
+	UPROPERTY(BlueprintReadWrite, EditAnywhere)
 		TSubclassOf<class UFPSHudWidget>FPSHudClass;
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
 		class UFPSHudWidget* HudWidget;
@@ -73,9 +96,18 @@ public:
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
 		ECamInUse CamInUse = ECamInUse::TE_FPCam;
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
-		bool IsItemEquipped = true;
+		bool IsItemEquipped;
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
 		bool IsFiring = false;
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
 		bool IsReloading = false;
+	UPROPERTY(BlueprintReadWrite, EditAnywhere)
+		bool CanAim = false;
+	UPROPERTY(BlueprintReadWrite, EditAnywhere)
+		EWeaponSlot WeaponSlotUse;
+	UPROPERTY(BlueprintReadWrite, EditAnywhere)
+		bool DoPickupLinetrace;
+	UPROPERTY(BlueprintReadWrite, EditAnywhere)
+		class AObject_Master* PickupItem;
+
 };

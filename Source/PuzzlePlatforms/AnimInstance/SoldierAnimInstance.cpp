@@ -2,6 +2,7 @@
 
 
 #include "SoldierAnimInstance.h"
+#include "../Soldier.h"
 
 #include "../PuzzlePlatformsCharacter.h"
 USoldierAnimInstance::USoldierAnimInstance()
@@ -16,6 +17,7 @@ void USoldierAnimInstance::NativeUpdateAnimation(float DeltaSeconds)
 
 	if (::IsValid(Pawn))
 	{
+		Player = Cast<ASoldier>(Pawn);
 		CalculateDirection(Pawn->GetVelocity(), Pawn->GetActorRotation());
 		CurrenPawnSpeed = Pawn->GetVelocity().Size();
 		Direction = CalculateDirection(Pawn->GetVelocity(), Pawn->GetActorRotation());
@@ -44,5 +46,7 @@ void USoldierAnimInstance::NativeUpdateAnimation(float DeltaSeconds)
 		{
 			IsInAir = Character->GetMovementComponent()->IsFalling();
 		}
+
+		IsItemEquipped = Player->IsItemEquipped;
 	}
 }

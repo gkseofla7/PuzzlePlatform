@@ -18,6 +18,7 @@ enum class EFireMode: uint8
 	TE_Auto UMETA(DisplayName = "Auto"),
 };
 
+
 UCLASS()
 class PUZZLEPLATFORMS_API AWeapon_Master : public AObject_Master
 {
@@ -25,6 +26,7 @@ class PUZZLEPLATFORMS_API AWeapon_Master : public AObject_Master
 
 public:
 
+	virtual void Tick(float Deltatime);
 	AWeapon_Master();
 	UFUNCTION(BlueprintCallable)
 	void FireModeSwitch();
@@ -42,14 +44,19 @@ public:
 	UFUNCTION(BlueprintCallable)
 		void Reload();
 
+
+
+	void SetMuzzleRotation(FRotator NewRotator) { MuzzleRotation_ = NewRotator; }
+	void AttachToSoldier(class ASoldier* NewSoldier, FName SocketName);
+
 	class UCameraComponent* GetCamera() { return Camera_; }
 
 public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	EFireMode FireMode;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-		FRotator MuzzleRotation;
+	UPROPERTY(Replicated)
+		FRotator MuzzleRotation_;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	bool CanFire = true;
 
@@ -87,7 +94,8 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Ammo")
 		int AmmoNeeded;
 
-
+	UPROPERTY()
+		class ASoldier* Soldier;
 
 private:
 

@@ -22,6 +22,7 @@
 #include "DrawDebugHelpers.h"
 #include "GameFramework/PlayerState.h"
 #include "Components/TextBlock.h"
+#include "Components/SphereComponent.h"
 
 
 #include "Net/UnrealNetwork.h"
@@ -52,7 +53,7 @@ APuzzlePlatformsCharacter::APuzzlePlatformsCharacter()
 	// Set size for collision capsule
 	GetCapsuleComponent()->InitCapsuleSize(42.f, 96.0f);
 	//추가하는 코드
-
+	SetActorTickEnabled(true);
 	bReplicates = true;
 	GetMesh()->SetAnimationMode(EAnimationMode::AnimationBlueprint);
 	//IsAttacking = false;
@@ -89,10 +90,9 @@ APuzzlePlatformsCharacter::APuzzlePlatformsCharacter()
 	FollowCamera->SetupAttachment(CameraBoom, USpringArmComponent::SocketName); // Attach the camera to the end of the boom and let the boom adjust to match the controller orientation
 	FollowCamera->bUsePawnControlRotation = false; // Camera does not rotate relative to arm
 
-	// Note: The skeletal mesh and anim blueprint references on the Mesh component (inherited from Character) 
-	// are set in the derived blueprint asset named MyCharacter (to avoid direct content references in C++)
 
-	SetActorTickEnabled(true);
+	NearObjectCollisionDetector = CreateDefaultSubobject<USphereComponent>(TEXT("NearObjectCollisionDetector"));
+	NearObjectCollisionDetector->SetupAttachment(RootComponent);
 
 
 	

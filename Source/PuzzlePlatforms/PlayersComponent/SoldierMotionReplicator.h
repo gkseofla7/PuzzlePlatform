@@ -28,16 +28,32 @@ public:
 
 public:
 
+
 	UFUNCTION(Server, Reliable, WithValidation)
 		void Server_SendRide(AActor* _Car, APawn* _Rider) override;
 	UFUNCTION(Server, Reliable, WithValidation)
 		void Server_SendAttack() override;
+	UFUNCTION(Server, Reliable, WithValidation)
+		void Server_SendAttackStop();
+	UFUNCTION(Server, Reliable, WithValidation)
+		void Server_SendGetItem(class AObject_Master* NewWeapon);
+	UFUNCTION(NetMulticast, Reliable, WithValidation)
+		void Multicast_SendGetItem();
+
 
 	UFUNCTION(BlueprintCallable, Category = "Disable")
 		void DisableActor(bool toHide);
 
+	UFUNCTION()
+	void OnRep_Attack();
 
 private:
 	UPROPERTY()
 		class USoldierAnimInstance* MyAnim;
+
+public:
+	UPROPERTY(ReplicatedUsing = OnRep_Attack)
+		bool IsFiring = false;
+	UPROPERTY(replicated, BlueprintReadWrite, EditAnywhere)
+		class AObject_Master* PickupItem;
 };

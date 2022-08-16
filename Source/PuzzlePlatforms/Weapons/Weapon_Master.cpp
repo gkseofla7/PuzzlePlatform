@@ -3,11 +3,15 @@
 
 #include "Weapon_Master.h"
 #include "BulletMaster.h"
+#include "../Soldier.h"
 
+#include "Net/UnrealNetwork.h"
 #include "Kismet/KismetSystemLibrary.h"
 #include "Camera/CameraComponent.h"
+#include "DrawDebugHelpers.h"
 AWeapon_Master::AWeapon_Master()
 {
+    bReplicates = true;
     ConstructorHelpers::FClassFinder<ABulletMaster> BulletBPClass(TEXT("/Game/Weapons/Projectiles/BP_Bullet_Master"));
     if (!ensure(BulletBPClass.Class != nullptr)) return;
     BulletMasterClass = BulletBPClass.Class;
@@ -15,6 +19,20 @@ AWeapon_Master::AWeapon_Master()
     Camera_ = CreateDefaultSubobject<UCameraComponent>(TEXT("Camera"));
     Camera_->SetupAttachment(GetSkeletalMesh());
 }
+
+void AWeapon_Master::GetLifetimeReplicatedProps(TArray< FLifetimeProperty >& OutLifetimeProps) const
+{
+    Super::GetLifetimeReplicatedProps(OutLifetimeProps);
+    DOREPLIFETIME(AWeapon_Master, MuzzleRotation_);
+
+}
+void AWeapon_Master::Tick(float Deltatime)
+{
+    Super::Tick(Deltatime);
+  //  DrawDebugString(GetWorld(), FVector(0, 0, 120), GetName(), this, FColor::White,Deltatime);
+
+}
+
 void AWeapon_Master::FireModeSwitch()
 {
     switch (FireMode)
@@ -78,20 +96,31 @@ void AWeapon_Master::AmmoCheck()
 
 void AWeapon_Master::Shot()
 {
+    FString name = GetName();
+    UE_LOG(LogTemp, Warning, TEXT(" %s Muzzle Rotation %f, %f, %f"),*name, MuzzleRotation_.Yaw, MuzzleRotation_.Roll, MuzzleRotation_.Pitch);
+
+    UE_LOG(LogTemp, Warning, TEXT("Shoot!!"));
     AmmoCheck();
+    if (Soldier->IsLocallyControlled())
+    {
+        Soldier->SetMuzzleRotation();
+    }
+
+ 
     if ( CanFire== true && ClipEmpty == false && Reloading == false)
     {
-       
+        
         FVector BulletScale;
        // BulletScale.Set(0.1, 0.1, 0.1);
         FTransform BulletTransform;
 
         BulletTransform.SetLocation(SkeletalMeshComponent->GetSocketTransform("Muzzle").GetLocation());
-        BulletTransform.SetRotation(MuzzleRotation.Quaternion());
+        BulletTransform.SetRotation(MuzzleRotation_.Quaternion());
         //BulletTransform.SetScale3D(BulletScale);
 
 
         GetWorld()->SpawnActor<ABulletMaster>(BulletMasterClass, BulletTransform);
+
         ClipAmmo = ClipAmmo - AmmoCost;
     }
 }
@@ -127,4 +156,14 @@ void AWeapon_Master::Reload()
                 }
             }), WaitTime, false); //반복도 여기서 추가 변수를 선언해 설정가능
     }
+}
+
+void AWeapon_Master::AttachToSoldier(ASoldier* NewSoldier ,FName SocketName )
+{
+    Soldier = NewSoldier;
+    GetSkeletalMesh()->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+   
+    FAttachmentTransformRules ItemTransformRules(EAttachmentRule::SnapToTarget, true);
+    AttachToComponent(Soldier->GetMesh(), ItemTransformRules, SocketName);
+
 }
