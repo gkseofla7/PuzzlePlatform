@@ -45,8 +45,14 @@ void USoldierAnimInstance::NativeUpdateAnimation(float DeltaSeconds)
 		if (Character)
 		{
 			IsInAir = Character->GetMovementComponent()->IsFalling();
+			
 		}
 
 		IsItemEquipped = Player->IsItemEquipped;
+		if (Player->EquippedItem != nullptr)
+		{
+			WeaponType = Player->EquippedItem->WeaponType;
+		}
+		IsReloading = Player->IsReloading;
 	}
 }

@@ -67,7 +67,7 @@ public:
 
 public:
 
-	UPROPERTY(VisibleAnywhere, Category = Stat)
+	UPROPERTY(EditAnywhere,BlueprintReadWrite, Category = Stat)
 		class UMyCharacterStatComponent* CharacterStat;
 	//UPROPERTY(VisibleAnywhere, Category = Replicator)
 	//	class UPlayersMotionReplicator* MotionReplicator;

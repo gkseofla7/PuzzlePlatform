@@ -2,19 +2,26 @@
 
 
 #include "BulletMaster.h"
-
+#include "Engine/StaticMesh.h"
+#include "Components/CapsuleComponent.h"
+#include "../PuzzlePlatformsCharacter.h"
 // Sets default values
 ABulletMaster::ABulletMaster()
 {
  	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
-	
+	Capsule = CreateDefaultSubobject<UCapsuleComponent>(TEXT("Capsule"));
+	//StaticMesh = CreateDefaultSubobject<UStaticMesh>(TEXT("StaticMesh"));
+	Capsule->SetupAttachment(RootComponent);
+	//StaticMesh->SetupAttachment(Capsule);
+
 }
 
 // Called when the game starts or when spawned
 void ABulletMaster::BeginPlay()
 {
 	Super::BeginPlay();
+	Capsule->OnComponentHit.AddDynamic(this, &ABulletMaster::OnHit);
 	
 }
 
@@ -25,3 +32,20 @@ void ABulletMaster::Tick(float DeltaTime)
 
 }
 
+void ABulletMaster::OnHit(UPrimitiveComponent* HitComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit)
+{
+	if (HasAuthority())
+	{
+		UE_LOG(LogTemp, Warning, TEXT("Hit!"));
+		auto MyCharacter = Cast<APuzzlePlatformsCharacter>(OtherActor);
+		if (MyCharacter != nullptr)
+		{
+			FDamageEvent DamageEvent;
+			//여기서 컨트롤러가..ㅋㅋ 다른 서버쪽 기준 컨트롤러로 돼있을텐데
+			MyCharacter->TakeDamage(50.0f, DamageEvent, MyCharacter->GetController(), this);
+			//UGameplayStatics::ApplyDamage(MyCharacter, 10,nullptr, nullptr,UDamageType::);
+			//MyCharacter->ApplyDamage();
+		}
+	}
+	this->Destroy();
+}

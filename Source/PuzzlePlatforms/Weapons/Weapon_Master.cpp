@@ -9,6 +9,7 @@
 #include "Kismet/KismetSystemLibrary.h"
 #include "Camera/CameraComponent.h"
 #include "DrawDebugHelpers.h"
+
 AWeapon_Master::AWeapon_Master()
 {
     bReplicates = true;
@@ -96,6 +97,7 @@ void AWeapon_Master::AmmoCheck()
 
 void AWeapon_Master::Shot()
 {
+
     FString name = GetName();
     UE_LOG(LogTemp, Warning, TEXT(" %s Muzzle Rotation %f, %f, %f"),*name, MuzzleRotation_.Yaw, MuzzleRotation_.Roll, MuzzleRotation_.Pitch);
 
@@ -122,9 +124,31 @@ void AWeapon_Master::Shot()
         GetWorld()->SpawnActor<ABulletMaster>(BulletMasterClass, BulletTransform);
 
         ClipAmmo = ClipAmmo - AmmoCost;
+        Multicast_SendShot();
     }
 }
 
+void AWeapon_Master::Multicast_SendShot_Implementation()
+{
+    if (GetOwner()->HasAuthority())
+        return;
+
+    UE_LOG(LogTemp, Warning, TEXT("Multicast shot!!"));
+    FVector BulletScale;
+    // BulletScale.Set(0.1, 0.1, 0.1);
+    FTransform BulletTransform;
+
+    BulletTransform.SetLocation(SkeletalMeshComponent->GetSocketTransform("Muzzle").GetLocation());
+    BulletTransform.SetRotation(MuzzleRotation_.Quaternion());
+    //BulletTransform.SetScale3D(BulletScale);
+
+
+    GetWorld()->SpawnActor<ABulletMaster>(BulletMasterClass, BulletTransform);
+}
+bool AWeapon_Master::Multicast_SendShot_Validate()
+{
+    return true;
+}
 void AWeapon_Master::Reload()
 {
     AmmoCheck();
@@ -138,8 +162,7 @@ void AWeapon_Master::Reload()
         FTimerHandle WaitHandle;
         float WaitTime = ReloadDelay; //시간을 설정하고
         GetWorld()->GetTimerManager().SetTimer(WaitHandle, FTimerDelegate::CreateLambda([&]()
-            {
-                // 여기에 코드를 치면 된다.
+            {      
                 if (UseRemainingAmmo == true)
                 {
                     ClipAmmo = ClipAmmo + BagAmmo;
@@ -147,14 +170,19 @@ void AWeapon_Master::Reload()
                     AmmoNeeded = 0;
                     Reloading = false;
                 }
-                else
+                    else
                 {
                     ClipAmmo = ClipAmmo + AmmoNeeded;
-                    BagAmmo -=AmmoNeeded;
+                    BagAmmo -= AmmoNeeded;
                     AmmoNeeded = 0;
                     Reloading = false;
                 }
+
             }), WaitTime, false); //반복도 여기서 추가 변수를 선언해 설정가능
+
+                        // 여기에 코드를 치면 된다.
+
+
     }
 }
 

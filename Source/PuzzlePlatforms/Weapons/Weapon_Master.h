@@ -18,6 +18,14 @@ enum class EFireMode: uint8
 	TE_Auto UMETA(DisplayName = "Auto"),
 };
 
+UENUM(BlueprintType)
+enum class EGunType : uint8
+{
+	TE_Rifle UMETA(DisplayName = "Rifle"),
+	TE_Pistol UMETA(DisplayName = "Pistol"),
+	TE_Shotgun UMETA(DisplayName = "Shotgun"),
+};
+
 
 UCLASS()
 class PUZZLEPLATFORMS_API AWeapon_Master : public AObject_Master
@@ -43,7 +51,8 @@ public:
 
 	UFUNCTION(BlueprintCallable)
 		void Reload();
-
+	UFUNCTION(NetMulticast, Reliable, WithValidation)
+		void Multicast_SendShot();
 
 
 	void SetMuzzleRotation(FRotator NewRotator) { MuzzleRotation_ = NewRotator; }
@@ -59,12 +68,17 @@ public:
 		FRotator MuzzleRotation_;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	bool CanFire = true;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+		bool TestPhysics = true;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-		float ReloadDelay = 0.5;
+		float ReloadDelay = 1.784;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 		bool Reloading;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+		EGunType WeaponType = EGunType::TE_Rifle;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Ammo")
 		bool CanReload;
@@ -93,6 +107,8 @@ public:
 		int AmmoCost = 1;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Ammo")
 		int AmmoNeeded;
+
+
 
 	UPROPERTY()
 		class ASoldier* Soldier;

@@ -46,16 +46,16 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Disable")
 		void DisableActor(bool toHide);
 
-	UFUNCTION()
-	void OnRep_Attack();
+	//UFUNCTION()
+	//void OnRep_Attack();
 
 private:
 	UPROPERTY()
 		class USoldierAnimInstance* MyAnim;
 
 public:
-	UPROPERTY(ReplicatedUsing = OnRep_Attack)
-		bool IsFiring = false;
+	//UPROPERTY(ReplicatedUsing = OnRep_Attack)
+	bool IsFiring = false;
 	UPROPERTY(replicated, BlueprintReadWrite, EditAnywhere)
 		AObject_Master* PickupItem;
 

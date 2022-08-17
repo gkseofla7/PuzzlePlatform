@@ -41,7 +41,7 @@ private:
 		int32 Level;
 
 public:
-	UPROPERTY(ReplicatedUsing = OnRep_HP, Transient, VisibleInstanceOnly, Category = Stat, Meta = (AllowPrivateAccess = true))
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, ReplicatedUsing = OnRep_HP, Transient,   Category = Stat)
 		float CurrentHP;
 
 	UFUNCTION()

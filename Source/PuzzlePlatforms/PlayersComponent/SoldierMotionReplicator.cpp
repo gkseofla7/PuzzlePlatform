@@ -26,7 +26,7 @@ void USoldierMotionReplicator::GetLifetimeReplicatedProps(TArray< FLifetimePrope
 {
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
 	DOREPLIFETIME(USoldierMotionReplicator, PickupItem);
-	DOREPLIFETIME(USoldierMotionReplicator, IsFiring);
+	//DOREPLIFETIME(USoldierMotionReplicator, IsFiring);
 
 }
 // Called when the game starts
@@ -81,17 +81,11 @@ void USoldierMotionReplicator::Server_SendAttack_Implementation()
 {
 
 	auto MyOwner = Cast<ASoldier>(GetOwner());
-	//MyOwner ->SetMuzzleRotation();
 	MyOwner->EquippedItem->StartFire();
 
 	IsFiring = true;
 	
 
-}
-
-bool USoldierMotionReplicator::Server_SendAttack_Validate()
-{
-	return true;
 }
 
 void USoldierMotionReplicator::Server_SendAttackStop_Implementation()
@@ -101,10 +95,6 @@ void USoldierMotionReplicator::Server_SendAttackStop_Implementation()
 	IsFiring = false;
 }
 
-bool USoldierMotionReplicator::Server_SendAttackStop_Validate()
-{
-	return true;
-}
 
 
 void USoldierMotionReplicator::Server_SendGetItem_Implementation(class AObject_Master* NewWeapon)
@@ -114,7 +104,7 @@ void USoldierMotionReplicator::Server_SendGetItem_Implementation(class AObject_M
 	UE_LOG(LogTemp, Warning, TEXT("Equip"));
 	if (PickupItem == nullptr)
 		return;
-
+	PickupItem->SetOwner(MyOwner);
 	MyOwner->EquipItem(PickupItem, MyOwner->IsItemEquipped);
 	//FTimerHandle WaitHandle;
 	//float WaitTime = 1.73; //시간을 설정하고
@@ -124,10 +114,6 @@ void USoldierMotionReplicator::Server_SendGetItem_Implementation(class AObject_M
 
 }
 
-bool USoldierMotionReplicator::Server_SendGetItem_Validate(class AObject_Master* NewWeapon)
-{
-	return true;
-}
 
 void USoldierMotionReplicator::Multicast_SendGetItem_Implementation(class AObject_Master* NewWeapon)
 {
@@ -153,10 +139,6 @@ void USoldierMotionReplicator::Multicast_SendGetItem_Implementation(class AObjec
 	}
 }
 
-bool USoldierMotionReplicator::Multicast_SendGetItem_Validate(class AObject_Master* NewWeapon)
-{
-	return true;
-}
 
 
 void USoldierMotionReplicator::DisableActor(bool toHide)
@@ -171,17 +153,23 @@ void USoldierMotionReplicator::DisableActor(bool toHide)
 	GetOwner()->SetActorTickEnabled(!toHide);
 }
 
-void USoldierMotionReplicator::OnRep_Attack()
-{
-	auto MyOwner = Cast<ASoldier>(GetOwner());
-	if (IsFiring == true)
-	{
-		
-		MyOwner->EquippedItem->StartFire();
 
-	}
-	else
-	{
-		MyOwner->EquippedItem->StopFire();
-	}
+
+bool USoldierMotionReplicator::Server_SendAttack_Validate()
+{
+	return true;
+}
+
+bool USoldierMotionReplicator::Server_SendAttackStop_Validate()
+{
+	return true;
+}
+
+bool USoldierMotionReplicator::Server_SendGetItem_Validate(class AObject_Master* NewWeapon)
+{
+	return true;
+}
+bool USoldierMotionReplicator::Multicast_SendGetItem_Validate(class AObject_Master* NewWeapon)
+{
+	return true;
 }

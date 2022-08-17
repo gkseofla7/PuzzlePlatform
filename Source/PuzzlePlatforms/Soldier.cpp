@@ -211,7 +211,7 @@ void ASoldier::Attack()
 		UE_LOG(LogTemp, Warning, TEXT("EquippedItem null"));
 		return;
 	}
-		SetMuzzleRotation();
+	SetMuzzleRotation();
 	Super::Attack();
 
 }
@@ -241,18 +241,26 @@ void ASoldier::WeaponSecondaryReleased()
 }
 void ASoldier::WeaponReload()
 {
+	if (EquippedItem == nullptr)
+		return;
 	bool IsFiring__ = Cast<USoldierMotionReplicator>(DaerimMotionReplicator)->IsFiring;
 	if (EquippedItem->CanReload == true && IsFiring__ == false && IsReloading == false && IsItemEquipped == true)
 	{
+		CanAim = false;
 		IsReloading = true;
-		EquippedItem->Reload();
+
 		FTimerHandle WaitHandle;
+		EquippedItem->Reload();
 		float WaitTime =EquippedItem->ReloadDelay; //시간을 설정하고
 		GetWorld()->GetTimerManager().SetTimer(WaitHandle, FTimerDelegate::CreateLambda([&]()
 			{
+
 				// 여기에 코드를 치면 된다.
 				IsReloading = false;
+				CanAim = true;
 			}), WaitTime, false); //반복도 여기서 추가 변수를 선언해 설정가능
+
+
 	}
 }
 
@@ -296,8 +304,11 @@ void ASoldier::InteractPressed()
 {
 	if (IsItemEquipped == false)
 	{
+		Cast<USoldierMotionReplicator>(DaerimMotionReplicator)->Server_SendGetItem(PickupItem);
 		SetFPSHudWidget();
 	}
-	Cast<USoldierMotionReplicator>(DaerimMotionReplicator)->Server_SendGetItem(PickupItem);
+	else
+		Cast<USoldierMotionReplicator>(DaerimMotionReplicator)->Server_SendGetItem(PickupItem);
+
 
 }
