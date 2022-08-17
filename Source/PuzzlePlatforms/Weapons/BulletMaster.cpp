@@ -12,7 +12,7 @@ ABulletMaster::ABulletMaster()
 	PrimaryActorTick.bCanEverTick = true;
 	Capsule = CreateDefaultSubobject<UCapsuleComponent>(TEXT("Capsule"));
 	//StaticMesh = CreateDefaultSubobject<UStaticMesh>(TEXT("StaticMesh"));
-	Capsule->SetupAttachment(RootComponent);
+	RootComponent = Capsule;
 	//StaticMesh->SetupAttachment(Capsule);
 
 }
@@ -34,15 +34,16 @@ void ABulletMaster::Tick(float DeltaTime)
 
 void ABulletMaster::OnHit(UPrimitiveComponent* HitComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit)
 {
+	UE_LOG(LogTemp, Warning, TEXT("Hit!"));
 	if (HasAuthority())
 	{
-		UE_LOG(LogTemp, Warning, TEXT("Hit!"));
+
 		auto MyCharacter = Cast<APuzzlePlatformsCharacter>(OtherActor);
 		if (MyCharacter != nullptr)
 		{
 			FDamageEvent DamageEvent;
 			//여기서 컨트롤러가..ㅋㅋ 다른 서버쪽 기준 컨트롤러로 돼있을텐데
-			MyCharacter->TakeDamage(50.0f, DamageEvent, MyCharacter->GetController(), this);
+			MyCharacter->TakeDamage(10.0f, DamageEvent, MyCharacter->GetController(), this);
 			//UGameplayStatics::ApplyDamage(MyCharacter, 10,nullptr, nullptr,UDamageType::);
 			//MyCharacter->ApplyDamage();
 		}
