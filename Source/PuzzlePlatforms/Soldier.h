@@ -110,4 +110,5 @@ public:
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
 		class AObject_Master* PickupItem;
 
+
 };

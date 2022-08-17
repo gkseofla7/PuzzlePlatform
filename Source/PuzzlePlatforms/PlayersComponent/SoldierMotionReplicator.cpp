@@ -18,14 +18,15 @@ USoldierMotionReplicator::USoldierMotionReplicator()
 	// off to improve performance if you don't need them.
 	PrimaryComponentTick.bCanEverTick = true;
 
+
 	// ...
 }
 
 void USoldierMotionReplicator::GetLifetimeReplicatedProps(TArray< FLifetimeProperty >& OutLifetimeProps) const
 {
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
-	DOREPLIFETIME(USoldierMotionReplicator, IsFiring);
 	DOREPLIFETIME(USoldierMotionReplicator, PickupItem);
+	DOREPLIFETIME(USoldierMotionReplicator, IsFiring);
 
 }
 // Called when the game starts
@@ -82,7 +83,7 @@ void USoldierMotionReplicator::Server_SendAttack_Implementation()
 	auto MyOwner = Cast<ASoldier>(GetOwner());
 	//MyOwner ->SetMuzzleRotation();
 	MyOwner->EquippedItem->StartFire();
-	UE_LOG(LogTemp, Warning, TEXT("False!!"));
+
 	IsFiring = true;
 	
 
@@ -108,12 +109,18 @@ bool USoldierMotionReplicator::Server_SendAttackStop_Validate()
 
 void USoldierMotionReplicator::Server_SendGetItem_Implementation(class AObject_Master* NewWeapon)
 {
+	auto MyOwner = Cast<ASoldier>(GetOwner());
 	PickupItem = NewWeapon;
-
+	UE_LOG(LogTemp, Warning, TEXT("Equip"));
 	if (PickupItem == nullptr)
 		return;
 
-	Multicast_SendGetItem();
+	MyOwner->EquipItem(PickupItem, MyOwner->IsItemEquipped);
+	//FTimerHandle WaitHandle;
+	//float WaitTime = 1.73; //시간을 설정하고
+	MyOwner->CanAim = true;//나중에 애니메이션 노티파이로변환
+
+	Multicast_SendGetItem(NewWeapon);
 
 }
 
@@ -122,12 +129,16 @@ bool USoldierMotionReplicator::Server_SendGetItem_Validate(class AObject_Master*
 	return true;
 }
 
-void USoldierMotionReplicator::Multicast_SendGetItem_Implementation()
+void USoldierMotionReplicator::Multicast_SendGetItem_Implementation(class AObject_Master* NewWeapon)
 {
 
 	auto MyOwner = Cast<ASoldier>(GetOwner());
+
+	//UE_LOG(LogTemp, Warning, TEXT("Multicast"));
+
 	if (MyOwner->HasAuthority())
 		return;
+	PickupItem = NewWeapon;
 	if (MyOwner->DoPickupLinetrace)
 	{
 		if (PickupItem != nullptr)
@@ -142,7 +153,7 @@ void USoldierMotionReplicator::Multicast_SendGetItem_Implementation()
 	}
 }
 
-bool USoldierMotionReplicator::Multicast_SendGetItem_Validate()
+bool USoldierMotionReplicator::Multicast_SendGetItem_Validate(class AObject_Master* NewWeapon)
 {
 	return true;
 }

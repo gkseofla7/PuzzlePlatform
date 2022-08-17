@@ -6,6 +6,8 @@
 #include "Components/ActorComponent.h"
 #include "MotionReplicatorInterface.h"
 #include "MotionInterfaceComponent.h"
+#include "../Weapons/Object_Master.h"
+
 #include "SoldierMotionReplicator.generated.h"
 
 //public UActorComponent, public IMotionReplicatorInterface
@@ -38,7 +40,7 @@ public:
 	UFUNCTION(Server, Reliable, WithValidation)
 		void Server_SendGetItem(class AObject_Master* NewWeapon);
 	UFUNCTION(NetMulticast, Reliable, WithValidation)
-		void Multicast_SendGetItem();
+		void Multicast_SendGetItem(class AObject_Master* NewWeapon);
 
 
 	UFUNCTION(BlueprintCallable, Category = "Disable")
@@ -55,5 +57,6 @@ public:
 	UPROPERTY(ReplicatedUsing = OnRep_Attack)
 		bool IsFiring = false;
 	UPROPERTY(replicated, BlueprintReadWrite, EditAnywhere)
-		class AObject_Master* PickupItem;
+		AObject_Master* PickupItem;
+
 };

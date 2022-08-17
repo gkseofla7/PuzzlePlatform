@@ -8,9 +8,12 @@
 #include "PlayersComponent/SoldierMotionReplicator.h"
 #include "AnimInstance/SoldierAnimInstance.h"
 #include "Kismet/KismetMathLibrary.h"
+#include "Net/UnrealNetwork.h"
 
 ASoldier::ASoldier()
 {
+	bReplicates = true;
+	//SetReplicates(true);
 	DaerimMotionReplicator = CreateDefaultSubobject<USoldierMotionReplicator>(TEXT("SoldierMotionReplicator"));
 
 
@@ -34,6 +37,8 @@ ASoldier::ASoldier()
 	ADSCam_->SetupAttachment(GetMesh());
 	IsItemEquipped = false;
 }
+
+
 
 void ASoldier::SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent)
 {
@@ -106,6 +111,8 @@ void ASoldier::Tick(float DeltaTime)
 	}
 	else
 		UnAim();
+
+
 }
 
 
@@ -266,7 +273,7 @@ void ASoldier::EquipItem(AObject_Master* Item, bool EquipAndHold)
 			//자연스럽게 원하는 방향으로 회전
 			GetCharacterMovement()->bOrientRotationToMovement = false;
 			// 자동적으로 캐릭터의 이동방향을 움직이는 방향에 맞춰주며 회전보간을 해줌
-			SetFPSHudWidget();
+
 			WeaponSlotUse = EWeaponSlot::TE_PrimaryWeapon;
 		}
 	}
@@ -287,23 +294,10 @@ void ASoldier::EquipItem(AObject_Master* Item, bool EquipAndHold)
 
 void ASoldier::InteractPressed()
 {
-
+	if (IsItemEquipped == false)
+	{
+		SetFPSHudWidget();
+	}
 	Cast<USoldierMotionReplicator>(DaerimMotionReplicator)->Server_SendGetItem(PickupItem);
-	//if (DoPickupLinetrace)
-	//{
-	//	if (PickupItem != nullptr)
-	//	{
 
-	//		EquipItem(PickupItem, IsItemEquipped);
-
-	//		FTimerHandle WaitHandle;
-	//		float WaitTime = 1.73; //시간을 설정하고
-	//		GetWorld()->GetTimerManager().SetTimer(WaitHandle, FTimerDelegate::CreateLambda([&]()
-	//			{
-	//				CanAim = true;
-	//				// 여기에 코드를 치면 된다.
-	//			}), WaitTime, false); //반복도 여기서 추가 변수를 선언해 설정가능
-	//		
-	//	}
-	//}
 }
