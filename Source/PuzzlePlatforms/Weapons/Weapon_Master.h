@@ -108,6 +108,11 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Ammo")
 		int AmmoNeeded;
 
+	/** Sound to play each time we fire */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Gameplay)
+		class USoundBase* FireSound;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Gameplay)
+		class UParticleSystem* MuzzleParticles;
 
 
 	UPROPERTY()

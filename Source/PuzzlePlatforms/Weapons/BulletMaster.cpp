@@ -2,6 +2,8 @@
 
 
 #include "BulletMaster.h"
+#include "../Soldier.h"
+
 #include "Engine/StaticMesh.h"
 #include "Components/CapsuleComponent.h"
 #include "../PuzzlePlatformsCharacter.h"
@@ -21,7 +23,9 @@ ABulletMaster::ABulletMaster()
 void ABulletMaster::BeginPlay()
 {
 	Super::BeginPlay();
-	Capsule->OnComponentHit.AddDynamic(this, &ABulletMaster::OnHit);
+	Capsule->OnComponentBeginOverlap.AddDynamic(this, &ABulletMaster::OnOverlapBegin);
+
+	//Capsule->OnComponentHit.AddDynamic(this, &ABulletMaster::OnHit);
 	
 }
 
@@ -34,7 +38,9 @@ void ABulletMaster::Tick(float DeltaTime)
 
 void ABulletMaster::OnHit(UPrimitiveComponent* HitComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit)
 {
-	UE_LOG(LogTemp, Warning, TEXT("Hit!"));
+	//if (Cast<ASoldier>(OtherActor) == Shooter)
+	//	return;
+
 	if (HasAuthority())
 	{
 
@@ -48,5 +54,38 @@ void ABulletMaster::OnHit(UPrimitiveComponent* HitComponent, AActor* OtherActor,
 			//MyCharacter->ApplyDamage();
 		}
 	}
+	if (ImpactParticles)
+	{
+		UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), ImpactParticles, GetTransform());
+	}
 	this->Destroy();
+}
+
+void ABulletMaster::OnOverlapBegin(class UPrimitiveComponent* OverlappedComp, class AActor* OtherActor, class UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
+{
+	FString s_a = OtherActor->GetName();
+	FString s = OtherComp->GetName();
+	UE_LOG(LogTemp, Warning, TEXT("Overlap %s %s"),*s_a, *s);
+
+	if (OtherActor && (OtherActor != this) && OtherComp)
+	{
+		if (HasAuthority())
+		{
+
+			auto MyCharacter = Cast<APuzzlePlatformsCharacter>(OtherActor);
+			if (MyCharacter != nullptr)
+			{
+				FDamageEvent DamageEvent;
+				//여기서 컨트롤러가..ㅋㅋ 다른 서버쪽 기준 컨트롤러로 돼있을텐데
+				MyCharacter->TakeDamage(10.0f, DamageEvent, MyCharacter->GetController(), this);
+				//UGameplayStatics::ApplyDamage(MyCharacter, 10,nullptr, nullptr,UDamageType::);
+				//MyCharacter->ApplyDamage();
+			}
+		}
+		if (ImpactParticles)
+		{
+			UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), ImpactParticles, GetTransform());
+		}
+		this->Destroy();
+	}
 }

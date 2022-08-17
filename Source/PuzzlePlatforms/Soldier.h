@@ -77,6 +77,8 @@ private:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Camera, meta = (AllowPrivateAccess = "true"))
 		class UCameraComponent* ADSCam_;
 
+		
+
 
 public:
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)

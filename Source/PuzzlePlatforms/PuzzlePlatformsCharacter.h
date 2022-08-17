@@ -12,6 +12,7 @@
 UCLASS(config=Game, BlueprintType)
 class APuzzlePlatformsCharacter : public ACharacter
 {
+protected:
 	GENERATED_BODY()
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
 	class USphereComponent* NearObjectCollisionDetector;

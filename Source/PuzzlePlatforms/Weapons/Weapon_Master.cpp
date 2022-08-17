@@ -99,8 +99,7 @@ void AWeapon_Master::Shot()
 {
 
     FString name = GetName();
-    UE_LOG(LogTemp, Warning, TEXT(" %s Muzzle Rotation %f, %f, %f"),*name, MuzzleRotation_.Yaw, MuzzleRotation_.Roll, MuzzleRotation_.Pitch);
-
+  
     UE_LOG(LogTemp, Warning, TEXT("Shoot!!"));
     AmmoCheck();
     if (Soldier->IsLocallyControlled())
@@ -115,16 +114,41 @@ void AWeapon_Master::Shot()
         FVector BulletScale;
        // BulletScale.Set(0.1, 0.1, 0.1);
         FTransform BulletTransform;
-
+        FVector Dir = GetOwner()->GetActorForwardVector();
         BulletTransform.SetLocation(SkeletalMeshComponent->GetSocketTransform("Muzzle").GetLocation());
         BulletTransform.SetRotation(MuzzleRotation_.Quaternion());
         //BulletTransform.SetScale3D(BulletScale);
 
 
-        GetWorld()->SpawnActor<ABulletMaster>(BulletMasterClass, BulletTransform);
-
+       ABulletMaster* bullet =  GetWorld()->SpawnActor<ABulletMaster>(BulletMasterClass, BulletTransform);
+       if (bullet != nullptr)
+       {
+           bullet->Shooter = Soldier;
+       }
+       else
+       {
+           UE_LOG(LogTemp, Warning, TEXT("nullptr"));
+       }
         ClipAmmo = ClipAmmo - AmmoCost;
         Multicast_SendShot();
+
+        if (FireSound != NULL)
+        {
+            UGameplayStatics::PlaySoundAtLocation(this, FireSound, GetActorLocation());
+        }
+        //if (GetWorld()->LineTraceSingleByChannel(Hit, StartTrace, EndTrace, ECC_Visibility, QueryParams))
+        //{
+        //    if (ImpactParticles)
+        //    {
+        //        UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), ImpactParticles, FTransform(Hit.ImpactNormal.Rotation(), Hit.ImpactPoint));
+        //    }
+        //}
+        if (MuzzleParticles)
+        {
+            UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), MuzzleParticles, SkeletalMeshComponent->GetSocketTransform(FName("Muzzle")));
+        }
+       
+
     }
 }
 

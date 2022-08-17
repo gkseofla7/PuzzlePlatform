@@ -69,18 +69,7 @@ void ASoldier::PostInitializeComponents()
 void ASoldier::BeginPlay()
 {
 	Super::BeginPlay();
-	//{
-	//	FTransform WeaponTransform;
-	//	EquippedItem = GetWorld()->SpawnActor<AWeapon_Master>(WeaponMasterClass, WeaponTransform);
-	//	EquippedItem->Soldier = this;
-	//	FAttachmentTransformRules ItemTransformRules(EAttachmentRule::SnapToTarget, true);
-
-	//	EquippedItem->AttachToComponent(GetMesh(), ItemTransformRules, "GripPoint");
-	//	IsItemEquipped = true;
-	//}
-
-	//HudWidget = CreateWidget<UFPSHudWidget>(GetController(), FPSHudClass);
-	//ABCHECK(FPSHudClass != nullptr);
+	
 
 	if (EquippedItem == nullptr)
 	{
@@ -121,9 +110,34 @@ void ASoldier::SetMuzzleRotation()
 {
 	if (EquippedItem == nullptr)
 		return;
+	UCameraComponent* CurrentCam;
+	if (CamInUse == ECamInUse::TE_FPCam)
+	{
+		CurrentCam = FPPCam_;
+	}
+	else
+	{
+		CurrentCam = FollowCamera;
+	}
+
+	const float WeaponRange = 20000.f;
+	const FVector StartTrace = CurrentCam->GetComponentLocation();
+	 FVector EndTrace = (CurrentCam->GetForwardVector() * WeaponRange) + StartTrace;
 	FVector Start = EquippedItem->GetSkeletalMesh()->GetSocketLocation("Muzzle");
-	FVector Target = AimObejctFPP->GetComponentLocation();
-	FRotator temp = UKismetMathLibrary::FindLookAtRotation(Start, Target);
+	//FVector Target = AimObejctFPP->GetComponentLocation();
+	FHitResult Hit;
+	FCollisionQueryParams QueryParams = FCollisionQueryParams(SCENE_QUERY_STAT(WeaponTrace), false, this);
+	UE_LOG(LogTemp, Warning, TEXT("Before %f, %f, %f"), EndTrace.X, EndTrace.Y, EndTrace.Z);
+	if (GetWorld()->LineTraceSingleByChannel(Hit, StartTrace, EndTrace, ECC_Visibility, QueryParams))
+	{
+		UE_LOG(LogTemp, Warning, TEXT("Got Line Trace"));
+		//UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), ImpactParticles, FTransform(Hit.ImpactNormal.Rotation(), Hit.ImpactPoint));
+		EndTrace = Hit.ImpactPoint;
+		UE_LOG(LogTemp, Warning, TEXT("After %f, %f, %f"), EndTrace.X, EndTrace.Y, EndTrace.Z);
+		
+	}
+
+	FRotator temp = UKismetMathLibrary::FindLookAtRotation(Start, EndTrace);
 
 	Server_SetMuzzleRotation(temp);
 	Everyone_SetMuzzleRotation(temp);
