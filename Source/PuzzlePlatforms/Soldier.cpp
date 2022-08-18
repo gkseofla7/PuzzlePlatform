@@ -170,7 +170,7 @@ void ASoldier::Server_SetMuzzleRotation_Implementation(FRotator NewRotator)
 
 void ASoldier::AimDownSights()
 {
-	FPPCam_->Deactivate();
+	FollowCamera->Deactivate();
 	ADSCam_->Activate();
 	FVector VCurrent = ADSCam_->GetComponentLocation();
 	FVector VTarget = EquippedItem->GetCamera()->GetComponentLocation();
@@ -189,10 +189,10 @@ void ASoldier::AimDownSights()
 void ASoldier::UnAim()
 {
 	FVector VCurrent = ADSCam_->GetComponentLocation();
-	FVector VTarget = FPPCam_->GetComponentLocation();
+	FVector VTarget = FollowCamera->GetComponentLocation();
 
 	FRotator RCurrent = ADSCam_->GetComponentRotation();
-	FRotator RTarget = FPPCam_ ->GetComponentRotation();
+	FRotator RTarget = FollowCamera->GetComponentRotation();
 
 	float Deltatime = UGameplayStatics::GetWorldDeltaSeconds(GetWorld());
 	FVector NextLoc = FMath::VInterpTo(VCurrent, VTarget, Deltatime, 15);
@@ -200,10 +200,10 @@ void ASoldier::UnAim()
 
 	ADSCam_->SetWorldLocationAndRotation(NextLoc, NexRot);
 
-	if (FPPCam_->GetComponentLocation().Equals(ADSCam_->GetComponentLocation(), 0.01))
+	if (FollowCamera->GetComponentLocation().Equals(ADSCam_->GetComponentLocation(), 0.01))
 	{
 		ADSCam_->Deactivate();
-		FPPCam_->Activate();
+		FollowCamera->Activate();
 	}
 }
 

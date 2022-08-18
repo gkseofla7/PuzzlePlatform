@@ -96,7 +96,7 @@ public:
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
 		bool UseTPSMovement = false;
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
-		ECamInUse CamInUse = ECamInUse::TE_FPCam;
+		ECamInUse CamInUse = ECamInUse::TE_TPCam;
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
 		bool IsItemEquipped;
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)

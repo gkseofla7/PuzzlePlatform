@@ -21,7 +21,6 @@ void USoldierAnimInstance::NativeUpdateAnimation(float DeltaSeconds)
 		CalculateDirection(Pawn->GetVelocity(), Pawn->GetActorRotation());
 		CurrenPawnSpeed = Pawn->GetVelocity().Size();
 		Direction = CalculateDirection(Pawn->GetVelocity(), Pawn->GetActorRotation());
-
 		FRotator ControlRotation = Pawn->GetControlRotation();
 		//float A = 360.0 - ControlRotation.Vector().X;
 		float A = 360.0 - ControlRotation.Pitch;
