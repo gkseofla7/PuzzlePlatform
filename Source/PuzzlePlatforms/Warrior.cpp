@@ -2,12 +2,21 @@
 #include "Warrior.h"
 #include "AnimInstance/PlayerAnimInstance.h"
 #include "PlayersComponent/PlayersMotionReplicator.h"
+#include "Weapons/Sword_Master.h"
 
 #include "DrawDebugHelpers.h"
 
 AWarrior::AWarrior()
 {
 	DaerimMotionReplicator = CreateDefaultSubobject<UPlayersMotionReplicator>(TEXT("MOTIOREPLICATOR"));
+
+	static ConstructorHelpers::FClassFinder<ASword_Master> FinderSword(TEXT("/Game/Weapons/BP_Sword_Master"));
+	if (FinderSword.Succeeded())
+	{
+		SwordClass = FinderSword.Class;
+		
+		//EquippedItem->Get
+	}
 
 	static ConstructorHelpers::FClassFinder<UAnimInstance> WARRIO_ANIM((TEXT("/Game/Animation/ThirdPerson_AnimBP")));
 	if (WARRIO_ANIM.Succeeded())
@@ -21,13 +30,21 @@ void AWarrior::PostInitializeComponents()
 {
 	Super::PostInitializeComponents();
 	auto Anim = Cast<UPlayerAnimInstance>(GetMesh()->GetAnimInstance());
-	ABCHECK(nullptr != MyAnim);
+	ABCHECK(nullptr != Anim);
 
 
 
 
 	Anim->OnAttackHitCheck.AddUObject(this, &AWarrior::AttackCheck);
 
+}
+void AWarrior::BeginPlay()
+{
+	Super::BeginPlay();
+
+	EquippedItem = GetWorld()->SpawnActor<ASword_Master>(SwordClass);// GetMesh()->GetSocketTransform("SwordSocket")
+	EquippedItem->GetSkeletalMesh()->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+	EquippedItem->AttachToPlayer(this, "SwordSocket");
 }
 
 void AWarrior::AttackCheck()

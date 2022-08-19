@@ -30,6 +30,10 @@ public:
 	FOnAttackEndCheckDelegate OnAttackEndCheck;
 	bool IsAttacking = false;
 private:
+
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Pawn, Meta = (AllowPrivateAccess = true))
+		float Direction;
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Pawn, Meta = (AllowPrivateAccess = true))
 		float CurrenPawnSpeed;
 	

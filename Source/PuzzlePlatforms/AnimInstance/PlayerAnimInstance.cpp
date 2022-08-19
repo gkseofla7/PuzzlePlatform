@@ -27,7 +27,10 @@ void UPlayerAnimInstance::NativeUpdateAnimation(float DeltaSeconds)
 
 	if (::IsValid(Pawn))
 	{
+
+		CalculateDirection(Pawn->GetVelocity(), Pawn->GetActorRotation());
 		CurrenPawnSpeed = Pawn->GetVelocity().Size();
+		Direction = CalculateDirection(Pawn->GetVelocity(), Pawn->GetActorRotation());
 		auto Character = Cast<ACharacter>(Pawn);
 		if (Character)
 		{
@@ -51,6 +54,7 @@ void UPlayerAnimInstance::PlaySwordAttackMontage()
 
 void UPlayerAnimInstance::AnimNotify_AttackHitCheck()
 {
+
 	OnAttackHitCheck.Broadcast();
 }
 void UPlayerAnimInstance::AnimNotify_NextAttackCheck()

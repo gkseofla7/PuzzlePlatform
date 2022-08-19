@@ -287,9 +287,9 @@ void ASoldier::EquipItem(AObject_Master* Item, bool EquipAndHold)
 		{
 			EquippedItem = weapon;
 			PrimaryWeapon = weapon;
-			EquippedItem->Soldier = this;
+			EquippedItem->Player = this;
 			EquippedItem->GetSkeletalMesh()->SetCollisionEnabled(ECollisionEnabled::NoCollision);
-			EquippedItem->AttachToSoldier(this ,"GripPoint");
+			EquippedItem->AttachToPlayer(this ,"GripPoint");
 			IsItemEquipped = true;
 			bUseControllerRotationYaw= true;
 			//자연스럽게 원하는 방향으로 회전
@@ -306,9 +306,9 @@ void ASoldier::EquipItem(AObject_Master* Item, bool EquipAndHold)
 		if (weapon != nullptr)
 		{
 			SecondaryWeapon = weapon;
-			SecondaryWeapon->Soldier = this;
+			SecondaryWeapon->Player = this;
 			SecondaryWeapon->GetSkeletalMesh()->SetCollisionEnabled(ECollisionEnabled::NoCollision);
-			SecondaryWeapon->AttachToSoldier(this, "RifleHolster");
+			SecondaryWeapon->AttachToPlayer(this, "RifleHolster");
 			
 		}
 	}

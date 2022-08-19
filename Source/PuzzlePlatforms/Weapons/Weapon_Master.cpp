@@ -99,7 +99,7 @@ void AWeapon_Master::Shot()
 {
 
     FString name = GetName();
-  
+    auto Soldier = Cast<ASoldier>(Player);
     UE_LOG(LogTemp, Warning, TEXT("Shoot!!"));
     AmmoCheck();
     if (Soldier->IsLocallyControlled())
@@ -210,12 +210,3 @@ void AWeapon_Master::Reload()
     }
 }
 
-void AWeapon_Master::AttachToSoldier(ASoldier* NewSoldier ,FName SocketName )
-{
-    Soldier = NewSoldier;
-    GetSkeletalMesh()->SetCollisionEnabled(ECollisionEnabled::NoCollision);
-   
-    FAttachmentTransformRules ItemTransformRules(EAttachmentRule::SnapToTarget, true);
-    AttachToComponent(Soldier->GetMesh(), ItemTransformRules, SocketName);
-
-}

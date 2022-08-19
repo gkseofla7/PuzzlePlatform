@@ -6,6 +6,8 @@
 #include "Components/StaticMeshComponent.h"
 
 #include "Kismet/KismetSystemLibrary.h"
+#include "Kismet/GameplayStatics.h"
+#include "Kismet/KismetMathLibrary.h"
 // Sets default values
 ATurret::ATurret()
 {
@@ -65,7 +67,7 @@ void ATurret::FindBestTarget()
 				IgnoreActorsLinetrace.Add(CurrentTarget);
 
 				bool tmp = HasLineOfSight(StaticMeshTop->GetComponentLocation(), CurrentTarget->GetActorLocation(), IgnoreActorsLinetrace);
-				UE_LOG(LogTemp, Warning, TEXT("For Test"));
+
 				if (tmp == true)
 				{
 					
@@ -83,6 +85,37 @@ bool ATurret::HasLineOfSight(FVector From, FVector To, TArray<AActor*> ActorsToI
 //	UKismetSystemLibrary::LineTraceSingle	= > 내부적으로는 	UWorld::LineTraceSingleByChannel
 	//FVector Target = AimObejctFPP->GetComponentLocation();
 	FHitResult Hit;
-	FCollisionQueryParams QueryParams = FCollisionQueryParams(SCENE_QUERY_STAT(WeaponTrace), false, this);
+	FCollisionQueryParams QueryParams = FCollisionQueryParams(SCENE_QUERY_STAT(TurretTrace), false);
+	QueryParams.AddIgnoredActors(ActorsToIgnore);
+
 	return !(GetWorld()->LineTraceSingleByChannel(Hit, From, To, ECC_Visibility, QueryParams));
+}
+
+void ATurret::UpdateTurretRotation(float DeltaSeconds)
+{
+	FRotator L_Current = StaticMeshTop->GetComponentRotation();
+	FRotator L_Target = UKismetMathLibrary::FindLookAtRotation(StaticMeshTop->GetComponentLocation(), Target->GetActorLocation());
+
+	FRotator NewRotation = FMath::RInterpConstantTo(L_Current, L_Target, DeltaSeconds, RotateSpeed);
+	float Y = FMath::ClampAngle(NewRotation.Pitch, -45, 75);
+	//StaticMeshTop->SetWorldRotation(NewRotation.Roll, Y, NewRotation.Yaw);
+	NewRotation.Pitch = Y;
+	StaticMeshTop->SetWorldRotation(NewRotation);
+
+}
+void ATurret::UpdateFire()
+{
+	float tmp = UGameplayStatics::GetTimeSeconds(GetWorld())- TimeOfLastFire;
+	//UE_LOG(LogTemp, Warning, TEXT("Fire"));
+	if (tmp > RateOfFire )
+	{
+
+		FVector L_From = StaticMeshTop->GetComponentLocation();
+		FVector L_Target = Target->GetActorLocation();
+		FVector TurretDirection = UKismetMathLibrary::GetDirectionUnitVector(L_From, L_Target);
+		if (FVector::DotProduct(TurretDirection,StaticMeshTop->GetForwardVector()) > .99)
+		{
+			Fire();
+		}
+	}
 }

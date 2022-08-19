@@ -56,7 +56,7 @@ public:
 
 
 	void SetMuzzleRotation(FRotator NewRotator) { MuzzleRotation_ = NewRotator; }
-	void AttachToSoldier(class ASoldier* NewSoldier, FName SocketName);
+
 
 	class UCameraComponent* GetCamera() { return Camera_; }
 
@@ -115,8 +115,7 @@ public:
 		class UParticleSystem* MuzzleParticles;
 
 
-	UPROPERTY()
-		class ASoldier* Soldier;
+
 
 private:
 

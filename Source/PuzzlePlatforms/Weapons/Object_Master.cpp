@@ -3,6 +3,8 @@
 
 #include "Object_Master.h"
 
+#include "../PuzzlePlatformsCharacter.h"
+
 #include "Components/SkeletalMeshComponent.h"
 
 // Sets default values
@@ -28,3 +30,12 @@ void AObject_Master::Tick(float DeltaTime)
 
 }
 
+void AObject_Master::AttachToPlayer(APuzzlePlatformsCharacter* NewPlayer, FName SocketName)
+{
+	Player = NewPlayer;
+	SkeletalMeshComponent->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+
+	FAttachmentTransformRules ItemTransformRules(EAttachmentRule::SnapToTarget, true);
+	AttachToComponent(Player->GetMesh(), ItemTransformRules, SocketName);
+
+}

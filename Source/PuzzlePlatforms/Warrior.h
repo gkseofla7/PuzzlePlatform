@@ -18,7 +18,7 @@ class PUZZLEPLATFORMS_API AWarrior : public APuzzlePlatformsCharacter
 protected:
 	virtual void PostInitializeComponents() override;
 	//virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
-
+	virtual void BeginPlay();
 	//UPROPERTY(VisibleAnywhere, Category = Replicator)
 	//	class UPlayersMotionReplicator* MotionReplicator;
 private:
@@ -27,5 +27,9 @@ private:
 private:	
 	//UPROPERTY()
 	//class UPlayerAnimInstance* MyAnim;
-	
+
+public:
+	UPROPERTY(BlueprintReadWrite, EditAnywhere)
+		class ASword_Master* EquippedItem;
+	TSubclassOf<class ASword_Master>SwordClass;
 };

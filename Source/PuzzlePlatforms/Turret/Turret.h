@@ -35,6 +35,12 @@ public:
 		void FindBestTarget();
 	UFUNCTION(BlueprintCallable)
 		bool HasLineOfSight(FVector From, FVector To, TArray<AActor*> ActorsToIgnore);
+	UFUNCTION(BlueprintCallable)
+		void UpdateFire();
+	UFUNCTION(BlueprintImplementableEvent, BlueprintCallable)
+		void Fire();
+	UFUNCTION( BlueprintCallable)
+		void UpdateTurretRotation(float DeltaSeconds);
 
 public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
@@ -46,4 +52,6 @@ public:
 		float TimeOfLastFire;
 		UPROPERTY(EditAnywhere, BlueprintReadWrite)
 		float RateOfFire;
+		UPROPERTY(EditAnywhere, BlueprintReadWrite)
+			float RotateSpeed;
 };
