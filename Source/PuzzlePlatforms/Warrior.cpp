@@ -89,3 +89,121 @@ void AWarrior::AttackCheck()
 		}
 	}
 }
+
+void AWarrior::SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent)
+{
+	Super::SetupPlayerInputComponent(PlayerInputComponent);
+	// Set up gameplay key bindings
+	check(PlayerInputComponent);
+	PlayerInputComponent->BindAction("Climb", IE_Pressed, this, &AWarrior::ClimbTheWall);
+	PlayerInputComponent->BindAction("Climb", IE_Released, this, &AWarrior::ClimbTheWall);
+
+}
+
+
+void AWarrior::MoveForward(float Value)
+{
+	MoveUpDown = Value;
+	if ((Value != 0.0f) && IsClimbing == false)
+	{
+		// find out which way is forward
+		const FRotator Rotation = Controller->GetControlRotation();
+		const FRotator YawRotation(0, Rotation.Yaw, 0);
+		// get forward vector
+		const FVector Direction = FRotationMatrix(YawRotation).GetUnitAxis(EAxis::X);
+		AddMovementInput(Direction, Value);
+	}
+
+	//if ((Controller != nullptr) && (Value != 0.0f))
+	//{
+
+	//	if (IsClimbing == false)
+	//	{
+
+
+	//		
+	//		// find out which way is forward
+	//		const FRotator Rotation = Controller->GetControlRotation();
+	//		const FRotator YawRotation(0, Rotation.Yaw, 0);
+
+	//		// get forward vector
+	//		const FVector Direction = FRotationMatrix(YawRotation).GetUnitAxis(EAxis::X);
+	//		AddMovementInput(Direction, Value);
+	//		
+	//	}
+	//	else
+	//	{
+	//		if (IsOnEdge == false)
+	//		{
+	//			UE_LOG(LogTemp, Warning, TEXT("Wtf"));
+	//			MoveUpDown = 0;
+	//		}
+	//		else
+	//			AddMovementInput(GetActorUpVector(), Value);
+	//	}
+	//}
+
+
+}
+
+void AWarrior::MoveRight(float Value)
+{
+	MoveRightLeft = Value;
+	//if ((Controller != nullptr) && (Value != 0.0f))
+	//{
+	//	if (IsClimbing == false)
+	//	{
+	//		// find out which way is right
+	//		const FRotator Rotation = Controller->GetControlRotation();
+	//		const FRotator YawRotation(0, Rotation.Yaw, 0);
+
+	//		// get right vector 
+	//		const FVector Direction = FRotationMatrix(YawRotation).GetUnitAxis(EAxis::Y);
+	//		// add movement in that direction
+	//		AddMovementInput(Direction, Value);
+	//	}
+	//	else
+	//	{
+	//		AddMovementInput(GetActorRightVector(), Value);
+	//	}
+	//}
+
+		if ((Controller != nullptr) && (Value != 0.0f)&&IsClimbing==false)
+		{
+
+			AddMovementInput(GetActorRightVector(), Value);
+		}
+}
+
+
+void AWarrior::ClimbTheWall()
+{
+	if(ClimbTheWallOn == false)
+		ClimbTheWallOn = true;
+	else
+	{
+		ClimbTheWallOn = false;
+	}
+	if (IsClimbing)
+	{
+		FVector tmp = GetActorForwardVector() * -500;
+		LaunchCharacter(FVector(tmp.X, tmp.Y, 0), false, false);
+		JumpFromWall();
+	}
+
+}
+//void AWarrior::CJump(float Value)
+//{
+//	if (IsClimbing)
+//	{
+//		FVector tmp = GetActorForwardVector() * -500;
+//		LaunchCharacter(FVector(tmp.X, tmp.Y, 0), false, false);
+//		JumpFromWall();
+//
+//	}
+//	else
+//	{
+//		Jump();
+//	}
+//}
+

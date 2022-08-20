@@ -274,6 +274,15 @@ void APuzzlePlatformsCharacter::MoveRight(float Value)
 	}
 }
 
+void APuzzlePlatformsCharacter::CJump(float Value)
+{
+	Jump();
+}
+void APuzzlePlatformsCharacter::CStopJumping(float Value)
+{
+	StopJumping();
+}
+
 void APuzzlePlatformsCharacter::Attack()
 {
 	//만약 종족이 두개있다면..?
@@ -308,3 +317,4 @@ float APuzzlePlatformsCharacter::TakeDamage(float DamageAmount, FDamageEvent con
 
 
 }
+

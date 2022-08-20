@@ -79,12 +79,10 @@ void UPlayersMotionReplicator::Server_SendRide_Implementation(AActor* _Car, APaw
 	if (Car != nullptr)
 	{
 
-
-		UE_LOG(LogTemp, Warning, TEXT("In Client"));
 		//Car->SetRider(this);
 
 		DisableActor(true);
-		UE_LOG(LogTemp, Warning, TEXT("In Server"));
+
 		Car->AIController = Car->GetController();
 		Rider->GetController()->Possess(Car);
 		Car->SetRider(Rider);
@@ -147,6 +145,7 @@ void UPlayersMotionReplicator::OnRep_Attack()//서버에서는 안하는구나..?ㅋ
 		//MyAnim->IsAttacking = false;
 		return;
 	}
+	MyAnim->IsAttacking = true;
 	PlaySwordAttackMontage();
 	MyAnim->JumpToAttackMontageSection(CurrentCombo);
 }

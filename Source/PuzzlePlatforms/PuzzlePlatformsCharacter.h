@@ -34,9 +34,10 @@ protected:
 	virtual void BeginPlay() override;
 	virtual void Tick(float DeltaTime) override;
 	void OnResetVR();
-	void MoveForward(float Value);
-	void MoveRight(float Value);
-
+	virtual void MoveForward(float Value);
+	virtual void MoveRight(float Value);
+	virtual void CJump(float Value);
+	virtual void CStopJumping(float Value);
 	void TurnAtRate(float Rate);
 	void LookUpAtRate(float Rate);
 	void GetInTheCar();

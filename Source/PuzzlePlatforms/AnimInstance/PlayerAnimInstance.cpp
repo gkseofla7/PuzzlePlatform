@@ -4,6 +4,7 @@
 #include "PlayerAnimInstance.h"
 #include "../PuzzlePlatformsCharacter.h"
 #include "../PlayersComponent/PlayersMotionReplicator.h"
+#include "../Warrior.h"
 UPlayerAnimInstance::UPlayerAnimInstance()
 {
 	CurrenPawnSpeed = 0.0f;
@@ -35,6 +36,13 @@ void UPlayerAnimInstance::NativeUpdateAnimation(float DeltaSeconds)
 		if (Character)
 		{
 			IsInAir = Character->GetMovementComponent()->IsFalling();
+		}
+		auto Warrior = Cast<AWarrior>(Pawn);
+		if (Warrior != nullptr)
+		{
+			IsClimbing = Warrior->IsClimbing;
+			MoveUpDown = 100*Warrior->MoveUpDown;
+			MoveRightLeft =100* Warrior->MoveRightLeft;
 		}
 	}
 }

@@ -19,8 +19,13 @@ protected:
 	virtual void PostInitializeComponents() override;
 	//virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 	virtual void BeginPlay();
-	//UPROPERTY(VisibleAnywhere, Category = Replicator)
-	//	class UPlayersMotionReplicator* MotionReplicator;
+	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
+	virtual void MoveForward(float Value) override;
+	virtual void MoveRight(float Value) override;;
+
+UFUNCTION(BlueprintCallable, BlueprintImplementableEvent)
+	void JumpFromWall();
+void ClimbTheWall();
 private:
 	void AttackCheck();
 
@@ -32,4 +37,16 @@ public:
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
 		class ASword_Master* EquippedItem;
 	TSubclassOf<class ASword_Master>SwordClass;
+	UPROPERTY(BlueprintReadWrite, EditAnywhere)
+		bool IsClimbing;
+	UPROPERTY(BlueprintReadWrite, EditAnywhere)
+	float MoveUpDown;
+	UPROPERTY(BlueprintReadWrite, EditAnywhere)
+	float MoveRightLeft;
+	UPROPERTY(BlueprintReadWrite, EditAnywhere)
+		bool ClimbTheWallOn;
+	UPROPERTY(BlueprintReadWrite, EditAnywhere)
+		bool IsOnEdge;
+	UPROPERTY(BlueprintReadWrite, EditAnywhere)
+		bool IsClimbingUp;
 };
