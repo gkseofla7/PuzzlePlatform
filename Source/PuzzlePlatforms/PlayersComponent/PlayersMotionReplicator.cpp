@@ -5,6 +5,7 @@
 
 #include "../AnimInstance/PlayerAnimInstance.h"
 #include "../Cars/GoKart.h"
+#include "../Warrior.h"
 
 #include "Net/UnrealNetwork.h"
 
@@ -98,8 +99,10 @@ bool UPlayersMotionReplicator::Server_SendRide_Validate(AActor* Car, APawn* Ride
 
 void UPlayersMotionReplicator::Server_SendAttack_Implementation()
 {
+
 	if (MyAnim->IsAttacking == false)
 	{
+
 		CurrentCombo++;
 		if (CurrentCombo == 4)
 			CurrentCombo = 1;
@@ -113,6 +116,36 @@ void UPlayersMotionReplicator::Server_SendAttack_Implementation()
 }
 
 bool UPlayersMotionReplicator::Server_SendAttack_Validate()
+{
+	return true;
+}
+
+void UPlayersMotionReplicator::Server_SendClimbUp_Implementation()
+{
+
+	//auto Warrior = Cast<AWarrior>(GetOwner());
+	//if (Warrior->IsClimbing == true)
+	//{
+	//	Warrior->PlayHangToCrouchMontage();
+	//}
+	NetMulticast_SendClimbUp();
+}
+
+bool UPlayersMotionReplicator::Server_SendClimbUp_Validate()
+{
+	return true;
+}
+void UPlayersMotionReplicator::NetMulticast_SendClimbUp_Implementation()
+{
+	UE_LOG(LogTemp, Warning, TEXT("Name :%s"), *GetOwner()->GetName());
+	auto Warrior = Cast<AWarrior>(GetOwner());
+	if (Warrior->IsClimbing == true)
+	{
+		Warrior->PlayHangToCrouchMontage();
+	}
+}
+
+bool UPlayersMotionReplicator::NetMulticast_SendClimbUp_Validate()
 {
 	return true;
 }

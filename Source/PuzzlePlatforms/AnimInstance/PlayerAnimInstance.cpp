@@ -18,6 +18,14 @@ UPlayerAnimInstance::UPlayerAnimInstance()
 		SwordAttackMontage = SWORD_ATTACK_MONTAGE.Object;
 	}
 
+	static ConstructorHelpers::FObjectFinder<UAnimMontage> HANG_TO_CROUCH_MONTAGE(TEXT(
+		"/Game/Animation/BlendSpace/Hang_to_Crouch_fixed_Montage"
+	));
+	if (HANG_TO_CROUCH_MONTAGE.Succeeded())
+	{
+		HangToCrouchMontage = HANG_TO_CROUCH_MONTAGE.Object;
+	}
+
 	IsAttacking = false;
 }
 
@@ -60,6 +68,11 @@ void UPlayerAnimInstance::PlaySwordAttackMontage()
 	
 }
 
+void UPlayerAnimInstance::PlayHangToCrouchMontage()
+{
+	Montage_Play(HangToCrouchMontage, 1.0);
+}
+
 void UPlayerAnimInstance::AnimNotify_AttackHitCheck()
 {
 
@@ -73,6 +86,12 @@ void UPlayerAnimInstance::AnimNotify_EndAttack()
 {
 	OnAttackEndCheck.Broadcast();
 	
+}
+
+void UPlayerAnimInstance::AnimNotify_MovePlace()
+{
+	OnHangMovePlace.Broadcast();
+
 }
 
 void UPlayerAnimInstance::JumpToAttackMontageSection(int32 NewSection)

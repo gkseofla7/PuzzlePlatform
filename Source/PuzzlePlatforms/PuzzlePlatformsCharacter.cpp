@@ -286,6 +286,7 @@ void APuzzlePlatformsCharacter::CStopJumping(float Value)
 void APuzzlePlatformsCharacter::Attack()
 {
 	//만약 종족이 두개있다면..?
+	UE_LOG(LogTemp, Warning, TEXT("Attack1"));
 	if(DaerimMotionReplicator != nullptr)
 		DaerimMotionReplicator->Server_SendAttack();
 

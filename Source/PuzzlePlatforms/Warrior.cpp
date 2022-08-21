@@ -5,9 +5,12 @@
 #include "Weapons/Sword_Master.h"
 
 #include "DrawDebugHelpers.h"
+#include "Kismet/KismetSystemLibrary.h"
+#include "Kismet/KismetMathLibrary.h"
 
 AWarrior::AWarrior()
 {
+	bReplicates = true;
 	DaerimMotionReplicator = CreateDefaultSubobject<UPlayersMotionReplicator>(TEXT("MOTIOREPLICATOR"));
 
 	static ConstructorHelpers::FClassFinder<ASword_Master> FinderSword(TEXT("/Game/Weapons/BP_Sword_Master"));
@@ -45,6 +48,16 @@ void AWarrior::BeginPlay()
 	EquippedItem = GetWorld()->SpawnActor<ASword_Master>(SwordClass);// GetMesh()->GetSocketTransform("SwordSocket")
 	EquippedItem->GetSkeletalMesh()->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 	EquippedItem->AttachToPlayer(this, "SwordSocket");
+	auto Anim = Cast<UPlayerAnimInstance>(GetMesh()->GetAnimInstance());
+	Anim->OnHangMovePlace.AddLambda([this]()->void {
+		HangMontageNotify();
+		});
+}
+void AWarrior::Tick(float DeltaTime)
+{
+	Super::Tick(DeltaTime);
+	ForwardTrace();
+	HeightTrace();
 }
 
 void AWarrior::AttackCheck()
@@ -95,8 +108,10 @@ void AWarrior::SetupPlayerInputComponent(class UInputComponent* PlayerInputCompo
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
 	// Set up gameplay key bindings
 	check(PlayerInputComponent);
-	PlayerInputComponent->BindAction("Climb", IE_Pressed, this, &AWarrior::ClimbTheWall);
-	PlayerInputComponent->BindAction("Climb", IE_Released, this, &AWarrior::ClimbTheWall);
+	//PlayerInputComponent->BindAction("Climb", IE_Pressed, this, &AWarrior::ClimbTheWall);
+	//PlayerInputComponent->BindAction("Climb", IE_Released, this, &AWarrior::ClimbTheWall);
+	PlayerInputComponent->BindAction("ClimbUp", IE_Pressed, this, &AWarrior::ClimbUp);
+	PlayerInputComponent->BindAction("DropDown", IE_Pressed, this, &AWarrior::DropDown);
 
 }
 
@@ -113,42 +128,40 @@ void AWarrior::MoveForward(float Value)
 		const FVector Direction = FRotationMatrix(YawRotation).GetUnitAxis(EAxis::X);
 		AddMovementInput(Direction, Value);
 	}
+	{
+		//if (Value == 0)
+		//	return;
 
-	//if ((Controller != nullptr) && (Value != 0.0f))
-	//{
+		//if (IsClimbing == false)
+		//{
+		//	// find out which way is forward
+		//	const FRotator Rotation = Controller->GetControlRotation();
+		//	const FRotator YawRotation(0, Rotation.Yaw, 0);
+		//	// get forward vector
+		//	const FVector Direction = FRotationMatrix(YawRotation).GetUnitAxis(EAxis::X);
+		//	AddMovementInput(Direction, Value);
 
-	//	if (IsClimbing == false)
-	//	{
-
-
-	//		
-	//		// find out which way is forward
-	//		const FRotator Rotation = Controller->GetControlRotation();
-	//		const FRotator YawRotation(0, Rotation.Yaw, 0);
-
-	//		// get forward vector
-	//		const FVector Direction = FRotationMatrix(YawRotation).GetUnitAxis(EAxis::X);
-	//		AddMovementInput(Direction, Value);
-	//		
-	//	}
-	//	else
-	//	{
-	//		if (IsOnEdge == false)
-	//		{
-	//			UE_LOG(LogTemp, Warning, TEXT("Wtf"));
-	//			MoveUpDown = 0;
-	//		}
-	//		else
-	//			AddMovementInput(GetActorUpVector(), Value);
-	//	}
-	//}
-
-
+		//}
+		//else
+		//{
+		//	//if (IsOnEdge == false)
+		//	//{
+		//	//	UE_LOG(LogTemp, Warning, TEXT("Wtf"));
+		//	//	MoveUpDown = 0;
+		//	//}
+		//	//else
+		//	AddMovementInput(GetActorUpVector(), Value);
+		//}
+	}
 }
+
+
+
 
 void AWarrior::MoveRight(float Value)
 {
 	MoveRightLeft = Value;
+	{
 	//if ((Controller != nullptr) && (Value != 0.0f))
 	//{
 	//	if (IsClimbing == false)
@@ -167,6 +180,7 @@ void AWarrior::MoveRight(float Value)
 	//		AddMovementInput(GetActorRightVector(), Value);
 	//	}
 	//}
+	}
 
 		if ((Controller != nullptr) && (Value != 0.0f)&&IsClimbing==false)
 		{
@@ -176,34 +190,137 @@ void AWarrior::MoveRight(float Value)
 }
 
 
-void AWarrior::ClimbTheWall()
-{
-	if(ClimbTheWallOn == false)
-		ClimbTheWallOn = true;
-	else
-	{
-		ClimbTheWallOn = false;
-	}
-	if (IsClimbing)
-	{
-		FVector tmp = GetActorForwardVector() * -500;
-		LaunchCharacter(FVector(tmp.X, tmp.Y, 0), false, false);
-		JumpFromWall();
-	}
-
-}
-//void AWarrior::CJump(float Value)
+//void AWarrior::ClimbTheWall()
 //{
+//	if(ClimbTheWallOn == false)
+//		ClimbTheWallOn = true;
+//	else
+//	{
+//		ClimbTheWallOn = false;
+//	}
 //	if (IsClimbing)
 //	{
 //		FVector tmp = GetActorForwardVector() * -500;
 //		LaunchCharacter(FVector(tmp.X, tmp.Y, 0), false, false);
 //		JumpFromWall();
-//
 //	}
-//	else
+//
+//}
+
+//void AWarrior::Climb()
+//{
+//	bool CanClimb = ForwardTrace();
+//	if (CanClimb&&IsClimbing ==false)
 //	{
-//		Jump();
+//		
+//		float YawValue = UKismetMathLibrary::MakeRotFromX(WallNormal).Yaw + 180;
+//		SetActorRotation(FRotator(0, YawValue, 0));
+//		IsClimbing = true;
+//		GetCharacterMovement()->Velocity =(FVector(0, 0, 0));
+//		GetCharacterMovement()->SetMovementMode(EMovementMode::MOVE_Flying);
 //	}
 //}
+
+bool AWarrior::ForwardTrace()
+{
+	auto StartLoc = GetActorLocation();
+	auto EndLoc = StartLoc + GetActorForwardVector() * 150;//Hit, From, To, ECC_Visibility, QueryParams)
+	TArray<AActor*> Ignore;
+	Ignore.Add(this);
+	FHitResult OutHit;
+	bool Output = UKismetSystemLibrary::SphereTraceSingle(GetWorld(),StartLoc,EndLoc,10.,ETraceTypeQuery::TraceTypeQuery1,false, Ignore,EDrawDebugTrace::ForOneFrame,OutHit,true);
+	WallNormal = OutHit.Normal;
+	WallLocation = OutHit.Location;
+	//UE_LOG(LogTemp, Warning, TEXT("WallLocation %f, %f %f"), WallLocation.X, WallLocation.Y, WallLocation.Z);
+	return Output;
+
+}
+	
+
+void AWarrior::HeightTrace()
+{
+	auto StartLoc = GetActorLocation() + FVector(0,0,500.) +  GetActorForwardVector()*75;
+	auto EndLoc = StartLoc - FVector(0, 0, 500.);
+	TArray<AActor*> Ignore;
+	Ignore.Add(this);
+	FHitResult OutHit;
+	bool ClimbUp = UKismetSystemLibrary::SphereTraceSingle(GetWorld(), StartLoc, EndLoc, 10., ETraceTypeQuery::TraceTypeQuery1, false, Ignore, EDrawDebugTrace::ForOneFrame, OutHit, true);
+	if (ClimbUp == true)
+	{
+		HeightLocation = OutHit.Location;
+		float tmp = GetMesh()->GetSocketLocation("pelvisSocket").Z - HeightLocation.Z;
+		if (tmp >= -50 && tmp <= 0)
+		{
+			if (IsClimbing == false)
+			{
+				GetCharacterMovement()->SetMovementMode(EMovementMode::MOVE_Flying);
+				GetCharacterMovement()->StopMovementImmediately();
+				Hang();
+			}
+		}
+	}
+
+}
+
+void AWarrior::Hang()
+{
+	auto Anim = Cast<UPlayerAnimInstance>(GetMesh()->GetAnimInstance());
+	PlayHangToCrouchMontage();
+	Anim->Montage_Pause();
+	IsClimbing = true;
+	FVector tmpLoc = WallNormal * 20 + WallLocation;
+	FVector TargetRelativeLocation = FVector(tmpLoc.X, tmpLoc.Y, HeightLocation.Z - 90);
+	FRotator TargetRelativeRotation = UKismetMathLibrary::MakeRotFromX((WallNormal * -1));
+	FLatentActionInfo Latentinfo;
+	Latentinfo.CallbackTarget = this;
+	Latentinfo.ExecutionFunction = "****OnMoveComponentToEnd";
+	Latentinfo.Linkage = 0;
+	UKismetSystemLibrary::MoveComponentTo(GetCapsuleComponent(), TargetRelativeLocation, TargetRelativeRotation, true, true, .2, false,EMoveComponentAction::Move, Latentinfo);
+
+}
+
+void AWarrior::PlayHangToCrouchMontage()
+{
+	auto Anim = Cast<UPlayerAnimInstance>(GetMesh()->GetAnimInstance());
+	if (Anim == nullptr)
+	{
+		return;
+	}
+
+	Cast<UPlayerAnimInstance>(Anim)->PlayHangToCrouchMontage();
+}
+
+void AWarrior::ClimbUp()
+{
+	Cast<UPlayersMotionReplicator>(DaerimMotionReplicator)->Server_SendClimbUp();
+	//if (IsClimbing == true)
+	//{
+	//	PlayHangToCrouchMontage();
+	//}
+}
+void AWarrior::HangMontageNotify()
+{
+
+	FVector TargetRelativeLocation = GetCapsuleComponent()->GetComponentLocation() + 50 * GetActorForwardVector();
+	FRotator TargetRelativeRotation = UKismetMathLibrary::MakeRotFromX((GetActorForwardVector()));
+	FLatentActionInfo Latentinfo;
+	Latentinfo.CallbackTarget = this;
+	Latentinfo.ExecutionFunction = "****OnMoveComponentToEnd";
+	Latentinfo.Linkage = 0;
+	UKismetSystemLibrary::MoveComponentTo(GetCapsuleComponent(), TargetRelativeLocation, TargetRelativeRotation, true, true, .2, false, EMoveComponentAction::Move, Latentinfo);
+	IsClimbing = false;
+	//UE_LOG(LogTemp, Warning, TEXT("IsClimbing!"))
+	GetCharacterMovement()->SetMovementMode(EMovementMode::MOVE_Walking);
+
+}
+void AWarrior::DropDown()
+{
+	if (IsClimbing == true)
+	{
+		auto Anim = Cast<UPlayerAnimInstance>(GetMesh()->GetAnimInstance());
+		IsClimbing = false;
+		GetCharacterMovement()->SetMovementMode(EMovementMode::MOVE_Falling);
+		StopAnimMontage(Anim->GetHangToCrouchMontage());
+	}
+}
 

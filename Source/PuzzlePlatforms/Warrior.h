@@ -20,15 +20,30 @@ protected:
 	//virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 	virtual void BeginPlay();
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
+	virtual void Tick(float DeltaTime);
 	virtual void MoveForward(float Value) override;
 	virtual void MoveRight(float Value) override;;
 
 UFUNCTION(BlueprintCallable, BlueprintImplementableEvent)
 	void JumpFromWall();
-void ClimbTheWall();
+
+	bool ForwardTrace();
+	void HeightTrace();
+	void Hang();
+
+	UFUNCTION(BlueprintCallable)
+	void ClimbUp();
+	void HangMontageNotify();
+	UFUNCTION(BlueprintCallable)
+		void DropDown();
+	//void ClimbTheWall();
+
+	void Climb();
 private:
 	void AttackCheck();
 
+public:
+	void PlayHangToCrouchMontage();
 private:	
 	//UPROPERTY()
 	//class UPlayerAnimInstance* MyAnim;
@@ -49,4 +64,10 @@ public:
 		bool IsOnEdge;
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
 		bool IsClimbingUp;
+	UPROPERTY(BlueprintReadWrite, EditAnywhere)
+		FVector WallNormal;
+	UPROPERTY(BlueprintReadWrite, EditAnywhere)
+		FVector WallLocation;
+	UPROPERTY(BlueprintReadWrite, EditAnywhere)
+		FVector HeightLocation;
 };

@@ -34,6 +34,10 @@ public:
 		void Server_SendRide(AActor* _Car, APawn* _Rider) override;
 	UFUNCTION(Server, Reliable, WithValidation)
 		void Server_SendAttack() override;
+	UFUNCTION(Server, Reliable, WithValidation)
+		void Server_SendClimbUp();
+	UFUNCTION(NetMulticast, Reliable, WithValidation)
+		void NetMulticast_SendClimbUp();
 	UFUNCTION()
 		void OnRep_Attack();
 	UPROPERTY(ReplicatedUsing = OnRep_Attack)
