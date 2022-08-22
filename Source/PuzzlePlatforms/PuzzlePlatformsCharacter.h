@@ -41,10 +41,7 @@ protected:
 	void TurnAtRate(float Rate);
 	void LookUpAtRate(float Rate);
 	void GetInTheCar();
-	/** Handler for when a touch input begins. */
-	void TouchStarted(ETouchIndex::Type FingerIndex, FVector Location);
-	/** Handler for when a touch input stops. */
-	void TouchStopped(ETouchIndex::Type FingerIndex, FVector Location);
+	void SeeMouseCursur();
 	virtual void Attack();
 
 
@@ -79,7 +76,7 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Replicator)
 		UMotionInterfaceComponent* DaerimMotionReplicator;
 		//IMotionReplicatorInterface* MotionReplicator;
-
+	bool MouseCursorToggle = false;
 
 protected:
 	UPROPERTY()

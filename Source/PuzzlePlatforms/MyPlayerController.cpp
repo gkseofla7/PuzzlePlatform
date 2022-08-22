@@ -65,3 +65,22 @@ UPlayerInfoWidget* AMyPlayerController::GetHudWidget() const
 {
 	return HUDWidget;
 }
+
+void AMyPlayerController::SetInputModeGameAndUI()
+{
+	FInputModeGameAndUI InputMode;
+	InputMode.SetHideCursorDuringCapture (true);
+	InputMode.SetLockMouseToViewportBehavior(EMouseLockMode::DoNotLock);
+	
+	SetInputMode(InputMode);
+	SetShowMouseCursor(true);
+}
+
+void AMyPlayerController::SetInputModeGame()
+{
+	FInputModeGameOnly InputMode;
+	InputMode.SetConsumeCaptureMouseDown(false);
+
+	SetInputMode(InputMode);
+	SetShowMouseCursor(false);
+}

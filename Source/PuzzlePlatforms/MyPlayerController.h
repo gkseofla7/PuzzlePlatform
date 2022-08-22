@@ -19,7 +19,8 @@ public:
 
 	virtual void PostInitializeComponents() override;
 	virtual void OnPossess(APawn* aPawn) override;
-
+	void SetInputModeGameAndUI();
+	void SetInputModeGame();
 	class UPlayerInfoWidget* GetHudWidget() const;
 
 protected:
