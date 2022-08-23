@@ -28,11 +28,11 @@ protected:
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = UI)
 		TSubclassOf<class UPlayerInfoWidget> HUDWidgetClass;
-	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = UI)
-		TSubclassOf<class UUserWidget> NewHUDWidgetClass;
+	//UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = UI)
+	//	TSubclassOf<class UUserWidget> NewHUDWidgetClass;
 public:
 	UPROPERTY()
 	class UPlayerInfoWidget* HUDWidget;
-	UPROPERTY()
-		class UUserWidget* NewHUDWidget;
+	//UPROPERTY()
+	//	class UUserWidget* NewHUDWidget;
 };

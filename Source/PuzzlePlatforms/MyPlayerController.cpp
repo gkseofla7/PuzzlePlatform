@@ -4,21 +4,22 @@
 #include "MyPlayerController.h"
 #include "PlayerInfoWidget.h"
 #include "PuzzlePlatformsCharacter.h"
+#include "PuzzlePlatformsGameInstance.h"
 
 #include "MyLobbyGameMode.h"
 AMyPlayerController::AMyPlayerController()
 {
 	static ConstructorHelpers::FClassFinder< UPlayerInfoWidget> UI_HUD_C(TEXT("/Game/PuzzlePlatforms/Widget/WBP_PlayerInfo"));
-	static ConstructorHelpers::FClassFinder< UUserWidget> NEWUI_HUD_C(TEXT("/Game/AbilitySystem/UI/HeadsUpDisplay"));
+	//static ConstructorHelpers::FClassFinder< UUserWidget> NEWUI_HUD_C(TEXT("/Game/AbilitySystem/UI/HeadsUpDisplay"));
 	///Game/AbilitySystem/UI/HeadsUpDisplay
 	if (UI_HUD_C.Succeeded())
 	{
 		HUDWidgetClass = UI_HUD_C.Class;
 	}
-	if (NEWUI_HUD_C.Succeeded())
-	{
-		NewHUDWidgetClass = NEWUI_HUD_C.Class;
-	}
+	//if (NEWUI_HUD_C.Succeeded())
+	//{
+	//	NewHUDWidgetClass = NEWUI_HUD_C.Class;
+	//}
 }
 
 void AMyPlayerController::PostInitializeComponents()
@@ -44,12 +45,13 @@ void AMyPlayerController::BeginPlay()
 		SetInputMode(InputMode);
 		//위젯은 무조건 beginplay에서 초기화시켜야됨
 		HUDWidget = CreateWidget<UPlayerInfoWidget>(this, HUDWidgetClass);
-		NewHUDWidget = CreateWidget<UUserWidget>(this, NewHUDWidgetClass);
+		//NewHUDWidget = CreateWidget<UUserWidget>(this, NewHUDWidgetClass);
 
 		if (HUDWidget != nullptr)
 		{
 			HUDWidget->AddToViewport();
-			NewHUDWidget->AddToViewport();
+			//Cast<UPuzzlePlatformsGameInstance>(GetGameInstance());
+			Cast<UPuzzlePlatformsGameInstance>(GetGameInstance())->GetHeadsUpDisplay()->AddToViewport();
 			UE_LOG(LogTemp, Warning, TEXT("Here Is"));
 			auto MyPawn = Cast<APuzzlePlatformsCharacter>(GetPawn());
 			if (MyPawn != nullptr)

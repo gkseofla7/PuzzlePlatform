@@ -9,6 +9,9 @@
 #include "PlayersComponent/MotionInterfaceComponent.h"
 #include "PuzzlePlatformsCharacter.generated.h"
 
+
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FInterruptCastingDeleagate);
+
 UCLASS(config=Game, BlueprintType)
 class APuzzlePlatformsCharacter : public ACharacter
 {
@@ -77,7 +80,8 @@ public:
 		UMotionInterfaceComponent* DaerimMotionReplicator;
 		//IMotionReplicatorInterface* MotionReplicator;
 	bool MouseCursorToggle = false;
-
+	UPROPERTY(BlueprintAssignable,BlueprintCallable)
+	FInterruptCastingDeleagate InterruptCasting;
 protected:
 	UPROPERTY()
 		UAnimInstance* MyAnim;

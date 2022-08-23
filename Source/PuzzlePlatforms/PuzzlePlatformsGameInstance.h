@@ -49,18 +49,19 @@ public:
 
 	FMyCharacterrData* GetMyCharacterData(int32 Level);
 	
-
-
+	UFUNCTION(BlueprintCallable)
+	class UUserWidget* GetHeadsUpDisplay() { return HeadsUpDisplay; }
 
 
 private:
 	TSubclassOf<class UUserWidget>MenuClass;
 	TSubclassOf<class UUserWidget>CloseMenuClass;
 	TSubclassOf<class UUserWidget> SetNameMenuClass;
-
+	TSubclassOf<class UUserWidget> NewHUDWidgetClass;
 	class UMainMenu* Menu;
 	class UQuitMenu* QuitMenu;
 	class USetNameMenu* SetNameMenu;
+
 	IOnlineSessionPtr SessionInterface;
 	TSharedPtr<class FOnlineSessionSearch> SessionSearch;
 	TOptional<FText>HostName;
@@ -74,4 +75,7 @@ private:
 	void OnNetworkFailure(UWorld* World, UNetDriver* NetDriver, ENetworkFailure::Type FailureType, const FString& ErrorString);
 
 	void CreateSession();
+public:
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = UI)
+		class UUserWidget* HeadsUpDisplay;
 };

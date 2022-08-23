@@ -4,6 +4,7 @@
 #include "PuzzlePlatformsCharacter.h"
 #include "UObject/ConstructorHelpers.h"
 #include "TimerManager.h"
+#include "Blueprint/UserWidget.h"
 
 #include "MyPlayerState.h"
 #include "PuzzlePlatformsGameInstance.h"
@@ -25,7 +26,14 @@ APuzzlePlatformsGameMode::APuzzlePlatformsGameMode()
 	//DefaultPawnClass = AMyProjectPawn::StaticClass();
 	PlayerStateClass = AMyPlayerState::StaticClass();
 	PlayerControllerClass = AMyPlayerController::StaticClass();
+
+	
 }
+
+//void APuzzlePlatformsGameMode::BeginPlay()
+//{
+//	Super::BeginPlay();
+//}
 
 void APuzzlePlatformsGameMode::PostLogin(APlayerController* NewPlayer)
 {

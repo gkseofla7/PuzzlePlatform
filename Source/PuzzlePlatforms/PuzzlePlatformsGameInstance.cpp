@@ -34,6 +34,13 @@ UPuzzlePlatformsGameInstance::UPuzzlePlatformsGameInstance(const FObjectInitiali
 		MyCharacterTable = DT_MYCHARACTER.Object;
 		ABCHECK(MyCharacterTable->GetRowMap().Num() > 0);
 	}
+
+	//static ConstructorHelpers::FClassFinder< UUserWidget> NEWUI_HUD_C(TEXT("/Game/AbilitySystem/UI/HeadsUpDisplay"));
+	static ConstructorHelpers::FClassFinder< UUserWidget> NEWUI_HUD_C(TEXT("/Game/AbilitySystem/HeadsUpDisplay"));
+	if (NEWUI_HUD_C.Succeeded())
+	{
+		NewHUDWidgetClass = NEWUI_HUD_C.Class;
+	}
 }
 
 void UPuzzlePlatformsGameInstance::Init()
@@ -66,8 +73,9 @@ void UPuzzlePlatformsGameInstance::Init()
 		GEngine->OnNetworkFailure().AddUObject(this, &UPuzzlePlatformsGameInstance::OnNetworkFailure);
 	}
 
+	HeadsUpDisplay = CreateWidget<UUserWidget>(this, NewHUDWidgetClass);
 
-	UE_LOG(LogTemp, Warning, TEXT("Character Level 3 DropExp %d"), GetMyCharacterData(3)->DropExp);
+
 }
 FMyCharacterrData* UPuzzlePlatformsGameInstance::GetMyCharacterData(int32 Level)
 {
