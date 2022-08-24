@@ -26,7 +26,20 @@ protected:
 public:	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
+	
+
+public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	FAbilityDetailsStruct AbilityDetails;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	class USphereComponent* AbilityRoot;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+		class APuzzlePlatformsCharacter* PlayerRef;
+	//UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	//	class ACharacter* Caster;
+
+
+
+
 };
 

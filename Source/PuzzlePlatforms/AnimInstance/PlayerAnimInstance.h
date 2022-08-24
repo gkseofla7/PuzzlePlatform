@@ -31,7 +31,7 @@ public:
 	FOnAttackHitCheckDelegate OnAttackHitCheck;
 	FOnAttackEndCheckDelegate OnAttackEndCheck;
 	FOnHangMovePlaceDelegate OnHangMovePlace;
-	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly, Category = Attack)
+	UPROPERTY(VisibleDefaultsOnly, BlueprintReadWrite, Category = Attack)
 		bool IsAttacking = false;
 private:
 

@@ -3,12 +3,14 @@
 
 #include "Ability.h"
 
+#include "Components/SphereComponent.h"
 // Sets default values
 AAbility::AAbility()
 {
  	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
-
+	AbilityRoot = CreateDefaultSubobject<USphereComponent>(TEXT("AbilityRoot"));
+	RootComponent = AbilityRoot;
 }
 
 // Called when the game starts or when spawned
