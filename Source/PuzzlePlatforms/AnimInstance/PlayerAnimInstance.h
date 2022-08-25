@@ -11,6 +11,7 @@ DECLARE_MULTICAST_DELEGATE(FOnNextAttackCheckDelegate);
 DECLARE_MULTICAST_DELEGATE(FOnAttackHitCheckDelegate);
 DECLARE_MULTICAST_DELEGATE(FOnAttackEndCheckDelegate);
 DECLARE_MULTICAST_DELEGATE(FOnHangMovePlaceDelegate);
+DECLARE_MULTICAST_DELEGATE(FOnFireBallDelegate);
 UCLASS()
 class PUZZLEPLATFORMS_API UPlayerAnimInstance : public UAnimInstance
 {
@@ -22,6 +23,7 @@ public:
 	virtual void NativeUpdateAnimation(float DeltaSeconds) override;//이건 Tick마다 호출하는 함수
 
 	void PlaySwordAttackMontage();
+	void PlayFireballAttackMontage();
 	void PlayHangToCrouchMontage();
 	void JumpToAttackMontageSection(int32 NewSection);
 	UAnimMontage* GetHangToCrouchMontage() { return HangToCrouchMontage; }
@@ -31,9 +33,10 @@ public:
 	FOnAttackHitCheckDelegate OnAttackHitCheck;
 	FOnAttackEndCheckDelegate OnAttackEndCheck;
 	FOnHangMovePlaceDelegate OnHangMovePlace;
+	FOnFireBallDelegate OnFireBall;
 	UPROPERTY(VisibleDefaultsOnly, BlueprintReadWrite, Category = Attack)
 		bool IsAttacking = false;
-private:
+	public:
 
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Pawn, Meta = (AllowPrivateAccess = true))
@@ -54,6 +57,8 @@ private:
 		UAnimMontage* SwordAttackMontage;
 	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly, Category = Attack, Meta = (AllowPrivateAccess = true))
 		UAnimMontage* HangToCrouchMontage;
+	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly, Category = Attack, Meta = (AllowPrivateAccess = true))
+		UAnimMontage* FireballAttackMontage;
 
 	UFUNCTION()
 		void AnimNotify_NextAttackCheck();
@@ -61,6 +66,8 @@ private:
 		void AnimNotify_EndAttack();
 	UFUNCTION()
 		void AnimNotify_MovePlace();
+	UFUNCTION()
+		void AnimNotify_LaunchProjectile();
 	FName GetAttackMontageSectionName(int32 Section);
 private:
 	UFUNCTION()

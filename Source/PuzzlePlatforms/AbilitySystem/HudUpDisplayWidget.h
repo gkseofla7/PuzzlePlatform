@@ -17,7 +17,7 @@ public:
 	UHudUpDisplayWidget(const FObjectInitializer& ObjectInitializer);
 		
 	UFUNCTION(BlueprintImplementableEvent, BlueprintCallable)
-		class UUserWidget* DisplayCastBar(class AAbility* CastToAbility);
+		class UCastBarWidget* DisplayCastBar(class AAbility* CastToAbility);
 
 public:
 	UPROPERTY(meta = (BindWidget), BlueprintReadWrite)

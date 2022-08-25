@@ -9,6 +9,7 @@
 /**
  * 
  */
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FCastSuccessfulDeleagate);
 UCLASS()
 class PUZZLEPLATFORMS_API UCastBarWidget : public UUserWidget
 {
@@ -33,4 +34,6 @@ public:
 		class APuzzlePlatformsCharacter* PlayerCharacter;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	FTimerHandle CastTimer;
+	UPROPERTY(BlueprintAssignable, BlueprintCallable)
+	FCastSuccessfulDeleagate CastSuccessful;
 };

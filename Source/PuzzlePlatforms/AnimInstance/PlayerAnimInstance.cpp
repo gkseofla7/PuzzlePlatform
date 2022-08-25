@@ -18,6 +18,16 @@ UPlayerAnimInstance::UPlayerAnimInstance()
 		SwordAttackMontage = SWORD_ATTACK_MONTAGE.Object;
 	}
 
+	static ConstructorHelpers::FObjectFinder<UAnimMontage> FIREBALLATTACKMONTAGE(TEXT(
+		"/Game/Animation/Montage/Fireball_Montage"
+	));
+	if (FIREBALLATTACKMONTAGE.Succeeded())
+	{
+		FireballAttackMontage = FIREBALLATTACKMONTAGE.Object;
+	}
+
+
+
 	static ConstructorHelpers::FObjectFinder<UAnimMontage> HANG_TO_CROUCH_MONTAGE(TEXT(
 		"/Game/Animation/BlendSpace/Hang_to_Crouch_fixed_Montage"
 	));
@@ -68,6 +78,20 @@ void UPlayerAnimInstance::PlaySwordAttackMontage()
 	
 }
 
+void UPlayerAnimInstance::PlayFireballAttackMontage()
+{
+	auto Pawn = TryGetPawnOwner();
+	if (Pawn == nullptr)
+		return;
+	//auto Character = Cast<APuzzlePlatformsCharacter>(Pawn);
+	//int tmp = Cast<Character->MotionReplicator->CurrentCombo;
+
+	//UE_LOG(LogTemp, Warning, TEXT("CurrentCombo : %d"), tmp);
+	Montage_Play(FireballAttackMontage, 1.0);
+
+
+}
+
 void UPlayerAnimInstance::PlayHangToCrouchMontage()
 {
 	Montage_Play(HangToCrouchMontage, 1.0);
@@ -87,7 +111,11 @@ void UPlayerAnimInstance::AnimNotify_EndAttack()
 	OnAttackEndCheck.Broadcast();
 	
 }
-
+void UPlayerAnimInstance::AnimNotify_LaunchProjectile()
+{
+	OnFireBall.Broadcast();
+	UE_LOG(LogTemp, Warning, TEXT("Notify!"));
+}
 void UPlayerAnimInstance::AnimNotify_MovePlace()
 {
 	OnHangMovePlace.Broadcast();

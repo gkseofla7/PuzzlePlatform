@@ -119,10 +119,7 @@ void AWarrior::SetupPlayerInputComponent(class UInputComponent* PlayerInputCompo
 void AWarrior::MoveForward(float Value)
 {
 
-	if (Value != 0)
-	{
-		InterruptCasting.Broadcast();
-	}
+
 	MoveUpDown = Value;
 	if ((Value != 0.0f) && IsClimbing == false)
 	{
@@ -165,10 +162,7 @@ void AWarrior::MoveForward(float Value)
 
 void AWarrior::MoveRight(float Value)
 {
-	if (Value != 0)
-	{
-		InterruptCasting.Broadcast();
-	}
+
 	MoveRightLeft = Value;
 	{
 	//if ((Controller != nullptr) && (Value != 0.0f))

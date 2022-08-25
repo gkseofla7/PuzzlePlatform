@@ -28,12 +28,16 @@ public:
 	virtual void Tick(float DeltaTime) override;
 	UFUNCTION(BlueprintCallable)
 		void BeginCasting();
-	UFUNCTION(BlueprintCallable, BlueprintImplementableEvent)
+	UFUNCTION(BlueprintCallable)
 		void CastAbility();
-	UFUNCTION(BlueprintCallable, BlueprintImplementableEvent)
+	virtual void CastAbility_Implementation() ;
+	UFUNCTION(BlueprintCallable)
 		void InterruptCast();
-	UFUNCTION(BlueprintCallable, BlueprintImplementableEvent)
+	UFUNCTION(BlueprintCallable)
 		void ActivateEffect();
+	virtual void ActivateEffect_Implementation();
+
+	void DetachAbilityFromPlayer();
 public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	FAbilityDetailsStruct AbilityDetails;
