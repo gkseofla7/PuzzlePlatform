@@ -21,7 +21,7 @@ AWarrior::AWarrior()
 		//EquippedItem->Get
 	}
 
-	static ConstructorHelpers::FClassFinder<UAnimInstance> WARRIO_ANIM((TEXT("/Game/Animation/ThirdPerson_AnimBP")));
+	static ConstructorHelpers::FClassFinder<UAnimInstance> WARRIO_ANIM((TEXT("/Game/Animation/BP_WarriorAnim")));
 	if (WARRIO_ANIM.Succeeded())
 	{
 		

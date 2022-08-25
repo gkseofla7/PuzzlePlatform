@@ -2,8 +2,13 @@
 
 
 #include "Ability.h"
+#include "../PuzzlePlatformsCharacter.h"
+#include "../PuzzlePlatformsGameInstance.h"
 
+#include "GameFramework/Character.h"
 #include "Components/SphereComponent.h"
+#include "Kismet/GameplayStatics.h"
+#include "Blueprint/UserWidget.h"
 // Sets default values
 AAbility::AAbility()
 {
@@ -17,6 +22,11 @@ AAbility::AAbility()
 void AAbility::BeginPlay()
 {
 	Super::BeginPlay();
+	//PlayerRef = Cast<APuzzlePlatformsCharacter>(UGameplayStatics::GetPlayerCharacter(GetWorld(),0));
+	//AttachToComponent(PlayerRef->GetMesh(), FAttachmentTransformRules::SnapToTargetNotIncludingScale, "hand_rSocket");
+	//HudUI = Cast< UPuzzlePlatformsGameInstance>(UGameplayStatics::GetGameInstance(GetWorld()))->HeadsUpDisplay;
+
+	//BeginCasting();
 	
 }
 
@@ -27,3 +37,14 @@ void AAbility::Tick(float DeltaTime)
 
 }
 
+void AAbility::BeginCasting()
+{
+	if (AbilityDetails.CastTime > 0)
+	{
+		AttachToComponent(UGameplayStatics::GetPlayerCharacter(GetWorld(), 0)->GetMesh(), FAttachmentTransformRules::SnapToTargetNotIncludingScale, "hand_rSocket");
+		PlayerRef = Cast<APuzzlePlatformsCharacter>(UGameplayStatics::GetPlayerCharacter(GetWorld(), 0));
+		HudUI = 
+			Cast< UPuzzlePlatformsGameInstance>(UGameplayStatics::GetGameInstance(GetWorld()))->HeadsUpDisplay;
+
+	}
+}

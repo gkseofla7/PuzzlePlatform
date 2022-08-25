@@ -5,6 +5,7 @@
 #include "PlayerInfoWidget.h"
 #include "PuzzlePlatformsCharacter.h"
 #include "PuzzlePlatformsGameInstance.h"
+#include "AbilitySystem/HudUpDisplayWidget.h"
 
 #include "MyLobbyGameMode.h"
 AMyPlayerController::AMyPlayerController()

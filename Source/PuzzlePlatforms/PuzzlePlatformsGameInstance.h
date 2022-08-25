@@ -50,7 +50,7 @@ public:
 	FMyCharacterrData* GetMyCharacterData(int32 Level);
 	
 	UFUNCTION(BlueprintCallable)
-	class UUserWidget* GetHeadsUpDisplay() { return HeadsUpDisplay; }
+	class UHudUpDisplayWidget* GetHeadsUpDisplay() { return HeadsUpDisplay; }
 
 
 private:
@@ -77,5 +77,5 @@ private:
 	void CreateSession();
 public:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = UI)
-		class UUserWidget* HeadsUpDisplay;
+		class UHudUpDisplayWidget* HeadsUpDisplay;
 };

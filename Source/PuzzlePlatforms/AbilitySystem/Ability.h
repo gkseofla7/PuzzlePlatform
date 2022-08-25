@@ -26,8 +26,14 @@ protected:
 public:	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
-	
-
+	UFUNCTION(BlueprintCallable)
+		void BeginCasting();
+	UFUNCTION(BlueprintCallable, BlueprintImplementableEvent)
+		void CastAbility();
+	UFUNCTION(BlueprintCallable, BlueprintImplementableEvent)
+		void InterruptCast();
+	UFUNCTION(BlueprintCallable, BlueprintImplementableEvent)
+		void ActivateEffect();
 public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	FAbilityDetailsStruct AbilityDetails;
@@ -35,8 +41,8 @@ public:
 	class USphereComponent* AbilityRoot;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 		class APuzzlePlatformsCharacter* PlayerRef;
-	//UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	//	class ACharacter* Caster;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+		class UHudUpDisplayWidget* HudUI;
 
 
 

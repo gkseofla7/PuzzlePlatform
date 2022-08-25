@@ -11,7 +11,7 @@
 #include "MenuSystem/QuitMenu.h"
 #include "MenuSystem/MainMenu.h"
 #include "MenuSystem/SetNameMenu.h"
-
+#include "AbilitySystem/HudUpDisplayWidget.h"
 const static FName SESSION_NAME = NAME_GameSession;
 
 UPuzzlePlatformsGameInstance::UPuzzlePlatformsGameInstance(const FObjectInitializer& ObjectInitializer)
@@ -73,7 +73,7 @@ void UPuzzlePlatformsGameInstance::Init()
 		GEngine->OnNetworkFailure().AddUObject(this, &UPuzzlePlatformsGameInstance::OnNetworkFailure);
 	}
 
-	HeadsUpDisplay = CreateWidget<UUserWidget>(this, NewHUDWidgetClass);
+	HeadsUpDisplay = Cast< UHudUpDisplayWidget>(CreateWidget<UUserWidget>(this, NewHUDWidgetClass));
 
 
 }
