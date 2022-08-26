@@ -16,7 +16,7 @@ class PUZZLEPLATFORMS_API UActionBarSlotWidget : public UUserWidget
 public:
 	UFUNCTION()
 	void CastButtonClicked();
-
+	void AbilitySpawn(class APuzzlePlatformsCharacter* NewPlayer);
 	UActionBarSlotWidget(const FObjectInitializer& ObjectInitializer);
 	//virtual void PreConstruct(bool IsDesignTime) override;
 	virtual void NativePreConstruct();

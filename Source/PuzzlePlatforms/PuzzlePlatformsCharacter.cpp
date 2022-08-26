@@ -11,6 +11,9 @@
 #include "PlayerInfoWidget.h"
 #include "PlayersComponent/SoldierMotionReplicator.h"
 #include "MyLobbyGameMode.h"
+#include "AbilitySystem/ActionBarSlotWidget.h"
+#include "AbilitySystem/HudUpDisplayWidget.h"
+#include "AbilitySystem/ActionBarWidget.h"
 
 #include "HeadMountedDisplayFunctionLibrary.h"
 #include "Camera/CameraComponent.h"
@@ -24,7 +27,6 @@
 #include "Components/TextBlock.h"
 #include "Components/SphereComponent.h"
 #include "Kismet/KismetMathLibrary.h"
-
 
 #include "Net/UnrealNetwork.h"
 
@@ -110,6 +112,7 @@ void APuzzlePlatformsCharacter::SetupPlayerInputComponent(class UInputComponent*
 	PlayerInputComponent->BindAction("Jump", IE_Released, this, &ACharacter::StopJumping);
 	PlayerInputComponent->BindAction("GetInTheCar", IE_Pressed, this, &APuzzlePlatformsCharacter::GetInTheCar);
 	PlayerInputComponent->BindAction("SkillTree", IE_Pressed, this, &APuzzlePlatformsCharacter::SeeMouseCursur);
+	PlayerInputComponent->BindAction("Skill1", IE_Pressed, this, &APuzzlePlatformsCharacter::Skill1Clicked);
 
 	PlayerInputComponent->BindAxis("MoveForward", this, &APuzzlePlatformsCharacter::MoveForward);
 	PlayerInputComponent->BindAxis("MoveRight", this, &APuzzlePlatformsCharacter::MoveRight);
@@ -144,16 +147,12 @@ void APuzzlePlatformsCharacter::PostInitializeComponents()
 void APuzzlePlatformsCharacter::BeginPlay()
 {
 	Super::BeginPlay();
-	
+	HeadsUpDisplayRef = Cast< UPuzzlePlatformsGameInstance>(UGameplayStatics::GetGameInstance(GetWorld()))->HeadsUpDisplay;
 	//Not Working
 	//FName identifier = TEXT("Not Yet");
 	auto gamemode = Cast<AMyLobbyGameMode>(UGameplayStatics::GetGameMode(GetWorld()));
 	if (IsLocallyControlled()&& gamemode != nullptr)
 	{
-		//FText Name = Cast<AMyPlayerController>(GetController())->HUDWidget->PlayerName->GetText();
-		//if(Name.EqualTo(FText::FromName(identifier)))
-
-		UE_LOG(LogTemp, Warning, TEXT("LoadSetNameMenu"));
 		Cast<UPuzzlePlatformsGameInstance>(GetGameInstance())->LoadSetNameMenu();
 	}
 }
@@ -161,9 +160,6 @@ void APuzzlePlatformsCharacter::BeginPlay()
 void APuzzlePlatformsCharacter::Tick(float DeltaTime)
 {//시작하자마자 로그인되는거임;;ㅋㅋ
 	Super::Tick(DeltaTime);
-	DrawDebugString(GetWorld(), FVector(0, 0, 150), GetEnumText(GetLocalRole()), this, FColor::White, DeltaTime);
-
-
 }
 
 
@@ -218,26 +214,18 @@ void APuzzlePlatformsCharacter::GetInTheCar()
 }
 
 
-
-
 void APuzzlePlatformsCharacter::TurnAtRate(float Rate)
 {
-	// calculate delta for this frame from the rate information
 	AddControllerYawInput(Rate * BaseTurnRate * GetWorld()->GetDeltaSeconds());
 }
 
 void APuzzlePlatformsCharacter::LookUpAtRate(float Rate)
 {
-	// calculate delta for this frame from the rate information
 	AddControllerPitchInput(Rate * BaseLookUpRate * GetWorld()->GetDeltaSeconds());
 }
 
 void APuzzlePlatformsCharacter::MoveForward(float Value)
 {
-	//if (Value != 0)
-	//{
-	//	InterruptCasting.Broadcast();
-	//}
 	if ((Controller != nullptr) && (Value != 0.0f))
 	{
 		// find out which way is forward
@@ -252,10 +240,6 @@ void APuzzlePlatformsCharacter::MoveForward(float Value)
 
 void APuzzlePlatformsCharacter::MoveRight(float Value)
 {
-	//if (Value != 0)
-	//{
-	//	InterruptCasting.Broadcast();
-	//}
 	if ( (Controller != nullptr) && (Value != 0.0f) )
 	{
 		// find out which way is right
@@ -362,4 +346,31 @@ FRotator APuzzlePlatformsCharacter::GetMuzzleRotation()
 	FRotator temp = UKismetMathLibrary::FindLookAtRotation(Start, EndTrace);
 
 	return temp;
+}
+
+void APuzzlePlatformsCharacter::Skill1Clicked()
+{
+	Server_Skill1Clicked();
+}
+
+void APuzzlePlatformsCharacter::Server_Skill1Clicked_Implementation()
+{
+	HeadsUpDisplayRef->ActionBar_UI->ActionBarSlot_UI->AbilitySpawn(this);
+	//NetMulticast_Skill1Clicked();
+}
+
+void APuzzlePlatformsCharacter::NetMulticast_Skill1Clicked_Implementation()
+{
+	//UE_LOG(LogTemp,Warning, TEXT(""))
+	HeadsUpDisplayRef->ActionBar_UI->ActionBarSlot_UI->AbilitySpawn(this);
+}
+
+bool APuzzlePlatformsCharacter::Server_Skill1Clicked_Validate()
+{
+	return true;
+}
+
+bool APuzzlePlatformsCharacter::NetMulticast_Skill1Clicked_Validate()
+{
+	return true;
 }

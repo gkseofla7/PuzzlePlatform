@@ -21,8 +21,7 @@ public:
 	virtual void CastAbility_Implementation() override;
 	virtual void ActivateEffect_Implementation() override;
 public:
-	UPROPERTY(BlueprintReadWrite, EditAnywhere)
-	class UPlayerAnimInstance* AsPlayerAnimInstance;
+
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
 		class	UProjectileMovementComponent* ProjectileMovement_;
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)

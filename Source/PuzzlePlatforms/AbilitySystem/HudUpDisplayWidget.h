@@ -22,5 +22,7 @@ public:
 public:
 	UPROPERTY(meta = (BindWidget), BlueprintReadWrite)
 	class UCastBarWidget* CastBar_UI;
+	UPROPERTY(meta = (BindWidget), BlueprintReadWrite)
+		class UActionBarWidget* ActionBar_UI;
 	//TSubclassOf<class UUserWidget>CastBarClass;
 };

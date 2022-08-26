@@ -32,6 +32,7 @@ public:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category=Camera)
 	float BaseLookUpRate;
 	FRotator GetMuzzleRotation();
+	void Skill1Clicked();
 protected:
 	virtual void PostInitializeComponents() override;
 	virtual void BeginPlay() override;
@@ -67,6 +68,11 @@ public:
 	virtual float TakeDamage(float DamageAmount, struct FDamageEvent const& DamageEvent,
 		class AController* EventInstigator, AActor* DamageCauser) override;
 
+	UFUNCTION(Server, Reliable, WithValidation)
+		void Server_Skill1Clicked();
+	UFUNCTION(NetMulticast, Reliable, WithValidation)
+		void NetMulticast_Skill1Clicked();
+
 public:
 
 	UPROPERTY(EditAnywhere,BlueprintReadWrite, Category = Stat)
@@ -82,6 +88,7 @@ public:
 	bool MouseCursorToggle = false;
 	UPROPERTY(BlueprintAssignable,BlueprintCallable)
 	FInterruptCastingDeleagate InterruptCasting;
+	class UHudUpDisplayWidget* HeadsUpDisplayRef;
 protected:
 	UPROPERTY()
 		UAnimInstance* MyAnim;

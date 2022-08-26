@@ -5,6 +5,7 @@
 
 
 #include "Ability.h"
+#include"../PuzzlePlatformsCharacter.h"
 
 #include "Components/Image.h"
 #include "Components/Button.h"
@@ -42,7 +43,6 @@ bool UActionBarSlotWidget::Initialize()
 	if (!Success) return false;
 
 	if (!ensure(CastButton != nullptr)) return false;
-	UE_LOG(LogTemp, Warning, TEXT("Hello!!"));
 	CastButton->OnClicked.AddDynamic(this, &UActionBarSlotWidget::CastButtonClicked);
 
 
@@ -54,9 +54,25 @@ void UActionBarSlotWidget::CastButtonClicked()
 {
 	FTransform PlayerTransform = UGameplayStatics::GetPlayerCharacter(GetWorld(), 0)->GetActorTransform();
 	FActorSpawnParameters Params;
+	auto ability = GetWorld()->SpawnActor<AAbility>(AbilityClass, PlayerTransform);
 
+	ability->PlayerRef = Cast<APuzzlePlatformsCharacter>(UGameplayStatics::GetPlayerCharacter(GetWorld(), 0));
+	//UWorld::SpawnActor(AbilityClass, PlayerTransform);
+	//GetWorld()->SpawnActor();
+}
 
-	GetWorld()->SpawnActor<AAbility>(AbilityClass, PlayerTransform);
+void UActionBarSlotWidget::AbilitySpawn(APuzzlePlatformsCharacter* NewPlayer)
+{
+	FTransform PlayerTransform = NewPlayer->GetActorTransform();
+	FActorSpawnParameters Params;
+	FActorSpawnParameters SpawnInfo;
+
+	SpawnInfo.Owner = NewPlayer;
+	SpawnInfo.Instigator = NewPlayer;
+	//auto ability = GetWorld()->SpawnActorDeferred<AAbility>(AbilityClass, PlayerTransform,NewPlayer,NewPlayer);
+	auto ability = GetWorld()->SpawnActor<AAbility>(AbilityClass, PlayerTransform, SpawnInfo);
+
+		//ability->PlayerRef = NewPlayer;//컨트롤러가 있는 플레이어
 	//UWorld::SpawnActor(AbilityClass, PlayerTransform);
 	//GetWorld()->SpawnActor();
 }

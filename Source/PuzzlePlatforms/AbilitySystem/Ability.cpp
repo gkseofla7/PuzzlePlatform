@@ -19,6 +19,7 @@ AAbility::AAbility()
 	PrimaryActorTick.bCanEverTick = true;
 	AbilityRoot = CreateDefaultSubobject<USphereComponent>(TEXT("AbilityRoot"));
 	RootComponent = AbilityRoot;
+	bReplicates = true;
 }
 
 // Called when the game starts or when spawned
@@ -28,12 +29,12 @@ void AAbility::BeginPlay()
 
 	if (AbilityDetails.CastTime > 0)
 	{
-
-
-		AttachToComponent(UGameplayStatics::GetPlayerCharacter(GetWorld(), 0)->GetMesh(), FAttachmentTransformRules::SnapToTargetNotIncludingScale, "hand_rSocket");
-		PlayerRef = Cast<APuzzlePlatformsCharacter>(UGameplayStatics::GetPlayerCharacter(GetWorld(), 0));
+		UE_LOG(LogTemp, Warning, TEXT("BeginPlay"));
 
 	
+		PlayerRef = Cast<APuzzlePlatformsCharacter>(GetOwner());
+
+		AttachToComponent(PlayerRef->GetMesh(), FAttachmentTransformRules::SnapToTargetNotIncludingScale, "hand_rSocket");
 		HudUI =
 			Cast< UPuzzlePlatformsGameInstance>(UGameplayStatics::GetGameInstance(GetWorld()))->HeadsUpDisplay;
 		BeginCasting();
@@ -84,7 +85,6 @@ void AAbility::ActivateEffect()
 }
 void AAbility::ActivateEffect_Implementation()
 {
-	UE_LOG(LogTemp, Warning, TEXT("First One"));
 }
 
 void AAbility::DetachAbilityFromPlayer()
@@ -95,10 +95,6 @@ void AAbility::DetachAbilityFromPlayer()
 
 	DetachFromActor(FDetachmentTransformRules::KeepWorldTransform);
 	FRotator NewRotation = PlayerRef->GetActorRotation();
-	//FRotator NewRotation = UKismetMathLibrary::MakeRotFromX(PlayerRef->GetActorForwardVector());
-	//FRotator NewRotation = UKismetMathLibrary::MakeRotationFromAxes(PlayerRef->GetActorForwardVector(), PlayerRef->GetActorRightVector(), PlayerRef->GetActorUpVector());
 
-	//SetActorRotation(NewRotation.Quaternion());
-	//UE_LOG(LogTemp, Warning, TEXT("Before Rotation %f, %f, %f"), GetActorRotation().Yaw, GetActorRotation().Roll, GetActorRotation().Pitch);
 }
 
