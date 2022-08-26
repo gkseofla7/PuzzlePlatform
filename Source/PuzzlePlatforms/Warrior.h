@@ -44,6 +44,7 @@ private:
 
 public:
 	void PlayHangToCrouchMontage();
+
 private:	
 	//UPROPERTY()
 	//class UPlayerAnimInstance* MyAnim;
@@ -70,4 +71,9 @@ public:
 		FVector WallLocation;
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
 		FVector HeightLocation;
+
+	UPROPERTY(BlueprintReadWrite, EditAnywhere)
+		TSubclassOf<class UUserWidget>CrosshairHudClass;
+	UPROPERTY(BlueprintReadWrite, EditAnywhere)
+		class UUserWidget* HudWidget;
 };

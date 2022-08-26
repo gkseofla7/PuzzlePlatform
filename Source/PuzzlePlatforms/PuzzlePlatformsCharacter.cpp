@@ -23,6 +23,7 @@
 #include "GameFramework/PlayerState.h"
 #include "Components/TextBlock.h"
 #include "Components/SphereComponent.h"
+#include "Kismet/KismetMathLibrary.h"
 
 
 #include "Net/UnrealNetwork.h"
@@ -328,4 +329,37 @@ void APuzzlePlatformsCharacter::SeeMouseCursur()
 		controller->SetInputModeGame();
 		MouseCursorToggle = false;
 	}
+}
+
+FRotator APuzzlePlatformsCharacter::GetMuzzleRotation()
+{
+
+	UCameraComponent* CurrentCam = FollowCamera;
+	//if (CamInUse == ECamInUse::TE_FPCam)
+	//{
+	//	CurrentCam = FPPCam_;
+	//}
+	//else
+	//{
+	//	CurrentCam = FollowCamera;
+	//}
+
+	const float WeaponRange = 20000.f;
+	const FVector StartTrace = CurrentCam->GetComponentLocation();
+	FVector EndTrace = (CurrentCam->GetForwardVector() * WeaponRange) + StartTrace;
+	FVector Start = GetMesh()->GetSocketLocation("hand_rSocket");
+
+	//FVector Target = AimObejctFPP->GetComponentLocation();
+	FHitResult Hit;
+	FCollisionQueryParams QueryParams = FCollisionQueryParams(SCENE_QUERY_STAT(WeaponTrace), false, this);
+	if (GetWorld()->LineTraceSingleByChannel(Hit, StartTrace, EndTrace, ECC_Visibility, QueryParams))
+	{
+		//UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), ImpactParticles, FTransform(Hit.ImpactNormal.Rotation(), Hit.ImpactPoint));
+		EndTrace = Hit.ImpactPoint;
+
+	}
+
+	FRotator temp = UKismetMathLibrary::FindLookAtRotation(Start, EndTrace);
+
+	return temp;
 }

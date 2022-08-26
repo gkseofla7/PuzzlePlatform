@@ -49,6 +49,8 @@ void AAbility_Projectile::ActivateEffect_Implementation()
 	
 
 	ProjectileMovement_->Activate();
+	ProjectileMovement_->Velocity = (PlayerRef->GetMuzzleRotation()).Vector() * 1500;
+	//ProjectileMovement_->SetVelocityInLocalSpace();
 	AsPlayerAnimInstance->IsAttacking = false;
 
 }

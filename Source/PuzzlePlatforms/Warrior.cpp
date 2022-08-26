@@ -7,6 +7,7 @@
 #include "DrawDebugHelpers.h"
 #include "Kismet/KismetSystemLibrary.h"
 #include "Kismet/KismetMathLibrary.h"
+#include "Blueprint/UserWidget.h"
 
 AWarrior::AWarrior()
 {
@@ -28,6 +29,14 @@ AWarrior::AWarrior()
 		GetMesh()->SetAnimInstanceClass(WARRIO_ANIM.Class);
 
 	}
+
+	static ConstructorHelpers::FClassFinder<UUserWidget> CrosshairHudBPClass(TEXT("/Game/Weapons/UI/BP_Crosshair_Hud"));
+	if (CrosshairHudBPClass.Succeeded())
+	{
+		CrosshairHudClass = CrosshairHudBPClass.Class;
+
+	}
+	
 }
 void AWarrior::PostInitializeComponents()
 {
@@ -52,10 +61,19 @@ void AWarrior::BeginPlay()
 	Anim->OnHangMovePlace.AddLambda([this]()->void {
 		HangMontageNotify();
 		});
+
+	if (CrosshairHudClass != nullptr)
+	{
+
+		HudWidget = CreateWidget<UUserWidget>(GetWorld(), CrosshairHudClass);
+		HudWidget->AddToViewport();
+
+	}
 }
 void AWarrior::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
+
 	ForwardTrace();
 	HeightTrace();
 }

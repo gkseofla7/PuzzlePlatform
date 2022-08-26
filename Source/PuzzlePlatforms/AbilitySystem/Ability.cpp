@@ -91,10 +91,14 @@ void AAbility::DetachAbilityFromPlayer()
 {
 
 
-	UE_LOG(LogTemp, Warning, TEXT("Detach"));
+
 
 	DetachFromActor(FDetachmentTransformRules::KeepWorldTransform);
-	FRotator NewRotation = UKismetMathLibrary::MakeRotFromX(PlayerRef->GetActorForwardVector());
-	SetActorRotation(NewRotation.Quaternion());
+	FRotator NewRotation = PlayerRef->GetActorRotation();
+	//FRotator NewRotation = UKismetMathLibrary::MakeRotFromX(PlayerRef->GetActorForwardVector());
+	//FRotator NewRotation = UKismetMathLibrary::MakeRotationFromAxes(PlayerRef->GetActorForwardVector(), PlayerRef->GetActorRightVector(), PlayerRef->GetActorUpVector());
+
+	//SetActorRotation(NewRotation.Quaternion());
+	//UE_LOG(LogTemp, Warning, TEXT("Before Rotation %f, %f, %f"), GetActorRotation().Yaw, GetActorRotation().Roll, GetActorRotation().Pitch);
 }
 
