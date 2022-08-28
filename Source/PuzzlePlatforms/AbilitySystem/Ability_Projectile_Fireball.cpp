@@ -14,7 +14,17 @@
 AAbility_Projectile_Fireball::AAbility_Projectile_Fireball()
 	:Super()
 {
+	AbilityRoot->OnComponentHit.AddDynamic(this, &AAbility_Projectile_Fireball::OnHit);
+	AbilityRoot->SetNotifyRigidBodyCollision(true);
+	//SetNotifyRigidBodyCollision(true);
+	//OnActorHit.AddDynamic(this, &AAbility_Projectile_Fireball::OnHit);
 	bReplicates = true;
+
+	static ConstructorHelpers::FObjectFinder<UParticleSystem> ParticleAsset(TEXT("/Game/StarterContent/Particles/P_Explosion"));
+	if (ParticleAsset.Succeeded())
+	{
+		ParticleTemplate = ParticleAsset.Object;
+	}
 }
 void AAbility_Projectile_Fireball::BeginPlay()
 {
@@ -81,3 +91,25 @@ bool AAbility_Projectile_Fireball::NetMulticast_SetVelocity_Validate(FVector New
 {
 	return true;
 }
+
+void AAbility_Projectile_Fireball::NetMulticast_Spark_Implementation(FVector Location)
+{
+	UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), ParticleTemplate,Location, FRotator(0, 0, 0));
+}
+
+bool AAbility_Projectile_Fireball::NetMulticast_Spark_Validate(FVector Location)
+{
+	return true;
+}
+
+void AAbility_Projectile_Fireball::OnHit(UPrimitiveComponent* HitComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit)
+{
+	UE_LOG(LogTemp, Warning, TEXT("Hit"));
+	NetMulticast_Spark(Hit.Location);
+	Destroy();
+}
+
+//void AAbility_Projectile_Fireball::ReceiveHit(class UPrimitiveComponent* MyComp, AActor* Other, class UPrimitiveComponent* OtherComp, bool bSelfMoved, FVector HitLocation, FVector HitNormal, FVector NormalImpulse, const FHitResult& Hit)
+//{
+//
+//}

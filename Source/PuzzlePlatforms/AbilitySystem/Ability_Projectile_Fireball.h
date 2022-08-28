@@ -24,7 +24,16 @@ public:
 		void Server_SetVelocity(FVector NewVelocity);
 	UFUNCTION(NetMulticast, Reliable, WithValidation)
 		void NetMulticast_SetVelocity(FVector NewVelocity);
+	UFUNCTION(NetMulticast, Reliable, WithValidation)
+		void NetMulticast_Spark(FVector Location);
+	UFUNCTION()
+		//void OnHit(class UPrimitiveComponent* MyComp, AActor* Other, class UPrimitiveComponent* OtherComp, bool bSelfMoved, FVector HitLocation, FVector HitNormal, FVector NormalImpulse, const FHitResult& Hit);
+		void OnHit(UPrimitiveComponent* HitComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit);
+	//virtual void ReceiveHit(class UPrimitiveComponent* MyComp,class AActor* Other,class UPrimitiveComponent* OtherComp,	bool bSelfMoved,	FVector HitLocation,	FVector HitNormal,	FVector NormalImpulse,	const FHitResult& Hit) override;
+
 public:
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
 		class UPlayerAnimInstance* AsPlayerAnimInstance;
+
+	class UParticleSystem* ParticleTemplate;
 };
