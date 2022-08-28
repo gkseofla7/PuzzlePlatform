@@ -12,8 +12,7 @@ AAbility_Projectile::AAbility_Projectile()
 	:Super()
 {
 	ProjectileMovement_ = CreateDefaultSubobject<UProjectileMovementComponent>(TEXT("ProjectileMovement_"));
-	ParticleSystemComponent = CreateDefaultSubobject<UParticleSystemComponent>(TEXT("ParticleSystemComponent"));
-	ParticleSystemComponent->SetupAttachment(RootComponent);
+
 	ProjectileMovement_->InitialSpeed = 800;
 	ProjectileMovement_->MaxSpeed = 800;
 	ProjectileMovement_->ProjectileGravityScale = 0;

@@ -4,25 +4,28 @@
 
 #include "CoreMinimal.h"
 #include "Ability.h"
-#include "Ability_Projectile.generated.h"
+#include "Ability_AoE.generated.h"
 
 /**
  * 
  */
 UCLASS()
-class PUZZLEPLATFORMS_API AAbility_Projectile : public AAbility
+class PUZZLEPLATFORMS_API AAbility_AoE : public AAbility
 {
 	GENERATED_BODY()
-protected:
-	AAbility_Projectile();
-	virtual void BeginPlay() override;
-public:
+	
 
+public:
+	AAbility_AoE();
+	virtual void BeginPlay();
 	virtual void CastAbility_Implementation() override;
 	virtual void ActivateEffect_Implementation() override;
-public:
+	
 
+
+
+public:
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
-		class	UProjectileMovementComponent* ProjectileMovement_;
+		class UPlayerAnimInstance* AsPlayerAnimInstance;
 
 };

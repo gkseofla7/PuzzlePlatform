@@ -113,6 +113,7 @@ void APuzzlePlatformsCharacter::SetupPlayerInputComponent(class UInputComponent*
 	PlayerInputComponent->BindAction("GetInTheCar", IE_Pressed, this, &APuzzlePlatformsCharacter::GetInTheCar);
 	PlayerInputComponent->BindAction("SkillTree", IE_Pressed, this, &APuzzlePlatformsCharacter::SeeMouseCursur);
 	PlayerInputComponent->BindAction("Skill1", IE_Pressed, this, &APuzzlePlatformsCharacter::Skill1Clicked);
+	PlayerInputComponent->BindAction("Skill2", IE_Pressed, this, &APuzzlePlatformsCharacter::Skill2Clicked);
 
 	PlayerInputComponent->BindAxis("MoveForward", this, &APuzzlePlatformsCharacter::MoveForward);
 	PlayerInputComponent->BindAxis("MoveRight", this, &APuzzlePlatformsCharacter::MoveRight);
@@ -352,6 +353,13 @@ void APuzzlePlatformsCharacter::Skill1Clicked()
 {
 	Server_Skill1Clicked();
 }
+
+void APuzzlePlatformsCharacter::Skill2Clicked()
+{
+	HeadsUpDisplayRef->ActionBar_UI->ActionBarSlot_UI_1->AbilitySpawn(this);
+	//Server_Skill1Clicked();
+}
+
 
 void APuzzlePlatformsCharacter::Server_Skill1Clicked_Implementation()
 {

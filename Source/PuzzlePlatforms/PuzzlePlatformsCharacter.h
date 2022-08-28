@@ -33,6 +33,7 @@ public:
 	float BaseLookUpRate;
 	FRotator GetMuzzleRotation();
 	void Skill1Clicked();
+	void Skill2Clicked();
 protected:
 	virtual void PostInitializeComponents() override;
 	virtual void BeginPlay() override;

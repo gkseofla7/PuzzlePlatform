@@ -36,6 +36,14 @@ UPlayerAnimInstance::UPlayerAnimInstance()
 		HangToCrouchMontage = HANG_TO_CROUCH_MONTAGE.Object;
 	}
 
+	static ConstructorHelpers::FObjectFinder<UAnimMontage> AREA_ATTACK_MONTAGE(TEXT(
+		"/Game/Animation/Montage/AoE_Montage"
+	));
+	if (AREA_ATTACK_MONTAGE.Succeeded())
+	{
+		AreaAttackMontage = AREA_ATTACK_MONTAGE.Object;
+	}
+
 	IsAttacking = false;
 }
 
@@ -67,27 +75,21 @@ void UPlayerAnimInstance::NativeUpdateAnimation(float DeltaSeconds)
 
 void UPlayerAnimInstance::PlaySwordAttackMontage()
 {
-	auto Pawn = TryGetPawnOwner();
-	if (Pawn ==nullptr)
-		return;
-	//auto Character = Cast<APuzzlePlatformsCharacter>(Pawn);
-	//int tmp = Cast<Character->MotionReplicator->CurrentCombo;
-
-	//UE_LOG(LogTemp, Warning, TEXT("CurrentCombo : %d"), tmp);
 	Montage_Play(SwordAttackMontage, 1.0);
-	
 }
 
 void UPlayerAnimInstance::PlayFireballAttackMontage()
 {
-	auto Pawn = TryGetPawnOwner();
-	if (Pawn == nullptr)
-		return;
-	//auto Character = Cast<APuzzlePlatformsCharacter>(Pawn);
-	//int tmp = Cast<Character->MotionReplicator->CurrentCombo;
 
-	//UE_LOG(LogTemp, Warning, TEXT("CurrentCombo : %d"), tmp);
 	Montage_Play(FireballAttackMontage, 1.0);
+
+}
+
+void UPlayerAnimInstance::PlayAoEAttackMontage()
+{
+
+
+	Montage_Play(AreaAttackMontage, 1.0);
 
 
 }
@@ -120,6 +122,10 @@ void UPlayerAnimInstance::AnimNotify_MovePlace()
 {
 	OnHangMovePlace.Broadcast();
 
+}
+void UPlayerAnimInstance::AnimNotify_ActivateSpell()
+{
+	OnActivateSpell.Broadcast();
 }
 
 void UPlayerAnimInstance::JumpToAttackMontageSection(int32 NewSection)

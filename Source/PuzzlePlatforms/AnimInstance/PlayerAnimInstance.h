@@ -12,6 +12,7 @@ DECLARE_MULTICAST_DELEGATE(FOnAttackHitCheckDelegate);
 DECLARE_MULTICAST_DELEGATE(FOnAttackEndCheckDelegate);
 DECLARE_MULTICAST_DELEGATE(FOnHangMovePlaceDelegate);
 DECLARE_MULTICAST_DELEGATE(FOnFireBallDelegate);
+DECLARE_MULTICAST_DELEGATE(FOnActivateSpellDelegate);
 UCLASS()
 class PUZZLEPLATFORMS_API UPlayerAnimInstance : public UAnimInstance
 {
@@ -25,6 +26,7 @@ public:
 	void PlaySwordAttackMontage();
 	void PlayFireballAttackMontage();
 	void PlayHangToCrouchMontage();
+	void PlayAoEAttackMontage();
 	void JumpToAttackMontageSection(int32 NewSection);
 	UAnimMontage* GetHangToCrouchMontage() { return HangToCrouchMontage; }
 
@@ -34,6 +36,7 @@ public:
 	FOnAttackEndCheckDelegate OnAttackEndCheck;
 	FOnHangMovePlaceDelegate OnHangMovePlace;
 	FOnFireBallDelegate OnFireBall;
+	FOnActivateSpellDelegate OnActivateSpell;
 	UPROPERTY(VisibleDefaultsOnly, BlueprintReadWrite, Category = Attack)
 		bool IsAttacking = false;
 	public:
@@ -59,6 +62,8 @@ public:
 		UAnimMontage* HangToCrouchMontage;
 	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly, Category = Attack, Meta = (AllowPrivateAccess = true))
 		UAnimMontage* FireballAttackMontage;
+	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly, Category = Attack, Meta = (AllowPrivateAccess = true))
+		UAnimMontage* AreaAttackMontage;
 
 	UFUNCTION()
 		void AnimNotify_NextAttackCheck();
@@ -68,6 +73,8 @@ public:
 		void AnimNotify_MovePlace();
 	UFUNCTION()
 		void AnimNotify_LaunchProjectile();
+	UFUNCTION()
+		void AnimNotify_ActivateSpell();
 	FName GetAttackMontageSectionName(int32 Section);
 private:
 	UFUNCTION()

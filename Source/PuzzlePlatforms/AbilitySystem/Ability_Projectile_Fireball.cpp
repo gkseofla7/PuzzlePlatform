@@ -31,6 +31,7 @@ void AAbility_Projectile_Fireball::BeginPlay()
 	Super::BeginPlay();
 	auto warrior = Cast<AWarrior>(PlayerRef);
 	bReplicates = true;
+	AttachToComponent(PlayerRef->GetMesh(), FAttachmentTransformRules::SnapToTargetNotIncludingScale, "hand_rSocket");
 	AsPlayerAnimInstance = Cast<UPlayerAnimInstance>(warrior->GetMesh()->GetAnimInstance());
 	AsPlayerAnimInstance->Montage_JumpToSection(FName("Defualt"), AsPlayerAnimInstance->FireballAttackMontage);
 	AsPlayerAnimInstance->IsAttacking = true;

@@ -43,6 +43,8 @@ public:
 	FAbilityDetailsStruct AbilityDetails;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	class USphereComponent* AbilityRoot;
+	UPROPERTY(BlueprintReadWrite, EditAnywhere)
+		class UParticleSystemComponent* ParticleSystemComponent;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 		class APuzzlePlatformsCharacter* PlayerRef;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)

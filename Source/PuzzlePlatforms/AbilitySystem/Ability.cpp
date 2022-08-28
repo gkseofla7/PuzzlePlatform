@@ -19,13 +19,16 @@ AAbility::AAbility()
 	PrimaryActorTick.bCanEverTick = true;
 	AbilityRoot = CreateDefaultSubobject<USphereComponent>(TEXT("AbilityRoot"));
 	RootComponent = AbilityRoot;
+	ParticleSystemComponent = CreateDefaultSubobject<UParticleSystemComponent>(TEXT("ParticleSystemComponent"));
+	ParticleSystemComponent->SetupAttachment(RootComponent);
+
 	bReplicates = true;
 }
 
 // Called when the game starts or when spawned
 void AAbility::BeginPlay()
 {
-	
+	Super::BeginPlay();
 
 	if (AbilityDetails.CastTime > 0)
 	{
@@ -34,13 +37,13 @@ void AAbility::BeginPlay()
 	
 		PlayerRef = Cast<APuzzlePlatformsCharacter>(GetOwner());
 
-		AttachToComponent(PlayerRef->GetMesh(), FAttachmentTransformRules::SnapToTargetNotIncludingScale, "hand_rSocket");
+	
 		HudUI =
 			Cast< UPuzzlePlatformsGameInstance>(UGameplayStatics::GetGameInstance(GetWorld()))->HeadsUpDisplay;
 		BeginCasting();
 	}
 	
-	Super::BeginPlay();
+
 }
 
 // Called every frame
