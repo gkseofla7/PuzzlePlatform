@@ -71,8 +71,9 @@ public:
 
 	UFUNCTION(Server, Reliable, WithValidation)
 		void Server_Skill1Clicked();
-	UFUNCTION(NetMulticast, Reliable, WithValidation)
-		void NetMulticast_Skill1Clicked();
+	UFUNCTION(Server, Reliable, WithValidation)
+		void Server_Skill2Clicked();
+
 
 public:
 

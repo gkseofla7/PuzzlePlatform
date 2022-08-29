@@ -16,10 +16,11 @@ AAbility_AoE::AAbility_AoE()
 void AAbility_AoE::BeginPlay()
 {
 	Super::BeginPlay();
+
 	auto warrior = Cast<AWarrior>(PlayerRef);
 	bReplicates = true;
 	AsPlayerAnimInstance = Cast<UPlayerAnimInstance>(warrior->GetMesh()->GetAnimInstance());
-	AsPlayerAnimInstance->IsAttacking = true;
+	//AsPlayerAnimInstance->IsAttacking = true;
 	AsPlayerAnimInstance->OnActivateSpell.AddUObject(this, &AAbility_AoE::ActivateEffect);
 
 	AsPlayerAnimInstance->PlayAoEAttackMontage();

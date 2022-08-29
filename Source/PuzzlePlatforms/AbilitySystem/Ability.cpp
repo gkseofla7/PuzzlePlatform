@@ -32,7 +32,7 @@ void AAbility::BeginPlay()
 
 	if (AbilityDetails.CastTime > 0)
 	{
-		UE_LOG(LogTemp, Warning, TEXT("BeginPlay"));
+
 
 	
 		PlayerRef = Cast<APuzzlePlatformsCharacter>(GetOwner());

@@ -31,8 +31,7 @@ void UPlayerInfoWidget::BindCharacterStat(class UMyCharacterStatComponent* NewCh
 	NewCharacterStat->OnHPChanged.AddLambda([this]() -> void {
 		if (CurrentCharacterStat.IsValid())
 		{
-			UE_LOG(LogTemp, Warning, TEXT("HPRatio : %f"), CurrentCharacterStat->GetHPRatio())
-			UE_LOG(LogTemp, Warning, TEXT("HPRatio : %f"), CurrentCharacterStat->CurrentHP)
+
 		}
 		});
 

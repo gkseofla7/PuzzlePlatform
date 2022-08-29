@@ -19,11 +19,30 @@ AAbility_AoE_HolyGround::AAbility_AoE_HolyGround()
 void AAbility_AoE_HolyGround::ActivateEffect_Implementation()
 {
 	Super::ActivateEffect_Implementation();
-	DecalComponent->SetVisibility(true);
-	SetLifeSpan(LifeSpan);
+	//DecalComponent->SetVisibility(true);
+	
+
+
+	if (HasAuthority())
+	{
+		TArray<AActor*>OverlappingActors;
+		AbilityRoot->GetOverlappingActors(OverlappingActors, APuzzlePlatformsCharacter::StaticClass());
+		UE_LOG(LogTemp, Warning, TEXT("Server"));
+		for (auto Actors : OverlappingActors)
+		{
+			if (Actors == PlayerRef)
+				continue;
+			UGameplayStatics::ApplyDamage(Actors, 10, PlayerRef->GetController(), PlayerRef, UDamageType::StaticClass());
+
+		}
+		Destroy();
+	}
+	//SetLifeSpan(LifeSpan);
+
+
 	FTimerHandle TimerHandler;
 	
-	GetWorld()->GetTimerManager().SetTimer(TimerHandler, this, &AAbility_AoE_HolyGround::TickEffect, DoTTimer, true);
+	//GetWorld()->GetTimerManager().SetTimer(TimerHandler, this, &AAbility_AoE_HolyGround::TickEffect, DoTTimer, true);
 //	GetWorldTimerManager().SetTimer(TimerHandler,1.,false);
 	//UKismetSystemLibrary::K2_SetTimerDelegate()
 }

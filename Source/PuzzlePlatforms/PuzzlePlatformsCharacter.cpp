@@ -291,9 +291,11 @@ float APuzzlePlatformsCharacter::TakeDamage(float DamageAmount, FDamageEvent con
 	float FinalDamage = Super::TakeDamage(DamageAmount, DamageEvent, EventInstigator, DamageCauser);
 	
 	float HP =  CharacterStat->GetHP();
+	UE_LOG(LogTemp, Warning, TEXT("Before HP : %f"), CharacterStat->GetHP());
 	CharacterStat->SetHP(HP - FinalDamage);
 
 	UE_LOG(LogTemp, Warning, TEXT("Actor : %s took Damage : %f"), *GetName(), FinalDamage);
+	UE_LOG(LogTemp, Warning, TEXT("After HP : %f"), CharacterStat->GetHP());
 	return FinalDamage;
 
 
@@ -356,7 +358,7 @@ void APuzzlePlatformsCharacter::Skill1Clicked()
 
 void APuzzlePlatformsCharacter::Skill2Clicked()
 {
-	HeadsUpDisplayRef->ActionBar_UI->ActionBarSlot_UI_1->AbilitySpawn(this);
+	Server_Skill2Clicked();
 	//Server_Skill1Clicked();
 }
 
@@ -364,21 +366,21 @@ void APuzzlePlatformsCharacter::Skill2Clicked()
 void APuzzlePlatformsCharacter::Server_Skill1Clicked_Implementation()
 {
 	HeadsUpDisplayRef->ActionBar_UI->ActionBarSlot_UI->AbilitySpawn(this);
-	//NetMulticast_Skill1Clicked();
+
 }
 
-void APuzzlePlatformsCharacter::NetMulticast_Skill1Clicked_Implementation()
-{
-	//UE_LOG(LogTemp,Warning, TEXT(""))
-	HeadsUpDisplayRef->ActionBar_UI->ActionBarSlot_UI->AbilitySpawn(this);
-}
+
 
 bool APuzzlePlatformsCharacter::Server_Skill1Clicked_Validate()
 {
 	return true;
 }
 
-bool APuzzlePlatformsCharacter::NetMulticast_Skill1Clicked_Validate()
+void APuzzlePlatformsCharacter::Server_Skill2Clicked_Implementation()
+{
+	HeadsUpDisplayRef->ActionBar_UI->ActionBarSlot_UI_1->AbilitySpawn(this);
+}
+bool APuzzlePlatformsCharacter::Server_Skill2Clicked_Validate()
 {
 	return true;
 }
