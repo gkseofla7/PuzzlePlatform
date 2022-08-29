@@ -35,12 +35,12 @@ void AAbility_AoE_HolyGround::ActivateEffect_Implementation()
 			UGameplayStatics::ApplyDamage(Actors, 10, PlayerRef->GetController(), PlayerRef, UDamageType::StaticClass());
 
 		}
-		Destroy();
+
 	}
-	//SetLifeSpan(LifeSpan);
+	SetLifeSpan(LifeSpan);
 
 
-	FTimerHandle TimerHandler;
+//	FTimerHandle TimerHandler;
 	
 	//GetWorld()->GetTimerManager().SetTimer(TimerHandler, this, &AAbility_AoE_HolyGround::TickEffect, DoTTimer, true);
 //	GetWorldTimerManager().SetTimer(TimerHandler,1.,false);

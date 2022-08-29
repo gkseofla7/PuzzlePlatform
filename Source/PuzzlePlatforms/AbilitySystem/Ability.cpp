@@ -30,8 +30,7 @@ void AAbility::BeginPlay()
 {
 	Super::BeginPlay();
 
-	if (AbilityDetails.CastTime > 0)
-	{
+
 
 
 	
@@ -41,7 +40,7 @@ void AAbility::BeginPlay()
 		HudUI =
 			Cast< UPuzzlePlatformsGameInstance>(UGameplayStatics::GetGameInstance(GetWorld()))->HeadsUpDisplay;
 		BeginCasting();
-	}
+	
 	
 
 }
@@ -58,6 +57,7 @@ void AAbility::BeginCasting()
 	if (AbilityDetails.CastTime > 0)
 	{
 		auto CastBar = HudUI->DisplayCastBar(this);
+		//이거에서 중복되는구나..
 		CastBar->CastSuccessful.AddDynamic(this, &AAbility::CastAbility);
 	}
 	else

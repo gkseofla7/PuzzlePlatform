@@ -34,11 +34,12 @@ public:
 	FRotator GetMuzzleRotation();
 	void Skill1Clicked();
 	void Skill2Clicked();
+	void Skill3Clicked();
+	void Skill4Clicked();
 protected:
 	virtual void PostInitializeComponents() override;
 	virtual void BeginPlay() override;
 	virtual void Tick(float DeltaTime) override;
-	void OnResetVR();
 	virtual void MoveForward(float Value);
 	virtual void MoveRight(float Value);
 	virtual void CJump(float Value);
@@ -48,10 +49,6 @@ protected:
 	void GetInTheCar();
 	void SeeMouseCursur();
 	virtual void Attack();
-
-
-	//UFUNCTION()
-	//	void OnAttackMontageEnded(UAnimMontage* Montage, bool bInterrupted);
 
 
 protected:
@@ -73,6 +70,10 @@ public:
 		void Server_Skill1Clicked();
 	UFUNCTION(Server, Reliable, WithValidation)
 		void Server_Skill2Clicked();
+	UFUNCTION(Server, Reliable, WithValidation)
+		void Server_Skill3Clicked();
+	UFUNCTION(Server, Reliable, WithValidation)
+		void Server_Skill4Clicked();
 
 
 public:

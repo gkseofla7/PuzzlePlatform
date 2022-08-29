@@ -63,7 +63,7 @@ void UActionBarSlotWidget::CastButtonClicked()
 
 void UActionBarSlotWidget::AbilitySpawn(APuzzlePlatformsCharacter* NewPlayer)
 {
-	
+	UE_LOG(LogTemp,Warning, TEXT("Spawning"))
 	FTransform PlayerTransform = NewPlayer->GetActorTransform();
 	FActorSpawnParameters Params;
 	FActorSpawnParameters SpawnInfo;

@@ -114,6 +114,8 @@ void APuzzlePlatformsCharacter::SetupPlayerInputComponent(class UInputComponent*
 	PlayerInputComponent->BindAction("SkillTree", IE_Pressed, this, &APuzzlePlatformsCharacter::SeeMouseCursur);
 	PlayerInputComponent->BindAction("Skill1", IE_Pressed, this, &APuzzlePlatformsCharacter::Skill1Clicked);
 	PlayerInputComponent->BindAction("Skill2", IE_Pressed, this, &APuzzlePlatformsCharacter::Skill2Clicked);
+	PlayerInputComponent->BindAction("Skill3", IE_Pressed, this, &APuzzlePlatformsCharacter::Skill3Clicked);
+	PlayerInputComponent->BindAction("Skill4", IE_Pressed, this, &APuzzlePlatformsCharacter::Skill4Clicked);
 
 	PlayerInputComponent->BindAxis("MoveForward", this, &APuzzlePlatformsCharacter::MoveForward);
 	PlayerInputComponent->BindAxis("MoveRight", this, &APuzzlePlatformsCharacter::MoveRight);
@@ -137,11 +139,6 @@ void APuzzlePlatformsCharacter::SetupPlayerInputComponent(class UInputComponent*
 void APuzzlePlatformsCharacter::PostInitializeComponents()
 {
 	Super::PostInitializeComponents();
-	//MyAnim =GetMesh()->GetAnimInstance();
-	//ABCHECK(nullptr != MyAnim);
-
-	//MyAnim->OnMontageEnded.AddDynamic(this, &APuzzlePlatformsCharacter::OnAttackMontageEnded);
-	//MyAnim->OnAttackHitCheck.AddUObject(this, &APuzzlePlatformsCharacter::AttackCheck);
 
 }
 
@@ -202,13 +199,6 @@ void APuzzlePlatformsCharacter::GetInTheCar()
 
 		if (Car != nullptr)
 		{
-			//DisableActor(true);
-			//OtherActor->SetHidden(true);
-			//GetController()->Possess(Car);
-
-			//Car->SetRider(this);
-			//Car->OurMovementComponent__->ItsMe = false;
-			//Car->OurMovementComponent__->riden = true;
 			DaerimMotionReplicator->Server_SendRide(Car, this);
 		}
 	}
@@ -273,15 +263,6 @@ void APuzzlePlatformsCharacter::Attack()
 }
 
 
-
-
-//void APuzzlePlatformsCharacter::OnRep_TakeDamage()
-//{
-//	FDamageEvent DamageEvent;
-//	TakeDamage(50.0f, DamageEvent, GetController(), this);
-//}
-
-
 float APuzzlePlatformsCharacter::TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent,
 	AController* EventInstigator, AActor* DamageCauser)
 {
@@ -322,14 +303,6 @@ FRotator APuzzlePlatformsCharacter::GetMuzzleRotation()
 {
 
 	UCameraComponent* CurrentCam = FollowCamera;
-	//if (CamInUse == ECamInUse::TE_FPCam)
-	//{
-	//	CurrentCam = FPPCam_;
-	//}
-	//else
-	//{
-	//	CurrentCam = FollowCamera;
-	//}
 
 	const float WeaponRange = 20000.f;
 	const FVector StartTrace = CurrentCam->GetComponentLocation();
@@ -359,9 +332,17 @@ void APuzzlePlatformsCharacter::Skill1Clicked()
 void APuzzlePlatformsCharacter::Skill2Clicked()
 {
 	Server_Skill2Clicked();
-	//Server_Skill1Clicked();
 }
 
+void APuzzlePlatformsCharacter::Skill3Clicked()
+{
+	Server_Skill3Clicked();
+}
+
+void APuzzlePlatformsCharacter::Skill4Clicked()
+{
+	Server_Skill4Clicked();
+}
 
 void APuzzlePlatformsCharacter::Server_Skill1Clicked_Implementation()
 {
@@ -369,18 +350,36 @@ void APuzzlePlatformsCharacter::Server_Skill1Clicked_Implementation()
 
 }
 
+void APuzzlePlatformsCharacter::Server_Skill2Clicked_Implementation()
+{
+	HeadsUpDisplayRef->ActionBar_UI->ActionBarSlot_UI_1->AbilitySpawn(this);
+}
 
+
+void APuzzlePlatformsCharacter::Server_Skill3Clicked_Implementation()
+{
+	HeadsUpDisplayRef->ActionBar_UI->ActionBarSlot_UI_2->AbilitySpawn(this);
+}
+
+void APuzzlePlatformsCharacter::Server_Skill4Clicked_Implementation()
+{
+	HeadsUpDisplayRef->ActionBar_UI->ActionBarSlot_UI_3->AbilitySpawn(this);
+}
 
 bool APuzzlePlatformsCharacter::Server_Skill1Clicked_Validate()
 {
 	return true;
 }
-
-void APuzzlePlatformsCharacter::Server_Skill2Clicked_Implementation()
-{
-	HeadsUpDisplayRef->ActionBar_UI->ActionBarSlot_UI_1->AbilitySpawn(this);
-}
 bool APuzzlePlatformsCharacter::Server_Skill2Clicked_Validate()
+{
+	return true;
+}
+bool APuzzlePlatformsCharacter::Server_Skill3Clicked_Validate()
+{
+	return true;
+}
+
+bool APuzzlePlatformsCharacter::Server_Skill4Clicked_Validate()
 {
 	return true;
 }

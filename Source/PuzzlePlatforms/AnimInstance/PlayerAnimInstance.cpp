@@ -44,6 +44,15 @@ UPlayerAnimInstance::UPlayerAnimInstance()
 		AreaAttackMontage = AREA_ATTACK_MONTAGE.Object;
 	}
 
+	static ConstructorHelpers::FObjectFinder<UAnimMontage> SWORD_BLAST_MONTAGE(TEXT(
+		"/Game/Animation/Montage/SwordSlash_Montage"
+	));
+	if (SWORD_BLAST_MONTAGE.Succeeded())
+	{
+		SwordBlastMontage = SWORD_BLAST_MONTAGE.Object;
+	}
+
+
 	IsAttacking = false;
 }
 
@@ -92,6 +101,11 @@ void UPlayerAnimInstance::PlayAoEAttackMontage()
 	Montage_Play(AreaAttackMontage, 1.0);
 
 
+
+}
+void UPlayerAnimInstance::PlaySwordBlastMontage()
+{
+	Montage_Play(SwordBlastMontage, 1.0);
 }
 
 void UPlayerAnimInstance::PlayHangToCrouchMontage()
