@@ -20,10 +20,7 @@ protected:
 	virtual void CastAbility_Implementation() override;
 	virtual void ActivateEffect_Implementation() override;
 public:
-	UFUNCTION(Server, Reliable, WithValidation)
-		void Server_SetVelocity(FVector NewVelocity);
-	UFUNCTION(NetMulticast, Reliable, WithValidation)
-		void NetMulticast_SetVelocity(FVector NewVelocity);
+
 	UFUNCTION(NetMulticast, Reliable, WithValidation)
 		void NetMulticast_Spark(FVector Location);
 	UFUNCTION()

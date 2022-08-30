@@ -13,6 +13,7 @@ DECLARE_MULTICAST_DELEGATE(FOnAttackEndCheckDelegate);
 DECLARE_MULTICAST_DELEGATE(FOnHangMovePlaceDelegate);
 DECLARE_MULTICAST_DELEGATE(FOnFireBallDelegate);
 DECLARE_MULTICAST_DELEGATE(FOnActivateSpellDelegate);
+DECLARE_MULTICAST_DELEGATE(FOnFireDragonBlastDelegate);
 UCLASS()
 class PUZZLEPLATFORMS_API UPlayerAnimInstance : public UAnimInstance
 {
@@ -37,6 +38,7 @@ public:
 	FOnAttackEndCheckDelegate OnAttackEndCheck;
 	FOnHangMovePlaceDelegate OnHangMovePlace;
 	FOnFireBallDelegate OnFireBall;
+	FOnFireDragonBlastDelegate OnFireDragonBlastDelegate;
 	FOnActivateSpellDelegate OnActivateSpell;
 	UPROPERTY(VisibleDefaultsOnly, BlueprintReadWrite, Category = Attack)
 		bool IsAttacking = false;
@@ -78,6 +80,8 @@ public:
 		void AnimNotify_LaunchProjectile();
 	UFUNCTION()
 		void AnimNotify_ActivateSpell();
+	UFUNCTION()
+		void AnimNotify_FireDragonBlast();
 	FName GetAttackMontageSectionName(int32 Section);
 private:
 	UFUNCTION()

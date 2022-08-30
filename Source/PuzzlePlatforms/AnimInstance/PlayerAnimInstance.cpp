@@ -105,6 +105,7 @@ void UPlayerAnimInstance::PlayAoEAttackMontage()
 }
 void UPlayerAnimInstance::PlaySwordBlastMontage()
 {
+
 	Montage_Play(SwordBlastMontage, 1.0);
 }
 
@@ -140,6 +141,10 @@ void UPlayerAnimInstance::AnimNotify_MovePlace()
 void UPlayerAnimInstance::AnimNotify_ActivateSpell()
 {
 	OnActivateSpell.Broadcast();
+}
+void UPlayerAnimInstance::AnimNotify_FireDragonBlast()
+{
+	OnFireDragonBlastDelegate.Broadcast();
 }
 
 void UPlayerAnimInstance::JumpToAttackMontageSection(int32 NewSection)

@@ -29,6 +29,7 @@ AAbility_Projectile_Fireball::AAbility_Projectile_Fireball()
 void AAbility_Projectile_Fireball::BeginPlay()
 {
 	Super::BeginPlay();
+
 	auto warrior = Cast<AWarrior>(PlayerRef);
 	bReplicates = true;
 	AttachToComponent(PlayerRef->GetMesh(), FAttachmentTransformRules::SnapToTargetNotIncludingScale, "hand_rSocket");
@@ -45,7 +46,6 @@ void AAbility_Projectile_Fireball::BeginPlay()
 void AAbility_Projectile_Fireball::CastAbility_Implementation()
 {
 	Super::CastAbility_Implementation();
-	UE_LOG(LogTemp, Warning, TEXT("Second One"));
 	AsPlayerAnimInstance->Montage_JumpToSection(FName("EndCast"), AsPlayerAnimInstance->FireballAttackMontage);
 	//AsPlayerAnimInstance->PlayFireballAttackMontage();
 
@@ -70,28 +70,9 @@ void AAbility_Projectile_Fireball::ActivateEffect_Implementation()
 }
 
 
-void AAbility_Projectile_Fireball::Server_SetVelocity_Implementation(FVector NewVelocity)
-{
-	UE_LOG(LogTemp, Warning, TEXT("InServer"))
-	NetMulticast_SetVelocity(NewVelocity);
-}
-
-void AAbility_Projectile_Fireball::NetMulticast_SetVelocity_Implementation(FVector NewVelocity)
-{
-	UE_LOG(LogTemp, Warning, TEXT("InClient"))
-	ProjectileMovement_->Velocity = NewVelocity;
-}
 
 
-bool AAbility_Projectile_Fireball::Server_SetVelocity_Validate(FVector NewVelocity)
-{
-	return true;
-}
 
-bool AAbility_Projectile_Fireball::NetMulticast_SetVelocity_Validate(FVector NewVelocity)
-{
-	return true;
-}
 
 void AAbility_Projectile_Fireball::NetMulticast_Spark_Implementation(FVector Location)
 {
