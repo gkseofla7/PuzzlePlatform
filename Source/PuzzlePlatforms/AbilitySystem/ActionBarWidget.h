@@ -22,4 +22,6 @@ public:
 		class UActionBarSlotWidget* ActionBarSlot_UI_2;
 	UPROPERTY(meta = (BindWidget), BlueprintReadWrite)
 		class UActionBarSlotWidget *ActionBarSlot_UI_3;
+	UPROPERTY(meta = (BindWidget), BlueprintReadWrite)
+		class UActionBarSlotWidget* ActionBarSlot_UI_4;
 };

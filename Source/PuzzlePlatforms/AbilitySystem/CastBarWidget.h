@@ -36,4 +36,7 @@ public:
 	FTimerHandle CastTimer;
 	UPROPERTY(BlueprintAssignable, BlueprintCallable)
 	FCastSuccessfulDeleagate CastSuccessful;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+		bool WhileBuffering = false;
+	
 };

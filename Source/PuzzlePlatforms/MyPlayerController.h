@@ -33,6 +33,7 @@ protected:
 public:
 	UPROPERTY()
 	class UPlayerInfoWidget* HUDWidget;
+
 	//UPROPERTY()
 	//	class UUserWidget* NewHUDWidget;
 };

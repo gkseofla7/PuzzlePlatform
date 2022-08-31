@@ -19,6 +19,7 @@ void AAbility_Projectile_DragonBlast::BeginPlay()
 	//AsPlayerAnimInstance->IsAttacking = true;
 	AsPlayerAnimInstance->OnFireDragonBlastDelegate.AddUObject(this, &AAbility_Projectile::ActivateEffect);
 	AsPlayerAnimInstance->OnFireDragonBlastDelegate.AddUObject(this, &AAbility_Projectile::DetachAbilityFromPlayer);
+
 	AsPlayerAnimInstance->PlaySwordBlastMontage();
 
 

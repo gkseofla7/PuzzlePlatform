@@ -14,6 +14,7 @@
 #include "AbilitySystem/ActionBarSlotWidget.h"
 #include "AbilitySystem/HudUpDisplayWidget.h"
 #include "AbilitySystem/ActionBarWidget.h"
+#include "AbilitySystem/CastBarWidget.h"
 
 #include "HeadMountedDisplayFunctionLibrary.h"
 #include "Camera/CameraComponent.h"
@@ -27,6 +28,7 @@
 #include "Components/TextBlock.h"
 #include "Components/SphereComponent.h"
 #include "Kismet/KismetMathLibrary.h"
+#include "Components/DecalComponent.h"
 
 #include "Net/UnrealNetwork.h"
 
@@ -63,8 +65,9 @@ APuzzlePlatformsCharacter::APuzzlePlatformsCharacter()
 	//DaerimMotionReplicator = CreateDefaultSubobject<USoldierMotionReplicator>(TEXT("SoldierMotionReplicator"));
 	CharacterStat = CreateDefaultSubobject<UMyCharacterStatComponent>(TEXT("CHARACTERSTAT"));
 
-
-
+	DecalComponent = CreateDefaultSubobject<UDecalComponent>(TEXT("DecalComponent"));
+	DecalComponent->SetupAttachment(RootComponent);
+	DecalComponent->SetVisibility(false);
 	GetCapsuleComponent()->SetCollisionProfileName(TEXT("ABCharacter"));
 
 	// set our turn rates for input
@@ -97,9 +100,6 @@ APuzzlePlatformsCharacter::APuzzlePlatformsCharacter()
 	NearObjectCollisionDetector = CreateDefaultSubobject<USphereComponent>(TEXT("NearObjectCollisionDetector"));
 	NearObjectCollisionDetector->SetupAttachment(RootComponent);
 
-
-	
-
 }
 
 
@@ -116,6 +116,7 @@ void APuzzlePlatformsCharacter::SetupPlayerInputComponent(class UInputComponent*
 	PlayerInputComponent->BindAction("Skill2", IE_Pressed, this, &APuzzlePlatformsCharacter::Skill2Clicked);
 	PlayerInputComponent->BindAction("Skill3", IE_Pressed, this, &APuzzlePlatformsCharacter::Skill3Clicked);
 	PlayerInputComponent->BindAction("Skill4", IE_Pressed, this, &APuzzlePlatformsCharacter::Skill4Clicked);
+	PlayerInputComponent->BindAction("Skill5", IE_Pressed, this, &APuzzlePlatformsCharacter::Skill5Clicked);
 
 	PlayerInputComponent->BindAxis("MoveForward", this, &APuzzlePlatformsCharacter::MoveForward);
 	PlayerInputComponent->BindAxis("MoveRight", this, &APuzzlePlatformsCharacter::MoveRight);
@@ -158,6 +159,39 @@ void APuzzlePlatformsCharacter::BeginPlay()
 void APuzzlePlatformsCharacter::Tick(float DeltaTime)
 {//시작하자마자 로그인되는거임;;ㅋㅋ
 	Super::Tick(DeltaTime);
+	SkillAvailable = !(HeadsUpDisplayRef->CastBar_UI->WhileBuffering);
+	SetTargetPlayerWithLineTrace();
+
+}
+
+void APuzzlePlatformsCharacter::SetTargetPlayerWithLineTrace()
+{
+	UCameraComponent* CurrentCam = FollowCamera;
+
+	const float SkillRange = 20000.f;
+	const FVector StartTrace = CurrentCam->GetComponentLocation();
+	FVector EndTrace = (CurrentCam->GetForwardVector() * SkillRange) + StartTrace;
+	FHitResult Hit;
+	FCollisionQueryParams QueryParams = FCollisionQueryParams(SCENE_QUERY_STAT(WeaponTrace), false, this);
+	
+	if (GetWorld()->LineTraceSingleByChannel(Hit, StartTrace, EndTrace, ECC_Visibility, QueryParams))
+	{
+		//이전꺼
+		auto tmp = Cast< APuzzlePlatformsCharacter>(Hit.Actor);
+		if (TargetPlayer != nullptr && tmp!= nullptr)
+		{
+			TargetPlayer->DecalComponent->SetVisibility(false);
+		}
+		//UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), ImpactParticles, FTransform(Hit.ImpactNormal.Rotation(), Hit.ImpactPoint));
+		if(tmp != nullptr)
+			TargetPlayer = tmp;
+		if (TargetPlayer != nullptr)
+		{
+			//이후
+			TargetPlayer->DecalComponent->SetVisibility(true);
+		}
+	}
+	//FRotator temp = UKismetMathLibrary::FindLookAtRotation(Start, EndTrace);
 }
 
 
@@ -244,14 +278,7 @@ void APuzzlePlatformsCharacter::MoveRight(float Value)
 	}
 }
 
-void APuzzlePlatformsCharacter::CJump(float Value)
-{
-	Jump();
-}
-void APuzzlePlatformsCharacter::CStopJumping(float Value)
-{
-	StopJumping();
-}
+
 
 void APuzzlePlatformsCharacter::Attack()
 {
@@ -326,22 +353,38 @@ FRotator APuzzlePlatformsCharacter::GetMuzzleRotation()
 
 void APuzzlePlatformsCharacter::Skill1Clicked()
 {
+	if (SkillAvailable == false)
+		return;
 	Server_Skill1Clicked();
 }
 
 void APuzzlePlatformsCharacter::Skill2Clicked()
 {
+	if (SkillAvailable == false)
+		return;
 	Server_Skill2Clicked();
 }
 
 void APuzzlePlatformsCharacter::Skill3Clicked()
 {
+	if (SkillAvailable == false)
+		return;
 	Server_Skill3Clicked();
 }
 
 void APuzzlePlatformsCharacter::Skill4Clicked()
 {
+	if (SkillAvailable == false)
+		return;
 	Server_Skill4Clicked();
+}
+void APuzzlePlatformsCharacter::Skill5Clicked()
+{
+	if (SkillAvailable == false)
+		return;
+	if (TargetPlayer == nullptr)
+		return;
+	Server_Skill5Clicked();
 }
 
 void APuzzlePlatformsCharacter::Server_Skill1Clicked_Implementation()
@@ -365,6 +408,10 @@ void APuzzlePlatformsCharacter::Server_Skill4Clicked_Implementation()
 {
 	HeadsUpDisplayRef->ActionBar_UI->ActionBarSlot_UI_3->AbilitySpawn(this);
 }
+void APuzzlePlatformsCharacter::Server_Skill5Clicked_Implementation()
+{
+	HeadsUpDisplayRef->ActionBar_UI->ActionBarSlot_UI_4->AbilitySpawn(this);
+}
 
 bool APuzzlePlatformsCharacter::Server_Skill1Clicked_Validate()
 {
@@ -380,6 +427,11 @@ bool APuzzlePlatformsCharacter::Server_Skill3Clicked_Validate()
 }
 
 bool APuzzlePlatformsCharacter::Server_Skill4Clicked_Validate()
+{
+	return true;
+}
+
+bool APuzzlePlatformsCharacter::Server_Skill5Clicked_Validate()
 {
 	return true;
 }

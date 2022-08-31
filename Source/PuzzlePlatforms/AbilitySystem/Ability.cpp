@@ -52,6 +52,7 @@ void AAbility::BeginCasting()
 	{
 		auto CastBar = HudUI->DisplayCastBar(this);
 		//이거에서 중복되는구나..
+		CastBar->CastSuccessful.Clear();
 		CastBar->CastSuccessful.AddDynamic(this, &AAbility::CastAbility);
 	}
 	else
@@ -68,6 +69,7 @@ void AAbility::InterruptCast()
 
 void AAbility::CastAbility()
 {
+	UE_LOG(LogTemp, Warning, TEXT("CastAbility"));
 	CastAbility_Implementation();
 }
 void AAbility::CastAbility_Implementation()

@@ -16,13 +16,13 @@ class PUZZLEPLATFORMS_API UBuffIcon_UI : public UUserWidget
 	
 public:
 	UFUNCTION(BlueprintCallable)
-	void CustomInitialize(class AAbility_Buff* BuffAbility);
+	void CustomInitialize(class AAbility_Buff_Master* BuffAbility);
 	void UpdateProgressBar();
 	UFUNCTION()
 	void DeleteFromParent();
 public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	class AAbility_Buff* BuffAbility;
+	class AAbility_Buff_Master* BuffAbility;
 	UPROPERTY(meta = (BindWidget), BlueprintReadWrite)
 		class UImage* BuffImage;
 	UPROPERTY(meta = (BindWidget), BlueprintReadWrite)

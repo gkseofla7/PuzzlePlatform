@@ -3,7 +3,7 @@
 
 #include "BuffIcon_UI.h"
 
-#include "Ability_Buff.h"
+#include "Ability_Buff_Master.h"
 #include "BuffPanel_UI.h"
 
 #include "Components/WrapBox.h"
@@ -13,7 +13,7 @@
 
 
 
-void UBuffIcon_UI::CustomInitialize(class AAbility_Buff* NewBuffAbility)
+void UBuffIcon_UI::CustomInitialize( AAbility_Buff_Master* NewBuffAbility)
 {
 	BuffAbility = NewBuffAbility;
 	BuffImage->SetBrushFromTexture(BuffAbility->AbilityDetails.Icon);
@@ -40,6 +40,5 @@ void UBuffIcon_UI::DeleteFromParent()
 {
 	//Cast< UBuffPanel_UI>(GetParent())->BuffPanel
 	RemoveFromParent();
-	UE_LOG(LogTemp, Warning, TEXT("aa"));
 
 }

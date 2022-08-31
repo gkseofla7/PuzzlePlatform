@@ -15,7 +15,7 @@ class PUZZLEPLATFORMS_API UBuffPanel_UI : public UUserWidget
 	GENERATED_BODY()
 public:
 	UFUNCTION(BlueprintImplementableEvent)
-	void AddBufftoUI(class AAbility_Buff* Buff);
+	void AddBufftoUI(class AAbility_Buff_Master* Buff);
 
 public:
 	UPROPERTY(meta = (BindWidget), BlueprintReadWrite)

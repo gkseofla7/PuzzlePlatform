@@ -36,14 +36,14 @@ public:
 	void Skill2Clicked();
 	void Skill3Clicked();
 	void Skill4Clicked();
+	void Skill5Clicked();
 protected:
 	virtual void PostInitializeComponents() override;
 	virtual void BeginPlay() override;
 	virtual void Tick(float DeltaTime) override;
 	virtual void MoveForward(float Value);
 	virtual void MoveRight(float Value);
-	virtual void CJump(float Value);
-	virtual void CStopJumping(float Value);
+
 	void TurnAtRate(float Rate);
 	void LookUpAtRate(float Rate);
 	void GetInTheCar();
@@ -65,7 +65,7 @@ public:
 
 	virtual float TakeDamage(float DamageAmount, struct FDamageEvent const& DamageEvent,
 		class AController* EventInstigator, AActor* DamageCauser) override;
-
+	void SetTargetPlayerWithLineTrace();
 	UFUNCTION(Server, Reliable, WithValidation)
 		void Server_Skill1Clicked();
 	UFUNCTION(Server, Reliable, WithValidation)
@@ -74,6 +74,8 @@ public:
 		void Server_Skill3Clicked();
 	UFUNCTION(Server, Reliable, WithValidation)
 		void Server_Skill4Clicked();
+	UFUNCTION(Server, Reliable, WithValidation)
+		void Server_Skill5Clicked();
 
 
 public:
@@ -87,11 +89,16 @@ public:
 	//TScriptInterface<IMotionReplicatorInterface> DaerimMotionReplicator;
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Replicator)
 		UMotionInterfaceComponent* DaerimMotionReplicator;
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Replicator)
+		class UDecalComponent* DecalComponent;
 		//IMotionReplicatorInterface* MotionReplicator;
 	bool MouseCursorToggle = false;
 	UPROPERTY(BlueprintAssignable,BlueprintCallable)
 	FInterruptCastingDeleagate InterruptCasting;
 	class UHudUpDisplayWidget* HeadsUpDisplayRef;
+	bool SkillAvailable = true;
+	APuzzlePlatformsCharacter* TargetPlayer;
+
 protected:
 	UPROPERTY()
 		UAnimInstance* MyAnim;
