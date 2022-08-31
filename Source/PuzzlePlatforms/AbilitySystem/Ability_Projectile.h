@@ -17,7 +17,7 @@ protected:
 	AAbility_Projectile();
 	virtual void BeginPlay() override;
 public:
-
+	
 	virtual void CastAbility_Implementation() override;
 	virtual void ActivateEffect_Implementation() override;
 
@@ -25,6 +25,11 @@ public:
 		void Server_SetVelocity(FVector NewVelocity);
 	UFUNCTION(NetMulticast, Reliable, WithValidation)
 		void NetMulticast_SetVelocity(FVector NewVelocity);
+
+	UFUNCTION(Server, Reliable, WithValidation)
+		void Server_AddLocation(FVector RelativeLocation);
+	UFUNCTION(NetMulticast, Reliable, WithValidation)
+		void NetMulticast_AddLocation(FVector RelativeLocation);
 public:
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)

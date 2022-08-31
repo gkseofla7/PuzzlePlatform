@@ -17,7 +17,11 @@ protected:
 	void BeginPlay() override;
 	virtual void CastAbility_Implementation() override;
 	virtual void ActivateEffect_Implementation() override;
+	virtual void Tick(float DeltaTime) override;
 public:
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
 		class UPlayerAnimInstance* AsPlayerAnimInstance;
+	bool Toggle = false;
+	UPROPERTY(BlueprintReadWrite, EditAnywhere)
+	TArray<AActor*> SweepArray;
 };

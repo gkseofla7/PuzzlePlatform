@@ -29,14 +29,8 @@ AAbility::AAbility()
 void AAbility::BeginPlay()
 {
 	Super::BeginPlay();
-
-
-
-
 	
-		PlayerRef = Cast<APuzzlePlatformsCharacter>(GetOwner());
-
-	
+	PlayerRef = Cast<APuzzlePlatformsCharacter>(GetOwner());
 		HudUI =
 			Cast< UPuzzlePlatformsGameInstance>(UGameplayStatics::GetGameInstance(GetWorld()))->HeadsUpDisplay;
 		BeginCasting();

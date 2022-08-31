@@ -10,10 +10,12 @@
 void AAbility_Projectile_DragonBlast::BeginPlay()
 {
 	Super::BeginPlay();
-
+	
+	//bCanEverTick = true;
 	auto warrior = Cast<AWarrior>(PlayerRef);
 	bReplicates = true;
 	AsPlayerAnimInstance = Cast<UPlayerAnimInstance>(warrior->GetMesh()->GetAnimInstance());
+	AsPlayerAnimInstance->Montage_JumpToSection(FName("Defualt"), AsPlayerAnimInstance->SwordBlastMontage);
 	//AsPlayerAnimInstance->IsAttacking = true;
 	AsPlayerAnimInstance->OnFireDragonBlastDelegate.AddUObject(this, &AAbility_Projectile::ActivateEffect);
 	AsPlayerAnimInstance->OnFireDragonBlastDelegate.AddUObject(this, &AAbility_Projectile::DetachAbilityFromPlayer);
@@ -22,10 +24,28 @@ void AAbility_Projectile_DragonBlast::BeginPlay()
 
 }
 
+void AAbility_Projectile_DragonBlast::Tick(float DeltaTime)
+{
+	Super::Tick(DeltaTime);
+	if (HasAuthority())
+	{
+		if (Toggle == false && ParticleSystemComponent->IsActive() == true)
+		{
+			Toggle = true;
+		}
+		if (Toggle == true && ParticleSystemComponent->IsActive() == false)
+		{
+			Destroy();
+		}
+	}
+
+
+}
+
 void AAbility_Projectile_DragonBlast::CastAbility_Implementation()
 {
 	Super::CastAbility_Implementation();
-
+	AsPlayerAnimInstance->Montage_JumpToSection(FName("EndCast"), AsPlayerAnimInstance->SwordBlastMontage);
 
 }
 
@@ -37,16 +57,14 @@ void AAbility_Projectile_DragonBlast::ActivateEffect_Implementation()
 
 	if (PlayerRef->IsLocallyControlled() == true)
 	{
-		Server_SetVelocity(PlayerRef->GetMuzzleRotation().Vector() * 1500);
+		Server_AddLocation(PlayerRef->GetActorForwardVector() * 100);
+		Server_SetVelocity(FVector(PlayerRef->GetMuzzleRotation().Vector().X, PlayerRef->GetMuzzleRotation().Vector().Y,0)* 1500);
+
 		//ProjectileMovement_->Velocity = (PlayerRef->GetMuzzleRotation()).Vector() * 1500;
 	}
-	ProjectileMovement_->Activate();
+	ProjectileMovement_->Activate(true);
 	//여기서 만약 컨트롤러가 있으면 
-	if (PlayerRef->IsLocallyControlled() == true)
-	{
-		//Server_SetVelocity(PlayerRef->GetMuzzleRotation().Vector() * 1500);
-		//ProjectileMovement_->Velocity = (PlayerRef->GetMuzzleRotation()).Vector() * 1500;
-	}
+
 
 	//ProjectileMovement_->SetVelocityInLocalSpace();
 	ParticleSystemComponent->Activate(true);	

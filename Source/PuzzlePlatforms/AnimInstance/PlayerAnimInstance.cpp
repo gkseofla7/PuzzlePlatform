@@ -145,6 +145,7 @@ void UPlayerAnimInstance::AnimNotify_ActivateSpell()
 void UPlayerAnimInstance::AnimNotify_FireDragonBlast()
 {
 	OnFireDragonBlastDelegate.Broadcast();
+	UE_LOG(LogTemp, Warning, TEXT("NotifyOn"));
 }
 
 void UPlayerAnimInstance::JumpToAttackMontageSection(int32 NewSection)

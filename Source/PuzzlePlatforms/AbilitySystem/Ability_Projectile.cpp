@@ -8,7 +8,7 @@
 #include "GameFramework/ProjectileMovementComponent.h"
 #include "Particles/ParticleSystemComponent.h"
 #include "Kismet/KismetMathLibrary.h"
-
+#include "Components/SphereComponent.h"
 #include "Net/UnrealNetwork.h"
 AAbility_Projectile::AAbility_Projectile()
 	:Super()
@@ -44,16 +44,24 @@ void AAbility_Projectile::ActivateEffect_Implementation()
 
 void AAbility_Projectile::Server_SetVelocity_Implementation(FVector NewVelocity)
 {
-	UE_LOG(LogTemp, Warning, TEXT("InServer"))
-		NetMulticast_SetVelocity(NewVelocity);
+	NetMulticast_SetVelocity(NewVelocity);
 }
 
 void AAbility_Projectile::NetMulticast_SetVelocity_Implementation(FVector NewVelocity)
 {
-	UE_LOG(LogTemp, Warning, TEXT("InClient"))
-		ProjectileMovement_->Velocity = NewVelocity;
+	ProjectileMovement_->Velocity = NewVelocity;
 }
 
+
+void AAbility_Projectile::Server_AddLocation_Implementation(FVector RelativeLocation)
+{
+	NetMulticast_AddLocation(RelativeLocation);
+}
+
+void AAbility_Projectile::NetMulticast_AddLocation_Implementation(FVector RelativeLocation)
+{
+	AbilityRoot->AddLocalOffset(RelativeLocation);
+}
 
 bool AAbility_Projectile::Server_SetVelocity_Validate(FVector NewVelocity)
 {
@@ -61,6 +69,16 @@ bool AAbility_Projectile::Server_SetVelocity_Validate(FVector NewVelocity)
 }
 
 bool AAbility_Projectile::NetMulticast_SetVelocity_Validate(FVector NewVelocity)
+{
+	return true;
+}
+
+bool AAbility_Projectile::Server_AddLocation_Validate(FVector RelativeLocation)
+{
+	return true;
+}
+
+bool AAbility_Projectile::NetMulticast_AddLocation_Validate(FVector RelativeLocation)
 {
 	return true;
 }
