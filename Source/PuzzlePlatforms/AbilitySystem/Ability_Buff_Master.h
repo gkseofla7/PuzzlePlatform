@@ -19,7 +19,7 @@ protected:
 	virtual void BeginPlay();
 
 	virtual void CastAbility_Implementation() override;
-
+	virtual void Tick(float DeltaTime) override;
 public:
 	virtual void ApplyBuff();
 	virtual void TickBuff();
@@ -32,6 +32,8 @@ public:
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
 		class UPlayerAnimInstance* AsPlayerAnimInstance;
 	float BuffLifeSpan = 10;
+	float TimeSpend = 0;
 	float BuffTickRate = .5;
 	FOnEndBuffDelegate OnEndBuffDelegate;
+	float StartTimeSeconds;
 };

@@ -8,19 +8,43 @@
 #include "../AnimInstance/PlayerAnimInstance.h"
 #include "HudUpDisplayWidget.h"
 #include "BuffPanel_UI.h"
+#include "Ability_Debuff.h"
 void AAbility_Buff_Master::BeginPlay()
 {
 	Super::BeginPlay();
-	ClearDuplicates();
+
 	bReplicates = true;
+	//FTimerHandle TimerHandler;
+	//GetWorld()->GetTimerManager().SetTimer(TimerHandler, this, &AAbility_Buff_Master::TickBuff, BuffLifeSpan, false);
 
+}
 
+void AAbility_Buff_Master::Tick(float DeltaTime)
+{
+	TimeSpend += DeltaTime;
 }
 
 void AAbility_Buff_Master::CastAbility_Implementation()
 {
 	Super::CastAbility_Implementation();
-	SetLifeSpan(BuffLifeSpan);
+	auto tmp = Cast<AAbility_Debuff>(this);
+	if (tmp != nullptr)
+	{
+		PlayerRef = PlayerRef->TargetPlayer;
+	}
+
+	if (HasAuthority())
+	{
+		
+		SetLifeSpan(BuffLifeSpan);
+		UE_LOG(LogTemp, Warning, TEXT("Server SetLifeSpan %f"), GetLifeSpan());
+	}
+	else
+	{
+		UE_LOG(LogTemp, Warning, TEXT("Client SetLifeSpan %f"), GetLifeSpan());
+	}
+
+
 	ApplyBuff();
 
 }
@@ -33,6 +57,7 @@ void AAbility_Buff_Master::ApplyBuff()
 	GetWorld()->GetTimerManager().SetTimer(TimerHandler, this, &AAbility_Buff_Master::TickBuff, BuffTickRate, true);
 	if (PlayerRef->IsLocallyControlled() == true)
 	{
+		UE_LOG(LogTemp, Warning, TEXT("ApplyBuff"));
 		HudUI->BuffPanel_UI->AddBufftoUI(this);
 	}
 }

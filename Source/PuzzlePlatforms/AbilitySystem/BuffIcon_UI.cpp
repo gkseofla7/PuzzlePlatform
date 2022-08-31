@@ -28,8 +28,9 @@ void UBuffIcon_UI::UpdateProgressBar()
 {
 	if (BuffAbility != nullptr)
 	{
-		float percent = UKismetMathLibrary::NormalizeToRange(BuffAbility->GetLifeSpan(), 0, BuffLifeSpan);
-		percent = 1 - percent;
+		UE_LOG(LogTemp,Warning,TEXT("%f/%f"), BuffAbility->TimeSpend, BuffLifeSpan)
+		float percent = UKismetMathLibrary::NormalizeToRange(BuffAbility->TimeSpend, 0, BuffLifeSpan);
+		//percent = 1 - percent;
 		BuffTimer->SetPercent(percent);
 	}
 

@@ -67,6 +67,11 @@ public:
 		class AController* EventInstigator, AActor* DamageCauser) override;
 	void SetTargetPlayerWithLineTrace();
 	UFUNCTION(Server, Reliable, WithValidation)
+		void Server_SetTargetPlayer(APuzzlePlatformsCharacter * NewTarget);
+	UFUNCTION(NetMulticast, Reliable, WithValidation)
+		void NetMulticast_SetTargetPlayer(APuzzlePlatformsCharacter* NewTarget);
+
+	UFUNCTION(Server, Reliable, WithValidation)
 		void Server_Skill1Clicked();
 	UFUNCTION(Server, Reliable, WithValidation)
 		void Server_Skill2Clicked();

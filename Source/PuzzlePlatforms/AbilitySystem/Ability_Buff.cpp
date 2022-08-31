@@ -10,6 +10,7 @@
 void AAbility_Buff::BeginPlay()
 {
 	Super::BeginPlay();
+	ClearDuplicates();
 	bReplicates = true;
 	AttachToComponent(PlayerRef->GetMesh(), FAttachmentTransformRules::SnapToTargetNotIncludingScale, "hand_rSocket");
 	auto warrior = Cast<AWarrior>(PlayerRef);

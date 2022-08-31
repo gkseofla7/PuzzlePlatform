@@ -160,8 +160,10 @@ void APuzzlePlatformsCharacter::Tick(float DeltaTime)
 {//시작하자마자 로그인되는거임;;ㅋㅋ
 	Super::Tick(DeltaTime);
 	SkillAvailable = !(HeadsUpDisplayRef->CastBar_UI->WhileBuffering);
-	SetTargetPlayerWithLineTrace();
-
+	if (IsLocallyControlled())
+	{
+		SetTargetPlayerWithLineTrace();
+	}
 }
 
 void APuzzlePlatformsCharacter::SetTargetPlayerWithLineTrace()
@@ -183,9 +185,12 @@ void APuzzlePlatformsCharacter::SetTargetPlayerWithLineTrace()
 			TargetPlayer->DecalComponent->SetVisibility(false);
 		}
 		//UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), ImpactParticles, FTransform(Hit.ImpactNormal.Rotation(), Hit.ImpactPoint));
-		if(tmp != nullptr)
+		if (tmp != nullptr)
+		{
 			TargetPlayer = tmp;
-		if (TargetPlayer != nullptr)
+			Server_SetTargetPlayer(tmp);
+		}
+			if (TargetPlayer != nullptr)
 		{
 			//이후
 			TargetPlayer->DecalComponent->SetVisibility(true);
@@ -432,6 +437,26 @@ bool APuzzlePlatformsCharacter::Server_Skill4Clicked_Validate()
 }
 
 bool APuzzlePlatformsCharacter::Server_Skill5Clicked_Validate()
+{
+	return true;
+}
+
+void APuzzlePlatformsCharacter::Server_SetTargetPlayer_Implementation(APuzzlePlatformsCharacter* NewTarget)
+{
+	NetMulticast_SetTargetPlayer(NewTarget);
+}
+
+void APuzzlePlatformsCharacter::NetMulticast_SetTargetPlayer_Implementation(APuzzlePlatformsCharacter* NewTarget)
+{
+	TargetPlayer = NewTarget;
+}
+
+bool APuzzlePlatformsCharacter::Server_SetTargetPlayer_Validate(APuzzlePlatformsCharacter* NewTarget)
+{
+	return true;
+}
+
+bool APuzzlePlatformsCharacter::NetMulticast_SetTargetPlayer_Validate(APuzzlePlatformsCharacter* NewTarget)
 {
 	return true;
 }

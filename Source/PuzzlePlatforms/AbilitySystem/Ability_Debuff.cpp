@@ -9,16 +9,20 @@
 #include "../AnimInstance/PlayerAnimInstance.h"
 void AAbility_Debuff::BeginPlay()
 {
-	PlayerRef = PlayerRef->TargetPlayer;
+
 	Super::BeginPlay();
+
+
+	ClearDuplicates();
 	bReplicates = true;
+
 	auto warrior = Cast<AWarrior>(PlayerRef);
 	AsPlayerAnimInstance = Cast<UPlayerAnimInstance>(warrior->GetMesh()->GetAnimInstance());
 	//AsPlayerAnimInstance->IsAttacking = true;
 	//AsPlayerAnimInstance->OnActivateSpell.AddUObject(this, &AAbility_AoE::ActivateEffect);
 	AsPlayerAnimInstance->PlayAoEAttackMontage();
 	AttachToComponent(PlayerRef->GetMesh(), FAttachmentTransformRules::SnapToTargetNotIncludingScale, "hand_rSocket");
-
+	UE_LOG(LogTemp, Warning, TEXT("Beginplay"));
 }
 
 void AAbility_Debuff::CastAbility_Implementation()
