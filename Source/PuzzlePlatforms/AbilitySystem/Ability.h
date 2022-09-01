@@ -38,6 +38,8 @@ public:
 	virtual void ActivateEffect_Implementation();
 
 	void DetachAbilityFromPlayer();
+	UFUNCTION()
+	void EndAnimation(UAnimMontage* Montage, bool bInterrupted);
 public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	FAbilityDetailsStruct AbilityDetails;
@@ -50,7 +52,7 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 		class UHudUpDisplayWidget* HudUI;
 
-
+	class UAnimInstance_Master* AnimRef;
 
 
 

@@ -11,6 +11,7 @@
 #include "PlayerInfoWidget.h"
 #include "PlayersComponent/SoldierMotionReplicator.h"
 #include "MyLobbyGameMode.h"
+#include "AbilitySystem/Ability.h"
 #include "AbilitySystem/ActionBarSlotWidget.h"
 #include "AbilitySystem/HudUpDisplayWidget.h"
 #include "AbilitySystem/ActionBarWidget.h"
@@ -147,6 +148,7 @@ void APuzzlePlatformsCharacter::BeginPlay()
 {
 	Super::BeginPlay();
 	HeadsUpDisplayRef = Cast< UPuzzlePlatformsGameInstance>(UGameplayStatics::GetGameInstance(GetWorld()))->HeadsUpDisplay;
+
 	//Not Working
 	//FName identifier = TEXT("Not Yet");
 	auto gamemode = Cast<AMyLobbyGameMode>(UGameplayStatics::GetGameMode(GetWorld()));
@@ -304,11 +306,9 @@ float APuzzlePlatformsCharacter::TakeDamage(float DamageAmount, FDamageEvent con
 	float FinalDamage = Super::TakeDamage(DamageAmount, DamageEvent, EventInstigator, DamageCauser);
 	
 	float HP =  CharacterStat->GetHP();
-	UE_LOG(LogTemp, Warning, TEXT("Before HP : %f"), CharacterStat->GetHP());
+
 	CharacterStat->SetHP(HP - FinalDamage);
 
-	UE_LOG(LogTemp, Warning, TEXT("Actor : %s took Damage : %f"), *GetName(), FinalDamage);
-	UE_LOG(LogTemp, Warning, TEXT("After HP : %f"), CharacterStat->GetHP());
 	return FinalDamage;
 
 
@@ -360,28 +360,32 @@ void APuzzlePlatformsCharacter::Skill1Clicked()
 {
 	if (SkillAvailable == false)
 		return;
-	Server_Skill1Clicked();
+	if (HeadsUpDisplayRef != nullptr)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("HeadsUpDisplayRef nullptr"));
+	}
+	Server_Skill1Clicked(HeadsUpDisplayRef->ActionBar_UI->ActionBarSlot_UI->AbilityClass);
 }
 
 void APuzzlePlatformsCharacter::Skill2Clicked()
 {
 	if (SkillAvailable == false)
 		return;
-	Server_Skill2Clicked();
+	Server_Skill2Clicked(HeadsUpDisplayRef->ActionBar_UI->ActionBarSlot_UI_1->AbilityClass);
 }
 
 void APuzzlePlatformsCharacter::Skill3Clicked()
 {
 	if (SkillAvailable == false)
 		return;
-	Server_Skill3Clicked();
+	Server_Skill3Clicked(HeadsUpDisplayRef->ActionBar_UI->ActionBarSlot_UI_2->AbilityClass);
 }
 
 void APuzzlePlatformsCharacter::Skill4Clicked()
 {
 	if (SkillAvailable == false)
 		return;
-	Server_Skill4Clicked();
+	Server_Skill4Clicked(HeadsUpDisplayRef->ActionBar_UI->ActionBarSlot_UI_3->AbilityClass);
 }
 void APuzzlePlatformsCharacter::Skill5Clicked()
 {
@@ -389,54 +393,57 @@ void APuzzlePlatformsCharacter::Skill5Clicked()
 		return;
 	if (TargetPlayer == nullptr)
 		return;
-	Server_Skill5Clicked();
+	Server_Skill5Clicked(HeadsUpDisplayRef->ActionBar_UI->ActionBarSlot_UI_4->AbilityClass);
 }
 
-void APuzzlePlatformsCharacter::Server_Skill1Clicked_Implementation()
+void APuzzlePlatformsCharacter::Server_Skill1Clicked_Implementation(TSubclassOf<AAbility>AbilityClass)
 {
-	HeadsUpDisplayRef->ActionBar_UI->ActionBarSlot_UI->AbilitySpawn(this);
+	AbilitySpawn(AbilityClass);
+	//NewHeadsUpDisplay->ActionBar_UI->ActionBarSlot_UI->AbilitySpawn(this);
 
 }
 
-void APuzzlePlatformsCharacter::Server_Skill2Clicked_Implementation()
+void APuzzlePlatformsCharacter::Server_Skill2Clicked_Implementation(TSubclassOf<AAbility>AbilityClass)
 {
-	HeadsUpDisplayRef->ActionBar_UI->ActionBarSlot_UI_1->AbilitySpawn(this);
+	AbilitySpawn(AbilityClass);
 }
 
 
-void APuzzlePlatformsCharacter::Server_Skill3Clicked_Implementation()
+void APuzzlePlatformsCharacter::Server_Skill3Clicked_Implementation(TSubclassOf<AAbility>AbilityClass)
 {
-	HeadsUpDisplayRef->ActionBar_UI->ActionBarSlot_UI_2->AbilitySpawn(this);
+	AbilitySpawn(AbilityClass);
 }
 
-void APuzzlePlatformsCharacter::Server_Skill4Clicked_Implementation()
+void APuzzlePlatformsCharacter::Server_Skill4Clicked_Implementation(TSubclassOf<AAbility>AbilityClass)
 {
-	HeadsUpDisplayRef->ActionBar_UI->ActionBarSlot_UI_3->AbilitySpawn(this);
+	AbilitySpawn(AbilityClass);
+
 }
-void APuzzlePlatformsCharacter::Server_Skill5Clicked_Implementation()
+void APuzzlePlatformsCharacter::Server_Skill5Clicked_Implementation(TSubclassOf<AAbility>AbilityClass)
 {
-	HeadsUpDisplayRef->ActionBar_UI->ActionBarSlot_UI_4->AbilitySpawn(this);
+	AbilitySpawn(AbilityClass);
+	
 }
 
-bool APuzzlePlatformsCharacter::Server_Skill1Clicked_Validate()
-{
-	return true;
-}
-bool APuzzlePlatformsCharacter::Server_Skill2Clicked_Validate()
-{
-	return true;
-}
-bool APuzzlePlatformsCharacter::Server_Skill3Clicked_Validate()
+bool APuzzlePlatformsCharacter::Server_Skill1Clicked_Validate(TSubclassOf<AAbility>AbilityClass)
 {
 	return true;
 }
-
-bool APuzzlePlatformsCharacter::Server_Skill4Clicked_Validate()
+bool APuzzlePlatformsCharacter::Server_Skill2Clicked_Validate(TSubclassOf<AAbility>AbilityClass)
+{
+	return true;
+}
+bool APuzzlePlatformsCharacter::Server_Skill3Clicked_Validate(TSubclassOf<AAbility>AbilityClass)
 {
 	return true;
 }
 
-bool APuzzlePlatformsCharacter::Server_Skill5Clicked_Validate()
+bool APuzzlePlatformsCharacter::Server_Skill4Clicked_Validate(TSubclassOf<AAbility>AbilityClass)
+{
+	return true;
+}
+
+bool APuzzlePlatformsCharacter::Server_Skill5Clicked_Validate(TSubclassOf<AAbility>AbilityClass)
 {
 	return true;
 }
@@ -459,4 +466,22 @@ bool APuzzlePlatformsCharacter::Server_SetTargetPlayer_Validate(APuzzlePlatforms
 bool APuzzlePlatformsCharacter::NetMulticast_SetTargetPlayer_Validate(APuzzlePlatformsCharacter* NewTarget)
 {
 	return true;
+}
+
+void APuzzlePlatformsCharacter::AbilitySpawn( TSubclassOf<AAbility>AbilityClass)
+{
+
+	UE_LOG(LogTemp, Warning, TEXT("Spawn In Server"));
+	FTransform PlayerTransform = GetActorTransform();
+	FActorSpawnParameters Params;
+	FActorSpawnParameters SpawnInfo;
+
+	SpawnInfo.Owner = this;
+	SpawnInfo.Instigator = this;
+	//auto ability = GetWorld()->SpawnActorDeferred<AAbility>(AbilityClass, PlayerTransform,NewPlayer,NewPlayer);
+	auto ability = GetWorld()->SpawnActor<AAbility>(AbilityClass, PlayerTransform, SpawnInfo);
+
+	//ability->PlayerRef = NewPlayer;//컨트롤러가 있는 플레이어
+//UWorld::SpawnActor(AbilityClass, PlayerTransform);
+//GetWorld()->SpawnActor();
 }

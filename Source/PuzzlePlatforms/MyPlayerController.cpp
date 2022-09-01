@@ -17,6 +17,8 @@ AMyPlayerController::AMyPlayerController()
 	{
 		HUDWidgetClass = UI_HUD_C.Class;
 	}
+
+
 	//if (NEWUI_HUD_C.Succeeded())
 	//{
 	//	NewHUDWidgetClass = NEWUI_HUD_C.Class;
@@ -26,7 +28,6 @@ AMyPlayerController::AMyPlayerController()
 void AMyPlayerController::PostInitializeComponents()
 {
 	Super::PostInitializeComponents();
-
 
 }
 void AMyPlayerController::OnPossess(APawn* aPawn)

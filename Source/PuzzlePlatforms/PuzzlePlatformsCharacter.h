@@ -72,17 +72,17 @@ public:
 		void NetMulticast_SetTargetPlayer(APuzzlePlatformsCharacter* NewTarget);
 
 	UFUNCTION(Server, Reliable, WithValidation)
-		void Server_Skill1Clicked();
+		void Server_Skill1Clicked(TSubclassOf<AAbility>AbilityClass);
 	UFUNCTION(Server, Reliable, WithValidation)
-		void Server_Skill2Clicked();
+		void Server_Skill2Clicked(TSubclassOf<AAbility>AbilityClass);
 	UFUNCTION(Server, Reliable, WithValidation)
-		void Server_Skill3Clicked();
+		void Server_Skill3Clicked(TSubclassOf<AAbility>AbilityClass);
 	UFUNCTION(Server, Reliable, WithValidation)
-		void Server_Skill4Clicked();
+		void Server_Skill4Clicked(TSubclassOf<AAbility>AbilityClass);
 	UFUNCTION(Server, Reliable, WithValidation)
-		void Server_Skill5Clicked();
+		void Server_Skill5Clicked(TSubclassOf<AAbility>AbilityClass);
 
-
+	void AbilitySpawn(TSubclassOf<class AAbility>AbilityClass);
 public:
 
 	UPROPERTY(EditAnywhere,BlueprintReadWrite, Category = Stat)

@@ -35,12 +35,13 @@ UPuzzlePlatformsGameInstance::UPuzzlePlatformsGameInstance(const FObjectInitiali
 		ABCHECK(MyCharacterTable->GetRowMap().Num() > 0);
 	}
 
-	//static ConstructorHelpers::FClassFinder< UUserWidget> NEWUI_HUD_C(TEXT("/Game/AbilitySystem/UI/HeadsUpDisplay"));
 	static ConstructorHelpers::FClassFinder< UUserWidget> NEWUI_HUD_C(TEXT("/Game/AbilitySystem/HeadsUpDisplay"));
 	if (NEWUI_HUD_C.Succeeded())
 	{
 		NewHUDWidgetClass = NEWUI_HUD_C.Class;
 	}
+	//static ConstructorHelpers::FClassFinder< UUserWidget> NEWUI_HUD_C(TEXT("/Game/AbilitySystem/UI/HeadsUpDisplay"));
+
 }
 
 void UPuzzlePlatformsGameInstance::Init()
@@ -74,7 +75,10 @@ void UPuzzlePlatformsGameInstance::Init()
 	}
 
 	HeadsUpDisplay = Cast< UHudUpDisplayWidget>(CreateWidget<UUserWidget>(this, NewHUDWidgetClass));
-
+	if (HeadsUpDisplay == nullptr)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("In GameInstance Init nullptr"));
+	}
 
 }
 FMyCharacterrData* UPuzzlePlatformsGameInstance::GetMyCharacterData(int32 Level)

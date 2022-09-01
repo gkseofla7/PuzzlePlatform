@@ -5,6 +5,7 @@
 #include "../PuzzlePlatformsCharacter.h"
 #include "../PuzzlePlatformsGameInstance.h"
 #include "HudUpDisplayWidget.h"
+#include "../AnimInstance/AnimInstance_Master.h"
 
 #include "GameFramework/Character.h"
 #include "Components/SphereComponent.h"
@@ -31,6 +32,10 @@ void AAbility::BeginPlay()
 	Super::BeginPlay();
 	
 	PlayerRef = Cast<APuzzlePlatformsCharacter>(GetOwner());
+	AnimRef = Cast<UAnimInstance_Master>(PlayerRef->GetMesh()->GetAnimInstance());
+	AnimRef->IsAttacking = true;
+	AnimRef->OnMontageEnded.AddDynamic(this, &AAbility::EndAnimation);
+
 		HudUI =
 			Cast< UPuzzlePlatformsGameInstance>(UGameplayStatics::GetGameInstance(GetWorld()))->HeadsUpDisplay;
 		BeginCasting();
@@ -97,3 +102,7 @@ void AAbility::DetachAbilityFromPlayer()
 
 }
 
+void AAbility::EndAnimation(UAnimMontage* Montage, bool bInterrupted)
+{
+	AnimRef->IsAttacking = false;
+}

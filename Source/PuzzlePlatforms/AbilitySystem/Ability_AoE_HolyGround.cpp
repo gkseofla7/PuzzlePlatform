@@ -58,7 +58,7 @@ void AAbility_AoE_HolyGround::TickEffect()
 	{
 		for (auto Actors : OverlappingActors)
 		{
-			UGameplayStatics::ApplyDamage(Actors, -50, PlayerRef->GetController(), PlayerRef, UDamageType::StaticClass());
+			UGameplayStatics::ApplyDamage(Actors, -10, PlayerRef->GetController(), PlayerRef, UDamageType::StaticClass());
 
 		}
 	}

@@ -3,7 +3,7 @@
 #pragma once
 
 #include "../PuzzlePlatforms.h"
-#include "Animation/AnimInstance.h"
+#include "AnimInstance_Master.h"
 #include "PlayerAnimInstance.generated.h"
 
 
@@ -15,7 +15,7 @@ DECLARE_MULTICAST_DELEGATE(FOnFireBallDelegate);
 DECLARE_MULTICAST_DELEGATE(FOnActivateSpellDelegate);
 DECLARE_MULTICAST_DELEGATE(FOnFireDragonBlastDelegate);
 UCLASS()
-class PUZZLEPLATFORMS_API UPlayerAnimInstance : public UAnimInstance
+class PUZZLEPLATFORMS_API UPlayerAnimInstance : public UAnimInstance_Master
 {
 	GENERATED_BODY()
 	
@@ -40,10 +40,8 @@ public:
 	FOnFireBallDelegate OnFireBall;
 	FOnFireDragonBlastDelegate OnFireDragonBlastDelegate;
 	FOnActivateSpellDelegate OnActivateSpell;
-	UPROPERTY(VisibleDefaultsOnly, BlueprintReadWrite, Category = Attack)
-		bool IsAttacking = false;
-	public:
 
+	public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Pawn, Meta = (AllowPrivateAccess = true))
 		float Direction;

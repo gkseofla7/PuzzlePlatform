@@ -3,7 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "Animation/AnimInstance.h"
+#include "AnimInstance_Master.h"
 #include "../Weapons/Weapon_Master.h"
 #include "SoldierAnimInstance.generated.h"
 
@@ -11,7 +11,7 @@
  * 
  */
 UCLASS()
-class PUZZLEPLATFORMS_API USoldierAnimInstance : public UAnimInstance
+class PUZZLEPLATFORMS_API USoldierAnimInstance : public UAnimInstance_Master
 {
 	GENERATED_BODY()
 

@@ -63,7 +63,9 @@ void UActionBarSlotWidget::CastButtonClicked()
 
 void UActionBarSlotWidget::AbilitySpawn(APuzzlePlatformsCharacter* NewPlayer)
 {
-	UE_LOG(LogTemp,Warning, TEXT("Spawning"))
+	if (!NewPlayer->HasAuthority())
+		return;
+	UE_LOG(LogTemp, Warning, TEXT("Spawn In Server"));
 	FTransform PlayerTransform = NewPlayer->GetActorTransform();
 	FActorSpawnParameters Params;
 	FActorSpawnParameters SpawnInfo;
