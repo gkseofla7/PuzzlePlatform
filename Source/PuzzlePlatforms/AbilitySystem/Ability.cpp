@@ -55,9 +55,9 @@ void AAbility::BeginCasting()
 {
 	if (AbilityDetails.CastTime > 0)
 	{
-		auto CastBar = HudUI->DisplayCastBar(this);
+		CastBar = HudUI->DisplayCastBar(this);
 		//이거에서 중복되는구나..
-		CastBar->CastSuccessful.Clear();
+
 		CastBar->CastSuccessful.AddDynamic(this, &AAbility::CastAbility);
 	}
 	else
@@ -75,12 +75,15 @@ void AAbility::InterruptCast()
 void AAbility::CastAbility()
 {
 	UE_LOG(LogTemp, Warning, TEXT("CastAbility"));
+
 	CastAbility_Implementation();
 }
 void AAbility::CastAbility_Implementation()
 {
-	
-	
+	if (CastBar != nullptr)
+	{
+		CastBar->CastSuccessful.Clear();
+	}
 }
 
 void AAbility::ActivateEffect()
@@ -104,5 +107,6 @@ void AAbility::DetachAbilityFromPlayer()
 
 void AAbility::EndAnimation(UAnimMontage* Montage, bool bInterrupted)
 {
+	UE_LOG(LogTemp, Warning, TEXT("EndAnimation"));
 	AnimRef->IsAttacking = false;
 }

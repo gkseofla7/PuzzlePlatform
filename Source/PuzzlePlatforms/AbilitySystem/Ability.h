@@ -54,6 +54,9 @@ public:
 
 	class UAnimInstance_Master* AnimRef;
 
+	class UCastBarWidget* CastBar;
+
+
 
 
 };

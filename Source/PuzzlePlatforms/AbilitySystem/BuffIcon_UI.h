@@ -27,6 +27,6 @@ public:
 		class UImage* BuffImage;
 	UPROPERTY(meta = (BindWidget), BlueprintReadWrite)
 	class UProgressBar* BuffTimer;
-
+	FTimerHandle TimerHandler;
 	float BuffLifeSpan;
 };

@@ -96,7 +96,7 @@ void UPlayerAnimInstance::PlayFireballAttackMontage()
 
 void UPlayerAnimInstance::PlayAoEAttackMontage()
 {
-	UE_LOG(LogTemp, Warning, TEXT("PlayMontage"));
+
 	Montage_Play(AreaAttackMontage, 1.0);
 
 
@@ -106,6 +106,7 @@ void UPlayerAnimInstance::PlaySwordBlastMontage()
 {
 
 	Montage_Play(SwordBlastMontage, 1.0);
+	UE_LOG(LogTemp, Warning, TEXT("PlaySwordMontage"));
 }
 
 void UPlayerAnimInstance::PlayHangToCrouchMontage()

@@ -13,12 +13,7 @@ void AAbility_Buff::BeginPlay()
 	ClearDuplicates();
 	bReplicates = true;
 	AttachToComponent(PlayerRef->GetMesh(), FAttachmentTransformRules::SnapToTargetNotIncludingScale, "hand_rSocket");
-	auto warrior = Cast<AWarrior>(PlayerRef);
 
-	AsPlayerAnimInstance = Cast<UPlayerAnimInstance>(warrior->GetMesh()->GetAnimInstance());
-	//AsPlayerAnimInstance->OnActivateSpell.AddUObject(this, &AAbility_AoE::ActivateEffect);
-
-	AsPlayerAnimInstance->PlayAoEAttackMontage();
 }
 
 void AAbility_Buff::CastAbility_Implementation()

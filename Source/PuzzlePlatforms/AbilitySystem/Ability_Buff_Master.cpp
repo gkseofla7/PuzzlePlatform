@@ -22,6 +22,11 @@ void AAbility_Buff_Master::BeginPlay()
 void AAbility_Buff_Master::Tick(float DeltaTime)
 {
 	TimeSpend += DeltaTime;
+	if (TimeSpend > 10.)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("DEstroy"));
+		Destroy();
+	}
 }
 
 void AAbility_Buff_Master::CastAbility_Implementation()
@@ -82,7 +87,7 @@ void AAbility_Buff_Master::ClearDuplicates()
 	{
 		if (Actor->GetClass() == GetClass())
 		{
-			UE_LOG(LogTemp, Warning, TEXT("Clear!"));
+
 			//DestoryActors.Add(Actor);
 			Actor->Destroy();//아마 상관없을듯?
 		}
@@ -93,5 +98,6 @@ void AAbility_Buff_Master::ClearDuplicates()
 void AAbility_Buff_Master::EndPlay(const EEndPlayReason::Type EndPlayReason)
 {
 	Super::EndPlay(EndPlayReason);
+	UE_LOG(LogTemp, Warning, TEXT("EndPlay!"));
 	OnEndBuffDelegate.Broadcast();
 }
