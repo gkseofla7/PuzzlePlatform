@@ -20,13 +20,22 @@ public:
 	UActionBarSlotWidget(const FObjectInitializer& ObjectInitializer);
 	//virtual void PreConstruct(bool IsDesignTime) override;
 	virtual void NativePreConstruct();
+	void NativeTick(const FGeometry& MyGeometry,	float InDeltaTime	) override;
 	bool Initialize();
+	void StartCooldown();
+	void EndCooldown();
+	void UpdateAppearance();
 public:
 	UPROPERTY(meta = (BindWidget), BlueprintReadWrite)
 	class UImage* IconImage;
 	UPROPERTY(meta = (BindWidget), BlueprintReadWrite)
 	class UButton* CastButton;
+	UPROPERTY(meta = (BindWidget), BlueprintReadWrite)
+	class UProgressBar* CooldownBar;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	TSubclassOf<class AAbility>AbilityClass;
+	bool IsAvailable = true;
+	class APuzzlePlatformsCharacter* Owner;
+	FTimerHandle CooldownTimerHandler;
 	
 };

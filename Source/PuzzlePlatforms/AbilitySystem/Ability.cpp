@@ -84,6 +84,7 @@ void AAbility::CastAbility_Implementation()
 	{
 		CastBar->CastSuccessful.Clear();
 	}
+	CastSuccessDeleagate.Broadcast();
 }
 
 void AAbility::ActivateEffect()

@@ -11,6 +11,9 @@
 #include "Components/Button.h"
 #include "Kismet/GameplayStatics.h"
 #include "GameFramework/Character.h"
+#include "Components/ProgressBar.h"
+#include "Kismet/KismetSystemLibrary.h"
+#include "Kismet/KismetMathLibrary.h"
 UActionBarSlotWidget::UActionBarSlotWidget(const FObjectInitializer& ObjectInitializer)
 	:Super(ObjectInitializer)
 {
@@ -36,6 +39,7 @@ void UActionBarSlotWidget::NativePreConstruct()
 		IconImage->SetVisibility(ESlateVisibility::Hidden);
 		
 	}
+	UpdateAppearance();
 }
 bool UActionBarSlotWidget::Initialize()
 {
@@ -48,6 +52,19 @@ bool UActionBarSlotWidget::Initialize()
 
 
 	return true;
+}
+
+void UActionBarSlotWidget::NativeTick(const FGeometry& MyGeometry, float InDeltaTime)
+{
+	if (CooldownBar->IsVisible() == true)
+	{
+		float RemaingTime = UKismetSystemLibrary::K2_GetTimerRemainingTimeHandle(GetWorld(), CooldownTimerHandler);
+		float ElapsedTime = UKismetSystemLibrary::K2_GetTimerElapsedTimeHandle(GetWorld(), CooldownTimerHandler);
+
+		float Total = RemaingTime + ElapsedTime;
+		CooldownBar->SetPercent(UKismetMathLibrary::NormalizeToRange(RemaingTime, 0, Total));
+		
+	}
 }
 
 void UActionBarSlotWidget::CastButtonClicked()
@@ -69,7 +86,7 @@ void UActionBarSlotWidget::AbilitySpawn(APuzzlePlatformsCharacter* NewPlayer)
 	FTransform PlayerTransform = NewPlayer->GetActorTransform();
 	FActorSpawnParameters Params;
 	FActorSpawnParameters SpawnInfo;
-
+	Owner = NewPlayer;
 	SpawnInfo.Owner = NewPlayer;
 	SpawnInfo.Instigator = NewPlayer;
 	//auto ability = GetWorld()->SpawnActorDeferred<AAbility>(AbilityClass, PlayerTransform,NewPlayer,NewPlayer);
@@ -78,4 +95,35 @@ void UActionBarSlotWidget::AbilitySpawn(APuzzlePlatformsCharacter* NewPlayer)
 		//ability->PlayerRef = NewPlayer;//컨트롤러가 있는 플레이어
 	//UWorld::SpawnActor(AbilityClass, PlayerTransform);
 	//GetWorld()->SpawnActor();
+}
+//애초에 ability에 하는데..ㅋㅋ
+void UActionBarSlotWidget::StartCooldown()
+{
+	IsAvailable = false;
+	UpdateAppearance();
+
+	auto ability = AbilityClass.GetDefaultObject();
+	GetWorld()->GetTimerManager().SetTimer(CooldownTimerHandler, this, &UActionBarSlotWidget::EndCooldown, ability->AbilityDetails.CoolDown, false);
+
+}
+
+void UActionBarSlotWidget::EndCooldown()
+{
+	IsAvailable = true;
+	UpdateAppearance();
+	UKismetSystemLibrary::K2_ClearAndInvalidateTimerHandle(GetWorld(), CooldownTimerHandler);
+}
+
+void UActionBarSlotWidget::UpdateAppearance()
+{
+	if (IsAvailable == false)
+	{
+		CooldownBar->SetVisibility(ESlateVisibility::Visible);
+		CooldownBar->SetPercent(1);
+	}
+	else
+	{
+		CooldownBar->SetVisibility(ESlateVisibility::Hidden);
+		CooldownBar->SetPercent(0);
+	}
 }

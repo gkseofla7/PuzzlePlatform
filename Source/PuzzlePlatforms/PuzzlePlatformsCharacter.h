@@ -104,6 +104,9 @@ public:
 	bool SkillAvailable = true;
 	APuzzlePlatformsCharacter* TargetPlayer;
 
+
+
+
 protected:
 	UPROPERTY()
 		UAnimInstance* MyAnim;

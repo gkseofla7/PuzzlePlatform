@@ -8,7 +8,8 @@
 #include "AbilityDetailStruct.h"
 #include "Ability.generated.h"
 
-
+DECLARE_MULTICAST_DELEGATE(FCastSuccessDeleagate);
+//DECLARE_MULTICAST_DELEGATE(FCastSuccessDeleagate);
 
 UCLASS()
 class PUZZLEPLATFORMS_API AAbility : public AActor
@@ -55,6 +56,8 @@ public:
 	class UAnimInstance_Master* AnimRef;
 
 	class UCastBarWidget* CastBar;
+
+	FCastSuccessDeleagate CastSuccessDeleagate;
 
 
 

@@ -58,8 +58,8 @@ void AAbility_Buff_Master::ApplyBuff()
 {
 
 	FTimerHandle TimerHandler;
-
 	GetWorld()->GetTimerManager().SetTimer(TimerHandler, this, &AAbility_Buff_Master::TickBuff, BuffTickRate, true);
+	
 	if (PlayerRef->IsLocallyControlled() == true)
 	{
 		UE_LOG(LogTemp, Warning, TEXT("ApplyBuff"));

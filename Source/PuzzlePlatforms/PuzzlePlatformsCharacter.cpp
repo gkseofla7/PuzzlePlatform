@@ -360,10 +360,10 @@ void APuzzlePlatformsCharacter::Skill1Clicked()
 {
 	if (SkillAvailable == false)
 		return;
-	if (HeadsUpDisplayRef != nullptr)
-	{
-		UE_LOG(LogTemp, Warning, TEXT("HeadsUpDisplayRef nullptr"));
-	}
+
+	if (HeadsUpDisplayRef->ActionBar_UI->ActionBarSlot_UI->IsAvailable == false)
+		return;
+	HeadsUpDisplayRef->ActionBar_UI->ActionBarSlot_UI->StartCooldown();
 	Server_Skill1Clicked(HeadsUpDisplayRef->ActionBar_UI->ActionBarSlot_UI->AbilityClass);
 }
 
@@ -371,6 +371,9 @@ void APuzzlePlatformsCharacter::Skill2Clicked()
 {
 	if (SkillAvailable == false)
 		return;
+	if (HeadsUpDisplayRef->ActionBar_UI->ActionBarSlot_UI_1->IsAvailable == false)
+		return;
+	HeadsUpDisplayRef->ActionBar_UI->ActionBarSlot_UI_1->StartCooldown();
 	Server_Skill2Clicked(HeadsUpDisplayRef->ActionBar_UI->ActionBarSlot_UI_1->AbilityClass);
 }
 
@@ -378,6 +381,9 @@ void APuzzlePlatformsCharacter::Skill3Clicked()
 {
 	if (SkillAvailable == false)
 		return;
+	if (HeadsUpDisplayRef->ActionBar_UI->ActionBarSlot_UI_2->IsAvailable == false)
+		return;
+	HeadsUpDisplayRef->ActionBar_UI->ActionBarSlot_UI_2->StartCooldown();
 	Server_Skill3Clicked(HeadsUpDisplayRef->ActionBar_UI->ActionBarSlot_UI_2->AbilityClass);
 }
 
@@ -385,6 +391,9 @@ void APuzzlePlatformsCharacter::Skill4Clicked()
 {
 	if (SkillAvailable == false)
 		return;
+	if (HeadsUpDisplayRef->ActionBar_UI->ActionBarSlot_UI_3->IsAvailable == false)
+		return;
+	HeadsUpDisplayRef->ActionBar_UI->ActionBarSlot_UI_3->StartCooldown();
 	Server_Skill4Clicked(HeadsUpDisplayRef->ActionBar_UI->ActionBarSlot_UI_3->AbilityClass);
 }
 void APuzzlePlatformsCharacter::Skill5Clicked()
@@ -393,6 +402,9 @@ void APuzzlePlatformsCharacter::Skill5Clicked()
 		return;
 	if (TargetPlayer == nullptr)
 		return;
+	if (HeadsUpDisplayRef->ActionBar_UI->ActionBarSlot_UI_4->IsAvailable == false)
+		return;
+	HeadsUpDisplayRef->ActionBar_UI->ActionBarSlot_UI_4->StartCooldown();
 	Server_Skill5Clicked(HeadsUpDisplayRef->ActionBar_UI->ActionBarSlot_UI_4->AbilityClass);
 }
 
