@@ -34,6 +34,7 @@ public:
 	class UProgressBar* CooldownBar;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	TSubclassOf<class AAbility>AbilityClass;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	bool IsAvailable = true;
 	class APuzzlePlatformsCharacter* Owner;
 	FTimerHandle CooldownTimerHandler;

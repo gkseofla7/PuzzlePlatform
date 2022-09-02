@@ -55,6 +55,7 @@ void UMyCharacterStatComponent::SetNewLevel(int32 NewLevel)
 	{
 		Level = NewLevel;
 		SetHP(CurrentStatData->MaxHP);
+		SetMP(CurrentStatData->MaxMP);
 	}
 	else
 	{
@@ -74,11 +75,29 @@ void UMyCharacterStatComponent::SetHP(float NewHP)
 	}
 }
 
+void UMyCharacterStatComponent::SetMP(float NewMP)
+{
+	CurrentMP = NewMP;
+	OnMPChanged.Broadcast();
+	if (CurrentMP < KINDA_SMALL_NUMBER)
+	{
+		CurrentMP = 0.0f;
+	}
+}
+
+
 float UMyCharacterStatComponent::GetHPRatio()
 {
 	ABCHECK(nullptr != CurrentStatData, 0.0f);
 	
 	return (CurrentStatData->MaxHP < KINDA_SMALL_NUMBER) ? 0.0f : (CurrentHP / CurrentStatData->MaxHP);
+}
+
+float UMyCharacterStatComponent::GetMPRatio()
+{
+	ABCHECK(nullptr != CurrentStatData, 0.0f);
+
+	return (CurrentStatData->MaxMP < KINDA_SMALL_NUMBER) ? 0.0f : (CurrentMP / CurrentStatData->MaxMP);
 }
 
 

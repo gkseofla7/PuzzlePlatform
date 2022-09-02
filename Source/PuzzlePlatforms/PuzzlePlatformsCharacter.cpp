@@ -375,8 +375,10 @@ void APuzzlePlatformsCharacter::Skill1Clicked()
 
 	if (HeadsUpDisplayRef->ActionBar_UI->ActionBarSlot_UI->IsAvailable == false)
 		return;
+	auto SlotClass = HeadsUpDisplayRef->ActionBar_UI->ActionBarSlot_UI->AbilityClass;
+	CharacterStat->DecreaseMP(SlotClass.GetDefaultObject()->AbilityDetails.Cost);
 	HeadsUpDisplayRef->ActionBar_UI->ActionBarSlot_UI->StartCooldown();
-	DaerimMotionReplicator->Server_Skill1Clicked(HeadsUpDisplayRef->ActionBar_UI->ActionBarSlot_UI->AbilityClass);
+	DaerimMotionReplicator->Server_Skill1Clicked(SlotClass);
 }
 
 void APuzzlePlatformsCharacter::Skill2Clicked()
@@ -385,8 +387,10 @@ void APuzzlePlatformsCharacter::Skill2Clicked()
 		return;
 	if (HeadsUpDisplayRef->ActionBar_UI->ActionBarSlot_UI_1->IsAvailable == false)
 		return;
+	auto SlotClass = HeadsUpDisplayRef->ActionBar_UI->ActionBarSlot_UI_1->AbilityClass;
+	CharacterStat->DecreaseMP(SlotClass.GetDefaultObject()->AbilityDetails.Cost);
 	HeadsUpDisplayRef->ActionBar_UI->ActionBarSlot_UI_1->StartCooldown();
-	DaerimMotionReplicator->Server_Skill2Clicked(HeadsUpDisplayRef->ActionBar_UI->ActionBarSlot_UI_1->AbilityClass);
+	DaerimMotionReplicator->Server_Skill2Clicked(SlotClass);
 }
 
 void APuzzlePlatformsCharacter::Skill3Clicked()
@@ -395,8 +399,10 @@ void APuzzlePlatformsCharacter::Skill3Clicked()
 		return;
 	if (HeadsUpDisplayRef->ActionBar_UI->ActionBarSlot_UI_2->IsAvailable == false)
 		return;
+	auto SlotClass = HeadsUpDisplayRef->ActionBar_UI->ActionBarSlot_UI_2->AbilityClass;
+	CharacterStat->DecreaseMP(SlotClass.GetDefaultObject()->AbilityDetails.Cost);
 	HeadsUpDisplayRef->ActionBar_UI->ActionBarSlot_UI_2->StartCooldown();
-	DaerimMotionReplicator->Server_Skill3Clicked(HeadsUpDisplayRef->ActionBar_UI->ActionBarSlot_UI_2->AbilityClass);
+	DaerimMotionReplicator->Server_Skill3Clicked(SlotClass);
 }
 
 void APuzzlePlatformsCharacter::Skill4Clicked()
@@ -405,8 +411,11 @@ void APuzzlePlatformsCharacter::Skill4Clicked()
 		return;
 	if (HeadsUpDisplayRef->ActionBar_UI->ActionBarSlot_UI_3->IsAvailable == false)
 		return;
+	auto SlotClass = HeadsUpDisplayRef->ActionBar_UI->ActionBarSlot_UI_3->AbilityClass;
+	CharacterStat->DecreaseMP(SlotClass.GetDefaultObject()->AbilityDetails.Cost);
+
 	HeadsUpDisplayRef->ActionBar_UI->ActionBarSlot_UI_3->StartCooldown();
-	DaerimMotionReplicator->Server_Skill4Clicked(HeadsUpDisplayRef->ActionBar_UI->ActionBarSlot_UI_3->AbilityClass);
+	DaerimMotionReplicator->Server_Skill4Clicked(SlotClass);
 }
 void APuzzlePlatformsCharacter::Skill5Clicked()
 {
@@ -416,8 +425,10 @@ void APuzzlePlatformsCharacter::Skill5Clicked()
 		return;
 	if (HeadsUpDisplayRef->ActionBar_UI->ActionBarSlot_UI_4->IsAvailable == false)
 		return;
+	auto SlotClass = HeadsUpDisplayRef->ActionBar_UI->ActionBarSlot_UI_4->AbilityClass;
+	CharacterStat->DecreaseMP(SlotClass.GetDefaultObject()->AbilityDetails.Cost);
 	HeadsUpDisplayRef->ActionBar_UI->ActionBarSlot_UI_4->StartCooldown();
-	DaerimMotionReplicator->Server_Skill5Clicked(HeadsUpDisplayRef->ActionBar_UI->ActionBarSlot_UI_4->AbilityClass);
+	DaerimMotionReplicator->Server_Skill5Clicked(SlotClass);
 }
 
 

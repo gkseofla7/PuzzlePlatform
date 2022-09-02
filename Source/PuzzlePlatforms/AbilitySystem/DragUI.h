@@ -4,22 +4,25 @@
 
 #include "CoreMinimal.h"
 #include "Blueprint/UserWidget.h"
-#include "SpellbookSlot_UI.generated.h"
+#include "DragUI.generated.h"
 
 /**
  * 
  */
 UCLASS()
-class PUZZLEPLATFORMS_API USpellbookSlot_UI : public UUserWidget
+class PUZZLEPLATFORMS_API UDragUI : public UUserWidget
 {
 	GENERATED_BODY()
+	
+
 public:
-	//void 	NativePreConstruct() override;
 	UFUNCTION(BlueprintCallable)
 	void CustomInitialize(TSubclassOf<class AAbility> NewAbilityClass);
+
 public:
 	UPROPERTY(meta = (BindWidget), BlueprintReadWrite)
-		class UImage* SpellImage;
+	class UImage* DragIcon;
+
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	TSubclassOf<class AAbility> AbilityClass;
+		TSubclassOf<class AAbility> AbilityClass;
 };

@@ -24,14 +24,14 @@ void UPlayerInfoWidget::BindCharacterStat(class UMyCharacterStatComponent* NewCh
 	ABCHECK(nullptr != NewCharacterStat);
 
 	CurrentCharacterStat = NewCharacterStat;
-	CurrentCharacterStat->SetHP(80);
+	//CurrentCharacterStat->SetHP(80);
 	
 	PlayerName->SetText(FText::FromString(TEXT("Not Yet")));
 	HpBar->SetPercent(CurrentCharacterStat->GetHPRatio());
-	NewCharacterStat->OnHPChanged.AddLambda([this]() -> void {
+	NewCharacterStat->OnMPChanged.AddLambda([this]() -> void {
 		if (CurrentCharacterStat.IsValid())
 		{
-
+			MpBar->SetPercent(CurrentCharacterStat->GetMPRatio());
 		}
 		});
 
