@@ -6,6 +6,7 @@
 #include "../PuzzlePlatformsGameInstance.h"
 #include "HudUpDisplayWidget.h"
 #include "../AnimInstance/AnimInstance_Master.h"
+#include "Ability_Buff_Master.h"
 
 #include "GameFramework/Character.h"
 #include "Components/SphereComponent.h"
@@ -13,6 +14,7 @@
 #include "Blueprint/UserWidget.h"
 #include "CastBarWidget.h"
 #include "Kismet/KismetMathLibrary.h"
+
 // Sets default values
 AAbility::AAbility()
 {
@@ -33,7 +35,10 @@ void AAbility::BeginPlay()
 	
 	PlayerRef = Cast<APuzzlePlatformsCharacter>(GetOwner());
 	AnimRef = Cast<UAnimInstance_Master>(PlayerRef->GetMesh()->GetAnimInstance());
-	AnimRef->IsAttacking = true;
+	auto IsBuff = Cast<AAbility_Buff_Master>(this);
+	if (IsBuff != nullptr)
+		PlayerRef->SetIsAttacking(true);
+	//AnimRef->IsAttacking = true;
 	AnimRef->OnMontageEnded.AddDynamic(this, &AAbility::EndAnimation);
 
 		HudUI =
@@ -97,10 +102,6 @@ void AAbility::ActivateEffect_Implementation()
 
 void AAbility::DetachAbilityFromPlayer()
 {
-
-
-
-
 	DetachFromActor(FDetachmentTransformRules::KeepWorldTransform);
 	FRotator NewRotation = PlayerRef->GetActorRotation();
 
@@ -109,5 +110,6 @@ void AAbility::DetachAbilityFromPlayer()
 void AAbility::EndAnimation(UAnimMontage* Montage, bool bInterrupted)
 {
 	UE_LOG(LogTemp, Warning, TEXT("EndAnimation"));
-	AnimRef->IsAttacking = false;
+	PlayerRef->SetIsAttacking(false);
+	//AnimRef->IsAttacking = false;
 }

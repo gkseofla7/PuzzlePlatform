@@ -53,11 +53,13 @@ void AWarrior::PostInitializeComponents()
 void AWarrior::BeginPlay()
 {
 	Super::BeginPlay();
+	MyAnim = Cast<UAnimInstance_Master>(GetMesh()->GetAnimInstance());
 
 	EquippedItem = GetWorld()->SpawnActor<ASword_Master>(SwordClass);// GetMesh()->GetSocketTransform("SwordSocket")
 	EquippedItem->GetSkeletalMesh()->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 	EquippedItem->AttachToPlayer(this, "SwordSocket");
 	auto Anim = Cast<UPlayerAnimInstance>(GetMesh()->GetAnimInstance());
+	
 	Anim->OnHangMovePlace.AddLambda([this]()->void {
 		HangMontageNotify();
 		});

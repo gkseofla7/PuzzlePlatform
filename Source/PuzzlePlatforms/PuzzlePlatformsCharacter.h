@@ -63,26 +63,15 @@ public:
 	/** Returns FollowCamera subobject **/
 	FORCEINLINE class UCameraComponent* GetFollowCamera() const { return FollowCamera; }
 
+	void SetIsAttacking(bool NewIsAttacking);
 	virtual float TakeDamage(float DamageAmount, struct FDamageEvent const& DamageEvent,
 		class AController* EventInstigator, AActor* DamageCauser) override;
 	void SetTargetPlayerWithLineTrace();
-	UFUNCTION(Server, Reliable, WithValidation)
-		void Server_SetTargetPlayer(APuzzlePlatformsCharacter * NewTarget);
-	UFUNCTION(NetMulticast, Reliable, WithValidation)
-		void NetMulticast_SetTargetPlayer(APuzzlePlatformsCharacter* NewTarget);
 
-	UFUNCTION(Server, Reliable, WithValidation)
-		void Server_Skill1Clicked(TSubclassOf<AAbility>AbilityClass);
-	UFUNCTION(Server, Reliable, WithValidation)
-		void Server_Skill2Clicked(TSubclassOf<AAbility>AbilityClass);
-	UFUNCTION(Server, Reliable, WithValidation)
-		void Server_Skill3Clicked(TSubclassOf<AAbility>AbilityClass);
-	UFUNCTION(Server, Reliable, WithValidation)
-		void Server_Skill4Clicked(TSubclassOf<AAbility>AbilityClass);
-	UFUNCTION(Server, Reliable, WithValidation)
-		void Server_Skill5Clicked(TSubclassOf<AAbility>AbilityClass);
 
-	void AbilitySpawn(TSubclassOf<class AAbility>AbilityClass);
+
+
+
 public:
 
 	UPROPERTY(EditAnywhere,BlueprintReadWrite, Category = Stat)
@@ -94,6 +83,8 @@ public:
 	//TScriptInterface<IMotionReplicatorInterface> DaerimMotionReplicator;
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Replicator)
 		UMotionInterfaceComponent* DaerimMotionReplicator;
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+		class UActorAbilities* ActorAbilitiesComponent;
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Replicator)
 		class UDecalComponent* DecalComponent;
 		//IMotionReplicatorInterface* MotionReplicator;
@@ -104,12 +95,12 @@ public:
 	bool SkillAvailable = true;
 	APuzzlePlatformsCharacter* TargetPlayer;
 
-
+	bool IsAttacking = false;
 
 
 protected:
 	UPROPERTY()
-		UAnimInstance* MyAnim;
+		class UAnimInstance_Master* MyAnim;
 	
 
 

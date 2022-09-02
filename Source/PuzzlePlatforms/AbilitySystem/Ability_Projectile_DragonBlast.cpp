@@ -106,9 +106,11 @@ void AAbility_Projectile_DragonBlast::OnOverlapBegin(class UPrimitiveComponent* 
 			if (Player != nullptr && Player != PlayerRef)
 			{
 				UGameplayStatics::ApplyDamage(OtherActor, 10, PlayerRef->GetController(), this, UDamageType::StaticClass());
-				Player->AbilitySpawn(Ability_Buff_Fortitude_Class);
+				Player->DaerimMotionReplicator->AbilitySpawn(Ability_Buff_Fortitude_Class);
 				SweepArray.Add(OtherActor);
 			}
 		}
 	}
 }
+
+

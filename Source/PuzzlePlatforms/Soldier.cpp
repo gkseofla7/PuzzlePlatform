@@ -69,7 +69,7 @@ void ASoldier::PostInitializeComponents()
 void ASoldier::BeginPlay()
 {
 	Super::BeginPlay();
-	
+	MyAnim = Cast<UAnimInstance_Master>(GetMesh()->GetAnimInstance());
 
 	if (EquippedItem == nullptr)
 	{

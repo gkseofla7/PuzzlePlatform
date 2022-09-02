@@ -47,7 +47,9 @@ void UMyCharacterStatComponent::SetNewLevel(int32 NewLevel)
 	auto MyGameInstance = Cast<UPuzzlePlatformsGameInstance>(UGameplayStatics::GetGameInstance(GetWorld()));
 	
 	ABCHECK(nullptr != MyGameInstance);
-	CurrentStatData = MyGameInstance->GetMyCharacterData(NewLevel);
+
+	if(MyGameInstance!=nullptr)
+		CurrentStatData = MyGameInstance->GetMyCharacterData(NewLevel);
 
 	if (nullptr != CurrentStatData)
 	{

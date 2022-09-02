@@ -20,11 +20,16 @@ public:
 		class UCastBarWidget* DisplayCastBar(class AAbility* CastToAbility);
 
 public:
+	void ToggleSpellBook();
+
+public:
 	UPROPERTY(meta = (BindWidget), BlueprintReadWrite)
 	class UCastBarWidget* CastBar_UI;
 	UPROPERTY(meta = (BindWidget), BlueprintReadWrite)
 		class UActionBarWidget* ActionBar_UI;
 	UPROPERTY(meta = (BindWidget), BlueprintReadWrite)
 		class UBuffPanel_UI* BuffPanel_UI;
+	UPROPERTY(meta = (BindWidget), BlueprintReadWrite)
+	class USpellbook_UI* Spellbook_UI;
 	//TSubclassOf<class UUserWidget>CastBarClass;
 };

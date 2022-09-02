@@ -16,6 +16,7 @@
 #include "AbilitySystem/HudUpDisplayWidget.h"
 #include "AbilitySystem/ActionBarWidget.h"
 #include "AbilitySystem/CastBarWidget.h"
+#include "AbilitySystem/ActorAbilities.h"
 
 #include "HeadMountedDisplayFunctionLibrary.h"
 #include "Camera/CameraComponent.h"
@@ -65,7 +66,7 @@ APuzzlePlatformsCharacter::APuzzlePlatformsCharacter()
 	//IsAttacking = false;
 	//DaerimMotionReplicator = CreateDefaultSubobject<USoldierMotionReplicator>(TEXT("SoldierMotionReplicator"));
 	CharacterStat = CreateDefaultSubobject<UMyCharacterStatComponent>(TEXT("CHARACTERSTAT"));
-
+	ActorAbilitiesComponent = CreateDefaultSubobject<UActorAbilities>(TEXT("ActorAbilities"));
 	DecalComponent = CreateDefaultSubobject<UDecalComponent>(TEXT("DecalComponent"));
 	DecalComponent->SetupAttachment(RootComponent);
 	DecalComponent->SetVisibility(false);
@@ -100,6 +101,8 @@ APuzzlePlatformsCharacter::APuzzlePlatformsCharacter()
 
 	NearObjectCollisionDetector = CreateDefaultSubobject<USphereComponent>(TEXT("NearObjectCollisionDetector"));
 	NearObjectCollisionDetector->SetupAttachment(RootComponent);
+
+
 
 }
 
@@ -167,6 +170,11 @@ void APuzzlePlatformsCharacter::Tick(float DeltaTime)
 		SetTargetPlayerWithLineTrace();
 	}
 }
+void APuzzlePlatformsCharacter::SetIsAttacking(bool NewIsAttacking) 
+{
+	IsAttacking = NewIsAttacking;
+	MyAnim->IsAttacking = NewIsAttacking;
+}
 
 void APuzzlePlatformsCharacter::SetTargetPlayerWithLineTrace()
 {
@@ -190,7 +198,7 @@ void APuzzlePlatformsCharacter::SetTargetPlayerWithLineTrace()
 		if (tmp != nullptr)
 		{
 			TargetPlayer = tmp;
-			Server_SetTargetPlayer(tmp);
+			DaerimMotionReplicator->Server_SetTargetPlayer(tmp);
 		}
 			if (TargetPlayer != nullptr)
 		{
@@ -291,6 +299,8 @@ void APuzzlePlatformsCharacter::Attack()
 {
 	//만약 종족이 두개있다면..?
 	UE_LOG(LogTemp, Warning, TEXT("Attack1"));
+	if (IsAttacking == true)
+		return;
 	if(DaerimMotionReplicator != nullptr)
 		DaerimMotionReplicator->Server_SendAttack();
 
@@ -320,12 +330,14 @@ void APuzzlePlatformsCharacter::SeeMouseCursur()
 	auto controller = Cast<AMyPlayerController>(GetController());
 	if (MouseCursorToggle == false)
 	{
-
+		HeadsUpDisplayRef->ToggleSpellBook();
 		controller->SetInputModeGameAndUI();
+
 		MouseCursorToggle = true;
 	}
 	else
 	{
+		HeadsUpDisplayRef->ToggleSpellBook();
 		controller->SetInputModeGame();
 		MouseCursorToggle = false;
 	}
@@ -364,7 +376,7 @@ void APuzzlePlatformsCharacter::Skill1Clicked()
 	if (HeadsUpDisplayRef->ActionBar_UI->ActionBarSlot_UI->IsAvailable == false)
 		return;
 	HeadsUpDisplayRef->ActionBar_UI->ActionBarSlot_UI->StartCooldown();
-	Server_Skill1Clicked(HeadsUpDisplayRef->ActionBar_UI->ActionBarSlot_UI->AbilityClass);
+	DaerimMotionReplicator->Server_Skill1Clicked(HeadsUpDisplayRef->ActionBar_UI->ActionBarSlot_UI->AbilityClass);
 }
 
 void APuzzlePlatformsCharacter::Skill2Clicked()
@@ -374,7 +386,7 @@ void APuzzlePlatformsCharacter::Skill2Clicked()
 	if (HeadsUpDisplayRef->ActionBar_UI->ActionBarSlot_UI_1->IsAvailable == false)
 		return;
 	HeadsUpDisplayRef->ActionBar_UI->ActionBarSlot_UI_1->StartCooldown();
-	Server_Skill2Clicked(HeadsUpDisplayRef->ActionBar_UI->ActionBarSlot_UI_1->AbilityClass);
+	DaerimMotionReplicator->Server_Skill2Clicked(HeadsUpDisplayRef->ActionBar_UI->ActionBarSlot_UI_1->AbilityClass);
 }
 
 void APuzzlePlatformsCharacter::Skill3Clicked()
@@ -384,7 +396,7 @@ void APuzzlePlatformsCharacter::Skill3Clicked()
 	if (HeadsUpDisplayRef->ActionBar_UI->ActionBarSlot_UI_2->IsAvailable == false)
 		return;
 	HeadsUpDisplayRef->ActionBar_UI->ActionBarSlot_UI_2->StartCooldown();
-	Server_Skill3Clicked(HeadsUpDisplayRef->ActionBar_UI->ActionBarSlot_UI_2->AbilityClass);
+	DaerimMotionReplicator->Server_Skill3Clicked(HeadsUpDisplayRef->ActionBar_UI->ActionBarSlot_UI_2->AbilityClass);
 }
 
 void APuzzlePlatformsCharacter::Skill4Clicked()
@@ -394,7 +406,7 @@ void APuzzlePlatformsCharacter::Skill4Clicked()
 	if (HeadsUpDisplayRef->ActionBar_UI->ActionBarSlot_UI_3->IsAvailable == false)
 		return;
 	HeadsUpDisplayRef->ActionBar_UI->ActionBarSlot_UI_3->StartCooldown();
-	Server_Skill4Clicked(HeadsUpDisplayRef->ActionBar_UI->ActionBarSlot_UI_3->AbilityClass);
+	DaerimMotionReplicator->Server_Skill4Clicked(HeadsUpDisplayRef->ActionBar_UI->ActionBarSlot_UI_3->AbilityClass);
 }
 void APuzzlePlatformsCharacter::Skill5Clicked()
 {
@@ -405,95 +417,8 @@ void APuzzlePlatformsCharacter::Skill5Clicked()
 	if (HeadsUpDisplayRef->ActionBar_UI->ActionBarSlot_UI_4->IsAvailable == false)
 		return;
 	HeadsUpDisplayRef->ActionBar_UI->ActionBarSlot_UI_4->StartCooldown();
-	Server_Skill5Clicked(HeadsUpDisplayRef->ActionBar_UI->ActionBarSlot_UI_4->AbilityClass);
-}
-
-void APuzzlePlatformsCharacter::Server_Skill1Clicked_Implementation(TSubclassOf<AAbility>AbilityClass)
-{
-	AbilitySpawn(AbilityClass);
-	//NewHeadsUpDisplay->ActionBar_UI->ActionBarSlot_UI->AbilitySpawn(this);
-
-}
-
-void APuzzlePlatformsCharacter::Server_Skill2Clicked_Implementation(TSubclassOf<AAbility>AbilityClass)
-{
-	AbilitySpawn(AbilityClass);
+	DaerimMotionReplicator->Server_Skill5Clicked(HeadsUpDisplayRef->ActionBar_UI->ActionBarSlot_UI_4->AbilityClass);
 }
 
 
-void APuzzlePlatformsCharacter::Server_Skill3Clicked_Implementation(TSubclassOf<AAbility>AbilityClass)
-{
-	AbilitySpawn(AbilityClass);
-}
 
-void APuzzlePlatformsCharacter::Server_Skill4Clicked_Implementation(TSubclassOf<AAbility>AbilityClass)
-{
-	AbilitySpawn(AbilityClass);
-
-}
-void APuzzlePlatformsCharacter::Server_Skill5Clicked_Implementation(TSubclassOf<AAbility>AbilityClass)
-{
-	AbilitySpawn(AbilityClass);
-	
-}
-
-bool APuzzlePlatformsCharacter::Server_Skill1Clicked_Validate(TSubclassOf<AAbility>AbilityClass)
-{
-	return true;
-}
-bool APuzzlePlatformsCharacter::Server_Skill2Clicked_Validate(TSubclassOf<AAbility>AbilityClass)
-{
-	return true;
-}
-bool APuzzlePlatformsCharacter::Server_Skill3Clicked_Validate(TSubclassOf<AAbility>AbilityClass)
-{
-	return true;
-}
-
-bool APuzzlePlatformsCharacter::Server_Skill4Clicked_Validate(TSubclassOf<AAbility>AbilityClass)
-{
-	return true;
-}
-
-bool APuzzlePlatformsCharacter::Server_Skill5Clicked_Validate(TSubclassOf<AAbility>AbilityClass)
-{
-	return true;
-}
-
-void APuzzlePlatformsCharacter::Server_SetTargetPlayer_Implementation(APuzzlePlatformsCharacter* NewTarget)
-{
-	NetMulticast_SetTargetPlayer(NewTarget);
-}
-
-void APuzzlePlatformsCharacter::NetMulticast_SetTargetPlayer_Implementation(APuzzlePlatformsCharacter* NewTarget)
-{
-	TargetPlayer = NewTarget;
-}
-
-bool APuzzlePlatformsCharacter::Server_SetTargetPlayer_Validate(APuzzlePlatformsCharacter* NewTarget)
-{
-	return true;
-}
-
-bool APuzzlePlatformsCharacter::NetMulticast_SetTargetPlayer_Validate(APuzzlePlatformsCharacter* NewTarget)
-{
-	return true;
-}
-
-void APuzzlePlatformsCharacter::AbilitySpawn( TSubclassOf<AAbility>AbilityClass)
-{
-
-	UE_LOG(LogTemp, Warning, TEXT("Spawn In Server"));
-	FTransform PlayerTransform = GetActorTransform();
-	FActorSpawnParameters Params;
-	FActorSpawnParameters SpawnInfo;
-
-	SpawnInfo.Owner = this;
-	SpawnInfo.Instigator = this;
-	//auto ability = GetWorld()->SpawnActorDeferred<AAbility>(AbilityClass, PlayerTransform,NewPlayer,NewPlayer);
-	auto ability = GetWorld()->SpawnActor<AAbility>(AbilityClass, PlayerTransform, SpawnInfo);
-
-	//ability->PlayerRef = NewPlayer;//컨트롤러가 있는 플레이어
-//UWorld::SpawnActor(AbilityClass, PlayerTransform);
-//GetWorld()->SpawnActor();
-}

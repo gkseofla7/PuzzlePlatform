@@ -15,6 +15,7 @@
 const static FName SESSION_NAME = NAME_GameSession;
 
 UPuzzlePlatformsGameInstance::UPuzzlePlatformsGameInstance(const FObjectInitializer& ObjectInitializer)
+	:Super(ObjectInitializer)
 {
 
 	ConstructorHelpers::FClassFinder<UUserWidget> MenuBPClass(TEXT("/Game/PuzzlePlatforms/MenuSystem/WBP_MainMenu"));
@@ -46,6 +47,7 @@ UPuzzlePlatformsGameInstance::UPuzzlePlatformsGameInstance(const FObjectInitiali
 
 void UPuzzlePlatformsGameInstance::Init()
 {
+	Super::Init();
 	//이게 무엇보다 일찍 시작함
 	// UGameInstance::Init -> AActor::PostInitializeComponents -> AGameMode::PostLogin -> AGameMode::StartPlay
 	// ->AActor::BeginPlay

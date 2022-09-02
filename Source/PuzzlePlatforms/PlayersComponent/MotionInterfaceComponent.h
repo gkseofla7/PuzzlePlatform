@@ -29,4 +29,20 @@ public:
 	virtual void Server_SendAttack();
 
 	virtual void DisableActor(bool toHide);
+	void AbilitySpawn(TSubclassOf<class AAbility>AbilityClass);
+	UFUNCTION(Server, Reliable, WithValidation)
+		void Server_Skill1Clicked(TSubclassOf<AAbility>AbilityClass);
+	UFUNCTION(Server, Reliable, WithValidation)
+		void Server_Skill2Clicked(TSubclassOf<AAbility>AbilityClass);
+	UFUNCTION(Server, Reliable, WithValidation)
+		void Server_Skill3Clicked(TSubclassOf<AAbility>AbilityClass);
+	UFUNCTION(Server, Reliable, WithValidation)
+		void Server_Skill4Clicked(TSubclassOf<AAbility>AbilityClass);
+	UFUNCTION(Server, Reliable, WithValidation)
+		void Server_Skill5Clicked(TSubclassOf<AAbility>AbilityClass);
+
+	UFUNCTION(Server, Reliable, WithValidation)
+		void Server_SetTargetPlayer(class APuzzlePlatformsCharacter* NewTarget);
+	UFUNCTION(NetMulticast, Reliable, WithValidation)
+		void NetMulticast_SetTargetPlayer(class APuzzlePlatformsCharacter* NewTarget);
 };
