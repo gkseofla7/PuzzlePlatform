@@ -3,7 +3,7 @@
 
 #include "Ability_Projectile.h"
 
-
+#include "../PuzzlePlatformsCharacter.h"
 
 #include "GameFramework/ProjectileMovementComponent.h"
 #include "Particles/ParticleSystemComponent.h"
@@ -63,6 +63,38 @@ void AAbility_Projectile::NetMulticast_AddLocation_Implementation(FVector Relati
 	AbilityRoot->AddLocalOffset(RelativeLocation);
 }
 
+
+void AAbility_Projectile::Server_SetLocation_Implementation(FVector NewLocation)
+{
+	NetMulticast_SetLocation(NewLocation);
+}
+
+void AAbility_Projectile::NetMulticast_SetLocation_Implementation(FVector NewLocation)
+{
+	AbilityRoot->SetWorldLocation(NewLocation);
+}
+
+void AAbility_Projectile::Server_Activate_Implementation()
+{
+	NetMulticast_Activate();
+}
+
+void AAbility_Projectile::NetMulticast_Activate_Implementation()
+{
+	ProjectileMovement_->Activate();
+	ParticleSystemComponent->Activate();
+}
+
+void AAbility_Projectile::Server_DetachAbilityFromPlayer_Implementation()
+{
+	NetMulticast_DetachAbilityFromPlayer();
+}
+
+void AAbility_Projectile::NetMulticast_DetachAbilityFromPlayer_Implementation()
+{
+	DetachFromActor(FDetachmentTransformRules::KeepWorldTransform);
+}
+
 bool AAbility_Projectile::Server_SetVelocity_Validate(FVector NewVelocity)
 {
 	return true;
@@ -79,6 +111,44 @@ bool AAbility_Projectile::Server_AddLocation_Validate(FVector RelativeLocation)
 }
 
 bool AAbility_Projectile::NetMulticast_AddLocation_Validate(FVector RelativeLocation)
+{
+	return true;
+}
+
+
+
+bool AAbility_Projectile::Server_SetLocation_Validate(FVector NewLocation)
+{
+	return true;
+}
+
+bool AAbility_Projectile::NetMulticast_SetLocation_Validate(FVector NewLocation)
+{
+	return true;
+}
+
+
+
+
+bool AAbility_Projectile::Server_Activate_Validate()
+{
+	return true;
+}
+
+bool AAbility_Projectile::NetMulticast_Activate_Validate()
+{
+	return true;
+}
+
+
+
+
+bool AAbility_Projectile::Server_DetachAbilityFromPlayer_Validate()
+{
+	return true;
+}
+
+bool AAbility_Projectile::NetMulticast_DetachAbilityFromPlayer_Validate()
 {
 	return true;
 }

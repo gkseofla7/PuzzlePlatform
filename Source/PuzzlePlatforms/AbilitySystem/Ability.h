@@ -38,7 +38,7 @@ public:
 		void ActivateEffect();
 	virtual void ActivateEffect_Implementation();
 
-	void DetachAbilityFromPlayer();
+	virtual void DetachAbilityFromPlayer();
 	UFUNCTION()
 	void EndAnimation(UAnimMontage* Montage, bool bInterrupted);
 public:
@@ -58,6 +58,8 @@ public:
 	class UCastBarWidget* CastBar;
 
 	FCastSuccessDeleagate CastSuccessDeleagate;
+	UPROPERTY(EditAnywhere)
+		float DamageAmount;
 
 
 

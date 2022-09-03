@@ -27,12 +27,12 @@ void AAbility_AoE_HolyGround::ActivateEffect_Implementation()
 	{
 		TArray<AActor*>OverlappingActors;
 		AbilityRoot->GetOverlappingActors(OverlappingActors, APuzzlePlatformsCharacter::StaticClass());
-		UE_LOG(LogTemp, Warning, TEXT("Server"));
+
 		for (auto Actors : OverlappingActors)
 		{
 			if (Actors == PlayerRef)
 				continue;
-			UGameplayStatics::ApplyDamage(Actors, 10, PlayerRef->GetController(), PlayerRef, UDamageType::StaticClass());
+			UGameplayStatics::ApplyDamage(Actors, DamageAmount, PlayerRef->GetController(), PlayerRef, UDamageType::StaticClass());
 
 		}
 
@@ -54,12 +54,12 @@ void AAbility_AoE_HolyGround::TickEffect()
 
 	AbilityRoot->GetOverlappingActors(OverlappingActors, APuzzlePlatformsCharacter::StaticClass());
 
-	if (HasAuthority())
-	{
-		for (auto Actors : OverlappingActors)
-		{
-			UGameplayStatics::ApplyDamage(Actors, -10, PlayerRef->GetController(), PlayerRef, UDamageType::StaticClass());
+	//if (HasAuthority())
+	//{
+	//	for (auto Actors : OverlappingActors)
+	//	{
+	//		UGameplayStatics::ApplyDamage(Actors, DamageAmount, PlayerRef->GetController(), PlayerRef, UDamageType::StaticClass());
 
-		}
-	}
+	//	}
+	//}
 }

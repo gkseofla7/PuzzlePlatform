@@ -79,7 +79,7 @@ void AAbility::InterruptCast()
 
 void AAbility::CastAbility()
 {
-	UE_LOG(LogTemp, Warning, TEXT("CastAbility"));
+
 
 	CastAbility_Implementation();
 }
@@ -102,14 +102,13 @@ void AAbility::ActivateEffect_Implementation()
 
 void AAbility::DetachAbilityFromPlayer()
 {
+	
 	DetachFromActor(FDetachmentTransformRules::KeepWorldTransform);
-	FRotator NewRotation = PlayerRef->GetActorRotation();
-
 }
 
 void AAbility::EndAnimation(UAnimMontage* Montage, bool bInterrupted)
 {
-	UE_LOG(LogTemp, Warning, TEXT("EndAnimation"));
+
 	PlayerRef->SetIsAttacking(false);
 	//AnimRef->IsAttacking = false;
 }

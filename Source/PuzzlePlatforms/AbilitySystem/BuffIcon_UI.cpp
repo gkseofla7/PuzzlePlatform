@@ -30,14 +30,12 @@ void UBuffIcon_UI::UpdateProgressBar()
 {
 	if (BuffAbility != nullptr)
 	{
-		UE_LOG(LogTemp,Warning,TEXT("Percent : %f/%f"), BuffAbility->TimeSpend, BuffLifeSpan)
 		float percent = UKismetMathLibrary::NormalizeToRange(BuffAbility->TimeSpend, 0, BuffLifeSpan);
 		//percent = 1 - percent;
 		BuffTimer->SetPercent(percent);
 		if (BuffAbility->TimeSpend- BuffLifeSpan<0.1)
 		{
 
-			UE_LOG(LogTemp, Warning, TEXT("Clear"));
 			GetWorld()->GetTimerManager().ClearTimer(TimerHandler);
 			
 		}

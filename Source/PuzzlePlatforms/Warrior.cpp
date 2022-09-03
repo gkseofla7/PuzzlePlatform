@@ -316,7 +316,8 @@ void AWarrior::PlayHangToCrouchMontage()
 
 void AWarrior::ClimbUp()
 {
-	Cast<UPlayersMotionReplicator>(DaerimMotionReplicator)->Server_SendClimbUp();
+	if (IsClimbing == true)
+		Cast<UPlayersMotionReplicator>(DaerimMotionReplicator)->Server_SendClimbUp();
 	//if (IsClimbing == true)
 	//{
 	//	PlayHangToCrouchMontage();

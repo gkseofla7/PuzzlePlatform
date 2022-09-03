@@ -24,7 +24,6 @@ void AAbility_Buff_Master::Tick(float DeltaTime)
 	TimeSpend += DeltaTime;
 	if (TimeSpend > 10.)
 	{
-		UE_LOG(LogTemp, Warning, TEXT("DEstroy"));
 		Destroy();
 	}
 }
@@ -42,11 +41,9 @@ void AAbility_Buff_Master::CastAbility_Implementation()
 	{
 		
 		SetLifeSpan(BuffLifeSpan);
-		UE_LOG(LogTemp, Warning, TEXT("Server SetLifeSpan %f"), GetLifeSpan());
 	}
 	else
 	{
-		UE_LOG(LogTemp, Warning, TEXT("Client SetLifeSpan %f"), GetLifeSpan());
 	}
 
 
@@ -62,7 +59,6 @@ void AAbility_Buff_Master::ApplyBuff()
 	
 	if (PlayerRef->IsLocallyControlled() == true)
 	{
-		UE_LOG(LogTemp, Warning, TEXT("ApplyBuff"));
 		HudUI->BuffPanel_UI->AddBufftoUI(this);
 	}
 }
@@ -82,7 +78,6 @@ void AAbility_Buff_Master::ClearDuplicates()
 	TArray<AActor*> DestoryActors;//È¤½Ã¸ô¶ó¼­
 
 	PlayerRef->GetAttachedActors(OutputActors);
-	UE_LOG(LogTemp, Warning, TEXT("Clear? %f"), OutputActors.Num());
 	for (auto Actor : OutputActors)
 	{
 		if (Actor->GetClass() == GetClass())
@@ -98,6 +93,5 @@ void AAbility_Buff_Master::ClearDuplicates()
 void AAbility_Buff_Master::EndPlay(const EEndPlayReason::Type EndPlayReason)
 {
 	Super::EndPlay(EndPlayReason);
-	UE_LOG(LogTemp, Warning, TEXT("EndPlay!"));
 	OnEndBuffDelegate.Broadcast();
 }

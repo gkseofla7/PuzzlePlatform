@@ -67,31 +67,28 @@ void AAbility_Projectile_DragonBlast::Tick(float DeltaTime)
 void AAbility_Projectile_DragonBlast::CastAbility_Implementation()
 {
 	Super::CastAbility_Implementation();
-	UE_LOG(LogTemp, Warning, TEXT("CastAbility"));
 	AsPlayerAnimInstance->Montage_JumpToSection(FName("EndCast"), AsPlayerAnimInstance->SwordBlastMontage);
 
 }
 
+
+
 void AAbility_Projectile_DragonBlast::ActivateEffect_Implementation()
 {
+	AsPlayerAnimInstance->IsAttacking = false;//요건 그냥 replication으로 바꿔줌
+	if (PlayerRef->IsLocallyControlled() == false)
+		return;
+	//즉 클라이언트에서만 진행
 	Super::ActivateEffect_Implementation();
 
+	Server_DetachAbilityFromPlayer();//모두 일단 띄어냄
+	AbilityRoot->AddLocalOffset(PlayerRef->GetActorForwardVector() * 100);
+	//Server_AddLocation(PlayerRef->GetActorForwardVector() * 100);
+	Server_SetVelocity(FVector(PlayerRef->GetMuzzleRotation().Vector().X, PlayerRef->GetMuzzleRotation().Vector().Y, 0) * 1500);
+	Server_SetLocation(GetActorLocation());
+	Server_Activate();
+	//초기값 위치 다 맞춤
 
-
-	if (PlayerRef->IsLocallyControlled() == true)
-	{
-		Server_AddLocation(PlayerRef->GetActorForwardVector() * 100);
-		Server_SetVelocity(FVector(PlayerRef->GetMuzzleRotation().Vector().X, PlayerRef->GetMuzzleRotation().Vector().Y,0)* 1500);
-
-		//ProjectileMovement_->Velocity = (PlayerRef->GetMuzzleRotation()).Vector() * 1500;
-	}
-	ProjectileMovement_->Activate(true);
-	//여기서 만약 컨트롤러가 있으면 
-
-
-	//ProjectileMovement_->SetVelocityInLocalSpace();
-	ParticleSystemComponent->Activate(true);	
-	AsPlayerAnimInstance->IsAttacking = false;
 
 }
 
@@ -105,7 +102,8 @@ void AAbility_Projectile_DragonBlast::OnOverlapBegin(class UPrimitiveComponent* 
 			auto Player = Cast<APuzzlePlatformsCharacter>(OtherActor);
 			if (Player != nullptr && Player != PlayerRef)
 			{
-				UGameplayStatics::ApplyDamage(OtherActor, 10, PlayerRef->GetController(), this, UDamageType::StaticClass());
+				UGameplayStatics::ApplyDamage(OtherActor, DamageAmount, PlayerRef->GetController(), this, UDamageType::StaticClass());
+				UE_LOG(LogTemp, Warning, TEXT("Got DragonBalst"))
 				Player->DaerimMotionReplicator->AbilitySpawn(Ability_Buff_Fortitude_Class);
 				SweepArray.Add(OtherActor);
 			}

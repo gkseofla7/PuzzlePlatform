@@ -66,18 +66,16 @@ void UMyCharacterStatComponent::SetNewLevel(int32 NewLevel)
 
 void UMyCharacterStatComponent::SetHP(float NewHP)
 {
-	CurrentHP = NewHP;
-	OnHPChanged.Broadcast();
-	if (CurrentHP < KINDA_SMALL_NUMBER)
-	{
-		CurrentHP = 0.0f;
-		//OnHPIsZero.Broadcast();
-	}
+	//서버로 보내야됨
+
+	Server_SetHP(NewHP);
 }
 
 void UMyCharacterStatComponent::SetMP(float NewMP)
 {
+
 	CurrentMP = NewMP;
+
 	OnMPChanged.Broadcast();
 	if (CurrentMP < KINDA_SMALL_NUMBER)
 	{
@@ -104,4 +102,33 @@ float UMyCharacterStatComponent::GetMPRatio()
 void UMyCharacterStatComponent::OnRep_HP()
 {
 	OnHPChanged.Broadcast();
+}
+
+
+
+void UMyCharacterStatComponent::Server_SetHP_Implementation(float NewHp)
+{
+	NetMulticast_SetHP(NewHp);
+}
+
+void UMyCharacterStatComponent::NetMulticast_SetHP_Implementation(float NewHp)
+{
+
+	CurrentHP = NewHp;
+	OnHPChanged.Broadcast();
+	if (CurrentHP < KINDA_SMALL_NUMBER)
+	{
+		CurrentHP = 0.0f;
+		//OnHPIsZero.Broadcast();
+	}
+}
+
+bool UMyCharacterStatComponent::Server_SetHP_Validate(float NewHp)
+{
+	return true;
+}
+
+bool UMyCharacterStatComponent::NetMulticast_SetHP_Validate(float NewHp)
+{
+	return true;
 }

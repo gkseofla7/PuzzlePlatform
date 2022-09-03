@@ -21,7 +21,14 @@ public:
 
 	void SetHP(float NewHP);
 	void SetMP(float NewMP);
-	void DecreaseMP(float NewMP) { SetMP(CurrentMP - NewMP); }
+	void IncreaseHP(float NewHP) {
+		if (CurrentHP == CurrentStatData->MaxHP&&NewHP > 0)
+			return;
+		SetHP(CurrentHP + NewHP); }
+	void IncreaseMP(float NewMP) {
+		if (CurrentMP == CurrentStatData->MaxMP && NewMP > 0)
+			return;
+		SetMP(CurrentMP + NewMP); }
 	float GetHP() { return CurrentHP; }
 	float GetMP() { return CurrentMP; }
 	float GetHPRatio();
@@ -52,7 +59,10 @@ public:
 
 	UFUNCTION()
 	void OnRep_HP();
-
+	UFUNCTION(Server, Reliable, WithValidation)
+		void Server_SetHP(float NewHp);
+	UFUNCTION(NetMulticast, Reliable, WithValidation)
+		void NetMulticast_SetHP(float NewHp);
 
 	//언리얼 오브젝트에는 직렬화 기능이 있어서 오브젝트의 UPROPERTPY 속성을 저장하고 로딩할 수 있음
 };

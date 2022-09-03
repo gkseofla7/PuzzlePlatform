@@ -22,7 +22,6 @@ void AAbility_Debuff::BeginPlay()
 	//AsPlayerAnimInstance->OnActivateSpell.AddUObject(this, &AAbility_AoE::ActivateEffect);
 	AsPlayerAnimInstance->PlayAoEAttackMontage();
 	AttachToComponent(PlayerRef->GetMesh(), FAttachmentTransformRules::SnapToTargetNotIncludingScale, "hand_rSocket");
-	UE_LOG(LogTemp, Warning, TEXT("Beginplay"));
 }
 
 void AAbility_Debuff::CastAbility_Implementation()

@@ -36,6 +36,7 @@ public:
 	TSubclassOf<class AAbility>AbilityClass;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	bool IsAvailable = true;
+	bool IsManaAvailable = true;
 	class APuzzlePlatformsCharacter* Owner;
 	FTimerHandle CooldownTimerHandler;
 	

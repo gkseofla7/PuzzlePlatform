@@ -26,6 +26,11 @@ public:
 	UPROPERTY(meta = (BindWidget))
 		class UTextBlock* PlayerName;
 
+	UPROPERTY(meta = (BindWidget))
+		class UTextBlock* HpNum;
+	UPROPERTY(meta = (BindWidget))
+		class UTextBlock* MpNum;
+
 public:
 	void BindCharacterStat(class UMyCharacterStatComponent* NewCharacterStat);
 	void BindCharacterName(FText NewName);

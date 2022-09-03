@@ -20,7 +20,7 @@ void AAbility_Buff_Fire::TickBuff()
 	if (HasAuthority())
 	{
 
-		UGameplayStatics::ApplyDamage(PlayerRef, 2, PlayerRef->GetController(), PlayerRef, UDamageType::StaticClass());
+		UGameplayStatics::ApplyDamage(PlayerRef, DamageAmount, PlayerRef->GetController(), PlayerRef, UDamageType::StaticClass());
 	}
 }
 

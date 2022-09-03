@@ -23,17 +23,13 @@ public:
 
 	UFUNCTION(NetMulticast, Reliable, WithValidation)
 		void NetMulticast_Spark(FVector Location);
-	UFUNCTION()
-		//void OnHit(class UPrimitiveComponent* MyComp, AActor* Other, class UPrimitiveComponent* OtherComp, bool bSelfMoved, FVector HitLocation, FVector HitNormal, FVector NormalImpulse, const FHitResult& Hit);
-		void OnHit(UPrimitiveComponent* HitComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit);
-	//virtual void ReceiveHit(class UPrimitiveComponent* MyComp,class AActor* Other,class UPrimitiveComponent* OtherComp,	bool bSelfMoved,	FVector HitLocation,	FVector HitNormal,	FVector NormalImpulse,	const FHitResult& Hit) override;
+
 	UFUNCTION()
 		void OnOverlapBegin(class UPrimitiveComponent* OverlappedComp, class AActor* OtherActor, class UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
-
 public:
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
 		class UPlayerAnimInstance* AsPlayerAnimInstance;
 
 	class UParticleSystem* ParticleTemplate;
-	float DemageAmount = 10;
+
 };

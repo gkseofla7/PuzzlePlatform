@@ -24,4 +24,12 @@ public:
 		class UActionBarSlotWidget *ActionBarSlot_UI_3;
 	UPROPERTY(meta = (BindWidget), BlueprintReadWrite)
 		class UActionBarSlotWidget* ActionBarSlot_UI_4;
+	void BindCharacterStat(class UMyCharacterStatComponent* NewCharacterStat);
+public:
+
+	UPROPERTY(BlueprintReadWrite, BlueprintReadWrite)
+	TArray<class UActionBarSlotWidget*> ActionBarSlotArray;
+
+	class APuzzlePlatformsCharacter*  PlayerRef;
+	class UMyCharacterStatComponent* CurrentCharacterStat;
 };

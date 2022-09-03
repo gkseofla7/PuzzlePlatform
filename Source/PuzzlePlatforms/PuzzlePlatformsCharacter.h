@@ -31,12 +31,14 @@ public:
 	/** Base look up/down rate, in deg/sec. Other scaling may affect final rate. */
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category=Camera)
 	float BaseLookUpRate;
+	void UpdateStat();//이거 hp의 경우엔 서버에도 해줘야됨;
 	FRotator GetMuzzleRotation();
 	void Skill1Clicked();
 	void Skill2Clicked();
 	void Skill3Clicked();
 	void Skill4Clicked();
 	void Skill5Clicked();
+
 protected:
 	virtual void PostInitializeComponents() override;
 	virtual void BeginPlay() override;

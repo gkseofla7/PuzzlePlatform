@@ -65,6 +65,11 @@ void UActionBarSlotWidget::NativeTick(const FGeometry& MyGeometry, float InDelta
 		CooldownBar->SetPercent(UKismetMathLibrary::NormalizeToRange(RemaingTime, 0, Total));
 		
 	}
+	if (IsManaAvailable == false)
+	{
+		CooldownBar->SetVisibility(ESlateVisibility::Visible);
+		CooldownBar->SetPercent(1);
+	}
 }
 
 void UActionBarSlotWidget::CastButtonClicked()
@@ -82,7 +87,6 @@ void UActionBarSlotWidget::AbilitySpawn(APuzzlePlatformsCharacter* NewPlayer)
 {
 	if (!NewPlayer->HasAuthority())
 		return;
-	UE_LOG(LogTemp, Warning, TEXT("Spawn In Server"));
 	FTransform PlayerTransform = NewPlayer->GetActorTransform();
 	FActorSpawnParameters Params;
 	FActorSpawnParameters SpawnInfo;
@@ -126,4 +130,5 @@ void UActionBarSlotWidget::UpdateAppearance()
 		CooldownBar->SetVisibility(ESlateVisibility::Hidden);
 		CooldownBar->SetPercent(0);
 	}
+
 }

@@ -151,7 +151,8 @@ void APuzzlePlatformsCharacter::BeginPlay()
 {
 	Super::BeginPlay();
 	HeadsUpDisplayRef = Cast< UPuzzlePlatformsGameInstance>(UGameplayStatics::GetGameInstance(GetWorld()))->HeadsUpDisplay;
-
+	HeadsUpDisplayRef->ActionBar_UI->PlayerRef = this;
+	HeadsUpDisplayRef->ActionBar_UI->BindCharacterStat(CharacterStat);
 	//Not Working
 	//FName identifier = TEXT("Not Yet");
 	auto gamemode = Cast<AMyLobbyGameMode>(UGameplayStatics::GetGameMode(GetWorld()));
@@ -159,6 +160,12 @@ void APuzzlePlatformsCharacter::BeginPlay()
 	{
 		Cast<UPuzzlePlatformsGameInstance>(GetGameInstance())->LoadSetNameMenu();
 	}
+	if (IsLocallyControlled())
+	{
+		FTimerHandle TimerHandler;
+		GetWorld()->GetTimerManager().SetTimer(TimerHandler, this, &APuzzlePlatformsCharacter::UpdateStat, 2, true);
+	}
+
 }
 
 void APuzzlePlatformsCharacter::Tick(float DeltaTime)
@@ -169,6 +176,11 @@ void APuzzlePlatformsCharacter::Tick(float DeltaTime)
 	{
 		SetTargetPlayerWithLineTrace();
 	}
+}
+void APuzzlePlatformsCharacter::UpdateStat()
+{
+	CharacterStat->IncreaseHP(.5);
+	CharacterStat->IncreaseMP(.5);
 }
 void APuzzlePlatformsCharacter::SetIsAttacking(bool NewIsAttacking) 
 {
@@ -310,11 +322,13 @@ void APuzzlePlatformsCharacter::Attack()
 float APuzzlePlatformsCharacter::TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent,
 	AController* EventInstigator, AActor* DamageCauser)
 {
-
+	if (!HasAuthority())
+		return 0;
 	//ABCHECK(MotionReplicator != nullptr)
 	
 	float FinalDamage = Super::TakeDamage(DamageAmount, DamageEvent, EventInstigator, DamageCauser);
-	
+
+
 	float HP =  CharacterStat->GetHP();
 
 	CharacterStat->SetHP(HP - FinalDamage);
@@ -372,11 +386,11 @@ void APuzzlePlatformsCharacter::Skill1Clicked()
 {
 	if (SkillAvailable == false)
 		return;
-
-	if (HeadsUpDisplayRef->ActionBar_UI->ActionBarSlot_UI->IsAvailable == false)
+	auto Slot_UI = HeadsUpDisplayRef->ActionBar_UI->ActionBarSlot_UI;
+	if (Slot_UI->IsAvailable==false||Slot_UI->IsManaAvailable ==false )
 		return;
 	auto SlotClass = HeadsUpDisplayRef->ActionBar_UI->ActionBarSlot_UI->AbilityClass;
-	CharacterStat->DecreaseMP(SlotClass.GetDefaultObject()->AbilityDetails.Cost);
+	CharacterStat->IncreaseMP(-SlotClass.GetDefaultObject()->AbilityDetails.Cost);
 	HeadsUpDisplayRef->ActionBar_UI->ActionBarSlot_UI->StartCooldown();
 	DaerimMotionReplicator->Server_Skill1Clicked(SlotClass);
 }
@@ -385,10 +399,12 @@ void APuzzlePlatformsCharacter::Skill2Clicked()
 {
 	if (SkillAvailable == false)
 		return;
-	if (HeadsUpDisplayRef->ActionBar_UI->ActionBarSlot_UI_1->IsAvailable == false)
+
+	auto Slot_UI = HeadsUpDisplayRef->ActionBar_UI->ActionBarSlot_UI_1;
+	if (Slot_UI->IsAvailable == false || Slot_UI->IsManaAvailable == false)
 		return;
 	auto SlotClass = HeadsUpDisplayRef->ActionBar_UI->ActionBarSlot_UI_1->AbilityClass;
-	CharacterStat->DecreaseMP(SlotClass.GetDefaultObject()->AbilityDetails.Cost);
+	CharacterStat->IncreaseMP(-SlotClass.GetDefaultObject()->AbilityDetails.Cost);
 	HeadsUpDisplayRef->ActionBar_UI->ActionBarSlot_UI_1->StartCooldown();
 	DaerimMotionReplicator->Server_Skill2Clicked(SlotClass);
 }
@@ -397,10 +413,12 @@ void APuzzlePlatformsCharacter::Skill3Clicked()
 {
 	if (SkillAvailable == false)
 		return;
-	if (HeadsUpDisplayRef->ActionBar_UI->ActionBarSlot_UI_2->IsAvailable == false)
+
+	auto Slot_UI = HeadsUpDisplayRef->ActionBar_UI->ActionBarSlot_UI_2;
+	if (Slot_UI->IsAvailable == false || Slot_UI->IsManaAvailable == false)
 		return;
 	auto SlotClass = HeadsUpDisplayRef->ActionBar_UI->ActionBarSlot_UI_2->AbilityClass;
-	CharacterStat->DecreaseMP(SlotClass.GetDefaultObject()->AbilityDetails.Cost);
+	CharacterStat->IncreaseMP(-SlotClass.GetDefaultObject()->AbilityDetails.Cost);
 	HeadsUpDisplayRef->ActionBar_UI->ActionBarSlot_UI_2->StartCooldown();
 	DaerimMotionReplicator->Server_Skill3Clicked(SlotClass);
 }
@@ -409,10 +427,12 @@ void APuzzlePlatformsCharacter::Skill4Clicked()
 {
 	if (SkillAvailable == false)
 		return;
-	if (HeadsUpDisplayRef->ActionBar_UI->ActionBarSlot_UI_3->IsAvailable == false)
+
+	auto Slot_UI = HeadsUpDisplayRef->ActionBar_UI->ActionBarSlot_UI_3;
+	if (Slot_UI->IsAvailable == false || Slot_UI->IsManaAvailable == false)
 		return;
 	auto SlotClass = HeadsUpDisplayRef->ActionBar_UI->ActionBarSlot_UI_3->AbilityClass;
-	CharacterStat->DecreaseMP(SlotClass.GetDefaultObject()->AbilityDetails.Cost);
+	CharacterStat->IncreaseMP(-SlotClass.GetDefaultObject()->AbilityDetails.Cost);
 
 	HeadsUpDisplayRef->ActionBar_UI->ActionBarSlot_UI_3->StartCooldown();
 	DaerimMotionReplicator->Server_Skill4Clicked(SlotClass);
@@ -423,10 +443,12 @@ void APuzzlePlatformsCharacter::Skill5Clicked()
 		return;
 	if (TargetPlayer == nullptr)
 		return;
-	if (HeadsUpDisplayRef->ActionBar_UI->ActionBarSlot_UI_4->IsAvailable == false)
+
+	auto Slot_UI = HeadsUpDisplayRef->ActionBar_UI->ActionBarSlot_UI_4;
+	if (Slot_UI->IsAvailable == false || Slot_UI->IsManaAvailable == false)
 		return;
 	auto SlotClass = HeadsUpDisplayRef->ActionBar_UI->ActionBarSlot_UI_4->AbilityClass;
-	CharacterStat->DecreaseMP(SlotClass.GetDefaultObject()->AbilityDetails.Cost);
+	CharacterStat->IncreaseMP(-SlotClass.GetDefaultObject()->AbilityDetails.Cost);
 	HeadsUpDisplayRef->ActionBar_UI->ActionBarSlot_UI_4->StartCooldown();
 	DaerimMotionReplicator->Server_Skill5Clicked(SlotClass);
 }

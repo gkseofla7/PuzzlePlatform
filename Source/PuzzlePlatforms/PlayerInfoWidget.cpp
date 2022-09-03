@@ -28,10 +28,23 @@ void UPlayerInfoWidget::BindCharacterStat(class UMyCharacterStatComponent* NewCh
 	
 	PlayerName->SetText(FText::FromString(TEXT("Not Yet")));
 	HpBar->SetPercent(CurrentCharacterStat->GetHPRatio());
+
+	auto hp = FString::Printf(TEXT("%d"), int(CurrentCharacterStat->CurrentHP));
+	auto	hpText = FText::FromString(hp);
+	HpNum->SetText(hpText);
+
+	auto mp = FString::Printf(TEXT("%d"), (int)CurrentCharacterStat->CurrentMP);
+	auto	mpText = FText::FromString(mp);
+	MpNum->SetText(mpText);
+
 	NewCharacterStat->OnMPChanged.AddLambda([this]() -> void {
 		if (CurrentCharacterStat.IsValid())
 		{
 			MpBar->SetPercent(CurrentCharacterStat->GetMPRatio());
+			auto mp = FString::Printf(TEXT("%d"), (int)CurrentCharacterStat->CurrentMP);
+		
+			auto	mpText = FText::FromString(mp);
+			MpNum->SetText(mpText);
 		}
 		});
 
@@ -39,6 +52,10 @@ void UPlayerInfoWidget::BindCharacterStat(class UMyCharacterStatComponent* NewCh
 		if (CurrentCharacterStat.IsValid())
 		{
 			HpBar->SetPercent(CurrentCharacterStat->GetHPRatio());
+			auto hp = FString::Printf(TEXT("%d"), (int)CurrentCharacterStat->CurrentHP);
+
+			auto	hpText = FText::FromString(hp);
+			HpNum->SetText(hpText);
 		}
 		});
 

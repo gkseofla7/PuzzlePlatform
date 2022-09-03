@@ -39,7 +39,7 @@ void AAbility_Projectile_Fireball::BeginPlay()
 	AsPlayerAnimInstance->Montage_JumpToSection(FName("Defualt"), AsPlayerAnimInstance->FireballAttackMontage);
 	AsPlayerAnimInstance->IsAttacking = true;
 	AsPlayerAnimInstance->OnFireBall.AddUObject(this, &AAbility_Projectile::ActivateEffect);
-	AsPlayerAnimInstance->OnFireBall.AddUObject(this, &AAbility_Projectile::DetachAbilityFromPlayer);
+	//AsPlayerAnimInstance->OnFireBall.AddUObject(this, &AAbility_Projectile::DetachAbilityFromPlayer);
 	AsPlayerAnimInstance->PlayFireballAttackMontage();
 	//AsPlayerAnimInstance->OnFireBall.Add()
 
@@ -55,19 +55,19 @@ void AAbility_Projectile_Fireball::CastAbility_Implementation()
 
 void AAbility_Projectile_Fireball::ActivateEffect_Implementation()
 {
+	AsPlayerAnimInstance->IsAttacking = false;//요건 그냥 replication으로 바꿔줌
+	if (PlayerRef->IsLocallyControlled() == false)
+		return;
+	//즉 클라이언트에서만 진행
 	Super::ActivateEffect_Implementation();
 
+	Server_DetachAbilityFromPlayer();//모두 일단 띄어냄
+	Server_SetLocation(GetActorLocation());
+	Server_SetVelocity(PlayerRef->GetMuzzleRotation().Vector() * 1500);
+	Server_Activate();
+	//초기값 위치 다 맞춤
 
-	ProjectileMovement_->Activate();
-	//여기서 만약 컨트롤러가 있으면 
-	if(PlayerRef->IsLocallyControlled()==true)
-	{
-		Server_SetVelocity(PlayerRef->GetMuzzleRotation().Vector() * 1500);
-		//ProjectileMovement_->Velocity = (PlayerRef->GetMuzzleRotation()).Vector() * 1500;
-	}
 
-	//ProjectileMovement_->SetVelocityInLocalSpace();
-	AsPlayerAnimInstance->IsAttacking = false;
 
 }
 
@@ -86,12 +86,11 @@ bool AAbility_Projectile_Fireball::NetMulticast_Spark_Validate(FVector Location)
 	return true;
 }
 
-void AAbility_Projectile_Fireball::OnHit(UPrimitiveComponent* HitComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit)
-{
-	UE_LOG(LogTemp, Warning, TEXT("Hit"));
-	NetMulticast_Spark(Hit.Location);
-	Destroy();
-}
+//void AAbility_Projectile_Fireball::OnHit(UPrimitiveComponent* HitComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit)
+//{
+//	NetMulticast_Spark(Hit.Location);
+//	Destroy();
+//}
 
 void AAbility_Projectile_Fireball::OnOverlapBegin(class UPrimitiveComponent* OverlappedComp, class AActor* OtherActor, class UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
@@ -104,9 +103,10 @@ void AAbility_Projectile_Fireball::OnOverlapBegin(class UPrimitiveComponent* Ove
 		auto Player = Cast<APuzzlePlatformsCharacter>(OtherActor);
 		if (Player != nullptr)
 		{
-			UGameplayStatics::ApplyDamage(Player, DemageAmount, PlayerRef->GetController(), PlayerRef, UDamageType::StaticClass());
+			UGameplayStatics::ApplyDamage(Player, DamageAmount, PlayerRef->GetController(), PlayerRef, UDamageType::StaticClass());
 
 		}
 	}
 	Destroy();
 }
+

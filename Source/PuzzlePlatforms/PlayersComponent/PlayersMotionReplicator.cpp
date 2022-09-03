@@ -137,7 +137,7 @@ bool UPlayersMotionReplicator::Server_SendClimbUp_Validate()
 }
 void UPlayersMotionReplicator::NetMulticast_SendClimbUp_Implementation()
 {
-	UE_LOG(LogTemp, Warning, TEXT("Name :%s"), *GetOwner()->GetName());
+	UE_LOG(LogTemp, Warning, TEXT("Climb"), *GetOwner()->GetName());
 	auto Warrior = Cast<AWarrior>(GetOwner());
 	if (Warrior->IsClimbing == true)
 	{
