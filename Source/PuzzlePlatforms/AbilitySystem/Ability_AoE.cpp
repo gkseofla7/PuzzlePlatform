@@ -20,7 +20,7 @@ void AAbility_AoE::BeginPlay()
 	auto warrior = Cast<AWarrior>(PlayerRef);
 	bReplicates = true;
 	AsPlayerAnimInstance = Cast<UPlayerAnimInstance>(AnimRef);
-	//AsPlayerAnimInstance->IsAttacking = true;
+
 	AsPlayerAnimInstance->OnActivateSpell.AddUObject(this, &AAbility_AoE::ActivateEffect);
 
 	AsPlayerAnimInstance->PlayAoEAttackMontage();

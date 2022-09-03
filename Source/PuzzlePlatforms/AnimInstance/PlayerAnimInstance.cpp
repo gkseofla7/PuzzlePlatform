@@ -52,7 +52,7 @@ UPlayerAnimInstance::UPlayerAnimInstance()
 		SwordBlastMontage = SWORD_BLAST_MONTAGE.Object;
 	}
 
-
+	
 	IsAttacking = false;
 }
 

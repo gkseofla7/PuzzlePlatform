@@ -21,8 +21,8 @@ protected:
 	virtual void BeginPlay();
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 	virtual void Tick(float DeltaTime);
-	virtual void MoveForward(float Value) override;
-	virtual void MoveRight(float Value) override;;
+	//virtual void MoveForward(float Value) override;
+	//virtual void MoveRight(float Value) override;;
 
 UFUNCTION(BlueprintCallable, BlueprintImplementableEvent)
 	void JumpFromWall();

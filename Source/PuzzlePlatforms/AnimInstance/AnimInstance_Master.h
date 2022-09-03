@@ -16,4 +16,6 @@ class PUZZLEPLATFORMS_API UAnimInstance_Master : public UAnimInstance
 public:
 	UPROPERTY(VisibleDefaultsOnly, BlueprintReadWrite, Category = Attack)
 	bool IsAttacking = false;
+	UPROPERTY(VisibleDefaultsOnly, BlueprintReadWrite, Category = Attack)
+		bool UsingSkill = false;
 };

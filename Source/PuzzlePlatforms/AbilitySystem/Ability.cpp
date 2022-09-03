@@ -36,14 +36,21 @@ void AAbility::BeginPlay()
 	PlayerRef = Cast<APuzzlePlatformsCharacter>(GetOwner());
 	AnimRef = Cast<UAnimInstance_Master>(PlayerRef->GetMesh()->GetAnimInstance());
 	auto IsBuff = Cast<AAbility_Buff_Master>(this);
-	if (IsBuff != nullptr)
-		PlayerRef->SetIsAttacking(true);
-	//AnimRef->IsAttacking = true;
-	AnimRef->OnMontageEnded.AddDynamic(this, &AAbility::EndAnimation);
 
+	//AnimRef->IsAttacking = true;
+
+	if (PlayerRef->IsLocallyControlled() == true)
+	{
+		PlayerRef->SetUsingSkill(true);
+		//if (IsBuff == nullptr)
+		//	PlayerRef->SetIsAttacking(true);
+		//UE_LOG(LogTemp, Warning, TEXT("Binding AnimEnd"));
+		AnimRef->OnMontageEnded.AddDynamic(this, &AAbility::EndAnimation);
+	}
 		HudUI =
 			Cast< UPuzzlePlatformsGameInstance>(UGameplayStatics::GetGameInstance(GetWorld()))->HeadsUpDisplay;
-		BeginCasting();
+		if(PlayerRef->IsLocallyControlled())
+			BeginCasting();
 	
 	
 
@@ -108,7 +115,12 @@ void AAbility::DetachAbilityFromPlayer()
 
 void AAbility::EndAnimation(UAnimMontage* Montage, bool bInterrupted)
 {
-
-	PlayerRef->SetIsAttacking(false);
-	//AnimRef->IsAttacking = false;
+	UE_LOG(LogTemp, Warning, TEXT("EndAnimation"));
+	//PlayerRef->SetIsAttacking(false);
+	PlayerRef->SetUsingSkill(false);
+	AnimationEnd = true;
+	if (NeedToDestroy == true)
+	{
+		Destroy();
+	}
 }

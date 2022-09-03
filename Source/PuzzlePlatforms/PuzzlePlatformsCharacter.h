@@ -38,6 +38,8 @@ public:
 	void Skill3Clicked();
 	void Skill4Clicked();
 	void Skill5Clicked();
+	void SetIsAttacking(bool NewIsAttacking);
+	void SetUsingSkill(bool NewUsingSkill);
 
 protected:
 	virtual void PostInitializeComponents() override;
@@ -65,7 +67,7 @@ public:
 	/** Returns FollowCamera subobject **/
 	FORCEINLINE class UCameraComponent* GetFollowCamera() const { return FollowCamera; }
 
-	void SetIsAttacking(bool NewIsAttacking);
+
 	virtual float TakeDamage(float DamageAmount, struct FDamageEvent const& DamageEvent,
 		class AController* EventInstigator, AActor* DamageCauser) override;
 	void SetTargetPlayerWithLineTrace();
@@ -98,11 +100,11 @@ public:
 	APuzzlePlatformsCharacter* TargetPlayer;
 
 	bool IsAttacking = false;
-
-
-protected:
+	bool UsingSkill = false;
 	UPROPERTY()
 		class UAnimInstance_Master* MyAnim;
+
+
 	
 
 

@@ -63,7 +63,7 @@ APuzzlePlatformsCharacter::APuzzlePlatformsCharacter()
 	SetActorTickEnabled(true);
 	bReplicates = true;
 	GetMesh()->SetAnimationMode(EAnimationMode::AnimationBlueprint);
-	//IsAttacking = false;
+	
 	//DaerimMotionReplicator = CreateDefaultSubobject<USoldierMotionReplicator>(TEXT("SoldierMotionReplicator"));
 	CharacterStat = CreateDefaultSubobject<UMyCharacterStatComponent>(TEXT("CHARACTERSTAT"));
 	ActorAbilitiesComponent = CreateDefaultSubobject<UActorAbilities>(TEXT("ActorAbilities"));
@@ -182,11 +182,7 @@ void APuzzlePlatformsCharacter::UpdateStat()
 	CharacterStat->IncreaseHP(.5);
 	CharacterStat->IncreaseMP(.5);
 }
-void APuzzlePlatformsCharacter::SetIsAttacking(bool NewIsAttacking) 
-{
-	IsAttacking = NewIsAttacking;
-	MyAnim->IsAttacking = NewIsAttacking;
-}
+
 
 void APuzzlePlatformsCharacter::SetTargetPlayerWithLineTrace()
 {
@@ -268,6 +264,7 @@ void APuzzlePlatformsCharacter::GetInTheCar()
 
 void APuzzlePlatformsCharacter::TurnAtRate(float Rate)
 {
+
 	AddControllerYawInput(Rate * BaseTurnRate * GetWorld()->GetDeltaSeconds());
 }
 
@@ -278,6 +275,8 @@ void APuzzlePlatformsCharacter::LookUpAtRate(float Rate)
 
 void APuzzlePlatformsCharacter::MoveForward(float Value)
 {
+	if (UsingSkill == true)
+		return;
 	if ((Controller != nullptr) && (Value != 0.0f))
 	{
 		// find out which way is forward
@@ -292,6 +291,8 @@ void APuzzlePlatformsCharacter::MoveForward(float Value)
 
 void APuzzlePlatformsCharacter::MoveRight(float Value)
 {
+	if (UsingSkill == true)
+		return;
 	if ( (Controller != nullptr) && (Value != 0.0f) )
 	{
 		// find out which way is right
@@ -310,8 +311,8 @@ void APuzzlePlatformsCharacter::MoveRight(float Value)
 void APuzzlePlatformsCharacter::Attack()
 {
 	//만약 종족이 두개있다면..?
-	UE_LOG(LogTemp, Warning, TEXT("Attack1"));
-	if (IsAttacking == true)
+
+	if (IsAttacking == true || UsingSkill == true)
 		return;
 	if(DaerimMotionReplicator != nullptr)
 		DaerimMotionReplicator->Server_SendAttack();
@@ -389,6 +390,8 @@ void APuzzlePlatformsCharacter::Skill1Clicked()
 	auto Slot_UI = HeadsUpDisplayRef->ActionBar_UI->ActionBarSlot_UI;
 	if (Slot_UI->IsAvailable==false||Slot_UI->IsManaAvailable ==false )
 		return;
+	if (UsingSkill == true)
+		return;
 	auto SlotClass = HeadsUpDisplayRef->ActionBar_UI->ActionBarSlot_UI->AbilityClass;
 	CharacterStat->IncreaseMP(-SlotClass.GetDefaultObject()->AbilityDetails.Cost);
 	HeadsUpDisplayRef->ActionBar_UI->ActionBarSlot_UI->StartCooldown();
@@ -455,3 +458,12 @@ void APuzzlePlatformsCharacter::Skill5Clicked()
 
 
 
+void APuzzlePlatformsCharacter::SetIsAttacking(bool NewIsAttacking)
+{
+	DaerimMotionReplicator->Server_SetIsAttacking(NewIsAttacking);
+}
+
+void APuzzlePlatformsCharacter::SetUsingSkill(bool NewUsingSkill)
+{
+	DaerimMotionReplicator->Server_SetUsingSkill(NewUsingSkill);
+}

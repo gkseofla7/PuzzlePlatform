@@ -5,6 +5,7 @@
 
 #include "../AbilitySystem/Ability.h"
 #include "../PuzzlePlatformsCharacter.h"
+#include "../AnimInstance/AnimInstance_Master.h"
 // Sets default values for this component's properties
 UMotionInterfaceComponent::UMotionInterfaceComponent()
 {
@@ -21,6 +22,7 @@ void UMotionInterfaceComponent::BeginPlay()
 {
 	Super::BeginPlay();
 	SetIsReplicated(true);
+	PlayerRef = Cast<APuzzlePlatformsCharacter>(GetOwner());
 	// ...
 	
 }
@@ -129,8 +131,8 @@ void UMotionInterfaceComponent::Server_SetTargetPlayer_Implementation(APuzzlePla
 
 void UMotionInterfaceComponent::NetMulticast_SetTargetPlayer_Implementation(APuzzlePlatformsCharacter* NewTarget)
 {
-	auto Player = Cast<APuzzlePlatformsCharacter>(GetOwner());
-	Player->TargetPlayer = NewTarget;
+
+	PlayerRef->TargetPlayer = NewTarget;
 }
 
 bool UMotionInterfaceComponent::Server_SetTargetPlayer_Validate(APuzzlePlatformsCharacter* NewTarget)
@@ -139,6 +141,48 @@ bool UMotionInterfaceComponent::Server_SetTargetPlayer_Validate(APuzzlePlatforms
 }
 
 bool UMotionInterfaceComponent::NetMulticast_SetTargetPlayer_Validate(APuzzlePlatformsCharacter* NewTarget)
+{
+	return true;
+}
+
+void UMotionInterfaceComponent::Server_SetIsAttacking_Implementation(bool NewIsAttacking)
+{
+	NetMulticast_SetIsAttacking(NewIsAttacking);
+}
+
+void UMotionInterfaceComponent::NetMulticast_SetIsAttacking_Implementation(bool NewIsAttacking)
+{
+	PlayerRef->IsAttacking = NewIsAttacking;
+	PlayerRef->MyAnim->IsAttacking = NewIsAttacking;
+}
+bool UMotionInterfaceComponent::Server_SetIsAttacking_Validate(bool NewIsAttacking)
+{
+	return true;
+}
+
+bool UMotionInterfaceComponent::NetMulticast_SetIsAttacking_Validate(bool NewIsAttacking)
+{
+	return true;
+}
+
+
+void UMotionInterfaceComponent::Server_SetUsingSkill_Implementation(bool NewUsingSkill)
+{
+	NetMulticast_SetUsingSkill(NewUsingSkill);
+}
+
+void UMotionInterfaceComponent::NetMulticast_SetUsingSkill_Implementation(bool NewUsingSkill)
+{
+	PlayerRef->UsingSkill = NewUsingSkill;
+	PlayerRef->MyAnim->UsingSkill = NewUsingSkill;
+}
+
+bool UMotionInterfaceComponent::Server_SetUsingSkill_Validate(bool NewUsingSkill)
+{
+	return true;
+}
+
+bool UMotionInterfaceComponent::NetMulticast_SetUsingSkill_Validate(bool NewUsingSkill)
 {
 	return true;
 }

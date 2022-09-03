@@ -60,8 +60,8 @@ public:
 	FCastSuccessDeleagate CastSuccessDeleagate;
 	UPROPERTY(EditAnywhere)
 		float DamageAmount;
-
-
+	bool AnimationEnd = false;
+	bool NeedToDestroy = false;
 
 
 };

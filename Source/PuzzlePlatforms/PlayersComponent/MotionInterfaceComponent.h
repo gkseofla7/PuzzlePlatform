@@ -45,4 +45,16 @@ public:
 		void Server_SetTargetPlayer(class APuzzlePlatformsCharacter* NewTarget);
 	UFUNCTION(NetMulticast, Reliable, WithValidation)
 		void NetMulticast_SetTargetPlayer(class APuzzlePlatformsCharacter* NewTarget);
+	UFUNCTION(Server, Reliable, WithValidation)
+	void Server_SetIsAttacking(bool NewIsAttacking);
+	UFUNCTION(NetMulticast, Reliable, WithValidation)
+		void NetMulticast_SetIsAttacking(bool NewIsAttacking);
+
+	UFUNCTION(Server, Reliable, WithValidation)
+		void Server_SetUsingSkill(bool NewUsingSkill);
+	UFUNCTION(NetMulticast, Reliable, WithValidation)
+		void NetMulticast_SetUsingSkill(bool NewUsingSkill);
+
+public:
+	class APuzzlePlatformsCharacter* PlayerRef;
 };

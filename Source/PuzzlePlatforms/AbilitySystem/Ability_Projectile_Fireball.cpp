@@ -14,12 +14,9 @@
 AAbility_Projectile_Fireball::AAbility_Projectile_Fireball()
 	:Super()
 {
-	//AbilityRoot->OnComponentHit.AddDynamic(this, &AAbility_Projectile_Fireball::OnHit);
 	AbilityRoot->OnComponentBeginOverlap.AddDynamic(this, &AAbility_Projectile_Fireball::OnOverlapBegin);
 
 	AbilityRoot->SetNotifyRigidBodyCollision(true);
-	//SetNotifyRigidBodyCollision(true);
-	//OnActorHit.AddDynamic(this, &AAbility_Projectile_Fireball::OnHit);
 	bReplicates = true;
 
 	static ConstructorHelpers::FObjectFinder<UParticleSystem> ParticleAsset(TEXT("/Game/StarterContent/Particles/P_Explosion"));
@@ -35,9 +32,9 @@ void AAbility_Projectile_Fireball::BeginPlay()
 	auto warrior = Cast<AWarrior>(PlayerRef);
 	bReplicates = true;
 	AttachToComponent(PlayerRef->GetMesh(), FAttachmentTransformRules::SnapToTargetNotIncludingScale, "hand_rSocket");
-	AsPlayerAnimInstance = Cast<UPlayerAnimInstance>(warrior->GetMesh()->GetAnimInstance());
+	AsPlayerAnimInstance = Cast<UPlayerAnimInstance>(AnimRef);
 	AsPlayerAnimInstance->Montage_JumpToSection(FName("Defualt"), AsPlayerAnimInstance->FireballAttackMontage);
-	AsPlayerAnimInstance->IsAttacking = true;
+
 	AsPlayerAnimInstance->OnFireBall.AddUObject(this, &AAbility_Projectile::ActivateEffect);
 	//AsPlayerAnimInstance->OnFireBall.AddUObject(this, &AAbility_Projectile::DetachAbilityFromPlayer);
 	AsPlayerAnimInstance->PlayFireballAttackMontage();
@@ -55,9 +52,10 @@ void AAbility_Projectile_Fireball::CastAbility_Implementation()
 
 void AAbility_Projectile_Fireball::ActivateEffect_Implementation()
 {
-	AsPlayerAnimInstance->IsAttacking = false;//요건 그냥 replication으로 바꿔줌
+
 	if (PlayerRef->IsLocallyControlled() == false)
 		return;
+
 	//즉 클라이언트에서만 진행
 	Super::ActivateEffect_Implementation();
 
@@ -107,6 +105,15 @@ void AAbility_Projectile_Fireball::OnOverlapBegin(class UPrimitiveComponent* Ove
 
 		}
 	}
-	Destroy();
+
+	
+	if (AnimationEnd == true)
+	{
+		Destroy();
+	}
+	else
+	{
+		NeedToDestroy = true;
+	}
 }
 

@@ -18,7 +18,7 @@ void AAbility_Debuff::BeginPlay()
 
 	auto warrior = Cast<AWarrior>(PlayerRef);
 	AsPlayerAnimInstance = Cast<UPlayerAnimInstance>(warrior->GetMesh()->GetAnimInstance());
-	//AsPlayerAnimInstance->IsAttacking = true;
+
 	//AsPlayerAnimInstance->OnActivateSpell.AddUObject(this, &AAbility_AoE::ActivateEffect);
 	AsPlayerAnimInstance->PlayAoEAttackMontage();
 	AttachToComponent(PlayerRef->GetMesh(), FAttachmentTransformRules::SnapToTargetNotIncludingScale, "hand_rSocket");
