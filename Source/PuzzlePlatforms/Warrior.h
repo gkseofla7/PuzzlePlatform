@@ -24,9 +24,10 @@ protected:
 	//virtual void MoveForward(float Value) override;
 	//virtual void MoveRight(float Value) override;;
 
-UFUNCTION(BlueprintCallable, BlueprintImplementableEvent)
+	UFUNCTION(BlueprintCallable, BlueprintImplementableEvent)
 	void JumpFromWall();
-
+	UFUNCTION()
+	void EndAnimation(UAnimMontage* Montage, bool bInterrupted);
 	bool ForwardTrace();
 	void HeightTrace();
 	void Hang();
@@ -71,6 +72,8 @@ public:
 		FVector WallLocation;
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
 		FVector HeightLocation;
+
+
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
 		TSubclassOf<class UUserWidget>CrosshairHudClass;

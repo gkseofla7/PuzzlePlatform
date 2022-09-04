@@ -21,8 +21,6 @@ protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
-	UPROPERTY(BlueprintReadWrite, EditAnywhere)
-	class USkeletalMeshComponent * SkeletalMeshComponent;
 
 public:	
 	// Called every frame
@@ -32,4 +30,8 @@ public:
 
 	UPROPERTY()
 		class APuzzlePlatformsCharacter* Player;
+
+
+	UPROPERTY(BlueprintReadWrite, EditAnywhere)
+		class USkeletalMeshComponent* SkeletalMeshComponent;
 };

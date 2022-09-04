@@ -37,6 +37,8 @@ AWarrior::AWarrior()
 
 	}
 	
+
+
 }
 void AWarrior::PostInitializeComponents()
 {
@@ -71,6 +73,8 @@ void AWarrior::BeginPlay()
 		HudWidget->AddToViewport();
 
 	}
+
+	MyAnim->OnMontageEnded.AddDynamic(this, &AWarrior::EndAnimation);
 }
 void AWarrior::Tick(float DeltaTime)
 {
@@ -351,7 +355,19 @@ void AWarrior::DropDown()
 
 void AWarrior::Dash()
 {
-	auto Anim = Cast<UPlayerAnimInstance>(MyAnim);
-	Anim->PlayDashMontage();
+	Cast<UPlayersMotionReplicator>(DaerimMotionReplicator)->Server_SendDash();
 }
 
+void AWarrior::EndAnimation(UAnimMontage* Montage, bool bInterrupted)
+{
+	auto Anim = Cast<UPlayerAnimInstance>(MyAnim);
+	if (Montage == Anim->DashMontage)
+	{
+		IsDashing = false;
+		ParticleSystemComponent->SetVisibility(false);
+		ParticleSystemComponent->Deactivate();
+		GetMesh()->SetVisibility(true);
+		EquippedItem->SkeletalMeshComponent->SetVisibility(true);
+		Cast<UCharacterMovementComponent>(GetMovementComponent())->GravityScale = 1;
+	}
+}

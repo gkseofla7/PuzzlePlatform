@@ -102,6 +102,8 @@ APuzzlePlatformsCharacter::APuzzlePlatformsCharacter()
 	NearObjectCollisionDetector = CreateDefaultSubobject<USphereComponent>(TEXT("NearObjectCollisionDetector"));
 	NearObjectCollisionDetector->SetupAttachment(RootComponent);
 
+	ParticleSystemComponent = CreateDefaultSubobject<UParticleSystemComponent>(TEXT("ParticleSystemComponent"));
+	ParticleSystemComponent->SetupAttachment(RootComponent);
 
 
 }
@@ -128,9 +130,9 @@ void APuzzlePlatformsCharacter::SetupPlayerInputComponent(class UInputComponent*
 	// We have 2 versions of the rotation bindings to handle different kinds of devices differently
 	// "turn" handles devices that provide an absolute delta, such as a mouse.
 	// "turnrate" is for devices that we choose to treat as a rate of change, such as an analog joystick
-	PlayerInputComponent->BindAxis("Turn", this, &APawn::AddControllerYawInput);
+	PlayerInputComponent->BindAxis("Turn", this, &APuzzlePlatformsCharacter::AddControllerYawInput);
 	PlayerInputComponent->BindAxis("TurnRate", this, &APuzzlePlatformsCharacter::TurnAtRate);
-	PlayerInputComponent->BindAxis("LookUp", this, &APawn::AddControllerPitchInput);
+	PlayerInputComponent->BindAxis("LookUp", this, &APuzzlePlatformsCharacter::AddControllerPitchInput);
 	PlayerInputComponent->BindAxis("LookUpRate", this, &APuzzlePlatformsCharacter::LookUpAtRate);
 
 
@@ -166,6 +168,8 @@ void APuzzlePlatformsCharacter::BeginPlay()
 		GetWorld()->GetTimerManager().SetTimer(TimerHandler, this, &APuzzlePlatformsCharacter::UpdateStat, 2, true);
 	}
 
+
+
 }
 
 void APuzzlePlatformsCharacter::Tick(float DeltaTime)
@@ -175,6 +179,21 @@ void APuzzlePlatformsCharacter::Tick(float DeltaTime)
 	if (IsLocallyControlled())
 	{
 		SetTargetPlayerWithLineTrace();
+	}
+}
+
+void APuzzlePlatformsCharacter::AddControllerPitchInput(float Val)
+{
+	if (IsDashing == false)
+	{
+		Super::AddControllerPitchInput(Val);
+	}
+}
+void APuzzlePlatformsCharacter::AddControllerYawInput(float Val)
+{
+	if (IsDashing == false)
+	{
+		Super::AddControllerYawInput(Val);
 	}
 }
 void APuzzlePlatformsCharacter::UpdateStat()
@@ -264,12 +283,15 @@ void APuzzlePlatformsCharacter::GetInTheCar()
 
 void APuzzlePlatformsCharacter::TurnAtRate(float Rate)
 {
-
+	if (IsDashing == true)
+		return;
 	AddControllerYawInput(Rate * BaseTurnRate * GetWorld()->GetDeltaSeconds());
 }
 
 void APuzzlePlatformsCharacter::LookUpAtRate(float Rate)
 {
+	if (IsDashing == true)
+		return;
 	AddControllerPitchInput(Rate * BaseLookUpRate * GetWorld()->GetDeltaSeconds());
 }
 
@@ -467,3 +489,4 @@ void APuzzlePlatformsCharacter::SetUsingSkill(bool NewUsingSkill)
 {
 	DaerimMotionReplicator->Server_SetUsingSkill(NewUsingSkill);
 }
+

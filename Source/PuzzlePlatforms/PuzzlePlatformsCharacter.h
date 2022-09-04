@@ -53,8 +53,8 @@ protected:
 	void GetInTheCar();
 	void SeeMouseCursur();
 	virtual void Attack();
-
-
+	virtual void AddControllerPitchInput(float Val);
+	virtual void AddControllerYawInput(float Val);
 protected:
 	// APawn interface
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
@@ -75,7 +75,6 @@ public:
 
 
 
-
 public:
 
 	UPROPERTY(EditAnywhere,BlueprintReadWrite, Category = Stat)
@@ -91,6 +90,8 @@ public:
 		class UActorAbilities* ActorAbilitiesComponent;
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Replicator)
 		class UDecalComponent* DecalComponent;
+	UPROPERTY(BlueprintReadWrite, EditAnywhere)
+		class UParticleSystemComponent* ParticleSystemComponent;
 		//IMotionReplicatorInterface* MotionReplicator;
 	bool MouseCursorToggle = false;
 	UPROPERTY(BlueprintAssignable,BlueprintCallable)
@@ -99,13 +100,14 @@ public:
 	bool SkillAvailable = true;
 	APuzzlePlatformsCharacter* TargetPlayer;
 
-	bool IsAttacking = false;
-	bool UsingSkill = false;
+
 	UPROPERTY()
 		class UAnimInstance_Master* MyAnim;
 
 
-	
+	bool IsDashing = false;
+	bool IsAttacking = false;
+	bool UsingSkill = false;
 
 
 };

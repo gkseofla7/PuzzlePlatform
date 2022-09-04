@@ -33,22 +33,33 @@ public:
 	void JumpToAttackMontageSection(int32 NewSection);
 	UAnimMontage* GetHangToCrouchMontage() { return HangToCrouchMontage; }
 
-public:
-	FOnNextAttackCheckDelegate OnNextAttackCheck;
-	FOnAttackHitCheckDelegate OnAttackHitCheck;
-	FOnAttackEndCheckDelegate OnAttackEndCheck;
-	FOnHangMovePlaceDelegate OnHangMovePlace;
-	FOnFireBallDelegate OnFireBall;
-	FOnFireDragonBlastDelegate OnFireDragonBlastDelegate;
-	FOnActivateSpellDelegate OnActivateSpell;
 
-	public:
+
+public:
+	UFUNCTION()
+		void AnimNotify_NextAttackCheck();
+	UFUNCTION()
+		void AnimNotify_EndAttack();
+	UFUNCTION()
+		void AnimNotify_MovePlace();
+	UFUNCTION()
+		void AnimNotify_LaunchProjectile();
+	UFUNCTION()
+		void AnimNotify_ActivateSpell();
+	UFUNCTION()
+		void AnimNotify_FireDragonBlast();
+
+	FName GetAttackMontageSectionName(int32 Section);
+	UFUNCTION()
+		void AnimNotify_AttackHitCheck();
+	
+public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Pawn, Meta = (AllowPrivateAccess = true))
 		float Direction;
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Pawn, Meta = (AllowPrivateAccess = true))
 		float CurrenPawnSpeed;
-	
+
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Pawn, Meta = (AllowPrivateAccess = true))
 		bool IsInAir;
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Pawn, Meta = (AllowPrivateAccess = true))
@@ -70,22 +81,16 @@ public:
 		UAnimMontage* SwordBlastMontage;
 	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly, Category = Attack, Meta = (AllowPrivateAccess = true))
 		UAnimMontage* DashMontage;
-	UFUNCTION()
-		void AnimNotify_NextAttackCheck();
-	UFUNCTION()
-		void AnimNotify_EndAttack();
-	UFUNCTION()
-		void AnimNotify_MovePlace();
-	UFUNCTION()
-		void AnimNotify_LaunchProjectile();
-	UFUNCTION()
-		void AnimNotify_ActivateSpell();
-	UFUNCTION()
-		void AnimNotify_FireDragonBlast();
-	FName GetAttackMontageSectionName(int32 Section);
-private:
-	UFUNCTION()
-		void AnimNotify_AttackHitCheck();
+
+public:
+	FOnNextAttackCheckDelegate OnNextAttackCheck;
+	FOnAttackHitCheckDelegate OnAttackHitCheck;
+	FOnAttackEndCheckDelegate OnAttackEndCheck;
+	FOnHangMovePlaceDelegate OnHangMovePlace;
+	FOnFireBallDelegate OnFireBall;
+	FOnFireDragonBlastDelegate OnFireDragonBlastDelegate;
+	FOnActivateSpellDelegate OnActivateSpell;
+
 
 
 };

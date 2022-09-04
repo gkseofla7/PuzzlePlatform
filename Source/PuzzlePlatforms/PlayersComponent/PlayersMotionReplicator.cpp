@@ -6,6 +6,7 @@
 #include "../AnimInstance/PlayerAnimInstance.h"
 #include "../Cars/GoKart.h"
 #include "../Warrior.h"
+#include "../Weapons/Sword_Master.h"
 
 #include "Net/UnrealNetwork.h"
 
@@ -131,6 +132,35 @@ void UPlayersMotionReplicator::Server_SendClimbUp_Implementation()
 	NetMulticast_SendClimbUp();
 }
 
+
+void UPlayersMotionReplicator::Server_SendDash_Implementation()
+{
+	NetMulticast_SendDash();
+}
+
+void UPlayersMotionReplicator::NetMulticast_SendDash_Implementation()
+{
+	auto Warrior = Cast<AWarrior>(GetOwner());
+	Warrior->IsDashing = true;
+	MyAnim->PlayDashMontage();
+	Warrior->ParticleSystemComponent->SetVisibility(true);
+	Warrior->ParticleSystemComponent->Activate(true);
+	Warrior->GetMesh()->SetVisibility(false);
+	Warrior->EquippedItem->SkeletalMeshComponent->SetVisibility(false);
+	Cast<UCharacterMovementComponent>(Warrior->GetMovementComponent())->GravityScale = 0;
+
+}
+
+bool UPlayersMotionReplicator::Server_SendDash_Validate()
+{
+	return true;
+}
+
+bool UPlayersMotionReplicator::NetMulticast_SendDash_Validate()
+{
+	return true;
+}
+
 bool UPlayersMotionReplicator::Server_SendClimbUp_Validate()
 {
 	return true;
@@ -195,3 +225,4 @@ void UPlayersMotionReplicator::OnAttackMontageEnded()
 	MyAnim->IsAttacking = false;
 
 }
+

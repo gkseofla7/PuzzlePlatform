@@ -38,6 +38,11 @@ public:
 		void Server_SendClimbUp();
 	UFUNCTION(NetMulticast, Reliable, WithValidation)
 		void NetMulticast_SendClimbUp();
+	UFUNCTION(Server, Reliable, WithValidation)
+		void Server_SendDash();
+	UFUNCTION(NetMulticast, Reliable, WithValidation)
+		void NetMulticast_SendDash();
+
 	UFUNCTION()
 		void OnRep_Attack();
 	UPROPERTY(ReplicatedUsing = OnRep_Attack)
