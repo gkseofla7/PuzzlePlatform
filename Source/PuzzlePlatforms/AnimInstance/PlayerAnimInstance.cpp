@@ -52,7 +52,15 @@ UPlayerAnimInstance::UPlayerAnimInstance()
 		SwordBlastMontage = SWORD_BLAST_MONTAGE.Object;
 	}
 
-	
+	static ConstructorHelpers::FObjectFinder<UAnimMontage> DASHMONTAGE(TEXT(
+		"/Game/Animation/Montage/Dash_Montage"
+	));
+	if (DASHMONTAGE.Succeeded())
+	{
+		DashMontage = DASHMONTAGE.Object;
+	}
+
+
 	IsAttacking = false;
 }
 
@@ -107,6 +115,10 @@ void UPlayerAnimInstance::PlaySwordBlastMontage()
 
 	Montage_Play(SwordBlastMontage, 1.0);
 	UE_LOG(LogTemp, Warning, TEXT("PlaySwordMontage"));
+}
+void UPlayerAnimInstance::PlayDashMontage()
+{
+	Montage_Play(DashMontage, 2.0);
 }
 
 void UPlayerAnimInstance::PlayHangToCrouchMontage()

@@ -29,6 +29,7 @@ public:
 	void PlayHangToCrouchMontage();
 	void PlayAoEAttackMontage();
 	void PlaySwordBlastMontage();
+	void PlayDashMontage();
 	void JumpToAttackMontageSection(int32 NewSection);
 	UAnimMontage* GetHangToCrouchMontage() { return HangToCrouchMontage; }
 
@@ -67,7 +68,8 @@ public:
 		UAnimMontage* AreaAttackMontage;
 	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly, Category = Attack, Meta = (AllowPrivateAccess = true))
 		UAnimMontage* SwordBlastMontage;
-
+	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly, Category = Attack, Meta = (AllowPrivateAccess = true))
+		UAnimMontage* DashMontage;
 	UFUNCTION()
 		void AnimNotify_NextAttackCheck();
 	UFUNCTION()

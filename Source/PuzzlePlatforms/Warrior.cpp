@@ -131,6 +131,8 @@ void AWarrior::SetupPlayerInputComponent(class UInputComponent* PlayerInputCompo
 	//PlayerInputComponent->BindAction("Climb", IE_Released, this, &AWarrior::ClimbTheWall);
 	PlayerInputComponent->BindAction("ClimbUp", IE_Pressed, this, &AWarrior::ClimbUp);
 	PlayerInputComponent->BindAction("DropDown", IE_Pressed, this, &AWarrior::DropDown);
+	PlayerInputComponent->BindAction("Dash", IE_Pressed, this, &AWarrior::Dash);
+
 
 }
 
@@ -340,10 +342,16 @@ void AWarrior::DropDown()
 {
 	if (IsClimbing == true)
 	{
-		auto Anim = Cast<UPlayerAnimInstance>(GetMesh()->GetAnimInstance());
+		auto Anim = Cast<UPlayerAnimInstance>(MyAnim);
 		IsClimbing = false;
 		GetCharacterMovement()->SetMovementMode(EMovementMode::MOVE_Falling);
 		StopAnimMontage(Anim->GetHangToCrouchMontage());
 	}
+}
+
+void AWarrior::Dash()
+{
+	auto Anim = Cast<UPlayerAnimInstance>(MyAnim);
+	Anim->PlayDashMontage();
 }
 

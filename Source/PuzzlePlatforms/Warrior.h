@@ -37,7 +37,7 @@ UFUNCTION(BlueprintCallable, BlueprintImplementableEvent)
 	UFUNCTION(BlueprintCallable)
 		void DropDown();
 	//void ClimbTheWall();
-
+	void Dash();
 	void Climb();
 private:
 	void AttackCheck();
