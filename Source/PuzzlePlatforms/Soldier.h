@@ -84,6 +84,8 @@ public:
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
 		float Direction;
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
+		FVector MissileVelocity;
+	UPROPERTY(BlueprintReadWrite, EditAnywhere)
 		class AWeapon_Master* EquippedItem;
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
 		class AWeapon_Master* PrimaryWeapon;

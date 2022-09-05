@@ -25,10 +25,10 @@ ASoldier::ASoldier()
 	GridSphere->SetupAttachment(RootComponent);
 	DecalMissileComponent = CreateDefaultSubobject< UDecalComponent>(TEXT("DecalMissileComponent"));
 	DecalMissileComponent->SetupAttachment(GridSphere);	
-	DecalMissileComponent->SetVisibility(true);
+	DecalMissileComponent->SetVisibility(false);
 
 	SplinePathComponent = CreateDefaultSubobject< USplineComponent>(TEXT("SplinePathComponent"));
-	DecalMissileComponent->SetupAttachment(RocketHolderComponent);
+	SplinePathComponent->SetupAttachment(RocketHolderComponent);
 
 	static ConstructorHelpers::FClassFinder<USoldierAnimInstance> SOLDIER_ANIM((TEXT("/Game/Animation/BP_SoldierAnim")));
 	if (SOLDIER_ANIM.Succeeded())
