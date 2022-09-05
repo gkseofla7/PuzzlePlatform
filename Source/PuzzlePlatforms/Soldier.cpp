@@ -8,6 +8,8 @@
 #include "PlayersComponent/SoldierMotionReplicator.h"
 #include "AnimInstance/SoldierAnimInstance.h"
 #include "Kismet/KismetMathLibrary.h"
+#include "Components/DecalComponent.h"
+#include "Components/SplineComponent.h"
 #include "Net/UnrealNetwork.h"
 
 ASoldier::ASoldier()
@@ -15,7 +17,18 @@ ASoldier::ASoldier()
 	bReplicates = true;
 	//SetReplicates(true);
 	DaerimMotionReplicator = CreateDefaultSubobject<USoldierMotionReplicator>(TEXT("SoldierMotionReplicator"));
+	RocketHolderComponent = CreateDefaultSubobject< UStaticMeshComponent>(TEXT("RocketHolderComponent"));
+	RocketHolderComponent->SetupAttachment(GetMesh(), "clavicle_rSocket");
+	MissileComponent = CreateDefaultSubobject< UStaticMeshComponent>(TEXT("MissileComponent"));
+	MissileComponent->SetupAttachment(RocketHolderComponent, "Missile");
+	GridSphere = CreateDefaultSubobject< UStaticMeshComponent>(TEXT("GridSphere"));
+	GridSphere->SetupAttachment(RootComponent);
+	DecalMissileComponent = CreateDefaultSubobject< UDecalComponent>(TEXT("DecalMissileComponent"));
+	DecalMissileComponent->SetupAttachment(GridSphere);	
+	DecalMissileComponent->SetVisibility(true);
 
+	SplinePathComponent = CreateDefaultSubobject< USplineComponent>(TEXT("SplinePathComponent"));
+	DecalMissileComponent->SetupAttachment(RocketHolderComponent);
 
 	static ConstructorHelpers::FClassFinder<USoldierAnimInstance> SOLDIER_ANIM((TEXT("/Game/Animation/BP_SoldierAnim")));
 	if (SOLDIER_ANIM.Succeeded())

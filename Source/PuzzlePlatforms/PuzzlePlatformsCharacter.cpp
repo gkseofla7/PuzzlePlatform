@@ -67,11 +67,12 @@ APuzzlePlatformsCharacter::APuzzlePlatformsCharacter()
 	//DaerimMotionReplicator = CreateDefaultSubobject<USoldierMotionReplicator>(TEXT("SoldierMotionReplicator"));
 	CharacterStat = CreateDefaultSubobject<UMyCharacterStatComponent>(TEXT("CHARACTERSTAT"));
 	ActorAbilitiesComponent = CreateDefaultSubobject<UActorAbilities>(TEXT("ActorAbilities"));
+
+	GetCapsuleComponent()->SetCollisionProfileName(TEXT("ABCharacter"));
+
 	DecalComponent = CreateDefaultSubobject<UDecalComponent>(TEXT("DecalComponent"));
 	DecalComponent->SetupAttachment(RootComponent);
 	DecalComponent->SetVisibility(false);
-	GetCapsuleComponent()->SetCollisionProfileName(TEXT("ABCharacter"));
-
 	// set our turn rates for input
 	BaseTurnRate = 45.f;
 	BaseLookUpRate = 45.f;

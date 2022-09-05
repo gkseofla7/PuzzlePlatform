@@ -82,6 +82,8 @@ private:
 
 public:
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
+		float Direction;
+	UPROPERTY(BlueprintReadWrite, EditAnywhere)
 		class AWeapon_Master* EquippedItem;
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
 		class AWeapon_Master* PrimaryWeapon;
@@ -111,6 +113,20 @@ public:
 		bool DoPickupLinetrace;
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
 		class AObject_Master* PickupItem;
+	UPROPERTY(BlueprintReadWrite, EditAnywhere)
+	UStaticMeshComponent* RocketHolderComponent;
+	UPROPERTY(BlueprintReadWrite, EditAnywhere)
+		UStaticMeshComponent* MissileComponent;
+	UPROPERTY(BlueprintReadWrite, EditAnywhere)
+	class UDecalComponent* DecalMissileComponent;
+	UPROPERTY(BlueprintReadWrite, EditAnywhere)
+		class USplineComponent* SplinePathComponent;
+	UPROPERTY(BlueprintReadWrite, EditAnywhere)
+		UStaticMeshComponent* GridSphere;
+	UPROPERTY(BlueprintReadWrite, EditAnywhere)
+		float RocketSpeed = 1000;
+	UPROPERTY(BlueprintReadWrite, EditAnywhere)
+		TArray<class USplineMeshComponent*> PointsArray;
 
 
 };
