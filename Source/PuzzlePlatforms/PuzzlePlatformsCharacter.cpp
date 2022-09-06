@@ -329,8 +329,6 @@ void APuzzlePlatformsCharacter::MoveRight(float Value)
 	}
 }
 
-
-
 void APuzzlePlatformsCharacter::Attack()
 {
 	//만약 종족이 두개있다면..?

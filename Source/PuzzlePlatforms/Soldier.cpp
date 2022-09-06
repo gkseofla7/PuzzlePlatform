@@ -4,6 +4,7 @@
 #include "Soldier.h"
 #include "Weapons/Weapon_Master.h"
 #include "Weapons/FPSHudWidget.h"
+#include "Missile//Missile.h"
 
 #include "PlayersComponent/SoldierMotionReplicator.h"
 #include "AnimInstance/SoldierAnimInstance.h"
@@ -14,6 +15,7 @@
 #include "Kismet/GameplayStaticsTypes.h"
 #include "Kismet/GameplayStatics.h"
 #include "UObject/ConstructorHelpers.h"
+#include "GameFramework/ProjectileMovementComponent.h"
 
 #include "Net/UnrealNetwork.h"
 
@@ -39,9 +41,14 @@ ASoldier::ASoldier()
 	static ConstructorHelpers::FObjectFinder<UStaticMesh>SplineStaticMeshAsset(TEXT("/Game/StarterContent/Shapes/Shape_Cylinder"));
 	SplineStaticMesh = SplineStaticMeshAsset.Object;
 
-
 	static ConstructorHelpers::FObjectFinder<UMaterial>SplineStaticMaterialAsset(TEXT("/Game/RocketPath/M_Spline_White"));
 	SplineStaticMaterial = SplineStaticMaterialAsset.Object;
+
+	static ConstructorHelpers::FClassFinder<AMissile> MissileBPClass((TEXT("/Game/RocketPath/BP_Missile")));
+	if (MissileBPClass.Succeeded())
+	{
+		MissileClass = MissileBPClass.Class;
+	}
 
 	static ConstructorHelpers::FClassFinder<USoldierAnimInstance> SOLDIER_ANIM((TEXT("/Game/Animation/BP_SoldierAnim")));
 	if (SOLDIER_ANIM.Succeeded())
@@ -52,7 +59,9 @@ ASoldier::ASoldier()
 	ConstructorHelpers::FClassFinder<AWeapon_Master> WeaponBPClass(TEXT("/Game/Weapons/BP_Weapon_Master"));
 	if (!ensure(WeaponBPClass.Class != nullptr)) return;
 	WeaponMasterClass = WeaponBPClass.Class;
-
+	GeneralCameraPosition = FVector(0, 90, 90);
+	MissileCameraPosition = FVector(0, 90, 200);
+	CameraBoom->SetRelativeLocation(GeneralCameraPosition);
 	FPPCam_ = CreateDefaultSubobject<UCameraComponent>(TEXT("FPPCam"));
 	SpringArm_ = CreateDefaultSubobject<USpringArmComponent>(TEXT("SpringArm"));
 	AimObejctFPP = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("AimObejctFPP"));
@@ -80,6 +89,9 @@ void ASoldier::SetupPlayerInputComponent(class UInputComponent* PlayerInputCompo
 	PlayerInputComponent->BindAction("WeaponReload", IE_Pressed, this, &ASoldier::WeaponReload);
 
 	PlayerInputComponent->BindAction("Interact", IE_Pressed, this, &ASoldier::InteractPressed);
+
+	PlayerInputComponent->BindAction("ForTest", IE_Pressed, this, &ASoldier::MissilePressed);
+	PlayerInputComponent->BindAction("ForTest", IE_Released, this, &ASoldier::MissileReleased);
 }
 
 void ASoldier::PostInitializeComponents()
@@ -129,16 +141,9 @@ void ASoldier::Tick(float DeltaTime)
 
 	if (ShowPath == true)
 	{
-		
-		//{
-
-
-	//	//	PointsArray[0]->DestroyComponent();
-	//	//
-	//	//	PointsArray.Empty();
-	//	//	SplinePathComponent->ClearSplinePoints();
-
-	//	//}
+		if (MissileTargetArmLength != CameraBoom->TargetArmLength)
+			AimMissile();
+		ClearPointsArray();
 
 		auto RocketMouthTransform = RocketHolderComponent->GetSocketTransform("Mouth");
 		auto ForwardVector = RocketMouthTransform.GetRotation().GetForwardVector();
@@ -183,12 +188,10 @@ void ASoldier::Tick(float DeltaTime)
 			AddSplineMeshComponent(OutPathPositions[i], SplinePathComponent->GetTangentAtSplinePoint(i, ESplineCoordinateSpace::World),
 				OutPathPositions[i + 1], SplinePathComponent->GetTangentAtSplinePoint(i + 1, ESplineCoordinateSpace::World));
 		}
-		// 
-		//UE_LOG(LogTemp, Warning, TEXT("PointsArray  Num: %d "), PointsArray.Num());
+
 		//{
 		//	FTransform RelativeTransform;
 		//	auto SplineMesh = Cast< USplineMeshComponent>(AddComponentByClass(USplineMeshComponent::StaticClass(), true, RelativeTransform, true));
-
 		//	FVector2D SplineScale(1000, 1000);
 		//	SplineMesh->SetStartScale(SplineScale);
 		//	SplineMesh->SetEndScale(SplineScale);
@@ -197,7 +200,6 @@ void ASoldier::Tick(float DeltaTime)
 		//	SplineMesh->SetStaticMesh(SplineStaticMesh);
 		//	SplineMesh->SetWorldScale3D(FVector(100, 100, 100));
 		//	SplineMesh->SetMaterial(0, SplineStaticMaterial);
-
 		//	SplineMesh->ForwardAxis = ESplineMeshAxis::Z;
 		//	PointsArray.Add(SplineMesh);
 		//	SplineMesh->SetStartAndEnd(OutPathPositions[i], SplinePathComponent->GetTangentAtSplinePoint(i, ESplineCoordinateSpace::World),
@@ -210,9 +212,28 @@ void ASoldier::Tick(float DeltaTime)
 		auto NextLocation = UKismetMathLibrary::VInterpTo(OutLastTraceDestination, GridSphere->GetComponentLocation(), DeltaTime, 10);
 		GridSphere->SetWorldLocation(NextLocation);
 	}
+	else if (GeneralTargetArmLength != CameraBoom->TargetArmLength)
+	{
+		UnAimMissile();
+	}
 
 
 }
+
+void ASoldier::AddControllerPitchInput(float Val)
+{
+	if (IsDashing == false)
+	{
+		Super::AddControllerPitchInput(Val);
+		if (ShowPath == true)
+		{
+			float NewDirection = 0;
+			NewDirection = UKismetMathLibrary::FInterpTo(Direction, Direction - Val, UGameplayStatics::GetWorldDeltaSeconds(GetWorld()), 5);
+			Direction = NewDirection;
+		}
+	}
+}
+
 
 
 
@@ -315,6 +336,41 @@ void ASoldier::UnAim()
 		ADSCam_->Deactivate();
 		FollowCamera->Activate();
 	}
+}
+
+void ASoldier::AimMissile()
+{
+
+	FVector VCurrent = CameraBoom->GetRelativeLocation();
+	FVector VTarget = MissileCameraPosition;
+
+	float FCurrent = CameraBoom->TargetArmLength;
+	float FTarget = MissileTargetArmLength;
+
+	float Deltatime = UGameplayStatics::GetWorldDeltaSeconds(GetWorld());
+	FVector NextLoc = FMath::VInterpTo(VCurrent, VTarget, Deltatime, 15);
+	CameraBoom->SetRelativeLocation(NextLoc);
+
+	float NextLenth = FMath::FInterpTo(FCurrent, FTarget, Deltatime, 15);
+	CameraBoom->TargetArmLength = NextLenth;
+
+}
+
+void ASoldier::UnAimMissile()
+{
+	FVector VCurrent = CameraBoom->GetRelativeLocation();
+	FVector VTarget = GeneralCameraPosition;
+
+	float FCurrent = CameraBoom->TargetArmLength;
+	float FTarget = GeneralTargetArmLength;
+
+	float Deltatime = UGameplayStatics::GetWorldDeltaSeconds(GetWorld());
+	FVector NextLoc = FMath::VInterpTo(VCurrent, VTarget, Deltatime, 15);
+	CameraBoom->SetRelativeLocation(NextLoc);
+
+	float NextLenth = FMath::FInterpTo(FCurrent, FTarget, Deltatime, 15);
+	CameraBoom->TargetArmLength = NextLenth;
+
 }
 
 void ASoldier::WeaponPrimaryPressed()
@@ -436,22 +492,35 @@ void ASoldier::InteractPressed()
 
 
 }
-//UActorComponent* ASoldier::AddActorComponent(AActor* Owner, TSubclassOf<UActorComponent> ActorComponentClass)
-//{
-//	UClass* baseClass = FindObject<UClass>(ANY_PACKAGE, TEXT("ActorComponent"));
-//	if (ActorComponentClass->IsChildOf(baseClass))
-//	{
-//		UActorComponent* NewComp = NewObject<UActorComponent>(Owner, ActorComponentClass);
-//		if (!NewComp)
-//		{
-//			return NULL;
-//		}
-//		~~~~~~~~~~~~~
-//
-//		NewComp->RegisterComponent();        //You must ConstructObject with a valid Outer that has world, see above     
-//
-//		return NewComp;
-//	}
-//	else
-//		return NULL;
-//}
+
+void ASoldier::MissilePressed()
+{
+	GridSphere->SetVisibility(true, true);
+	GetMesh()->bPauseAnims = true;
+	ShowPath = true;
+	//FVector NextLoc = FMath::VInterpTo(VCurrent, VTarget, Deltatime, 15);
+	//CameraBoom->SetRelativeLocation(MissileCameraPosition);
+	//CameraBoom->TargetArmLength = MissileTargetArmLength;
+
+}
+void ASoldier::MissileReleased()
+{
+	GridSphere->SetVisibility(false, true);
+	GetMesh()->bPauseAnims = false;
+	ShowPath = false;
+	ClearPointsArray();
+	
+	FActorSpawnParameters SpawnInfo;
+	auto missile = GetWorld()->SpawnActor<AMissile>(MissileClass, RocketHolderComponent->GetSocketTransform("Mouth"), SpawnInfo);
+	missile->ProjectileMovementComponent->Velocity = MissileVelocity;
+	//CameraBoom->TargetArmLength = GeneralTargetArmLength;
+	//CameraBoom->SetRelativeLocation(GeneralCameraPosition);
+	//UE_LOG(LogTemp, Warning, TEXT("Spawn In Server"));
+	//FTransform PlayerTransform = GetOwner()->GetActorTransform();
+
+	//SpawnInfo.Owner = GetOwner();
+	//SpawnInfo.Instigator = Cast<APawn>(GetOwner());
+	//auto ability = GetWorld()->SpawnActorDeferred<AAbility>(AbilityClass, PlayerTransform,NewPlayer,NewPlayer);
+
+
+}

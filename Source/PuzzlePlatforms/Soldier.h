@@ -44,6 +44,8 @@ public:
 	void SetFPSHudWidget();
 	UFUNCTION(BlueprintCallable, BlueprintImplementableEvent)
 		void AddSplineMeshComponent(FVector StartPoint, FVector StartTangent, FVector EndPoint, FVector EndTangent);
+	UFUNCTION(BlueprintCallable, BlueprintImplementableEvent)
+		void ClearPointsArray();
 
 protected:
 	virtual void PostInitializeComponents() override;
@@ -51,21 +53,22 @@ protected:
 	virtual void Tick(float DeltaTime) override;
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 	virtual void Attack() override;
+	virtual void AddControllerPitchInput(float Val);
 private:
 	void WeaponPrimaryPressed();
 	void WeaponPrimaryReleased();
-
 	void WeaponSecondaryPressed();
 	void WeaponSecondaryReleased();
-
 	void InteractPressed();
-
 	void WeaponReload();
+	void MissilePressed();
+	void MissileReleased();
 	UFUNCTION(NetMulticast, Reliable, WithValidation)
 		void Everyone_SetMuzzleRotation(FRotator NewRotator);
 	UFUNCTION(Server, Reliable, WithValidation)
 		void Server_SetMuzzleRotation(FRotator NewRotator);
-
+	void AimMissile();
+	void UnAimMissile();
 
 private:
 	TSubclassOf<class AWeapon_Master>WeaponMasterClass;
@@ -83,6 +86,11 @@ private:
 
 
 public:
+	FVector GeneralCameraPosition;
+	FVector MissileCameraPosition;
+	float GeneralTargetArmLength = 250;
+	float MissileTargetArmLength = 500;
+
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
 		float Direction;
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
@@ -133,8 +141,9 @@ public:
 		TArray<class USplineMeshComponent*> PointsArray;
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
 	bool ShowPath = false;
-
+	TSubclassOf<class AMissile>MissileClass;
 	UStaticMesh* SplineStaticMesh;
 	class UMaterial* SplineStaticMaterial;
+
 
 };
