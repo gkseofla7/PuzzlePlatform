@@ -10,6 +10,11 @@
 #include "Kismet/KismetMathLibrary.h"
 #include "Components/DecalComponent.h"
 #include "Components/SplineComponent.h"
+#include "Components/SplineMeshComponent.h"
+#include "Kismet/GameplayStaticsTypes.h"
+#include "Kismet/GameplayStatics.h"
+#include "UObject/ConstructorHelpers.h"
+
 #include "Net/UnrealNetwork.h"
 
 ASoldier::ASoldier()
@@ -29,6 +34,14 @@ ASoldier::ASoldier()
 
 	SplinePathComponent = CreateDefaultSubobject< USplineComponent>(TEXT("SplinePathComponent"));
 	SplinePathComponent->SetupAttachment(RocketHolderComponent);
+
+	//SplineStaticMesh = CreateDefaultSubobject< UStaticMeshComponent>(TEXT("SplineStaticMesh"));
+	static ConstructorHelpers::FObjectFinder<UStaticMesh>SplineStaticMeshAsset(TEXT("/Game/StarterContent/Shapes/Shape_Cylinder"));
+	SplineStaticMesh = SplineStaticMeshAsset.Object;
+
+
+	static ConstructorHelpers::FObjectFinder<UMaterial>SplineStaticMaterialAsset(TEXT("/Game/RocketPath/M_Spline_White"));
+	SplineStaticMaterial = SplineStaticMaterialAsset.Object;
 
 	static ConstructorHelpers::FClassFinder<USoldierAnimInstance> SOLDIER_ANIM((TEXT("/Game/Animation/BP_SoldierAnim")));
 	if (SOLDIER_ANIM.Succeeded())
@@ -113,6 +126,90 @@ void ASoldier::Tick(float DeltaTime)
 	}
 	else
 		UnAim();
+
+	if (ShowPath == true)
+	{
+		
+		//{
+
+
+	//	//	PointsArray[0]->DestroyComponent();
+	//	//
+	//	//	PointsArray.Empty();
+	//	//	SplinePathComponent->ClearSplinePoints();
+
+	//	//}
+
+		auto RocketMouthTransform = RocketHolderComponent->GetSocketTransform("Mouth");
+		auto ForwardVector = RocketMouthTransform.GetRotation().GetForwardVector();
+		MissileVelocity = (ForwardVector + Direction * ForwardVector) * RocketSpeed;
+	
+
+		TArray< TEnumAsByte< EObjectTypeQuery > > ObjectTypes;
+		ObjectTypes.Add(EObjectTypeQuery::ObjectTypeQuery1);
+		FPredictProjectilePathParams PredictParam;
+		//FPredictProjectilePathResult PredictResult;
+		TArray<AActor*> Ignores;
+		Ignores.Add(this);
+		PredictParam.StartLocation = RocketMouthTransform.GetLocation();
+		PredictParam.LaunchVelocity = MissileVelocity;
+		PredictParam.ProjectileRadius = 20.;
+		PredictParam.bTraceWithCollision = true;
+		PredictParam.ObjectTypes = ObjectTypes;
+		PredictParam.SimFrequency = 15;
+		//PredictParam.DrawDebugType = EDrawDebugTrace::ForDuration;
+		//PredictParam.DrawDebugTime = .1;
+		PredictParam.MaxSimTime = 10;
+		PredictParam.ActorsToIgnore = Ignores;
+		PredictParam.OverrideGravityZ = 0.;
+		//결국 시작값, 이동등을 정해서 위치 경로 예측
+		FHitResult OutHit;
+		TArray< FVector > OutPathPositions;
+		FVector OutLastTraceDestination;
+		UGameplayStatics::PredictProjectilePath(GetWorld(), OutHit, OutPathPositions, OutLastTraceDestination, RocketMouthTransform.GetLocation(), MissileVelocity,
+			true, 20., ObjectTypes, false, Ignores, EDrawDebugTrace::None, 0, 15, 10, 0);
+			
+		//UGameplayStatics::PredictProjectilePath(GetWorld(), PredictParam, PredictResult);
+	
+		for (int i = 0; i < OutPathPositions.Num(); i++)
+		{
+			SplinePathComponent->AddSplinePointAtIndex(OutPathPositions[i], i, ESplineCoordinateSpace::World);//예상경로등록
+		}
+		SplinePathComponent->SetSplinePointType(OutPathPositions.Num() - 1, ESplinePointType::CurveClamped);//예상경로 마지막 부분에 마지막부분이라고 알려줌
+
+		for (int i = 0; i < SplinePathComponent->GetNumberOfSplinePoints() - 2; i++)
+		{
+
+			AddSplineMeshComponent(OutPathPositions[i], SplinePathComponent->GetTangentAtSplinePoint(i, ESplineCoordinateSpace::World),
+				OutPathPositions[i + 1], SplinePathComponent->GetTangentAtSplinePoint(i + 1, ESplineCoordinateSpace::World));
+		}
+		// 
+		//UE_LOG(LogTemp, Warning, TEXT("PointsArray  Num: %d "), PointsArray.Num());
+		//{
+		//	FTransform RelativeTransform;
+		//	auto SplineMesh = Cast< USplineMeshComponent>(AddComponentByClass(USplineMeshComponent::StaticClass(), true, RelativeTransform, true));
+
+		//	FVector2D SplineScale(1000, 1000);
+		//	SplineMesh->SetStartScale(SplineScale);
+		//	SplineMesh->SetEndScale(SplineScale);
+		//	SplineMesh->SetVisibility(true);
+		//	SplineMesh->SetMobility(EComponentMobility::Movable);
+		//	SplineMesh->SetStaticMesh(SplineStaticMesh);
+		//	SplineMesh->SetWorldScale3D(FVector(100, 100, 100));
+		//	SplineMesh->SetMaterial(0, SplineStaticMaterial);
+
+		//	SplineMesh->ForwardAxis = ESplineMeshAxis::Z;
+		//	PointsArray.Add(SplineMesh);
+		//	SplineMesh->SetStartAndEnd(OutPathPositions[i], SplinePathComponent->GetTangentAtSplinePoint(i, ESplineCoordinateSpace::World),
+		//		OutPathPositions[i + 1], SplinePathComponent->GetTangentAtSplinePoint(i + 1, ESplineCoordinateSpace::World));
+		//	SplineMesh->SetWorldLocation(OutPathPositions[i]);
+		//	//	UE_LOG(LogTemp, Warning, TEXT("SplineMesh Location %f, %f, %fl "), OutPathPositions[i].X, OutPathPositions[i].Y, OutPathPositions[i].Z);
+		//	//	UE_LOG(LogTemp, Warning, TEXT("SplineMesh Location %f, %f, %fl "),SplineMesh->GetStartPosition().X, SplineMesh->GetStartPosition().Y, SplineMesh->GetStartPosition().Z);
+		//}
+
+		auto NextLocation = UKismetMathLibrary::VInterpTo(OutLastTraceDestination, GridSphere->GetComponentLocation(), DeltaTime, 10);
+		GridSphere->SetWorldLocation(NextLocation);
+	}
 
 
 }
@@ -339,3 +436,22 @@ void ASoldier::InteractPressed()
 
 
 }
+//UActorComponent* ASoldier::AddActorComponent(AActor* Owner, TSubclassOf<UActorComponent> ActorComponentClass)
+//{
+//	UClass* baseClass = FindObject<UClass>(ANY_PACKAGE, TEXT("ActorComponent"));
+//	if (ActorComponentClass->IsChildOf(baseClass))
+//	{
+//		UActorComponent* NewComp = NewObject<UActorComponent>(Owner, ActorComponentClass);
+//		if (!NewComp)
+//		{
+//			return NULL;
+//		}
+//		~~~~~~~~~~~~~
+//
+//		NewComp->RegisterComponent();        //You must ConstructObject with a valid Outer that has world, see above     
+//
+//		return NewComp;
+//	}
+//	else
+//		return NULL;
+//}

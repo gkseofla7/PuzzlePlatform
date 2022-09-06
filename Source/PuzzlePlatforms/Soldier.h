@@ -42,6 +42,8 @@ public:
 	UFUNCTION(BlueprintCallable)
 		void EquipItem(class AObject_Master* Item, bool EquipandHold);
 	void SetFPSHudWidget();
+	UFUNCTION(BlueprintCallable, BlueprintImplementableEvent)
+		void AddSplineMeshComponent(FVector StartPoint, FVector StartTangent, FVector EndPoint, FVector EndTangent);
 
 protected:
 	virtual void PostInitializeComponents() override;
@@ -129,6 +131,10 @@ public:
 		float RocketSpeed = 1000;
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
 		TArray<class USplineMeshComponent*> PointsArray;
+	UPROPERTY(BlueprintReadWrite, EditAnywhere)
+	bool ShowPath = false;
 
+	UStaticMesh* SplineStaticMesh;
+	class UMaterial* SplineStaticMaterial;
 
 };
