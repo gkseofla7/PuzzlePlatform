@@ -124,6 +124,11 @@ void APuzzlePlatformsCharacter::SetupPlayerInputComponent(class UInputComponent*
 	PlayerInputComponent->BindAction("Skill3", IE_Pressed, this, &APuzzlePlatformsCharacter::Skill3Clicked);
 	PlayerInputComponent->BindAction("Skill4", IE_Pressed, this, &APuzzlePlatformsCharacter::Skill4Clicked);
 	PlayerInputComponent->BindAction("Skill5", IE_Pressed, this, &APuzzlePlatformsCharacter::Skill5Clicked);
+	PlayerInputComponent->BindAction("Skill1", IE_Released, this, &APuzzlePlatformsCharacter::SkillReleased);
+	PlayerInputComponent->BindAction("Skill2", IE_Released, this, &APuzzlePlatformsCharacter::SkillReleased);
+	PlayerInputComponent->BindAction("Skill3", IE_Released, this, &APuzzlePlatformsCharacter::SkillReleased);
+	PlayerInputComponent->BindAction("Skill4", IE_Released, this, &APuzzlePlatformsCharacter::SkillReleased);
+	PlayerInputComponent->BindAction("Skill5", IE_Released, this, &APuzzlePlatformsCharacter::SkillReleased);
 
 	PlayerInputComponent->BindAxis("MoveForward", this, &APuzzlePlatformsCharacter::MoveForward);
 	PlayerInputComponent->BindAxis("MoveRight", this, &APuzzlePlatformsCharacter::MoveRight);
@@ -169,7 +174,7 @@ void APuzzlePlatformsCharacter::BeginPlay()
 		GetWorld()->GetTimerManager().SetTimer(TimerHandler, this, &APuzzlePlatformsCharacter::UpdateStat, 2, true);
 	}
 
-
+	OnSkillReleased.AddUObject(this, &APuzzlePlatformsCharacter::ForTest);
 
 }
 
@@ -418,7 +423,6 @@ void APuzzlePlatformsCharacter::Skill1Clicked()
 	HeadsUpDisplayRef->ActionBar_UI->ActionBarSlot_UI->StartCooldown();
 	DaerimMotionReplicator->Server_Skill1Clicked(SlotClass);
 }
-
 void APuzzlePlatformsCharacter::Skill2Clicked()
 {
 	if (SkillAvailable == false)
@@ -432,7 +436,6 @@ void APuzzlePlatformsCharacter::Skill2Clicked()
 	HeadsUpDisplayRef->ActionBar_UI->ActionBarSlot_UI_1->StartCooldown();
 	DaerimMotionReplicator->Server_Skill2Clicked(SlotClass);
 }
-
 void APuzzlePlatformsCharacter::Skill3Clicked()
 {
 	if (SkillAvailable == false)
@@ -446,7 +449,6 @@ void APuzzlePlatformsCharacter::Skill3Clicked()
 	HeadsUpDisplayRef->ActionBar_UI->ActionBarSlot_UI_2->StartCooldown();
 	DaerimMotionReplicator->Server_Skill3Clicked(SlotClass);
 }
-
 void APuzzlePlatformsCharacter::Skill4Clicked()
 {
 	if (SkillAvailable == false)
@@ -465,8 +467,6 @@ void APuzzlePlatformsCharacter::Skill5Clicked()
 {
 	if (SkillAvailable == false)
 		return;
-	if (TargetPlayer == nullptr)
-		return;
 
 	auto Slot_UI = HeadsUpDisplayRef->ActionBar_UI->ActionBarSlot_UI_4;
 	if (Slot_UI->IsAvailable == false || Slot_UI->IsManaAvailable == false)
@@ -475,6 +475,12 @@ void APuzzlePlatformsCharacter::Skill5Clicked()
 	CharacterStat->IncreaseMP(-SlotClass.GetDefaultObject()->AbilityDetails.Cost);
 	HeadsUpDisplayRef->ActionBar_UI->ActionBarSlot_UI_4->StartCooldown();
 	DaerimMotionReplicator->Server_Skill5Clicked(SlotClass);
+}
+
+void APuzzlePlatformsCharacter::SkillReleased()
+{
+	UE_LOG(LogTemp, Warning, TEXT("ButtonReleased"));
+	OnSkillReleased.Broadcast();
 }
 
 

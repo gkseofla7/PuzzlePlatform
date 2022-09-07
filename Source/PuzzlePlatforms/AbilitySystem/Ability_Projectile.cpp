@@ -72,6 +72,7 @@ void AAbility_Projectile::Server_SetLocation_Implementation(FVector NewLocation)
 void AAbility_Projectile::NetMulticast_SetLocation_Implementation(FVector NewLocation)
 {
 	AbilityRoot->SetWorldLocation(NewLocation);
+
 }
 
 void AAbility_Projectile::Server_Activate_Implementation()
@@ -94,6 +95,27 @@ void AAbility_Projectile::NetMulticast_DetachAbilityFromPlayer_Implementation()
 {
 	DetachFromActor(FDetachmentTransformRules::KeepWorldTransform);
 }
+
+
+void AAbility_Projectile::Server_SetTransform_Implementation(FTransform NewTransform)
+{
+	NetMulticast_SetTransform(NewTransform);
+}
+void AAbility_Projectile::NetMulticast_SetTransform_Implementation(FTransform NewTransform)
+{
+	AbilityRoot->SetWorldTransform(NewTransform);
+}
+
+bool AAbility_Projectile::Server_SetTransform_Validate(FTransform NewTransform)
+{
+	return true;
+}
+bool AAbility_Projectile::NetMulticast_SetTransform_Validate(FTransform NewTransform)
+{
+	return true;
+}
+
+
 
 bool AAbility_Projectile::Server_SetVelocity_Validate(FVector NewVelocity)
 {

@@ -42,14 +42,11 @@ void AAbility::BeginPlay()
 	if (PlayerRef->IsLocallyControlled() == true)
 	{
 		PlayerRef->SetUsingSkill(true);
-		//if (IsBuff == nullptr)
-		//	PlayerRef->SetIsAttacking(true);
-		//UE_LOG(LogTemp, Warning, TEXT("Binding AnimEnd"));
 		AnimRef->OnMontageEnded.AddDynamic(this, &AAbility::EndAnimation);
 	}
 		HudUI =
 			Cast< UPuzzlePlatformsGameInstance>(UGameplayStatics::GetGameInstance(GetWorld()))->HeadsUpDisplay;
-		if(PlayerRef->IsLocallyControlled())
+		if(PlayerRef->IsLocallyControlled())//애초에 서버에서만 실행하고 마지막 모두한테 해야될건 그냥 서버가 알려줌
 			BeginCasting();
 	
 	

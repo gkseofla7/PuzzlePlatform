@@ -75,17 +75,18 @@ void AAbility_Projectile_DragonBlast::CastAbility_Implementation()
 
 void AAbility_Projectile_DragonBlast::ActivateEffect_Implementation()
 {
-	AsPlayerAnimInstance->IsAttacking = false;//요건 그냥 replication으로 바꿔줌
+
 	if (PlayerRef->IsLocallyControlled() == false)
 		return;
 	//즉 클라이언트에서만 진행
 	Super::ActivateEffect_Implementation();
 
 	Server_DetachAbilityFromPlayer();//모두 일단 띄어냄
-	AbilityRoot->AddLocalOffset(PlayerRef->GetActorForwardVector() * 100);
+
 	//Server_AddLocation(PlayerRef->GetActorForwardVector() * 100);
 	Server_SetVelocity(FVector(PlayerRef->GetMuzzleRotation().Vector().X, PlayerRef->GetMuzzleRotation().Vector().Y, 0) * 1500);
 	Server_SetLocation(GetActorLocation());
+	AbilityRoot->AddLocalOffset(PlayerRef->GetActorForwardVector() * 100);
 	Server_Activate();
 	//초기값 위치 다 맞춤
 

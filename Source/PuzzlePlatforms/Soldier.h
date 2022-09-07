@@ -10,6 +10,7 @@
  * 
  */
 
+
 UENUM(BlueprintType)
 enum class ECamInUse : uint8
 {
@@ -144,6 +145,7 @@ public:
 	TSubclassOf<class AMissile>MissileClass;
 	UStaticMesh* SplineStaticMesh;
 	class UMaterial* SplineStaticMaterial;
+	FOnSkillReleased OnSkillReleased;
 
 
 };

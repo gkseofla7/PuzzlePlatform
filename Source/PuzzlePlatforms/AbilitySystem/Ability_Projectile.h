@@ -29,6 +29,10 @@ public:
 		void Server_SetLocation(FVector NewLocation);
 	UFUNCTION(NetMulticast, Reliable, WithValidation)
 		void NetMulticast_SetLocation(FVector NewLocation);
+	UFUNCTION(Server, Reliable, WithValidation)
+		void Server_SetTransform(FTransform NewTransform);
+	UFUNCTION(NetMulticast, Reliable, WithValidation)
+		void NetMulticast_SetTransform(FTransform NewTransform);
 
 	UFUNCTION(Server, Reliable, WithValidation)
 		void Server_AddLocation(FVector RelativeLocation);

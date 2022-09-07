@@ -11,6 +11,7 @@
 
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FInterruptCastingDeleagate);
+DECLARE_MULTICAST_DELEGATE(FOnSkillReleased);
 
 UCLASS(config=Game, BlueprintType)
 class APuzzlePlatformsCharacter : public ACharacter
@@ -38,6 +39,7 @@ public:
 	void Skill3Clicked();
 	void Skill4Clicked();
 	void Skill5Clicked();
+	void SkillReleased();
 	void SetIsAttacking(bool NewIsAttacking);
 	void SetUsingSkill(bool NewUsingSkill);
 
@@ -96,6 +98,7 @@ public:
 	bool MouseCursorToggle = false;
 	UPROPERTY(BlueprintAssignable,BlueprintCallable)
 	FInterruptCastingDeleagate InterruptCasting;
+	FOnSkillReleased OnSkillReleased;
 	class UHudUpDisplayWidget* HeadsUpDisplayRef;
 	bool SkillAvailable = true;
 	APuzzlePlatformsCharacter* TargetPlayer;
@@ -109,6 +112,11 @@ public:
 	bool IsAttacking = false;
 	bool UsingSkill = false;
 
+
+	void ForTest()
+	{
+		UE_LOG(LogTemp, Warning, TEXT("Test"));
+	}
 
 };
 

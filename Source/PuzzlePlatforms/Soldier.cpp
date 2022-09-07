@@ -498,19 +498,19 @@ void ASoldier::MissilePressed()
 	GridSphere->SetVisibility(true, true);
 	GetMesh()->bPauseAnims = true;
 	ShowPath = true;
-	//FVector NextLoc = FMath::VInterpTo(VCurrent, VTarget, Deltatime, 15);
-	//CameraBoom->SetRelativeLocation(MissileCameraPosition);
-	//CameraBoom->TargetArmLength = MissileTargetArmLength;
 
 }
 void ASoldier::MissileReleased()
 {
+
+
 	GridSphere->SetVisibility(false, true);
 	GetMesh()->bPauseAnims = false;
 	ShowPath = false;
+
 	ClearPointsArray();
-	
 	FActorSpawnParameters SpawnInfo;
+	//즉 이것만 해주면됨
 	auto missile = GetWorld()->SpawnActor<AMissile>(MissileClass, RocketHolderComponent->GetSocketTransform("Mouth"), SpawnInfo);
 	missile->ProjectileMovementComponent->Velocity = MissileVelocity;
 	//CameraBoom->TargetArmLength = GeneralTargetArmLength;
