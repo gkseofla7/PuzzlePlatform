@@ -3,8 +3,8 @@
 
 #include "Ability_Projectile_DragonBlast.h"
 
-#include "../Warrior.h"
-#include "../AnimInstance/PlayerAnimInstance.h"
+#include "../../Warrior.h"
+#include "../../AnimInstance/PlayerAnimInstance.h"
 
 
 #include "GameFramework/ProjectileMovementComponent.h"

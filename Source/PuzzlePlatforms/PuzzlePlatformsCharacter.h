@@ -43,7 +43,7 @@ public:
 	void SetIsAttacking(bool NewIsAttacking);
 	void SetUsingSkill(bool NewUsingSkill);
 
-protected:
+public:
 	virtual void PostInitializeComponents() override;
 	virtual void BeginPlay() override;
 	virtual void Tick(float DeltaTime) override;
@@ -53,7 +53,6 @@ protected:
 	void TurnAtRate(float Rate);
 	void LookUpAtRate(float Rate);
 	void GetInTheCar();
-	void SeeMouseCursur();
 	virtual void Attack();
 	virtual void AddControllerPitchInput(float Val);
 	virtual void AddControllerYawInput(float Val);
@@ -81,42 +80,34 @@ public:
 
 	UPROPERTY(EditAnywhere,BlueprintReadWrite, Category = Stat)
 		class UMyCharacterStatComponent* CharacterStat;
-	//UPROPERTY(VisibleAnywhere, Category = Replicator)
-	//	class UPlayersMotionReplicator* MotionReplicator;
-	//UPROPERTY에서 돌아가려면
-	//UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Replicator)
-	//TScriptInterface<IMotionReplicatorInterface> DaerimMotionReplicator;
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Replicator)
 		UMotionInterfaceComponent* DaerimMotionReplicator;
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
-		class UActorAbilities* ActorAbilitiesComponent;
+		class UActorAbilities* ActorAbilitiesComponent;//받은 능력?
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Replicator)
 		class UDecalComponent* DecalComponent;
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
 		class UParticleSystemComponent* ParticleSystemComponent;
-		//IMotionReplicatorInterface* MotionReplicator;
-	bool MouseCursorToggle = false;
-	UPROPERTY(BlueprintAssignable,BlueprintCallable)
-	FInterruptCastingDeleagate InterruptCasting;
-	FOnSkillReleased OnSkillReleased;
+
+
 	class UHudUpDisplayWidget* HeadsUpDisplayRef;
-	bool SkillAvailable = true;
 	APuzzlePlatformsCharacter* TargetPlayer;
 
+	UPROPERTY(BlueprintAssignable, BlueprintCallable)
+	FInterruptCastingDeleagate InterruptCasting;
+	FOnSkillReleased OnSkillReleased;
 
 	UPROPERTY()
 		class UAnimInstance_Master* MyAnim;
 
-
+	bool SkillAvailable = true;
+	bool MouseCursorToggle = false;
 	bool IsDashing = false;
 	bool IsAttacking = false;
 	bool UsingSkill = false;
 
 
-	void ForTest()
-	{
-		UE_LOG(LogTemp, Warning, TEXT("Test"));
-	}
+
 
 };
 

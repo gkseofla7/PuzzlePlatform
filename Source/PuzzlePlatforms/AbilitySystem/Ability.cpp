@@ -41,6 +41,7 @@ void AAbility::BeginPlay()
 
 	if (PlayerRef->IsLocallyControlled() == true)
 	{
+	
 		PlayerRef->SetUsingSkill(true);
 		AnimRef->OnMontageEnded.AddDynamic(this, &AAbility::EndAnimation);
 	}

@@ -12,7 +12,7 @@ AAbility_Projectile_Missile::AAbility_Projectile_Missile()
 
 	MissileComponent = CreateDefaultSubobject< UStaticMeshComponent>(TEXT("MissileComponent"));
 	MissileComponent->SetupAttachment(RootComponent);
-
+	MissileComponent->SetVisibility(false);
 }
 
 void AAbility_Projectile_Missile::BeginPlay()
@@ -44,13 +44,37 @@ void AAbility_Projectile_Missile::ActivateEffect_Implementation()
 		return;//애초에 여기에 올일은 없음
 
 	Super::ActivateEffect_Implementation();
+	PlayerRef->SetUsingSkill(false);
 	SoldierRef->ClearPointsArray();
 	SoldierRef->GridSphere->SetVisibility(false, true);
 	SoldierRef->GetMesh()->bPauseAnims = false;
 	SoldierRef->ShowPath = false;
 	//SoldierRef->SetUsingSkill(false);
+	Server_SetVisibility();
 	Server_DetachAbilityFromPlayer();//모두 일단 띄어냄
 	Server_SetVelocity(SoldierRef->MissileVelocity);
 	Server_SetTransform(SoldierRef->RocketHolderComponent->GetSocketTransform("Mouth"));
 	Server_Activate();
+}
+
+
+void AAbility_Projectile_Missile::Server_SetVisibility_Implementation()
+{
+	NetMulticast_SetVisibility();
+}
+
+void AAbility_Projectile_Missile::NetMulticast_SetVisibility_Implementation()
+{
+	MissileComponent->SetVisibility(true);
+}
+
+
+bool AAbility_Projectile_Missile::Server_SetVisibility_Validate()
+{
+	return true;
+}
+
+bool AAbility_Projectile_Missile::NetMulticast_SetVisibility_Validate()
+{
+	return true;
 }

@@ -57,48 +57,37 @@ FString GetEnumText(ENetRole Role)
 }
 APuzzlePlatformsCharacter::APuzzlePlatformsCharacter()
 {
-	// Set size for collision capsule
-	GetCapsuleComponent()->InitCapsuleSize(42.f, 96.0f);
-	//추가하는 코드
-	SetActorTickEnabled(true);
+#pragma region GeneralInitialize
 	bReplicates = true;
-	GetMesh()->SetAnimationMode(EAnimationMode::AnimationBlueprint);
-	
-	//DaerimMotionReplicator = CreateDefaultSubobject<USoldierMotionReplicator>(TEXT("SoldierMotionReplicator"));
-	CharacterStat = CreateDefaultSubobject<UMyCharacterStatComponent>(TEXT("CHARACTERSTAT"));
-	ActorAbilitiesComponent = CreateDefaultSubobject<UActorAbilities>(TEXT("ActorAbilities"));
-
+	SetActorTickEnabled(true);
+	GetCapsuleComponent()->InitCapsuleSize(42.f, 96.0f);
 	GetCapsuleComponent()->SetCollisionProfileName(TEXT("ABCharacter"));
-
-	DecalComponent = CreateDefaultSubobject<UDecalComponent>(TEXT("DecalComponent"));
-	DecalComponent->SetupAttachment(RootComponent);
-	DecalComponent->SetVisibility(false);
-	// set our turn rates for input
+	GetMesh()->SetAnimationMode(EAnimationMode::AnimationBlueprint);
 	BaseTurnRate = 45.f;
 	BaseLookUpRate = 45.f;
-
-	// Don't rotate when the controller rotates. Let that just affect the camera.
 	bUseControllerRotationPitch = false;
 	bUseControllerRotationYaw = false;
 	bUseControllerRotationRoll = false;
-
-	// Configure character movement
 	GetCharacterMovement()->bOrientRotationToMovement = true; // Character moves in the direction of input...	
 	GetCharacterMovement()->RotationRate = FRotator(0.0f, 540.0f, 0.0f); // ...at this rotation rate
 	GetCharacterMovement()->JumpZVelocity = 600.f;
 	GetCharacterMovement()->AirControl = 0.2f;
-
-	// Create a camera boom (pulls in towards the player if there is a collision)
 	CameraBoom = CreateDefaultSubobject<USpringArmComponent>(TEXT("CameraBoom"));
 	CameraBoom->SetupAttachment(RootComponent);
 	CameraBoom->TargetArmLength = 300.0f; // The camera follows at this distance behind the character	
 	CameraBoom->bUsePawnControlRotation = true; // Rotate the arm based on the controller
-
-	// Create a follow camera
 	FollowCamera = CreateDefaultSubobject<UCameraComponent>(TEXT("FollowCamera"));
 	FollowCamera->SetupAttachment(CameraBoom, USpringArmComponent::SocketName); // Attach the camera to the end of the boom and let the boom adjust to match the controller orientation
 	FollowCamera->bUsePawnControlRotation = false; // Camera does not rotate relative to arm
 
+#pragma endregion Region_1
+	//Component 초기화
+	CharacterStat = CreateDefaultSubobject<UMyCharacterStatComponent>(TEXT("CHARACTERSTAT"));
+	ActorAbilitiesComponent = CreateDefaultSubobject<UActorAbilities>(TEXT("ActorAbilities"));
+
+	DecalComponent = CreateDefaultSubobject<UDecalComponent>(TEXT("DecalComponent"));
+	DecalComponent->SetupAttachment(RootComponent);
+	DecalComponent->SetVisibility(false);
 
 	NearObjectCollisionDetector = CreateDefaultSubobject<USphereComponent>(TEXT("NearObjectCollisionDetector"));
 	NearObjectCollisionDetector->SetupAttachment(RootComponent);
@@ -118,7 +107,7 @@ void APuzzlePlatformsCharacter::SetupPlayerInputComponent(class UInputComponent*
 	PlayerInputComponent->BindAction("Jump", IE_Pressed, this, &ACharacter::Jump);
 	PlayerInputComponent->BindAction("Jump", IE_Released, this, &ACharacter::StopJumping);
 	PlayerInputComponent->BindAction("GetInTheCar", IE_Pressed, this, &APuzzlePlatformsCharacter::GetInTheCar);
-	PlayerInputComponent->BindAction("SkillTree", IE_Pressed, this, &APuzzlePlatformsCharacter::SeeMouseCursur);
+	PlayerInputComponent->BindAction("Attack", IE_Pressed, this, &APuzzlePlatformsCharacter::Attack);
 	PlayerInputComponent->BindAction("Skill1", IE_Pressed, this, &APuzzlePlatformsCharacter::Skill1Clicked);
 	PlayerInputComponent->BindAction("Skill2", IE_Pressed, this, &APuzzlePlatformsCharacter::Skill2Clicked);
 	PlayerInputComponent->BindAction("Skill3", IE_Pressed, this, &APuzzlePlatformsCharacter::Skill3Clicked);
@@ -129,22 +118,13 @@ void APuzzlePlatformsCharacter::SetupPlayerInputComponent(class UInputComponent*
 	PlayerInputComponent->BindAction("Skill3", IE_Released, this, &APuzzlePlatformsCharacter::SkillReleased);
 	PlayerInputComponent->BindAction("Skill4", IE_Released, this, &APuzzlePlatformsCharacter::SkillReleased);
 	PlayerInputComponent->BindAction("Skill5", IE_Released, this, &APuzzlePlatformsCharacter::SkillReleased);
-
 	PlayerInputComponent->BindAxis("MoveForward", this, &APuzzlePlatformsCharacter::MoveForward);
 	PlayerInputComponent->BindAxis("MoveRight", this, &APuzzlePlatformsCharacter::MoveRight);
-
-	// We have 2 versions of the rotation bindings to handle different kinds of devices differently
-	// "turn" handles devices that provide an absolute delta, such as a mouse.
-	// "turnrate" is for devices that we choose to treat as a rate of change, such as an analog joystick
 	PlayerInputComponent->BindAxis("Turn", this, &APuzzlePlatformsCharacter::AddControllerYawInput);
 	PlayerInputComponent->BindAxis("TurnRate", this, &APuzzlePlatformsCharacter::TurnAtRate);
 	PlayerInputComponent->BindAxis("LookUp", this, &APuzzlePlatformsCharacter::AddControllerPitchInput);
 	PlayerInputComponent->BindAxis("LookUpRate", this, &APuzzlePlatformsCharacter::LookUpAtRate);
 
-
-	// VR headset functionality
-	
-	PlayerInputComponent->BindAction("Attack", IE_Pressed, this, &APuzzlePlatformsCharacter::Attack);
 
 }
 
@@ -152,7 +132,6 @@ void APuzzlePlatformsCharacter::SetupPlayerInputComponent(class UInputComponent*
 void APuzzlePlatformsCharacter::PostInitializeComponents()
 {
 	Super::PostInitializeComponents();
-
 }
 
 void APuzzlePlatformsCharacter::BeginPlay()
@@ -161,21 +140,17 @@ void APuzzlePlatformsCharacter::BeginPlay()
 	HeadsUpDisplayRef = Cast< UPuzzlePlatformsGameInstance>(UGameplayStatics::GetGameInstance(GetWorld()))->HeadsUpDisplay;
 	HeadsUpDisplayRef->ActionBar_UI->PlayerRef = this;
 	HeadsUpDisplayRef->ActionBar_UI->BindCharacterStat(CharacterStat);
-	//Not Working
-	//FName identifier = TEXT("Not Yet");
+
 	auto gamemode = Cast<AMyLobbyGameMode>(UGameplayStatics::GetGameMode(GetWorld()));
 	if (IsLocallyControlled()&& gamemode != nullptr)
 	{
 		Cast<UPuzzlePlatformsGameInstance>(GetGameInstance())->LoadSetNameMenu();
 	}
-	if (IsLocallyControlled())
+	if (IsLocallyControlled())//체력 주기적으로 회복
 	{
 		FTimerHandle TimerHandler;
 		GetWorld()->GetTimerManager().SetTimer(TimerHandler, this, &APuzzlePlatformsCharacter::UpdateStat, 2, true);
 	}
-
-	OnSkillReleased.AddUObject(this, &APuzzlePlatformsCharacter::ForTest);
-
 }
 
 void APuzzlePlatformsCharacter::Tick(float DeltaTime)
@@ -207,7 +182,6 @@ void APuzzlePlatformsCharacter::UpdateStat()
 	CharacterStat->IncreaseHP(.5);
 	CharacterStat->IncreaseMP(.5);
 }
-
 
 void APuzzlePlatformsCharacter::SetTargetPlayerWithLineTrace()
 {
@@ -242,51 +216,6 @@ void APuzzlePlatformsCharacter::SetTargetPlayerWithLineTrace()
 	//FRotator temp = UKismetMathLibrary::FindLookAtRotation(Start, EndTrace);
 }
 
-
-void APuzzlePlatformsCharacter::GetInTheCar()
-{
-	ABCHECK(DaerimMotionReplicator !=nullptr)
-	FHitResult HitResult;
-	FCollisionQueryParams Params(NAME_None, false, this);
-
-	float CarRange = 100.f;
-	float CarRadius = 50.f;
-
-
-	bool bResult = GetWorld()->SweepSingleByChannel(
-		OUT HitResult,
-		GetActorLocation(),
-		GetActorLocation() + GetActorForwardVector() * CarRange,
-		FQuat::Identity,
-		ECollisionChannel::ECC_GameTraceChannel3,
-		FCollisionShape::MakeSphere(CarRadius),
-		Params);
-	FVector Vec = GetActorForwardVector() * CarRange;
-	FVector Center = GetActorLocation() + CarRadius * 0.5f;
-	float HalfHeight = CarRange * 0.5f + CarRadius;
-	FQuat Rotation = FRotationMatrix::MakeFromZ(Vec).ToQuat();
-	FColor DrawColor;
-	if (bResult)
-		DrawColor = FColor::Green;
-	else
-		DrawColor = FColor::Red;
-
-
-	DrawDebugCapsule(GetWorld(), Center, HalfHeight, CarRadius,
-		Rotation, DrawColor, false, 5.f);
-	if (bResult && HitResult.Actor.IsValid())
-	{
-
-		auto Car = Cast<AMyProjectPawn>(HitResult.Actor);
-
-		if (Car != nullptr)
-		{
-			DaerimMotionReplicator->Server_SendRide(Car, this);
-		}
-	}
-}
-
-
 void APuzzlePlatformsCharacter::TurnAtRate(float Rate)
 {
 	if (IsDashing == true)
@@ -303,8 +232,12 @@ void APuzzlePlatformsCharacter::LookUpAtRate(float Rate)
 
 void APuzzlePlatformsCharacter::MoveForward(float Value)
 {
+	UE_LOG(LogTemp, Warning, TEXT("DontMove"));
 	if (UsingSkill == true)
+	{
+
 		return;
+	}
 	if ((Controller != nullptr) && (Value != 0.0f))
 	{
 		// find out which way is forward
@@ -345,7 +278,6 @@ void APuzzlePlatformsCharacter::Attack()
 
 }
 
-
 float APuzzlePlatformsCharacter::TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent,
 	AController* EventInstigator, AActor* DamageCauser)
 {
@@ -365,24 +297,6 @@ float APuzzlePlatformsCharacter::TakeDamage(float DamageAmount, FDamageEvent con
 
 }
 
-
-void APuzzlePlatformsCharacter::SeeMouseCursur()
-{
-	auto controller = Cast<AMyPlayerController>(GetController());
-	if (MouseCursorToggle == false)
-	{
-		HeadsUpDisplayRef->ToggleSpellBook();
-		controller->SetInputModeGameAndUI();
-
-		MouseCursorToggle = true;
-	}
-	else
-	{
-		HeadsUpDisplayRef->ToggleSpellBook();
-		controller->SetInputModeGame();
-		MouseCursorToggle = false;
-	}
-}
 
 FRotator APuzzlePlatformsCharacter::GetMuzzleRotation()
 {
@@ -483,8 +397,6 @@ void APuzzlePlatformsCharacter::SkillReleased()
 	OnSkillReleased.Broadcast();
 }
 
-
-
 void APuzzlePlatformsCharacter::SetIsAttacking(bool NewIsAttacking)
 {
 	DaerimMotionReplicator->Server_SetIsAttacking(NewIsAttacking);
@@ -492,6 +404,68 @@ void APuzzlePlatformsCharacter::SetIsAttacking(bool NewIsAttacking)
 
 void APuzzlePlatformsCharacter::SetUsingSkill(bool NewUsingSkill)
 {
+
 	DaerimMotionReplicator->Server_SetUsingSkill(NewUsingSkill);
 }
 
+
+void APuzzlePlatformsCharacter::GetInTheCar()
+{
+	ABCHECK(DaerimMotionReplicator != nullptr)
+		FHitResult HitResult;
+	FCollisionQueryParams Params(NAME_None, false, this);
+
+	float CarRange = 100.f;
+	float CarRadius = 50.f;
+
+
+	bool bResult = GetWorld()->SweepSingleByChannel(
+		OUT HitResult,
+		GetActorLocation(),
+		GetActorLocation() + GetActorForwardVector() * CarRange,
+		FQuat::Identity,
+		ECollisionChannel::ECC_GameTraceChannel3,
+		FCollisionShape::MakeSphere(CarRadius),
+		Params);
+	FVector Vec = GetActorForwardVector() * CarRange;
+	FVector Center = GetActorLocation() + CarRadius * 0.5f;
+	float HalfHeight = CarRange * 0.5f + CarRadius;
+	FQuat Rotation = FRotationMatrix::MakeFromZ(Vec).ToQuat();
+	FColor DrawColor;
+	if (bResult)
+		DrawColor = FColor::Green;
+	else
+		DrawColor = FColor::Red;
+
+
+	DrawDebugCapsule(GetWorld(), Center, HalfHeight, CarRadius,
+		Rotation, DrawColor, false, 5.f);
+	if (bResult && HitResult.Actor.IsValid())
+	{
+
+		auto Car = Cast<AMyProjectPawn>(HitResult.Actor);
+
+		if (Car != nullptr)
+		{
+			DaerimMotionReplicator->Server_SendRide(Car, this);
+		}
+	}
+}
+
+//void APuzzlePlatformsCharacter::SeeMouseCursur()
+//{
+//	auto controller = Cast<AMyPlayerController>(GetController());
+//	if (MouseCursorToggle == false)
+//	{
+//		HeadsUpDisplayRef->ToggleSpellBook();
+//		controller->SetInputModeGameAndUI();
+//
+//		MouseCursorToggle = true;
+//	}
+//	else
+//	{
+//		HeadsUpDisplayRef->ToggleSpellBook();
+//		controller->SetInputModeGame();
+//		MouseCursorToggle = false;
+//	}
+//}

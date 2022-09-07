@@ -22,6 +22,11 @@ public:
 	UFUNCTION(BlueprintCallable, BlueprintImplementableEvent)
 		void DelayCollision();
 
+	UFUNCTION(Server, Reliable, WithValidation)
+		void Server_SetVisibility( );
+	UFUNCTION(NetMulticast, Reliable, WithValidation)
+		void NetMulticast_SetVisibility( );
+
 public:
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
 		UStaticMeshComponent* MissileComponent; 

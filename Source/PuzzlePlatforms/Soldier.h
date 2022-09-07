@@ -56,14 +56,12 @@ protected:
 	virtual void Attack() override;
 	virtual void AddControllerPitchInput(float Val);
 private:
-	void WeaponPrimaryPressed();
+
 	void WeaponPrimaryReleased();
 	void WeaponSecondaryPressed();
 	void WeaponSecondaryReleased();
 	void InteractPressed();
 	void WeaponReload();
-	void MissilePressed();
-	void MissileReleased();
 	UFUNCTION(NetMulticast, Reliable, WithValidation)
 		void Everyone_SetMuzzleRotation(FRotator NewRotator);
 	UFUNCTION(Server, Reliable, WithValidation)
@@ -71,30 +69,15 @@ private:
 	void AimMissile();
 	void UnAimMissile();
 
-private:
-	TSubclassOf<class AWeapon_Master>WeaponMasterClass;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Camera, meta = (AllowPrivateAccess = "true"))
-		class UCameraComponent* FPPCam_;
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
-		class USpringArmComponent* SpringArm_;
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
-		class UStaticMeshComponent* AimObejctFPP;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Camera, meta = (AllowPrivateAccess = "true"))
-		class UCameraComponent* ADSCam_;
-
-		
 
 
 public:
-	FVector GeneralCameraPosition;
-	FVector MissileCameraPosition;
-	float GeneralTargetArmLength = 250;
-	float MissileTargetArmLength = 500;
+	//Classes
+	TSubclassOf<class AWeapon_Master>WeaponMasterClass;
+	TSubclassOf<class UFPSHudWidget>FPSHudClass;
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
 		float Direction;
-	UPROPERTY(BlueprintReadWrite, EditAnywhere)
 		FVector MissileVelocity;
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
 		class AWeapon_Master* EquippedItem;
@@ -103,39 +86,19 @@ public:
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
 		class AWeapon_Master* SecondaryWeapon;
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
-		TSubclassOf<class UFPSHudWidget>FPSHudClass;
-	UPROPERTY(BlueprintReadWrite, EditAnywhere)
 		class UFPSHudWidget* HudWidget;
-	UPROPERTY(BlueprintReadWrite, EditAnywhere)
-		bool IsAiming = false;
-	UPROPERTY(BlueprintReadWrite, EditAnywhere)
-		bool UseTPSMovement = false;
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
 		ECamInUse CamInUse = ECamInUse::TE_TPCam;
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
 		bool IsItemEquipped;
-	UPROPERTY(BlueprintReadWrite, EditAnywhere)
-		bool IsFiring = false;
-	UPROPERTY(BlueprintReadWrite, EditAnywhere)
-		bool IsReloading = false;
-	UPROPERTY(BlueprintReadWrite, EditAnywhere)
-		bool CanAim = false;
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
 		EWeaponSlot WeaponSlotUse;
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
 		bool DoPickupLinetrace;
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
 		class AObject_Master* PickupItem;
-	UPROPERTY(BlueprintReadWrite, EditAnywhere)
-	UStaticMeshComponent* RocketHolderComponent;
-	UPROPERTY(BlueprintReadWrite, EditAnywhere)
-		UStaticMeshComponent* MissileComponent;
-	UPROPERTY(BlueprintReadWrite, EditAnywhere)
-	class UDecalComponent* DecalMissileComponent;
-	UPROPERTY(BlueprintReadWrite, EditAnywhere)
-		class USplineComponent* SplinePathComponent;
-	UPROPERTY(BlueprintReadWrite, EditAnywhere)
-		UStaticMeshComponent* GridSphere;
+
+
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
 		float RocketSpeed = 1000;
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
@@ -146,6 +109,27 @@ public:
 	UStaticMesh* SplineStaticMesh;
 	class UMaterial* SplineStaticMaterial;
 	FOnSkillReleased OnSkillReleased;
+	//Variable
 
-
+	bool IsAiming = false;
+	bool IsFiring = false;
+	bool IsReloading = false;
+	bool CanAim = false;
+	FVector GeneralCameraPosition;
+	FVector MissileCameraPosition;
+	float GeneralTargetArmLength = 250;
+	float MissileTargetArmLength = 500;
+//Component
+	UPROPERTY(BlueprintReadWrite, EditAnywhere)
+		UStaticMeshComponent* RocketHolderComponent;
+	UPROPERTY(BlueprintReadWrite, EditAnywhere)
+		UStaticMeshComponent* MissileComponent;
+	UPROPERTY(BlueprintReadWrite, EditAnywhere)
+		class UDecalComponent* DecalMissileComponent;
+	UPROPERTY(BlueprintReadWrite, EditAnywhere)
+		class USplineComponent* SplinePathComponent;
+	UPROPERTY(BlueprintReadWrite, EditAnywhere)
+		UStaticMeshComponent* GridSphere;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Camera)
+		class UCameraComponent* ADSCam_;
 };
