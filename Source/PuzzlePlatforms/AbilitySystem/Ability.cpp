@@ -38,11 +38,10 @@ void AAbility::BeginPlay()
 	auto IsBuff = Cast<AAbility_Buff_Master>(this);
 
 	//AnimRef->IsAttacking = true;
-
+	if(IsBuff== nullptr)
+		PlayerRef->SetUsingSkill(true);
 	if (PlayerRef->IsLocallyControlled() == true)
 	{
-	
-		PlayerRef->SetUsingSkill(true);
 		AnimRef->OnMontageEnded.AddDynamic(this, &AAbility::EndAnimation);
 	}
 		HudUI =

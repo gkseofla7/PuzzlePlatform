@@ -232,7 +232,6 @@ void APuzzlePlatformsCharacter::LookUpAtRate(float Rate)
 
 void APuzzlePlatformsCharacter::MoveForward(float Value)
 {
-	UE_LOG(LogTemp, Warning, TEXT("DontMove"));
 	if (UsingSkill == true)
 	{
 

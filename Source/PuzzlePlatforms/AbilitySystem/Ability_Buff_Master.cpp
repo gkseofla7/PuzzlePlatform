@@ -14,6 +14,7 @@ void AAbility_Buff_Master::BeginPlay()
 	Super::BeginPlay();
 
 	bReplicates = true;
+	AbilityRoot->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 	//FTimerHandle TimerHandler;
 	//GetWorld()->GetTimerManager().SetTimer(TimerHandler, this, &AAbility_Buff_Master::TickBuff, BuffLifeSpan, false);
 

@@ -107,7 +107,8 @@ public:
 		int AmmoCost = 1;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Ammo")
 		int AmmoNeeded;
-
+	UPROPERTY(BlueprintReadWrite, EditAnywhere)
+		bool SteamPack = false;
 	/** Sound to play each time we fire */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Gameplay)
 		class USoundBase* FireSound;

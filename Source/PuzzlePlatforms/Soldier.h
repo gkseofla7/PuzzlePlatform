@@ -47,7 +47,8 @@ public:
 		void AddSplineMeshComponent(FVector StartPoint, FVector StartTangent, FVector EndPoint, FVector EndTangent);
 	UFUNCTION(BlueprintCallable, BlueprintImplementableEvent)
 		void ClearPointsArray();
-
+	void SteamPack();
+	void UnSteamPack();
 protected:
 	virtual void PostInitializeComponents() override;
 	virtual void BeginPlay() override;
@@ -119,6 +120,10 @@ public:
 	FVector MissileCameraPosition;
 	float GeneralTargetArmLength = 250;
 	float MissileTargetArmLength = 500;
+	float GeneralWalkSpeed = 600;
+	float SteamPackWalkSpeed = 1000;
+	float GeneralAcceleration = 2048.0;
+	float SteamPackAcceleration = 4000;
 //Component
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
 		UStaticMeshComponent* RocketHolderComponent;

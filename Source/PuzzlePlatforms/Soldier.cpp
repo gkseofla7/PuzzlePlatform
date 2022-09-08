@@ -60,7 +60,25 @@ ASoldier::ASoldier()
 	IsItemEquipped = false;
 }
 
+void ASoldier::SteamPack()
+{
+	if (EquippedItem == nullptr)
+		return;
+	auto Movement = GetCharacterMovement();
+	Movement->MaxWalkSpeed = GeneralWalkSpeed;
+	Movement->MaxAcceleration = GeneralAcceleration;
+	EquippedItem->SteamPack = true;
 
+}
+
+void ASoldier::UnSteamPack()
+{
+	auto Movement = GetCharacterMovement();
+	Movement->MaxWalkSpeed = SteamPackWalkSpeed;
+	Movement->MaxAcceleration = SteamPackAcceleration;
+	EquippedItem->SteamPack = false;
+
+}
 
 void ASoldier::SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent)
 {
