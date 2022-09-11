@@ -31,4 +31,11 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 		class ANPC_Master* MyPawn;
 
+	//static const FName PathLoopingKey;
+	//static const FName DirectionKey;
+	//static const FName WaitTimeKey;
+	static const FName HomePosKey;
+	static const FName PatrolPosKey;
+	static const FName TargetKey;
+
 };

@@ -6,6 +6,8 @@
 #include "GameFramework/Character.h"
 #include "NPC_Master.generated.h"
 
+DECLARE_MULTICAST_DELEGATE(FOnAttackEndDelegate)
+
 UCLASS()
 class PUZZLEPLATFORMS_API ANPC_Master : public ACharacter
 {
@@ -26,7 +28,17 @@ public:
 	// Called to bind functionality to input
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
-public:
+	void Attack();
+	UFUNCTION()
+		void EndAnimation(UAnimMontage* Montage, bool bInterrupted);
 
+public:
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	class APatrolPath* PatrolPath;
+
+	FOnAttackEndDelegate OnAttackEnd;
+	UPROPERTY()
+	class UNPCAnimInstance* MyAnim;
+	
 
 };

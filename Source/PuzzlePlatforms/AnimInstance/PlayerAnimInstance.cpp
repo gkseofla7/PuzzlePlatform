@@ -9,7 +9,7 @@ UPlayerAnimInstance::UPlayerAnimInstance()
 {
 	CurrenPawnSpeed = 0.0f;
 	IsInAir = false;
-
+#pragma region MontageAssetsSetting
 	static ConstructorHelpers::FObjectFinder<UAnimMontage> SWORD_ATTACK_MONTAGE(TEXT(
 		"/Game/Animation/Player_Attack_Montage"
 	));
@@ -60,7 +60,7 @@ UPlayerAnimInstance::UPlayerAnimInstance()
 		DashMontage = DASHMONTAGE.Object;
 	}
 
-
+#pragma endregion MontageAssetsSetting
 	IsAttacking = false;
 }
 

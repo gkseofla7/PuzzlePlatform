@@ -8,6 +8,6 @@ public class PuzzlePlatforms : ModuleRules
 	{
 		PCHUsage = PCHUsageMode.UseExplicitOrSharedPCHs;
 
-		PublicDependencyModuleNames.AddRange(new string[] { "Core", "CoreUObject", "Engine", "InputCore", "HeadMountedDisplay", "UMG", "NavigationSystem","OnlineSubsystem" , "AIModule","OnlineSubsystemSteam"});
+		PublicDependencyModuleNames.AddRange(new string[] { "Core", "CoreUObject", "Engine", "InputCore", "HeadMountedDisplay", "UMG", "NavigationSystem","OnlineSubsystem" , "AIModule","OnlineSubsystemSteam", "GameplayTasks"});
 	}
 }
