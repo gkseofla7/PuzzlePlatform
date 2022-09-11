@@ -8,6 +8,7 @@
 #include "Kismet/KismetSystemLibrary.h"
 #include "Kismet/KismetMathLibrary.h"
 #include "Blueprint/UserWidget.h"
+#include "Perception/AISense_Damage.h"
 
 AWarrior::AWarrior()
 {
@@ -121,7 +122,7 @@ void AWarrior::AttackCheck()
 		{
 			FDamageEvent DamageEvent;
 			HitResult.Actor->TakeDamage(50.0f, DamageEvent, GetController(), this);
-
+			//UAISense_Damage::ReportDamageEvent(GetWorld(), HitResult.Actor.Get(), this, 10., HitResult.TraceStart, HitResult.Location);
 		}
 	}
 }
