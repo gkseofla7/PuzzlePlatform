@@ -293,7 +293,6 @@ float APuzzlePlatformsCharacter::TakeDamage(float DamageAmount, FDamageEvent con
 
 	return FinalDamage;
 
-
 }
 
 

@@ -5,10 +5,13 @@
 #include "NPCAIController.h"
 #include "NPCAnimInstance.h"
 
+#include "Net/UnrealNetwork.h"
+
 // Sets default values
 ANPC_Master::ANPC_Master()
 {
 	PrimaryActorTick.bCanEverTick = true;
+	bReplicates = true;
 	//static ConstructorHelpers::FClassFinder<ANPCAIController> AIControllerBPClass(TEXT("/Game/AI/NPC/NPC_AI_Controller"));
 	//if (AIControllerBPClass.Class != NULL)
 	//{
@@ -48,11 +51,40 @@ void ANPC_Master::SetupPlayerInputComponent(UInputComponent* PlayerInputComponen
 
 void ANPC_Master::Attack()
 {
+	NetMulticast_Attack();
+}
+
+void ANPC_Master::NetMulticast_Attack_Implementation()
+{
 	MyAnim->PlaySwordAttackMontage();
+}
+
+bool ANPC_Master::NetMulticast_Attack_Validate()
+{
+	return true;
 }
 
 
 void ANPC_Master::EndAnimation(UAnimMontage* Montage, bool bInterrupted)
 {
 	OnAttackEnd.Broadcast();
+}
+
+
+float ANPC_Master::TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent,
+	AController* EventInstigator, AActor* DamageCauser)
+{
+	if (!HasAuthority())
+		return 0;
+	//ABCHECK(MotionReplicator != nullptr)
+
+	float FinalDamage = Super::TakeDamage(DamageAmount, DamageEvent, EventInstigator, DamageCauser);
+
+	//여기서 데미지 추가
+	//float HP = CharacterStat->GetHP();
+	//CharacterStat->SetHP(HP - FinalDamage);
+
+
+	return FinalDamage;
+
 }

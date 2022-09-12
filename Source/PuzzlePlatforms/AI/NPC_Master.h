@@ -32,6 +32,13 @@ public:
 	UFUNCTION()
 		void EndAnimation(UAnimMontage* Montage, bool bInterrupted);
 
+
+	UFUNCTION(NetMulticast, Reliable, WithValidation)
+	void NetMulticast_Attack();
+
+	virtual float TakeDamage(float DamageAmount, struct FDamageEvent const& DamageEvent,
+		class AController* EventInstigator, AActor* DamageCauser) override;
+
 public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	class APatrolPath* PatrolPath;

@@ -19,6 +19,14 @@ public:
 	virtual void OnPossess(APawn* InPawn) override;
 	virtual void OnUnPossess() override;
 
+	//void SetTargetKey(class APuzzlePlatformsCharacter* PlayerTarget);
+	//UFUNCTION(NetMulticast, Reliable, WithValidation)
+	//void NetMulticast_SetTargetKey(class APuzzlePlatformsCharacter* PlayerTarget);
+
+	//void SetHomePosKey(FVector NewPos);
+	//UFUNCTION(NetMulticast, Reliable, WithValidation)
+	//	void NetMulticast_SetHomePosKey(FVector NewPos);
+
 
 
 private:
@@ -37,5 +45,6 @@ public:
 	static const FName HomePosKey;
 	static const FName PatrolPosKey;
 	static const FName TargetKey;
+	int i = 0;
 
 };

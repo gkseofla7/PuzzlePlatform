@@ -17,6 +17,7 @@ EBTNodeResult::Type UBTTask_FindPatrolPos::ExecuteTask(UBehaviorTreeComponent& O
 	EBTNodeResult::Type Result = Super::ExecuteTask(OwnerComp, NodeMemory);
 
 	auto ControllingPawn = OwnerComp.GetAIOwner()->GetPawn();
+
 	if(ControllingPawn == nullptr)
 		return EBTNodeResult::Failed;
 
@@ -29,6 +30,7 @@ EBTNodeResult::Type UBTTask_FindPatrolPos::ExecuteTask(UBehaviorTreeComponent& O
 
 	if (NavSystem->GetRandomPointInNavigableRadius(Origin, 500.0f, NextPatrol))
 	{
+
 		OwnerComp.GetBlackboardComponent()->SetValueAsVector(ANPCAIController::PatrolPosKey, NextPatrol.Location);
 		return EBTNodeResult::Succeeded;
 
