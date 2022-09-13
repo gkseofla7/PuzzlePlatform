@@ -4,25 +4,22 @@
 
 #include "CoreMinimal.h"
 #include "NPC_Master.h"
-#include "NPC_Goblin.generated.h"
+#include "NPC_Archer.generated.h"
 
 /**
  * 
  */
 UCLASS()
-class PUZZLEPLATFORMS_API ANPC_Goblin : public ANPC_Master
+class PUZZLEPLATFORMS_API ANPC_Archer : public ANPC_Master
 {
 	GENERATED_BODY()
-	
 
 public:
-	ANPC_Goblin();
+	ANPC_Archer();
 	void BeginPlay();
 	virtual void Attack();
-	void AttackCheck();
 	UFUNCTION(NetMulticast, Reliable, WithValidation)
 		void NetMulticast_Attack();
-
 
 public:
 	float AttackRange = 200;

@@ -5,7 +5,6 @@
 #include "CoreMinimal.h"
 #include "AIController.h"
 #include "NPCAIController.generated.h"
-
 /**
  * 
  */
@@ -28,7 +27,6 @@ public:
 	//	void NetMulticast_SetHomePosKey(FVector NewPos);
 
 
-
 private:
 	UPROPERTY()
 		class UBehaviorTree* BTAsset;
@@ -45,6 +43,7 @@ public:
 	static const FName HomePosKey;
 	static const FName PatrolPosKey;
 	static const FName TargetKey;
+	static const FName AttackRangeKey;
 	int i = 0;
 
 };

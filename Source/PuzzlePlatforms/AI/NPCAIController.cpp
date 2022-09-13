@@ -17,6 +17,7 @@
 const FName ANPCAIController::HomePosKey(TEXT("HomePos"));
 const FName ANPCAIController::PatrolPosKey(TEXT("PatrolPos"));
 const FName ANPCAIController::TargetKey(TEXT("Target"));
+const FName ANPCAIController::AttackRangeKey(TEXT("AttackRange"));
 
 ANPCAIController::ANPCAIController()
 {
@@ -44,6 +45,7 @@ void ANPCAIController::OnPossess(APawn* InPawn)
 	Super::OnPossess(InPawn);
 	if (UseBlackboard(BBAsset, Blackboard))
 	{
+		
 		MyPawn = Cast<ANPC_Master>(InPawn);
 		Blackboard->SetValueAsVector(HomePosKey, InPawn->GetActorLocation());
 

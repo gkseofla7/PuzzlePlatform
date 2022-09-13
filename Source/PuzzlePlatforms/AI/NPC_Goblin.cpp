@@ -4,8 +4,12 @@
 #include "NPC_Goblin.h"
 #include "NPCAnimInstance.h"
 #include "MonsterStatComponent.h"
+#include "EnumMonsterType.h"
+#include "NPCAIController.h"
 
 #include "DrawDebugHelpers.h"
+#include "BehaviorTree/BlackboardData.h"
+#include "BehaviorTree/BlackboardComponent.h"
 #include "Net/UnrealNetwork.h"
 ANPC_Goblin::ANPC_Goblin()
 {
@@ -22,7 +26,7 @@ ANPC_Goblin::ANPC_Goblin()
 		GetMesh()->SetAnimInstanceClass(NPC_ANIM.Class);
 
 	}
-	MonsterStat = CreateDefaultSubobject<UMonsterStatComponent>(TEXT("MonsterStat"));
+
 }
 
 void ANPC_Goblin::BeginPlay()
@@ -30,6 +34,9 @@ void ANPC_Goblin::BeginPlay()
 	Super::BeginPlay();
 	MyAnim = Cast< UNPCAnimInstance>(GetMesh()->GetAnimInstance());
 	MyAnim->OnAttackHitCheck.AddUObject(this, &ANPC_Goblin::AttackCheck);
+	MonsterStat->CustomInitializeComponent(EMonsterEnum::TE_Goblin);
+	auto AIController = Cast< ANPCAIController>(GetController());
+	AIController->GetBlackboardComponent()->SetValueAsFloat(ANPCAIController::AttackRangeKey, AttackRange);
 }
 
 void ANPC_Goblin::Attack()
@@ -45,7 +52,6 @@ void ANPC_Goblin::AttackCheck()
 		FHitResult HitResult;
 		FCollisionQueryParams Params(NAME_None, false, this);
 
-		float AttackRange = 200.f;
 		float AttackRadius = 50.f;
 
 

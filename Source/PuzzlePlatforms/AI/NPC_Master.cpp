@@ -21,6 +21,7 @@ ANPC_Master::ANPC_Master()
 	//}
 	AIControllerClass = ANPCAIController::StaticClass();
 	AutoPossessAI = EAutoPossessAI::PlacedInWorldOrSpawned;
+	MonsterStat = CreateDefaultSubobject<UMonsterStatComponent>(TEXT("MonsterStat"));
 }
 
 // Called when the game starts or when spawned

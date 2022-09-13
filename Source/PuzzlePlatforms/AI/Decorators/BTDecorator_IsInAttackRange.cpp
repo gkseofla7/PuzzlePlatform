@@ -24,7 +24,7 @@ bool UBTDecorator_IsInAttackRange::CalculateRawConditionValue(UBehaviorTreeCompo
 	auto Target = Cast<APuzzlePlatformsCharacter>(OwnerComp.GetBlackboardComponent()->GetValueAsObject(ANPCAIController::TargetKey));
 	if (Target == nullptr)
 		return false;
-	bResult = (Target->GetDistanceTo(ControllingPawn) <= 200.f);
+	bResult = (Target->GetDistanceTo(ControllingPawn) <= OwnerComp.GetBlackboardComponent()->GetValueAsFloat(ANPCAIController::AttackRangeKey));
 
 	return bResult;
 }
