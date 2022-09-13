@@ -5,7 +5,7 @@
 
 #include "Ability.h"
 #include "ActionBarSlotWidget.h"
-#include "../MyCharacterStatComponent.h"
+#include "../PlayersComponent/MyCharacterStatComponent.h"
 void UActionBarWidget::BindCharacterStat(class UMyCharacterStatComponent* NewCharacterStat)
 {
 	CurrentCharacterStat = NewCharacterStat;

@@ -48,8 +48,6 @@ void AWarrior::PostInitializeComponents()
 	ABCHECK(nullptr != Anim);
 
 
-
-
 	Anim->OnAttackHitCheck.AddUObject(this, &AWarrior::AttackCheck);
 
 }
@@ -141,7 +139,6 @@ void AWarrior::SetupPlayerInputComponent(class UInputComponent* PlayerInputCompo
 
 }
 
-
 //void AWarrior::MoveForward(float Value)
 //{
 //
@@ -182,8 +179,6 @@ void AWarrior::SetupPlayerInputComponent(class UInputComponent* PlayerInputCompo
 //		//}
 //	}
 //}
-
-
 
 
 //void AWarrior::MoveRight(float Value)
@@ -265,7 +260,6 @@ bool AWarrior::ForwardTrace()
 	return Output;
 
 }
-	
 
 void AWarrior::HeightTrace()
 {

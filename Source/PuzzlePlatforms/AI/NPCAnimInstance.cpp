@@ -8,7 +8,7 @@ UNPCAnimInstance::UNPCAnimInstance()
 : Super()
 {
 	static ConstructorHelpers::FObjectFinder<UAnimMontage> SWORD_ATTACK_MONTAGE(TEXT(
-		"/Game/Animation/Montage/NPC_Attack_Montage"
+		"/Game/Animation/Montage/Goblin_Attack_Montage"
 	));
 	if (SWORD_ATTACK_MONTAGE.Succeeded())
 	{
@@ -19,4 +19,9 @@ UNPCAnimInstance::UNPCAnimInstance()
 void UNPCAnimInstance::PlaySwordAttackMontage()
 {
 	Montage_Play(SwordAttackMontage, 1.0);
+}
+
+void UNPCAnimInstance::AnimNotify_AttackHitCheck()
+{
+	OnAttackHitCheck.Broadcast();
 }

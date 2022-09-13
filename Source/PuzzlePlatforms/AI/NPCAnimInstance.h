@@ -9,6 +9,7 @@
 /**
  * 
  */
+DECLARE_MULTICAST_DELEGATE(FOnAttackHitCheckDelegate);
 UCLASS()
 class PUZZLEPLATFORMS_API UNPCAnimInstance : public UAnimInstance
 {
@@ -16,7 +17,12 @@ class PUZZLEPLATFORMS_API UNPCAnimInstance : public UAnimInstance
 public:
 	UNPCAnimInstance();
 	void PlaySwordAttackMontage();
+	UFUNCTION()
+		void AnimNotify_AttackHitCheck();
 public:
 	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly, Category = Attack)
 		UAnimMontage* SwordAttackMontage;
+	FOnAttackHitCheckDelegate OnAttackHitCheck;
+	UPROPERTY(EditAnywhere,BlueprintReadWrite)
+	float Speed;
 };

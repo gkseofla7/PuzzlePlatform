@@ -4,7 +4,9 @@
 #include "NPC_Master.h"
 #include "NPCAIController.h"
 #include "NPCAnimInstance.h"
+#include "MonsterStatComponent.h"
 
+#include "DrawDebugHelpers.h"
 #include "Net/UnrealNetwork.h"
 
 // Sets default values
@@ -19,12 +21,6 @@ ANPC_Master::ANPC_Master()
 	//}
 	AIControllerClass = ANPCAIController::StaticClass();
 	AutoPossessAI = EAutoPossessAI::PlacedInWorldOrSpawned;
-	static ConstructorHelpers::FClassFinder<UAnimInstance> NPC_ANIM((TEXT("/Game/Animation/BP_AI_Ainm")));
-	if (NPC_ANIM.Succeeded())
-	{
-		GetMesh()->SetAnimInstanceClass(NPC_ANIM.Class);
-
-	}
 }
 
 // Called when the game starts or when spawned
@@ -33,12 +29,15 @@ void ANPC_Master::BeginPlay()
 	Super::BeginPlay();
 	MyAnim = Cast< UNPCAnimInstance>(GetMesh()->GetAnimInstance());
 	MyAnim->OnMontageEnded.AddDynamic(this, &ANPC_Master::EndAnimation);
+
 }
 
 // Called every frame
 void ANPC_Master::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
+
+	//SetSpeed(GetVelocity().Size());
 
 }
 
@@ -51,18 +50,12 @@ void ANPC_Master::SetupPlayerInputComponent(UInputComponent* PlayerInputComponen
 
 void ANPC_Master::Attack()
 {
-	NetMulticast_Attack();
+	//NetMulticast_Attack();
 }
 
-void ANPC_Master::NetMulticast_Attack_Implementation()
-{
-	MyAnim->PlaySwordAttackMontage();
-}
 
-bool ANPC_Master::NetMulticast_Attack_Validate()
-{
-	return true;
-}
+
+
 
 
 void ANPC_Master::EndAnimation(UAnimMontage* Montage, bool bInterrupted)
@@ -76,15 +69,13 @@ float ANPC_Master::TakeDamage(float DamageAmount, FDamageEvent const& DamageEven
 {
 	if (!HasAuthority())
 		return 0;
+
 	//ABCHECK(MotionReplicator != nullptr)
 
 	float FinalDamage = Super::TakeDamage(DamageAmount, DamageEvent, EventInstigator, DamageCauser);
 
-	//여기서 데미지 추가
-	//float HP = CharacterStat->GetHP();
-	//CharacterStat->SetHP(HP - FinalDamage);
-
-
+	MonsterStat->IncreaseHP(-FinalDamage);
 	return FinalDamage;
-
 }
+
+

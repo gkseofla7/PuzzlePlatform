@@ -36,6 +36,18 @@ UPuzzlePlatformsGameInstance::UPuzzlePlatformsGameInstance(const FObjectInitiali
 		ABCHECK(MyCharacterTable->GetRowMap().Num() > 0);
 	}
 
+	static ConstructorHelpers::FObjectFinder<UDataTable> NearMonsterTableAsset(TEXT("/Game/GameData/GoblinData"));
+	if (NearMonsterTableAsset.Succeeded()) {
+		NearMonsterTable = NearMonsterTableAsset.Object;
+		ABCHECK(NearMonsterTable->GetRowMap().Num() > 0);
+	}
+	
+	static ConstructorHelpers::FObjectFinder<UDataTable> ArcherDataTableAsset(TEXT("/Game/GameData/GoblinData"));
+	if (ArcherDataTableAsset.Succeeded()) {
+		ArcherDataTable = ArcherDataTableAsset.Object;
+		ABCHECK(NearMonsterTable->GetRowMap().Num() > 0);
+	}
+
 	static ConstructorHelpers::FClassFinder< UUserWidget> NEWUI_HUD_C(TEXT("/Game/AbilitySystem/HeadsUpDisplay"));
 	if (NEWUI_HUD_C.Succeeded())
 	{
@@ -86,6 +98,22 @@ void UPuzzlePlatformsGameInstance::Init()
 FMyCharacterrData* UPuzzlePlatformsGameInstance::GetMyCharacterData(int32 Level)
 {
 	return MyCharacterTable->FindRow<FMyCharacterrData>(*FString::FromInt(Level), TEXT(""));
+}
+
+FMonsterData* UPuzzlePlatformsGameInstance::GetMonsterData(int32 Level, EMonsterEnum MonsterEnum)
+{
+	switch (MonsterEnum)
+	{
+	case EMonsterEnum::TE_Goblin:
+		return NearMonsterTable->FindRow<FMonsterData>(*FString::FromInt(Level), TEXT(""));
+		//break;
+	case EMonsterEnum::TE_Archer:
+		return ArcherDataTable->FindRow<FMonsterData>(*FString::FromInt(Level), TEXT(""));
+		//break;
+	default:
+		break;
+	}
+	return nullptr;
 }
 
 void UPuzzlePlatformsGameInstance::LoadMenuWidget()

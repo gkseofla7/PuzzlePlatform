@@ -2,7 +2,7 @@
 
 #include "PuzzlePlatformsCharacter.h"
 
-#include"MyCharacterStatComponent.h"
+#include"PlayersComponent/MyCharacterStatComponent.h"
 #include "AnimInstance/PlayerAnimInstance.h"
 #include "PlayersComponent/MotionReplicatorInterface.h"
 #include "Cars/MyProjectPawn.h"

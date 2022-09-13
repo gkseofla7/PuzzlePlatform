@@ -8,8 +8,9 @@
 #include "Interfaces/OnlineSessionInterface.h"
 #include "OnlineSubsystem.h"
 #include "MenuSystem/MenuInterface.h"
-#include "MyPlayerData.h"
-
+#include "DataTable/MyPlayerData.h"
+#include "DataTable/MonstersData.h"
+#include "AI/EnumMonsterType.h"
 
 #include "PuzzlePlatformsGameInstance.generated.h"
 
@@ -48,7 +49,8 @@ public:
 	void StartSession();
 
 	FMyCharacterrData* GetMyCharacterData(int32 Level);
-	
+	FMonsterData* GetMonsterData(int32 Level, EMonsterEnum MonsterEnuml);
+	//FMyCharacterrData* GetMyCharacterData(int32 Level);
 	UFUNCTION(BlueprintCallable)
 	class UHudUpDisplayWidget* GetHeadsUpDisplay() { return HeadsUpDisplay; }
 
@@ -67,6 +69,10 @@ private:
 	TOptional<FText>HostName;
 	UPROPERTY()
 	UDataTable* MyCharacterTable;
+	UPROPERTY()
+	UDataTable* NearMonsterTable;
+	UPROPERTY()
+		UDataTable* ArcherDataTable;
 
 	void OnCreateSessionComplete(FName SessionName, bool Success);
 	void OnDestroySessionComplete(FName SessionName, bool Success);

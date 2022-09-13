@@ -28,16 +28,15 @@ public:
 	// Called to bind functionality to input
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
-	void Attack();
+	virtual void Attack();
+	//void AttackCheck();
+
 	UFUNCTION()
-		void EndAnimation(UAnimMontage* Montage, bool bInterrupted);
-
-
-	UFUNCTION(NetMulticast, Reliable, WithValidation)
-	void NetMulticast_Attack();
+		virtual void EndAnimation(UAnimMontage* Montage, bool bInterrupted);
 
 	virtual float TakeDamage(float DamageAmount, struct FDamageEvent const& DamageEvent,
 		class AController* EventInstigator, AActor* DamageCauser) override;
+
 
 public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
@@ -46,6 +45,9 @@ public:
 	FOnAttackEndDelegate OnAttackEnd;
 	UPROPERTY()
 	class UNPCAnimInstance* MyAnim;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Stat)
+	class UMonsterStatComponent* MonsterStat;//약간 애들
+
 	
 
 };

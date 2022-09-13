@@ -2,7 +2,7 @@
 
 
 #include "PlayerInfoWidget.h"
-#include "MyCharacterStatComponent.h"
+#include "PlayersComponent/MyCharacterStatComponent.h"
 #include "MyPlayerState.h"
 
 
