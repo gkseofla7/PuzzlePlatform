@@ -27,14 +27,17 @@ void UMyCharacterStatComponent::BeginPlay()
 {
 	Super::BeginPlay();
 	SetIsReplicated(true);
+	SetNewLevel(Level);
 	// ...
 	
 }
 
-void UMyCharacterStatComponent::InitializeComponent() //Post Initialize 전에 일어남
+void UMyCharacterStatComponent::InitializeComponent() //Post Initialize 전에 일어남 이새끼 내생각엔 서버에서 한번 실행할때 일언
 {
 	Super::InitializeComponent();
-	SetNewLevel(Level);
+
+
+
  }
 
 void UMyCharacterStatComponent::SetNewLevel(int32 NewLevel)
@@ -49,6 +52,8 @@ void UMyCharacterStatComponent::SetNewLevel(int32 NewLevel)
 
 	if (nullptr != CurrentStatData)
 	{
+		UE_LOG(LogTemp, Warning, TEXT("Here!"));
+
 		Level = NewLevel;
 		SetHP(CurrentStatData->MaxHP);
 		SetMP(CurrentStatData->MaxMP);
@@ -64,6 +69,8 @@ void UMyCharacterStatComponent::SetHP(float NewHP)
 {
 	//서버로 보내야됨
 
+
+	
 	Server_SetHP(NewHP);
 }
 
@@ -109,7 +116,7 @@ void UMyCharacterStatComponent::Server_SetHP_Implementation(float NewHp)
 
 void UMyCharacterStatComponent::NetMulticast_SetHP_Implementation(float NewHp)
 {
-
+	UE_LOG(LogTemp, Warning, TEXT("NewHP : %f"), NewHp);
 	CurrentHP = NewHp;
 	OnHPChanged.Broadcast();
 	if (CurrentHP < KINDA_SMALL_NUMBER)

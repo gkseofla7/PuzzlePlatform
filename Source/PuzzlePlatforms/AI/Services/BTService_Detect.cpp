@@ -4,6 +4,7 @@
 #include "BTService_Detect.h"
 #include "../NPCAIController.h"
 #include "../../PuzzlePlatformsCharacter.h"
+#include "../NPC_Archer.h"
 
 #include"BehaviorTree/BlackboardComponent.h"
 #include "DrawDebugHelpers.h"
@@ -66,7 +67,11 @@ void UBTService_Detect::TickNode(UBehaviorTreeComponent& OwnerComp, uint8* NodeM
 				}
 				if (Target == nullptr)//처음 걸린 애면
 					Target = Player;
-
+				auto Archer = Cast<ANPC_Archer>(ControllingPawn);
+				if (Archer != nullptr)
+				{
+					Archer->NetMulticast_SetTarget(Target);
+				}
 				
 				DrawDebugSphere(World, Center, DetectRadius, 16, FColor::Green, false, 0.2f);
 

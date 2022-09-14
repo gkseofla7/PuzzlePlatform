@@ -64,3 +64,13 @@ bool ANPC_Archer::NetMulticast_Attack_Validate()
 {
 	return true;
 }
+
+void ANPC_Archer::NetMulticast_SetTarget_Implementation(class APuzzlePlatformsCharacter* NewTarget)
+{
+	Target = NewTarget;
+}
+
+bool ANPC_Archer::NetMulticast_SetTarget_Validate(class APuzzlePlatformsCharacter* NewTarget)
+{
+	return true;
+}

@@ -20,10 +20,13 @@ public:
 	virtual void Attack();
 	UFUNCTION(NetMulticast, Reliable, WithValidation)
 		void NetMulticast_Attack();
+	UFUNCTION(NetMulticast, Reliable, WithValidation)
+		void NetMulticast_SetTarget(class APuzzlePlatformsCharacter* NewTarget);
 	void ArrowShot();
 
 public:
 	UPROPERTY()
 		class UArcherAnimInstance* MyAnim;
 	float AttackRange = 500;
+	class APuzzlePlatformsCharacter* Target;
 };

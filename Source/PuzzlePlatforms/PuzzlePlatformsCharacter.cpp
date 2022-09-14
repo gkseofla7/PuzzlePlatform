@@ -162,7 +162,7 @@ void APuzzlePlatformsCharacter::BeginPlay()
 	if (IsLocallyControlled())//체력 주기적으로 회복
 	{
 		FTimerHandle TimerHandler;
-		GetWorld()->GetTimerManager().SetTimer(TimerHandler, this, &APuzzlePlatformsCharacter::UpdateStat, 2, true);
+		GetWorld()->GetTimerManager().SetTimer(TimerHandler, this, &APuzzlePlatformsCharacter::UpdateStat, 10, true);
 	}
 	//widget은 beginplay에서 초기화시켜야됨
 	auto CharacterWidget = Cast< UHPBarWidget>(HPBarWidget->GetUserWidgetObject());
