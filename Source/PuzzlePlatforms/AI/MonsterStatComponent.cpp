@@ -96,7 +96,7 @@ void UMonsterStatComponent::NetMulticast_SetHP_Implementation(float NewHp)
 {
 
 	CurrentHP = NewHp;
-	//OnHPChanged.Broadcast();
+	OnHPChanged.Broadcast();
 	if (CurrentHP < KINDA_SMALL_NUMBER)
 	{
 		CurrentHP = 0.0f;

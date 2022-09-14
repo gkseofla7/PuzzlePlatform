@@ -137,4 +137,7 @@ public:
 		UStaticMeshComponent* GridSphere;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Camera)
 		class UCameraComponent* ADSCam_;
+	TSubclassOf<class AObject_Master> GunClass;
+	class AObject_Master* Gun;
+
 };

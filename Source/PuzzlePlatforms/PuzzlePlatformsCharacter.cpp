@@ -17,6 +17,7 @@
 #include "AbilitySystem/ActionBarWidget.h"
 #include "AbilitySystem/CastBarWidget.h"
 #include "AbilitySystem/ActorAbilities.h"
+#include "HPBarWidget.h"
 
 #include "HeadMountedDisplayFunctionLibrary.h"
 #include "Camera/CameraComponent.h"
@@ -31,6 +32,7 @@
 #include "Components/SphereComponent.h"
 #include "Kismet/KismetMathLibrary.h"
 #include "Components/DecalComponent.h"
+#include "Components/WidgetComponent.h"
 
 #include "Net/UnrealNetwork.h"
 
@@ -95,7 +97,17 @@ APuzzlePlatformsCharacter::APuzzlePlatformsCharacter()
 	ParticleSystemComponent = CreateDefaultSubobject<UParticleSystemComponent>(TEXT("ParticleSystemComponent"));
 	ParticleSystemComponent->SetupAttachment(RootComponent);
 
+	HPBarWidget = CreateDefaultSubobject<UWidgetComponent>(TEXT("HPBarWidget"));
+	HPBarWidget->SetupAttachment(GetMesh());
 
+	HPBarWidget->SetRelativeLocation(FVector(0.f, 0.f, 180.f));
+	HPBarWidget->SetWidgetSpace(EWidgetSpace::Screen);
+	static ConstructorHelpers::FClassFinder<UUserWidget> UI_HUD(TEXT("/Game/PuzzlePlatforms/Widget/WBP_HPBar"));
+	if (UI_HUD.Succeeded())
+	{
+		HPBarWidget->SetWidgetClass(UI_HUD.Class);
+		HPBarWidget->SetDrawSize(FVector2D(150.f, 50.f));
+	}
 }
 
 
@@ -132,6 +144,7 @@ void APuzzlePlatformsCharacter::SetupPlayerInputComponent(class UInputComponent*
 void APuzzlePlatformsCharacter::PostInitializeComponents()
 {
 	Super::PostInitializeComponents();
+
 }
 
 void APuzzlePlatformsCharacter::BeginPlay()
@@ -150,6 +163,12 @@ void APuzzlePlatformsCharacter::BeginPlay()
 	{
 		FTimerHandle TimerHandler;
 		GetWorld()->GetTimerManager().SetTimer(TimerHandler, this, &APuzzlePlatformsCharacter::UpdateStat, 2, true);
+	}
+	//widget은 beginplay에서 초기화시켜야됨
+	auto CharacterWidget = Cast< UHPBarWidget>(HPBarWidget->GetUserWidgetObject());
+	if (nullptr != CharacterWidget)
+	{
+		CharacterWidget->BindCharacterStat(CharacterStat);
 	}
 }
 

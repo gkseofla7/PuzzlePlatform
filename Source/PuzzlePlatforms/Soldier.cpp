@@ -26,6 +26,8 @@ ASoldier::ASoldier()
 	//Asset Settings
 	static ConstructorHelpers::FClassFinder<AMissile> MissileBPClass((TEXT("/Game/RocketPath/BP_Missile")));
 	if (MissileBPClass.Succeeded())	MissileClass = MissileBPClass.Class;
+	//static ConstructorHelpers::FClassFinder<AMissile> GunBPClass((TEXT("/Game/Weapons/BP_Weapon_Master")));
+	//if (GunBPClass.Succeeded())	GunClass = GunBPClass.Class;
 	static ConstructorHelpers::FClassFinder<USoldierAnimInstance> SOLDIER_ANIM((TEXT("/Game/Animation/BP_SoldierAnim")));
 	if (SOLDIER_ANIM.Succeeded())	GetMesh()->SetAnimInstanceClass(SOLDIER_ANIM.Class);
 	static ConstructorHelpers::FObjectFinder<UStaticMesh>SplineStaticMeshAsset(TEXT("/Game/StarterContent/Shapes/Shape_Cylinder"));
@@ -58,6 +60,12 @@ ASoldier::ASoldier()
 	MissileCameraPosition = FVector(0, 90, 200);
 	CameraBoom->SetRelativeLocation(GeneralCameraPosition);
 	IsItemEquipped = false;
+	static ConstructorHelpers::FClassFinder<UUserWidget> FPSHudBPClass(TEXT("/Game/Weapons/UI/BP_FPS_Hud"));
+	if (FPSHudBPClass.Succeeded())
+	{
+		FPSHudClass = FPSHudBPClass.Class;
+
+	}
 }
 
 void ASoldier::SteamPack()
@@ -107,7 +115,9 @@ void ASoldier::BeginPlay()
 {
 	Super::BeginPlay();
 	MyAnim = Cast<UAnimInstance_Master>(GetMesh()->GetAnimInstance());
-
+	FActorSpawnParameters SpawnParams;
+	//Gun = GetWorld()->SpawnActor<AObject_Master>(WeaponMasterClass, SpawnParams);
+	EquipItem(Gun, false);
 	if (EquippedItem == nullptr)
 	{
 		IsItemEquipped = false;
@@ -119,9 +129,10 @@ void ASoldier::BeginPlay()
 }
 void ASoldier::SetFPSHudWidget()
 {
+	UE_LOG(LogTemp, Warning, TEXT("SetFPS"));
 	if (FPSHudClass != nullptr)
 	{
-
+		UE_LOG(LogTemp, Warning, TEXT("IsIn"));
 		HudWidget = CreateWidget<UFPSHudWidget>(GetWorld(), FPSHudClass);
 		HudWidget->AddToViewport();
 
@@ -417,8 +428,13 @@ void ASoldier::EquipItem(AObject_Master* Item, bool EquipAndHold)
 			//자연스럽게 원하는 방향으로 회전
 			GetCharacterMovement()->bOrientRotationToMovement = false;
 			// 자동적으로 캐릭터의 이동방향을 움직이는 방향에 맞춰주며 회전보간을 해줌
-
+			
 			WeaponSlotUse = EWeaponSlot::TE_PrimaryWeapon;
+			if (IsLocallyControlled()&&FPSHudClass != nullptr)
+			{
+				SetFPSHudWidget();
+
+			}
 		}
 	}
 	else
@@ -441,7 +457,7 @@ void ASoldier::InteractPressed()
 	if (IsItemEquipped == false)
 	{
 		Cast<USoldierMotionReplicator>(DaerimMotionReplicator)->Server_SendGetItem(PickupItem);
-		SetFPSHudWidget();
+		//SetFPSHudWidget();
 	}
 	else
 		Cast<USoldierMotionReplicator>(DaerimMotionReplicator)->Server_SendGetItem(PickupItem);

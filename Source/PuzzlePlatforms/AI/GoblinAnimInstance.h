@@ -4,18 +4,18 @@
 
 #include "CoreMinimal.h"
 #include "Animation/AnimInstance.h"
-#include "NPCAnimInstance.generated.h"
+#include "GoblinAnimInstance.generated.h"
 
 /**
  * 
  */
 DECLARE_MULTICAST_DELEGATE(FOnAttackHitCheckDelegate);
 UCLASS()
-class PUZZLEPLATFORMS_API UNPCAnimInstance : public UAnimInstance
+class PUZZLEPLATFORMS_API UGoblinAnimInstance : public UAnimInstance
 {
 	GENERATED_BODY()
 public:
-	UNPCAnimInstance();
+	UGoblinAnimInstance();
 	void PlaySwordAttackMontage();
 	UFUNCTION()
 		void AnimNotify_AttackHitCheck();

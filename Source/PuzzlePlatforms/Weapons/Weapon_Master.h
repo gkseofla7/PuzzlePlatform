@@ -52,7 +52,9 @@ public:
 	UFUNCTION(BlueprintCallable)
 		void Reload();
 	UFUNCTION(NetMulticast, Reliable, WithValidation)
-		void Multicast_SendShot();
+		void Multicast_SetClipAmmo(float NewClipAmmo);
+	/*UFUNCTION(NetMulticast, Reliable, WithValidation)
+		void Multicast_SetMuzzleRotation();*/
 
 
 	void SetMuzzleRotation(FRotator NewRotator) { MuzzleRotation_ = NewRotator; }
@@ -113,7 +115,7 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Gameplay)
 		class USoundBase* FireSound;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Gameplay)
-		class UParticleSystem* MuzzleParticles;
+		class UParticleSystem* MuzzlesParticle;
 
 
 

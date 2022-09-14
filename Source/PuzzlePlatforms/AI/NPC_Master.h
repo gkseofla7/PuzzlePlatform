@@ -43,10 +43,12 @@ public:
 	class APatrolPath* PatrolPath;
 
 	FOnAttackEndDelegate OnAttackEnd;
-	UPROPERTY()
-	class UNPCAnimInstance* MyAnim;
+
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Stat)
 	class UMonsterStatComponent* MonsterStat;//약간 애들
+
+	UPROPERTY(VisibleAnywhere, Category = UI)
+		class UWidgetComponent* HPBarWidget;
 
 	
 

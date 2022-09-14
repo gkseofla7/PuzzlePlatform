@@ -88,7 +88,8 @@ public:
 		class UDecalComponent* DecalComponent;
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
 		class UParticleSystemComponent* ParticleSystemComponent;
-
+	UPROPERTY(VisibleAnywhere, Category = UI)
+		class UWidgetComponent* HPBarWidget;
 
 	class UHudUpDisplayWidget* HeadsUpDisplayRef;
 	APuzzlePlatformsCharacter* TargetPlayer;

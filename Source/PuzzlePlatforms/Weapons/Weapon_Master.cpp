@@ -97,20 +97,29 @@ void AWeapon_Master::AmmoCheck()
 
 void AWeapon_Master::Shot()
 {
-
+    
     FString name = GetName();
     auto Soldier = Cast<ASoldier>(Player);
     UE_LOG(LogTemp, Warning, TEXT("Shoot!!"));
     AmmoCheck();
-    if (Soldier->IsLocallyControlled())
+    if (HasAuthority())
     {
-        Soldier->SetMuzzleRotation();
+        UE_LOG(LogTemp, Warning, TEXT("Server"));
     }
+    else
+    {
+        UE_LOG(LogTemp, Warning, TEXT("Client"));
+    }
+    //if (Soldier->IsLocallyControlled())
+    //{//절대 나올 수가 없네,,ㅋㅋ
+    //    UE_LOG(LogTemp, Warning, TEXT("IsLocclayControlled"));
+    //    Soldier->SetMuzzleRotation();//어차피 서버에서 맞춤
+    //} 그냥 보니깐 쏠때 맞췄었음;;ㅋㅋ
 
  
     if ( CanFire== true && ClipEmpty == false && Reloading == false)
     {
-        
+       // Multicast_SetMuzzleRotation();
         FVector BulletScale;
        // BulletScale.Set(0.1, 0.1, 0.1);
         FTransform BulletTransform;
@@ -129,10 +138,12 @@ void AWeapon_Master::Shot()
        {
            UE_LOG(LogTemp, Warning, TEXT("nullptr"));
        }
-        ClipAmmo = ClipAmmo - AmmoCost;
-        Multicast_SendShot();
+       Multicast_SetClipAmmo(ClipAmmo - AmmoCost);
+       // ClipAmmo = ClipAmmo - AmmoCost;//요걸 다른애들도 해줘야됨
+        //GetWorld()->SpawnActor<ABulletMaster>(BulletMasterClass, BulletTransform);
+        //Multicast_SendShot();
 
-        if (FireSound != NULL)
+        if (FireSound != NULL)//소리 다른애들한테도 해줘야됨
         {
             UGameplayStatics::PlaySoundAtLocation(this, FireSound, GetActorLocation());
         }
@@ -143,36 +154,59 @@ void AWeapon_Master::Shot()
         //        UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), ImpactParticles, FTransform(Hit.ImpactNormal.Rotation(), Hit.ImpactPoint));
         //    }
         //}
-        if (MuzzleParticles)
+        if (MuzzlesParticle)
         {
-            UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), MuzzleParticles, SkeletalMeshComponent->GetSocketTransform(FName("Muzzle")));
+            UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), MuzzlesParticle, SkeletalMeshComponent->GetSocketTransform(FName("Muzzle")));
         }
        
 
     }
 }
 
-void AWeapon_Master::Multicast_SendShot_Implementation()
+void AWeapon_Master::Multicast_SetClipAmmo_Implementation(float NewClipAmmo)
 {
-    if (GetOwner()->HasAuthority())
-        return;
-
-    UE_LOG(LogTemp, Warning, TEXT("Multicast shot!!"));
-    FVector BulletScale;
-    // BulletScale.Set(0.1, 0.1, 0.1);
-    FTransform BulletTransform;
-
-    BulletTransform.SetLocation(SkeletalMeshComponent->GetSocketTransform("Muzzle").GetLocation());
-    BulletTransform.SetRotation(MuzzleRotation_.Quaternion());
-    //BulletTransform.SetScale3D(BulletScale);
-
-
-    GetWorld()->SpawnActor<ABulletMaster>(BulletMasterClass, BulletTransform);
+    ClipAmmo = NewClipAmmo;
 }
-bool AWeapon_Master::Multicast_SendShot_Validate()
+
+bool AWeapon_Master::Multicast_SetClipAmmo_Validate(float NewClipAmmo)
 {
     return true;
 }
+//void AWeapon_Master::Multicast_SetMuzzleRotation_Implementation()
+//{
+//    auto Soldier = Cast<ASoldier>(Player);
+//    if (Soldier->IsLocallyControlled() == false)
+//        return;
+//    Soldier->SetMuzzleRotation();
+//}
+//
+//bool AWeapon_Master::Multicast_SetMuzzleRotation_Validate()
+//{
+//    return true;
+//}
+
+
+//void AWeapon_Master::Multicast_SendShot_Implementation()
+//{
+//    if (GetOwner()->HasAuthority())
+//        return;
+//
+//    UE_LOG(LogTemp, Warning, TEXT("Multicast shot!!"));
+//    FVector BulletScale;
+//    // BulletScale.Set(0.1, 0.1, 0.1);
+//    FTransform BulletTransform;
+//
+//    BulletTransform.SetLocation(SkeletalMeshComponent->GetSocketTransform("Muzzle").GetLocation());
+//    BulletTransform.SetRotation(MuzzleRotation_.Quaternion());
+//    //BulletTransform.SetScale3D(BulletScale);
+//
+//
+//    GetWorld()->SpawnActor<ABulletMaster>(BulletMasterClass, BulletTransform);
+//}
+//bool AWeapon_Master::Multicast_SendShot_Validate()
+//{
+//    return true;
+//}
 void AWeapon_Master::Reload()
 {
     AmmoCheck();
@@ -189,14 +223,14 @@ void AWeapon_Master::Reload()
             {      
                 if (UseRemainingAmmo == true)
                 {
-                    ClipAmmo = ClipAmmo + BagAmmo;
+                    Multicast_SetClipAmmo(ClipAmmo + BagAmmo);
                     BagAmmo = 0;
                     AmmoNeeded = 0;
                     Reloading = false;
                 }
                     else
                 {
-                    ClipAmmo = ClipAmmo + AmmoNeeded;
+                    Multicast_SetClipAmmo(ClipAmmo + AmmoNeeded);
                     BagAmmo -= AmmoNeeded;
                     AmmoNeeded = 0;
                     Reloading = false;

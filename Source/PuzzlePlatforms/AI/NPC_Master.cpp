@@ -3,10 +3,12 @@
 
 #include "NPC_Master.h"
 #include "NPCAIController.h"
-#include "NPCAnimInstance.h"
+#include "GoblinAnimInstance.h"
 #include "MonsterStatComponent.h"
+#include "../HPBarWidget.h"
 
 #include "DrawDebugHelpers.h"
+#include "Components/WidgetComponent.h"
 #include "Net/UnrealNetwork.h"
 
 // Sets default values
@@ -22,14 +24,30 @@ ANPC_Master::ANPC_Master()
 	AIControllerClass = ANPCAIController::StaticClass();
 	AutoPossessAI = EAutoPossessAI::PlacedInWorldOrSpawned;
 	MonsterStat = CreateDefaultSubobject<UMonsterStatComponent>(TEXT("MonsterStat"));
+
+	HPBarWidget = CreateDefaultSubobject<UWidgetComponent>(TEXT("HPBarWidget"));
+	HPBarWidget->SetupAttachment(GetMesh());
+
+	HPBarWidget->SetRelativeLocation(FVector(0.f, 0.f, 180.f));
+	HPBarWidget->SetWidgetSpace(EWidgetSpace::Screen);
+	static ConstructorHelpers::FClassFinder<UUserWidget> UI_HUD(TEXT("/Game/PuzzlePlatforms/Widget/WBP_HPBar"));
+	if (UI_HUD.Succeeded())
+	{
+		HPBarWidget->SetWidgetClass(UI_HUD.Class);
+		HPBarWidget->SetDrawSize(FVector2D(150.f, 50.f));
+	}
 }
 
 // Called when the game starts or when spawned
 void ANPC_Master::BeginPlay()
 {
 	Super::BeginPlay();
-	MyAnim = Cast< UNPCAnimInstance>(GetMesh()->GetAnimInstance());
-	MyAnim->OnMontageEnded.AddDynamic(this, &ANPC_Master::EndAnimation);
+
+	auto MonsterWidget = Cast< UHPBarWidget>(HPBarWidget->GetUserWidgetObject());
+	if (nullptr != MonsterWidget)
+	{
+		MonsterWidget->BindMonsterStat(MonsterStat);
+	}
 
 }
 

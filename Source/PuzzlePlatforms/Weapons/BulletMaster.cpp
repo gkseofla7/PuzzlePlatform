@@ -15,6 +15,7 @@ ABulletMaster::ABulletMaster()
 	Capsule = CreateDefaultSubobject<UCapsuleComponent>(TEXT("Capsule"));
 	//StaticMesh = CreateDefaultSubobject<UStaticMesh>(TEXT("StaticMesh"));
 	RootComponent = Capsule;
+	bReplicates = true;
 	//StaticMesh->SetupAttachment(Capsule);
 
 }
@@ -63,9 +64,7 @@ void ABulletMaster::OnHit(UPrimitiveComponent* HitComponent, AActor* OtherActor,
 
 void ABulletMaster::OnOverlapBegin(class UPrimitiveComponent* OverlappedComp, class AActor* OtherActor, class UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
-	FString s_a = OtherActor->GetName();
-	FString s = OtherComp->GetName();
-	UE_LOG(LogTemp, Warning, TEXT("Overlap %s %s"),*s_a, *s);
+
 
 	if (OtherActor && (OtherActor != this) && OtherComp)
 	{

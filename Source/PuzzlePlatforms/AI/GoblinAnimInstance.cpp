@@ -1,10 +1,10 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 
-#include "NPCAnimInstance.h"
+#include "GoblinAnimInstance.h"
 
 
-UNPCAnimInstance::UNPCAnimInstance()
+UGoblinAnimInstance::UGoblinAnimInstance()
 : Super()
 {
 	static ConstructorHelpers::FObjectFinder<UAnimMontage> SWORD_ATTACK_MONTAGE(TEXT(
@@ -16,12 +16,12 @@ UNPCAnimInstance::UNPCAnimInstance()
 	}
 }
 
-void UNPCAnimInstance::PlaySwordAttackMontage()
+void UGoblinAnimInstance::PlaySwordAttackMontage()
 {
 	Montage_Play(SwordAttackMontage, 1.0);
 }
 
-void UNPCAnimInstance::AnimNotify_AttackHitCheck()
+void UGoblinAnimInstance::AnimNotify_AttackHitCheck()
 {
 	OnAttackHitCheck.Broadcast();
 }

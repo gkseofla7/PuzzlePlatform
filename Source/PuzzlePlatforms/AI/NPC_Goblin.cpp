@@ -2,7 +2,7 @@
 
 
 #include "NPC_Goblin.h"
-#include "NPCAnimInstance.h"
+#include "GoblinAnimInstance.h"
 #include "MonsterStatComponent.h"
 #include "EnumMonsterType.h"
 #include "NPCAIController.h"
@@ -12,6 +12,7 @@
 #include "BehaviorTree/BlackboardComponent.h"
 #include "Net/UnrealNetwork.h"
 ANPC_Goblin::ANPC_Goblin()
+	:Super()
 {
 	PrimaryActorTick.bCanEverTick = true;
 	bReplicates = true;
@@ -20,6 +21,7 @@ ANPC_Goblin::ANPC_Goblin()
 	//{
 	//	AIControllerClass = AIControllerBPClass.Class;
 	//}
+	//AIControllerClass = ANPCAIController::StaticClass();
 	static ConstructorHelpers::FClassFinder<UAnimInstance> NPC_ANIM((TEXT("/Game/Animation/BP_GoblinAnim")));
 	if (NPC_ANIM.Succeeded())
 	{
@@ -32,11 +34,15 @@ ANPC_Goblin::ANPC_Goblin()
 void ANPC_Goblin::BeginPlay()
 {
 	Super::BeginPlay();
-	MyAnim = Cast< UNPCAnimInstance>(GetMesh()->GetAnimInstance());
+	MyAnim = Cast< UGoblinAnimInstance>(GetMesh()->GetAnimInstance());
 	MyAnim->OnAttackHitCheck.AddUObject(this, &ANPC_Goblin::AttackCheck);
+	MyAnim->OnMontageEnded.AddDynamic(this, &ANPC_Master::EndAnimation);
 	MonsterStat->CustomInitializeComponent(EMonsterEnum::TE_Goblin);
-	auto AIController = Cast< ANPCAIController>(GetController());
-	AIController->GetBlackboardComponent()->SetValueAsFloat(ANPCAIController::AttackRangeKey, AttackRange);
+	if (HasAuthority())
+	{
+		auto AIController = Cast< ANPCAIController>(GetController());
+		AIController->GetBlackboardComponent()->SetValueAsFloat(ANPCAIController::AttackRangeKey, AttackRange);
+	}
 }
 
 void ANPC_Goblin::Attack()

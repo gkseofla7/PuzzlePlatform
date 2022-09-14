@@ -25,5 +25,7 @@ public:
 
 
 public:
+	UPROPERTY()
+		class UGoblinAnimInstance* MyAnim;
 	float AttackRange = 200;
 };

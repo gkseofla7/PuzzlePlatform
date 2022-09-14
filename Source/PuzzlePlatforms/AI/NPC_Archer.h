@@ -20,7 +20,10 @@ public:
 	virtual void Attack();
 	UFUNCTION(NetMulticast, Reliable, WithValidation)
 		void NetMulticast_Attack();
+	void ArrowShot();
 
 public:
-	float AttackRange = 200;
+	UPROPERTY()
+		class UArcherAnimInstance* MyAnim;
+	float AttackRange = 500;
 };

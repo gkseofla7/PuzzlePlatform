@@ -11,7 +11,7 @@
 
 
 
-
+DECLARE_MULTICAST_DELEGATE(FOnHPChangedDelegate);
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
 class PUZZLEPLATFORMS_API UMonsterStatComponent : public UActorComponent
 {
@@ -50,6 +50,6 @@ public:
 		int32 Level;
 	FMonsterData* CurrentStatData = nullptr;
 	EMonsterEnum MonsterEnum;
-	//FOnHPChangedDelegate OnHPChanged;
+	FOnHPChangedDelegate OnHPChanged;
 	//FOnMPChangedDelegate OnMPChanged;
 };
