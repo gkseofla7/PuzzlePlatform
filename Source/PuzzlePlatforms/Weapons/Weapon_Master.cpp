@@ -60,6 +60,11 @@ void AWeapon_Master::FireModeSwitch()
 
 void AWeapon_Master::AmmoCheck()
 {
+    Multicast_AmmoCheck();
+}
+
+void AWeapon_Master::Multicast_AmmoCheck_Implementation()
+{
     AmmoNeeded = MaxClipAmmo - ClipAmmo;
     if (AmmoNeeded <= BagAmmo)
     {
@@ -98,6 +103,10 @@ void AWeapon_Master::AmmoCheck()
     ClipEmpty = (ClipAmmo <= 0);
 }
 
+bool AWeapon_Master::Multicast_AmmoCheck_Validate()
+{
+    return true;
+}
 
 void AWeapon_Master::Shot()
 {
@@ -105,7 +114,7 @@ void AWeapon_Master::Shot()
     FString name = GetName();
     auto Soldier = Cast<ASoldier>(Player);
     UE_LOG(LogTemp, Warning, TEXT("Shoot!!"));
-    AmmoCheck();
+    AmmoCheck();//¾êµµ °á±¹..
     if (HasAuthority())
     {
         UE_LOG(LogTemp, Warning, TEXT("Server"));

@@ -116,13 +116,13 @@ void ASoldier::BeginPlay()
 	Super::BeginPlay();
 	MyAnim = Cast<UAnimInstance_Master>(GetMesh()->GetAnimInstance());
 	FActorSpawnParameters SpawnParams;
-	if (HasAuthority())
-	{
+	//if (HasAuthority())
+	//{
 
-		auto temp = GetWorld()->SpawnActor<AWeapon_Master>(WeaponMasterClass, SpawnParams);
-		//서로 다른 시간에 만들어지므로..
-		Multicast_SetGun(temp);
-	}
+	//	auto temp = GetWorld()->SpawnActor<AWeapon_Master>(WeaponMasterClass, SpawnParams);
+	//	//서로 다른 시간에 만들어지므로..
+	//	Multicast_SetGun(temp);
+	//}
 	//EquipItem(Gun, false);
 	//if (EquippedItem == nullptr)
 	//{
@@ -159,6 +159,7 @@ void ASoldier::Tick(float DeltaTime)
 	}
 	else
 		UnAim();
+	WearItem();
 #pragma region SettingMissile
 	if (ShowPath == true)
 	{
@@ -398,10 +399,16 @@ void ASoldier::WeaponSecondaryReleased()
 void ASoldier::WeaponReload()
 {
 	if (EquippedItem == nullptr)
+	{
+
 		return;
+	}
+
 	bool IsFiring__ = Cast<USoldierMotionReplicator>(DaerimMotionReplicator)->IsFiring;
+
 	if (EquippedItem->CanReload == true && IsFiring__ == false && IsReloading == false && IsItemEquipped == true)
 	{
+		Server_WeaponReload();
 		CanAim = false;
 		IsReloading = true;
 
@@ -419,7 +426,26 @@ void ASoldier::WeaponReload()
 
 	}
 }
+void ASoldier::Server_WeaponReload_Implementation()
+{
+	CanAim = false;
+	IsReloading = true;
 
+	FTimerHandle WaitHandle;
+	EquippedItem->Reload();
+	float WaitTime = EquippedItem->ReloadDelay; //시간을 설정하고
+	GetWorld()->GetTimerManager().SetTimer(WaitHandle, FTimerDelegate::CreateLambda([&]()
+		{
+
+			// 여기에 코드를 치면 된다.
+			IsReloading = false;
+			CanAim = true;
+		}), WaitTime, false); //반복도 여기서 추가 변수를 선언해 설정가능
+}
+bool ASoldier::Server_WeaponReload_Validate()
+{
+	return true;
+}
 void ASoldier::EquipItem(AObject_Master* Item, bool EquipAndHold)
 {
 	if (EquipAndHold == false)
@@ -496,3 +522,32 @@ void ASoldier::InteractPressed()
 
 
 
+void ASoldier::WearItem()
+{
+	if (DoPickupLinetrace == true)
+	{
+		FVector StartLocation = FollowCamera->GetComponentLocation();
+		FVector TargetLocation = FollowCamera->GetComponentLocation() + FollowCamera->GetForwardVector() * 600.;
+		TArray<TEnumAsByte<EObjectTypeQuery> > ObjectTypes;
+		ObjectTypes.Add(EObjectTypeQuery::ObjectTypeQuery9);
+		TArray<AActor*> ActorsToIgnore;
+		TArray<FHitResult> OutHits;
+		//, bool bIgnoreSelf, FLinearColor TraceColor, FLinearColor TraceHitColor, float DrawTime
+		UKismetSystemLibrary::LineTraceMultiForObjects(GetWorld(), StartLocation, TargetLocation, ObjectTypes, true, ActorsToIgnore, EDrawDebugTrace::ForOneFrame, OutHits,true);
+		if (OutHits.Num() > 0)
+		{
+			auto tmp = Cast<AWeapon_Master>(OutHits[0].GetActor());
+			if (tmp != nullptr)
+			{
+				PickupItem = tmp;
+			}
+			else
+			{
+				PickupItem = nullptr;
+			}
+		}
+
+	}
+	else
+		PickupItem = nullptr;
+}

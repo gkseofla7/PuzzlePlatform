@@ -99,16 +99,13 @@ void USoldierMotionReplicator::Server_SendAttackStop_Implementation()
 
 void USoldierMotionReplicator::Server_SendGetItem_Implementation(class AObject_Master* NewWeapon)
 {
-	auto MyOwner = Cast<ASoldier>(GetOwner());
-	PickupItem = NewWeapon;
-	UE_LOG(LogTemp, Warning, TEXT("Equip"));
-	if (PickupItem == nullptr)
-		return;
-	PickupItem->SetOwner(MyOwner);
-	MyOwner->EquipItem(PickupItem, MyOwner->IsItemEquipped);
-	//FTimerHandle WaitHandle;
-	//float WaitTime = 1.73; //시간을 설정하고
-	MyOwner->CanAim = true;//나중에 애니메이션 노티파이로변환
+	//auto MyOwner = Cast<ASoldier>(GetOwner());
+	//PickupItem = NewWeapon;
+	//if (PickupItem == nullptr)
+	//	return;
+	//PickupItem->SetOwner(MyOwner);
+	//MyOwner->EquipItem(PickupItem, MyOwner->IsItemEquipped);
+	//MyOwner->CanAim = true;//나중에 애니메이션 노티파이로변환
 
 	Multicast_SendGetItem(NewWeapon);
 
@@ -122,17 +119,15 @@ void USoldierMotionReplicator::Multicast_SendGetItem_Implementation(class AObjec
 
 	//UE_LOG(LogTemp, Warning, TEXT("Multicast"));
 
-	if (MyOwner->HasAuthority())
-		return;
+	//if (MyOwner->HasAuthority())
+	//	return;
 	PickupItem = NewWeapon;
 	if (MyOwner->DoPickupLinetrace)
 	{
 		if (PickupItem != nullptr)
 		{
-
+			PickupItem->SetOwner(MyOwner);
 			MyOwner->EquipItem(PickupItem, MyOwner->IsItemEquipped);
-			//FTimerHandle WaitHandle;
-			//float WaitTime = 1.73; //시간을 설정하고
 			MyOwner->CanAim = true;//나중에 애니메이션 노티파이로변환
 
 		}

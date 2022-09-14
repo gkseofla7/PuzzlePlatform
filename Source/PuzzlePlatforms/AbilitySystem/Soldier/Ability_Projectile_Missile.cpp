@@ -9,10 +9,15 @@ AAbility_Projectile_Missile::AAbility_Projectile_Missile()
 {
 	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
-
+	AbilityRoot->OnComponentBeginOverlap.AddDynamic(this, &AAbility_Projectile_Missile::OnOverlapBegin);
 	MissileComponent = CreateDefaultSubobject< UStaticMeshComponent>(TEXT("MissileComponent"));
 	MissileComponent->SetupAttachment(RootComponent);
 	MissileComponent->SetVisibility(false);
+	static ConstructorHelpers::FObjectFinder<UParticleSystem> ParticleAsset(TEXT("/Game/Etcs/p_Turret_Explosion"));
+	if (ParticleAsset.Succeeded())
+	{
+		ParticleTemplate = ParticleAsset.Object;
+	}
 }
 
 void AAbility_Projectile_Missile::BeginPlay()
@@ -75,6 +80,37 @@ bool AAbility_Projectile_Missile::Server_SetVisibility_Validate()
 }
 
 bool AAbility_Projectile_Missile::NetMulticast_SetVisibility_Validate()
+{
+	return true;
+}
+
+void AAbility_Projectile_Missile::OnOverlapBegin(class UPrimitiveComponent* OverlappedComp, class AActor* OtherActor, class UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
+{
+	if (OtherActor == PlayerRef)
+		return;
+	//UE_LOG(LogTemp, Warning, TEXT("Hit %s, %s %s"), *OverlappedComp->GetName(), *OtherActor->GetName(), *OtherComp->GetName());
+	UE_LOG(LogTemp, Warning, TEXT("FIRST"));
+	if (HasAuthority() == true)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("InServer"));
+		NetMulticast_Spark(GetActorLocation());
+		//auto Player = Cast<APuzzlePlatformsCharacter>(OtherActor);
+		//if (Player != nullptr)
+		//{
+		//	UGameplayStatics::ApplyDamage(Player, DamageAmount, PlayerRef->GetController(), PlayerRef, UDamageType::StaticClass());
+
+		//}
+		Destroy();
+	}
+
+}
+
+void AAbility_Projectile_Missile::NetMulticast_Spark_Implementation(FVector Location)
+{
+	UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), ParticleTemplate, Location, FRotator(0, 0, 0));
+}
+
+bool AAbility_Projectile_Missile::NetMulticast_Spark_Validate(FVector Location)
 {
 	return true;
 }

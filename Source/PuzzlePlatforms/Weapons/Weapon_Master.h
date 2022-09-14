@@ -56,6 +56,8 @@ public:
 		void Multicast_SetClipAmmo(float NewClipAmmo);
 	UFUNCTION(NetMulticast, Reliable, WithValidation)
 		void Multicast_SetMuzzleRotation();
+	UFUNCTION(NetMulticast, Reliable, WithValidation)
+		void Multicast_AmmoCheck();
 
 
 	void SetMuzzleRotation(FRotator NewRotator) { MuzzleRotation_ = NewRotator; }

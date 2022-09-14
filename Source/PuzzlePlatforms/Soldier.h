@@ -70,10 +70,12 @@ private:
 
 	UFUNCTION(NetMulticast, Reliable, WithValidation)
 		void Multicast_SetGun(class AWeapon_Master *NewItem);
+	UFUNCTION(Server, Reliable, WithValidation)
+		void Server_WeaponReload();
 
 	void AimMissile();
 	void UnAimMissile();
-
+	void WearItem();
 
 
 public:
