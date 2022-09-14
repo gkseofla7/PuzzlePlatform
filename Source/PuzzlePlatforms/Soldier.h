@@ -67,6 +67,10 @@ private:
 		void Everyone_SetMuzzleRotation(FRotator NewRotator);
 	UFUNCTION(Server, Reliable, WithValidation)
 		void Server_SetMuzzleRotation(FRotator NewRotator);
+
+	UFUNCTION(NetMulticast, Reliable, WithValidation)
+		void Multicast_SetGun(class AWeapon_Master *NewItem);
+
 	void AimMissile();
 	void UnAimMissile();
 
@@ -80,6 +84,8 @@ public:
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
 		float Direction;
 		FVector MissileVelocity;
+
+		class AWeapon_Master* Gun;
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
 		class AWeapon_Master* EquippedItem;
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
@@ -138,6 +144,6 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Camera)
 		class UCameraComponent* ADSCam_;
 	TSubclassOf<class AObject_Master> GunClass;
-	class AObject_Master* Gun;
+
 
 };

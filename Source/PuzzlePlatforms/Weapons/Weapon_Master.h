@@ -36,6 +36,7 @@ public:
 
 	virtual void Tick(float Deltatime);
 	AWeapon_Master();
+	//void CustomInitialize(class ASoldier* NewPlayer);
 	UFUNCTION(BlueprintCallable)
 	void FireModeSwitch();
 	UFUNCTION(BlueprintCallable)
@@ -53,8 +54,8 @@ public:
 		void Reload();
 	UFUNCTION(NetMulticast, Reliable, WithValidation)
 		void Multicast_SetClipAmmo(float NewClipAmmo);
-	/*UFUNCTION(NetMulticast, Reliable, WithValidation)
-		void Multicast_SetMuzzleRotation();*/
+	UFUNCTION(NetMulticast, Reliable, WithValidation)
+		void Multicast_SetMuzzleRotation();
 
 
 	void SetMuzzleRotation(FRotator NewRotator) { MuzzleRotation_ = NewRotator; }
@@ -125,5 +126,7 @@ private:
 	TSubclassOf<class ABulletMaster>BulletMasterClass;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Camera, meta = (AllowPrivateAccess = "true"))
 		class UCameraComponent* Camera_;
+
+	//class ASoldier* PlayerRef;
 
 };

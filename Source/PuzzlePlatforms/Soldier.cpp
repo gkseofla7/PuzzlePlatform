@@ -116,17 +116,26 @@ void ASoldier::BeginPlay()
 	Super::BeginPlay();
 	MyAnim = Cast<UAnimInstance_Master>(GetMesh()->GetAnimInstance());
 	FActorSpawnParameters SpawnParams;
-	//Gun = GetWorld()->SpawnActor<AObject_Master>(WeaponMasterClass, SpawnParams);
-	EquipItem(Gun, false);
-	if (EquippedItem == nullptr)
+	if (HasAuthority())
 	{
-		IsItemEquipped = false;
+
+		auto temp = GetWorld()->SpawnActor<AWeapon_Master>(WeaponMasterClass, SpawnParams);
+		//서로 다른 시간에 만들어지므로..
+		Multicast_SetGun(temp);
 	}
+	//EquipItem(Gun, false);
+	//if (EquippedItem == nullptr)
+	//{
+	//	IsItemEquipped = false;
+	//}
 	bUseControllerRotationYaw = true;
 	GetCharacterMovement()->bOrientRotationToMovement = false;
 
 	
 }
+
+
+
 void ASoldier::SetFPSHudWidget()
 {
 	UE_LOG(LogTemp, Warning, TEXT("SetFPS"));
@@ -418,12 +427,12 @@ void ASoldier::EquipItem(AObject_Master* Item, bool EquipAndHold)
 		auto weapon = Cast<AWeapon_Master>(Item);
 		if (weapon != nullptr)
 		{
-			EquippedItem = weapon;
-			PrimaryWeapon = weapon;
-			EquippedItem->Player = this;
+			EquippedItem = weapon;//요건 전체
+			PrimaryWeapon = weapon;//전체
+			EquippedItem->Player = this;//전체
 			EquippedItem->GetSkeletalMesh()->SetCollisionEnabled(ECollisionEnabled::NoCollision);
-			EquippedItem->AttachToPlayer(this ,"GripPoint");
-			IsItemEquipped = true;
+			EquippedItem->AttachToPlayer(this ,"GripPoint");//전체
+			IsItemEquipped = true;//전체
 			bUseControllerRotationYaw= true;
 			//자연스럽게 원하는 방향으로 회전
 			GetCharacterMovement()->bOrientRotationToMovement = false;
@@ -450,6 +459,27 @@ void ASoldier::EquipItem(AObject_Master* Item, bool EquipAndHold)
 			
 		}
 	}
+}
+
+
+void ASoldier::Multicast_SetGun_Implementation(AWeapon_Master* weapon)
+{
+	EquippedItem = weapon;//요건 전체
+	PrimaryWeapon = weapon;//전체
+	EquippedItem->Player = this;//전체
+	EquippedItem->GetSkeletalMesh()->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+	EquippedItem->AttachToPlayer(this, "GripPoint");//전체
+	IsItemEquipped = true;//전체
+	bUseControllerRotationYaw = true;
+	//자연스럽게 원하는 방향으로 회전
+	GetCharacterMovement()->bOrientRotationToMovement = false;
+	// 자동적으로 캐릭터의 이동방향을 움직이는 방향에 맞춰주며 회전보간을 해줌
+
+	WeaponSlotUse = EWeaponSlot::TE_PrimaryWeapon;
+}
+bool ASoldier::Multicast_SetGun_Validate(AWeapon_Master* NewItem)
+{
+	return true;
 }
 
 void ASoldier::InteractPressed()

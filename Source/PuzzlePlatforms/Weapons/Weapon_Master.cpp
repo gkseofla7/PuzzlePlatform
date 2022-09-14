@@ -20,6 +20,10 @@ AWeapon_Master::AWeapon_Master()
     Camera_ = CreateDefaultSubobject<UCameraComponent>(TEXT("Camera"));
     Camera_->SetupAttachment(GetSkeletalMesh());
 }
+//void AWeapon_Master::CustomInitialize(class ASoldier* NewPlayer)
+//{
+//    PlayerRef = NewPlayer;
+//}
 
 void AWeapon_Master::GetLifetimeReplicatedProps(TArray< FLifetimeProperty >& OutLifetimeProps) const
 {
@@ -119,7 +123,7 @@ void AWeapon_Master::Shot()
  
     if ( CanFire== true && ClipEmpty == false && Reloading == false)
     {
-       // Multicast_SetMuzzleRotation();
+       Multicast_SetMuzzleRotation();
         FVector BulletScale;
        // BulletScale.Set(0.1, 0.1, 0.1);
         FTransform BulletTransform;
@@ -139,9 +143,8 @@ void AWeapon_Master::Shot()
            UE_LOG(LogTemp, Warning, TEXT("nullptr"));
        }
        Multicast_SetClipAmmo(ClipAmmo - AmmoCost);
-       // ClipAmmo = ClipAmmo - AmmoCost;//요걸 다른애들도 해줘야됨
-        //GetWorld()->SpawnActor<ABulletMaster>(BulletMasterClass, BulletTransform);
-        //Multicast_SendShot();
+
+
 
         if (FireSound != NULL)//소리 다른애들한테도 해줘야됨
         {
@@ -172,18 +175,18 @@ bool AWeapon_Master::Multicast_SetClipAmmo_Validate(float NewClipAmmo)
 {
     return true;
 }
-//void AWeapon_Master::Multicast_SetMuzzleRotation_Implementation()
-//{
-//    auto Soldier = Cast<ASoldier>(Player);
-//    if (Soldier->IsLocallyControlled() == false)
-//        return;
-//    Soldier->SetMuzzleRotation();
-//}
-//
-//bool AWeapon_Master::Multicast_SetMuzzleRotation_Validate()
-//{
-//    return true;
-//}
+void AWeapon_Master::Multicast_SetMuzzleRotation_Implementation()
+{
+    auto Soldier = Cast<ASoldier>(Player);
+    if (Soldier->IsLocallyControlled() == false)
+        return;
+    Soldier->SetMuzzleRotation();
+}
+
+bool AWeapon_Master::Multicast_SetMuzzleRotation_Validate()
+{
+    return true;
+}
 
 
 //void AWeapon_Master::Multicast_SendShot_Implementation()
