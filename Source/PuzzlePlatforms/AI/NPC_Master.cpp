@@ -6,6 +6,7 @@
 #include "GoblinAnimInstance.h"
 #include "MonsterStatComponent.h"
 #include "../HPBarWidget.h"
+#include "../PuzzlePlatformsCharacter.h"
 
 #include "DrawDebugHelpers.h"
 #include "Components/WidgetComponent.h"
@@ -92,6 +93,12 @@ float ANPC_Master::TakeDamage(float DamageAmount, FDamageEvent const& DamageEven
 	//ABCHECK(MotionReplicator != nullptr)
 
 	float FinalDamage = Super::TakeDamage(DamageAmount, DamageEvent, EventInstigator, DamageCauser);
+	if (HasAuthority())//아마 원래 그냥 서버에서 실행될걸
+	{
+		auto Player = Cast< APuzzlePlatformsCharacter>(DamageCauser);
+		Cast<ANPCAIController>(GetController())->SetTargetKey(Player);
+		Cast<ANPCAIController>(GetController())->SetIsHitKey(true);
+	}
 
 	MonsterStat->IncreaseHP(-FinalDamage);
 	return FinalDamage;

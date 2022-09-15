@@ -32,12 +32,21 @@ ANPC_Goblin::ANPC_Goblin()
 }
 
 void ANPC_Goblin::BeginPlay()
+
 {
 	Super::BeginPlay();
 	MyAnim = Cast< UGoblinAnimInstance>(GetMesh()->GetAnimInstance());
-	MyAnim->OnAttackHitCheck.AddUObject(this, &ANPC_Goblin::AttackCheck);
-	MyAnim->OnMontageEnded.AddDynamic(this, &ANPC_Master::EndAnimation);
-	MonsterStat->CustomInitializeComponent(EMonsterEnum::TE_Goblin);
+	if (MyAnim != nullptr)
+	{
+
+		MyAnim->OnAttackHitCheck.AddUObject(this, &ANPC_Goblin::AttackCheck);
+		MyAnim->OnMontageEnded.AddDynamic(this, &ANPC_Master::EndAnimation);
+	}
+	if (MonsterStat != nullptr)
+	{
+		MonsterStat->CustomInitializeComponent(EMonsterEnum::TE_Goblin);
+	}
+
 
 
 	if (HasAuthority())

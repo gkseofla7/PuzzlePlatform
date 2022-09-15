@@ -77,7 +77,8 @@ void ABulletMaster::OnOverlapBegin(class UPrimitiveComponent* OverlappedComp, cl
 			{
 				FDamageEvent DamageEvent;
 				//여기서 컨트롤러가..ㅋㅋ 다른 서버쪽 기준 컨트롤러로 돼있을텐데
-				MyCharacter->TakeDamage(10.0f, DamageEvent, MyCharacter->GetController(), this);
+
+				MyCharacter->TakeDamage(10.0f, DamageEvent, MyCharacter->GetController(), Shooter);
 				//UGameplayStatics::ApplyDamage(MyCharacter, 10,nullptr, nullptr,UDamageType::);
 				//MyCharacter->ApplyDamage();
 			}

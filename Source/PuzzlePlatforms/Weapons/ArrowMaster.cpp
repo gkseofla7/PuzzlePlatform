@@ -15,6 +15,7 @@ AArrowMaster::AArrowMaster()
 	Capsule = CreateDefaultSubobject<UCapsuleComponent>(TEXT("Capsule"));
 	//StaticMesh = CreateDefaultSubobject<UStaticMesh>(TEXT("StaticMesh"));
 	RootComponent = Capsule;
+	bReplicates = true;
 	//StaticMesh->SetupAttachment(Capsule);
 
 }

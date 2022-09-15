@@ -29,4 +29,5 @@ public:
 		class UArcherAnimInstance* MyAnim;
 	float AttackRange = 500;
 	class APuzzlePlatformsCharacter* Target;
+	TSubclassOf<class AArrowMaster> ArrowMasterClass;
 };

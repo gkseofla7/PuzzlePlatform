@@ -18,6 +18,7 @@ const FName ANPCAIController::HomePosKey(TEXT("HomePos"));
 const FName ANPCAIController::PatrolPosKey(TEXT("PatrolPos"));
 const FName ANPCAIController::TargetKey(TEXT("Target"));
 const FName ANPCAIController::AttackRangeKey(TEXT("AttackRange"));
+const FName ANPCAIController::IsHitKey(TEXT("IsHit"));
 
 ANPCAIController::ANPCAIController()
 {
@@ -67,51 +68,17 @@ void ANPCAIController::OnUnPossess()
 {
 	Super::OnUnPossess();
 }
+void ANPCAIController::SetHomePosKey(FVector NewPos)
+{
+	GetBlackboardComponent()->SetValueAsVector(ANPCAIController::HomePosKey, NewPos);
+}
 
-//void ANPCAIController::SetTargetKey(APuzzlePlatformsCharacter* PlayerTarget)
-//{
-//	GetBlackboardComponent()->SetValueAsObject(ANPCAIController::TargetKey, PlayerTarget);
-//	//NetMulticast_SetTargetKey(PlayerTarget);
-//}
-//
-//void ANPCAIController::NetMulticast_SetTargetKey_Implementation(class APuzzlePlatformsCharacter* PlayerTarget)
-//{
-//	GetBlackboardComponent()->SetValueAsObject(ANPCAIController::TargetKey, PlayerTarget);
-//}
-//
-//bool ANPCAIController::NetMulticast_SetTargetKey_Validate(class APuzzlePlatformsCharacter* PlayerTarget)
-//{
-//	return true;
-//}
-//
-//
-//void ANPCAIController::SetHomePosKey(FVector NewPos)
-//{
-//	NetMulticast_SetHomePosKey(NewPos);
-//}
-//
-//void ANPCAIController::NetMulticast_SetHomePosKey_Implementation(FVector NewPos)
-//{
-//	GetBlackboardComponent()->SetValueAsVector(ANPCAIController::HomePosKey, NewPos);
-//}
-//
-//bool ANPCAIController::NetMulticast_SetHomePosKey_Validate(FVector NewPos)
-//{
-//	return true;
-//}
-//
-//void ANPCAIController::SetPatrolPosKey(FVector NewPos)
-//{
-//	GetBlackboardComponent()->SetValueAsVector(ANPCAIController::PatrolPosKey, NewPos);
-//	//NetMulticast_SetPatrolPosKey(NewPos);
-//}
-//
-//void ANPCAIController::NetMulticast_SetPatrolPosKey_Implementation(FVector NewPos)
-//{
-//	GetBlackboardComponent()->SetValueAsVector(ANPCAIController::PatrolPosKey, NewPos);
-//}
-//
-//bool ANPCAIController::NetMulticast_SetPatrolPosKey_Validate(FVector NewPos)
-//{
-//	return true;
-//}
+void ANPCAIController::SetTargetKey(APuzzlePlatformsCharacter* PlayerTarget)
+{
+	GetBlackboardComponent()->SetValueAsObject(ANPCAIController::TargetKey, PlayerTarget);
+}
+
+void ANPCAIController::SetIsHitKey(bool NewIsHit)
+{
+	GetBlackboardComponent()->SetValueAsBool(ANPCAIController::IsHitKey, NewIsHit);
+}

@@ -2,7 +2,7 @@
 
 #pragma once
 
-#include "CoreMinimal.h"
+#include "../PuzzlePlatforms.h"
 #include "AIController.h"
 #include "NPCAIController.generated.h"
 /**
@@ -18,11 +18,12 @@ public:
 	virtual void OnPossess(APawn* InPawn) override;
 	virtual void OnUnPossess() override;
 
-	//void SetTargetKey(class APuzzlePlatformsCharacter* PlayerTarget);
+
 	//UFUNCTION(NetMulticast, Reliable, WithValidation)
 	//void NetMulticast_SetTargetKey(class APuzzlePlatformsCharacter* PlayerTarget);
-
-	//void SetHomePosKey(FVector NewPos);
+	void SetTargetKey(class APuzzlePlatformsCharacter* PlayerTarget);
+	void SetHomePosKey(FVector NewPos);
+	void SetIsHitKey(bool NewIsHit);
 	//UFUNCTION(NetMulticast, Reliable, WithValidation)
 	//	void NetMulticast_SetHomePosKey(FVector NewPos);
 
@@ -44,6 +45,7 @@ public:
 	static const FName PatrolPosKey;
 	static const FName TargetKey;
 	static const FName AttackRangeKey;
+	static const FName IsHitKey;
 	int i = 0;
 
 };

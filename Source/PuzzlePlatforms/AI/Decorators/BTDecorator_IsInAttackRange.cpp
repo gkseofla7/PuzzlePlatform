@@ -14,10 +14,11 @@ UBTDecorator_IsInAttackRange::UBTDecorator_IsInAttackRange()
 
 bool UBTDecorator_IsInAttackRange::CalculateRawConditionValue(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory) const
 {
+
 	bool bResult = Super::CalculateRawConditionValue(OwnerComp, NodeMemory);
 
 	auto ControllingPawn = OwnerComp.GetAIOwner()->GetPawn();
-	
+
 	//if (ControllingPawn == nullptr)
 	//	return false;
 

@@ -6,8 +6,11 @@
 #include "EnumMonsterType.h"
 #include "NPCAIController.h"
 #include "ArcherAnimInstance.h"
+#include "../PuzzlePlatformsCharacter.h"
+#include "../Weapons/ArrowMaster.h"
 
 #include "BehaviorTree/BlackboardComponent.h"
+#include "Kismet/KismetMathLibrary.h"
 #include "Net/UnrealNetwork.h"
 ANPC_Archer::ANPC_Archer()
 	:Super()
@@ -19,6 +22,10 @@ ANPC_Archer::ANPC_Archer()
 	//{
 	//	AIControllerClass = AIControllerBPClass.Class;
 	//}
+
+	ConstructorHelpers::FClassFinder<AArrowMaster> ArrowMasterBPClass(TEXT("/Game/Weapons/Projectiles/BP_ArrowMaster"));
+	if (!ensure(ArrowMasterBPClass.Class != nullptr)) return;
+	ArrowMasterClass = ArrowMasterBPClass.Class;
 	static ConstructorHelpers::FClassFinder<UAnimInstance> NPC_ANIM((TEXT("/Game/Animation/BP_ArcherAnim")));
 	if (NPC_ANIM.Succeeded())
 	{
@@ -45,7 +52,41 @@ void ANPC_Archer::BeginPlay()
 
 void ANPC_Archer::ArrowShot()
 {
+	if (Target != nullptr)
+	{
+		//Multicast_SetMuzzleRotation();
+		FVector ArrowScale;
+		// BulletScale.Set(0.1, 0.1, 0.1);
+		FTransform ArrowTransform;
+		FVector Dir = Target->GetActorLocation()-GetMesh()->GetSocketTransform("LeftHandSocket").GetLocation();
+		ArrowTransform.SetLocation(GetMesh()->GetSocketTransform("LeftHandSocket").GetLocation());
+		auto DirRot = UKismetMathLibrary::MakeRotFromX(Dir);
+		ArrowTransform.SetRotation(DirRot.Quaternion());
+		//ArrowTransform.SetScale3D(BulletScale);
+		GetWorld()->SpawnActor<AArrowMaster>(ArrowMasterClass, ArrowTransform);
 
+		//ABulletMaster* bullet = 
+		//if (bullet != nullptr)
+		//{
+		//	bullet->Shooter = Soldier;
+		//}
+		//else
+		//{
+		//	UE_LOG(LogTemp, Warning, TEXT("nullptr"));
+		//}
+		//Multicast_SetClipAmmo(ClipAmmo - AmmoCost);
+
+
+
+		//if (FireSound != NULL)//소리 다른애들한테도 해줘야됨
+		//{
+		//	UGameplayStatics::PlaySoundAtLocation(this, FireSound, GetActorLocation());
+		//}
+		//if (MuzzlesParticle)
+		//{
+		//	UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), MuzzlesParticle, SkeletalMeshComponent->GetSocketTransform(FName("Muzzle")));
+		//}
+	}
 }
 
 void ANPC_Archer::Attack()

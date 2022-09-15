@@ -4,6 +4,8 @@
 #include "BTTask_Attack.h"
 #include "../NPC_Master.h"
 #include "../NPCAIController.h"
+
+#include "BehaviorTree/BlackboardComponent.h"
 //#include "../GoblinAnimInstance.h"
 //#include "../../PuzzlePlatformsCharacter.h"
 UBTTask_Attack::UBTTask_Attack()
@@ -24,6 +26,7 @@ EBTNodeResult::Type UBTTask_Attack::ExecuteTask(UBehaviorTreeComponent& OwnerCom
 	Monster->Attack();
 	IsAttacking = true;
 	Monster->OnAttackEnd.AddLambda([this]()-> void {
+		UE_LOG(LogTemp, Warning, TEXT("FINISH"));
 		IsAttacking = false;
 		});
 	return EBTNodeResult::InProgress;
@@ -33,7 +36,9 @@ void UBTTask_Attack::TickTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemo
 {
 	Super::TickTask(OwnerComp, NodeMemory, DeltaSeconds);
 	if (!IsAttacking)
-	{
+	{//때리면 되돌림
+
+		OwnerComp.GetBlackboardComponent()->SetValueAsBool(ANPCAIController::IsHitKey, false);
 		FinishLatentTask(OwnerComp, EBTNodeResult::Succeeded);
 	}
 
