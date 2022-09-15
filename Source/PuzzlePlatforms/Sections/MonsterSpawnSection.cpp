@@ -89,6 +89,7 @@ void AMonsterSpawnSection::OnNPCSpawn()
 		{
 			OnNPCSpawn();
 			Toggle = true;
+
 		}
 		auto NPCController = Cast<ANPCAIController>(Monster->GetController());
 		ABCHECK(NPCController != nullptr);

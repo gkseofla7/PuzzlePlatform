@@ -78,10 +78,11 @@ void ANPC_Master::Attack()
 
 
 
-void ANPC_Master::EndAnimation(UAnimMontage* Montage, bool bInterrupted)
-{
-	OnAttackEnd.Broadcast();
-}
+//void ANPC_Master::EndAnimation(UAnimMontage* Montage, bool bInterrupted)
+//{
+//
+//
+//}
 
 
 float ANPC_Master::TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent,

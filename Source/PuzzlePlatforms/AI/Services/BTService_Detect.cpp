@@ -22,7 +22,7 @@ void UBTService_Detect::TickNode(UBehaviorTreeComponent& OwnerComp, uint8* NodeM
 	Super::TickNode(OwnerComp, NodeMemory, DeltaSeconds);
 	if (OwnerComp.GetBlackboardComponent()->GetValueAsBool(ANPCAIController::IsHitKey) == true)
 		return;
-	APawn* ControllingPawn = OwnerComp.GetAIOwner()->GetPawn();
+	APawn* ControllingPawn =OwnerComp.GetAIOwner()->GetPawn();
 	if (ControllingPawn == nullptr)
 		return;
 
@@ -89,16 +89,15 @@ void UBTService_Detect::TickNode(UBehaviorTreeComponent& OwnerComp, uint8* NodeM
 			//UE_LOG(LogTemp, Warning, TEXT("Go to the Before Player"));
 			return;
 		}
-		else
-		{
-			OwnerComp.GetBlackboardComponent()->ClearValue(ANPCAIController::TargetKey);
-		}
+		//else
+		//{
+		//	OwnerComp.GetBlackboardComponent()->ClearValue(ANPCAIController::TargetKey);
+		//}
 
 	}
 
 	DrawDebugSphere(World, Center, DetectRadius, 16, FColor::Red, false, 0.2f);
 
-	OwnerComp.GetBlackboardComponent()->ClearValue(ANPCAIController::TargetKey);
 
 	//UE_LOG(LogTemp, Warning, TEXT("Setting Nullptr"));
 	

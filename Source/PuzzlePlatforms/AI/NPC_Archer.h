@@ -23,7 +23,8 @@ public:
 	UFUNCTION(NetMulticast, Reliable, WithValidation)
 		void NetMulticast_SetTarget(class APuzzlePlatformsCharacter* NewTarget);
 	void ArrowShot();
-
+	UFUNCTION()
+		virtual void EndAnimation(UAnimMontage* Montage, bool bInterrupted);
 public:
 	UPROPERTY()
 		class UArcherAnimInstance* MyAnim;

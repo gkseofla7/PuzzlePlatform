@@ -40,7 +40,8 @@ void ANPC_Goblin::BeginPlay()
 	{
 
 		MyAnim->OnAttackHitCheck.AddUObject(this, &ANPC_Goblin::AttackCheck);
-		MyAnim->OnMontageEnded.AddDynamic(this, &ANPC_Master::EndAnimation);
+		//MyAnim->OnMontageEnded.AddDynamic(this, &ANPC_Goblin::EndAnimation);
+		MyAnim->OnEndTestDelegate.AddUObject(this, &ANPC_Goblin::EndTest);
 	}
 	if (MonsterStat != nullptr)
 	{
@@ -111,4 +112,19 @@ void ANPC_Goblin::NetMulticast_Attack_Implementation()
 bool ANPC_Goblin::NetMulticast_Attack_Validate()
 {
 	return true;
+}
+
+void ANPC_Goblin::EndAnimation(UAnimMontage* Montage, bool bInterrupted)
+{
+	//if (Montage == MyAnim->SwordAttackMontage)
+	//{
+	//	OnAttackEnd.Broadcast();
+	//}
+}
+
+void ANPC_Goblin::EndTest()
+{
+
+	OnAttackEnd.Broadcast();
+
 }

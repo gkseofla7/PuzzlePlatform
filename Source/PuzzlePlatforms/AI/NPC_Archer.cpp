@@ -39,7 +39,7 @@ void ANPC_Archer::BeginPlay()
 {
 	Super::BeginPlay();
 	MyAnim = Cast< UArcherAnimInstance>(GetMesh()->GetAnimInstance());
-	MyAnim->OnMontageEnded.AddDynamic(this, &ANPC_Master::EndAnimation);
+	MyAnim->OnMontageEnded.AddDynamic(this, &ANPC_Archer::EndAnimation);
 	MonsterStat->CustomInitializeComponent(EMonsterEnum::TE_Archer);
 	if (HasAuthority())
 	{
@@ -114,4 +114,12 @@ void ANPC_Archer::NetMulticast_SetTarget_Implementation(class APuzzlePlatformsCh
 bool ANPC_Archer::NetMulticast_SetTarget_Validate(class APuzzlePlatformsCharacter* NewTarget)
 {
 	return true;
+}
+
+void ANPC_Archer::EndAnimation(UAnimMontage* Montage, bool bInterrupted)
+{
+	if (Montage == MyAnim->ArrowAttackMontage)
+	{
+		OnAttackEnd.Broadcast();//이새끼가 계속 end때림.. 해도 왜.. Goblin까지 터짐? 아니 무슨 공용이여?
+	}
 }

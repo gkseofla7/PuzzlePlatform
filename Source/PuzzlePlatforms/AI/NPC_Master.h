@@ -31,8 +31,8 @@ public:
 	virtual void Attack();
 	//void AttackCheck();
 
-	UFUNCTION()
-		virtual void EndAnimation(UAnimMontage* Montage, bool bInterrupted);
+	//UFUNCTION()
+	//	virtual void EndAnimation(UAnimMontage* Montage, bool bInterrupted);
 
 	virtual float TakeDamage(float DamageAmount, struct FDamageEvent const& DamageEvent,
 		class AController* EventInstigator, AActor* DamageCauser) override;

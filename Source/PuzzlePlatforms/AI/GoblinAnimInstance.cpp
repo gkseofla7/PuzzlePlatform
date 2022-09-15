@@ -25,3 +25,10 @@ void UGoblinAnimInstance::AnimNotify_AttackHitCheck()
 {
 	OnAttackHitCheck.Broadcast();
 }
+
+
+void UGoblinAnimInstance::AnimNotify_EndTest()
+{
+	UE_LOG(LogTemp, Warning, TEXT("EndTEST"));
+	OnEndTestDelegate.Broadcast();
+}

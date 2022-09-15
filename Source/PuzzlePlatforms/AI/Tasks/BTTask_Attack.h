@@ -21,10 +21,12 @@ public:
 	virtual EBTNodeResult::Type ExecuteTask(UBehaviorTreeComponent& OwnerComp,
 		uint8* NodeMomory) override;
 
+
+
 protected:
 	virtual void TickTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory, float DeltaSeconds) override;
 
 
 public:
-	bool IsAttacking = false;
+	//bool IsAttacking = false;
 };

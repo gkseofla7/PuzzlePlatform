@@ -22,7 +22,10 @@ public:
 	void AttackCheck();
 	UFUNCTION(NetMulticast, Reliable, WithValidation)
 		void NetMulticast_Attack();
+	UFUNCTION()
+		virtual void EndAnimation(UAnimMontage* Montage, bool bInterrupted);
 
+	void EndTest();
 
 public:
 	UPROPERTY()

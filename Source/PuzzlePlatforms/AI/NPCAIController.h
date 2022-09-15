@@ -24,6 +24,7 @@ public:
 	void SetTargetKey(class APuzzlePlatformsCharacter* PlayerTarget);
 	void SetHomePosKey(FVector NewPos);
 	void SetIsHitKey(bool NewIsHit);
+	void SetIsAttackingKey(bool NewIsAttackingKey);
 	//UFUNCTION(NetMulticast, Reliable, WithValidation)
 	//	void NetMulticast_SetHomePosKey(FVector NewPos);
 
@@ -46,6 +47,7 @@ public:
 	static const FName TargetKey;
 	static const FName AttackRangeKey;
 	static const FName IsHitKey;
+	static const FName IsAttackingKey;
 	int i = 0;
 
 };
