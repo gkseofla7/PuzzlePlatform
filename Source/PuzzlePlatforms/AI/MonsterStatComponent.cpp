@@ -20,7 +20,7 @@ void UMonsterStatComponent::BeginPlay()
 {
 	Super::BeginPlay();
 	SetIsReplicated(true);
-
+	SetNewLevel(Level);//beginplay의 경우 새로 생길때만..
 }
 
 
@@ -41,7 +41,7 @@ void UMonsterStatComponent::InitializeComponent() //Post Initialize 전에 일어남
 void UMonsterStatComponent::CustomInitializeComponent(EMonsterEnum NewMonsterEnum)
 {
 	MonsterEnum = NewMonsterEnum;
-	SetNewLevel(Level);
+
 }
 
 void UMonsterStatComponent::SetNewLevel(int32 NewLevel)
@@ -57,6 +57,8 @@ void UMonsterStatComponent::SetNewLevel(int32 NewLevel)
 
 	if (nullptr != CurrentStatData)
 	{
+		CurrentHP = CurrentStatData->MaxHP;//처음에만 해주기위해..ㅋㅋ
+		OnHPChanged.Broadcast();
 		Level = NewLevel;
 		SetHP(CurrentStatData->MaxHP);
 		AttackDamage = CurrentStatData->Attack;
@@ -79,7 +81,7 @@ void UMonsterStatComponent::SetHP(float NewHP)
 
 float UMonsterStatComponent::GetHPRatio()
 {
-	ABCHECK(nullptr != CurrentStatData, 0.0f);
+	ABCHECK(nullptr != CurrentStatData, 0.f);
 
 	return (CurrentStatData->MaxHP < KINDA_SMALL_NUMBER) ? 0.0f : (CurrentHP / CurrentStatData->MaxHP);
 }

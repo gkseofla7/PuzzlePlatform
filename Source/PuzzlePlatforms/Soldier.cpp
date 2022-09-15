@@ -267,6 +267,8 @@ void ASoldier::SetMuzzleRotation()
 void ASoldier::Everyone_SetMuzzleRotation_Implementation(FRotator NewRotator)
 {
 
+	if (EquippedItem == nullptr)
+		return;
 	EquippedItem->SetMuzzleRotation(NewRotator);
 	
 }
@@ -282,7 +284,8 @@ bool ASoldier::Server_SetMuzzleRotation_Validate(FRotator NewRotator)
 
 void ASoldier::Server_SetMuzzleRotation_Implementation(FRotator NewRotator)
 {
-
+	if (EquippedItem == nullptr)
+		return;
 	EquippedItem->SetMuzzleRotation(NewRotator);
 
 }

@@ -42,8 +42,10 @@ public:
 		void Server_SetHP(float NewHp);
 	UFUNCTION(NetMulticast, Reliable, WithValidation)
 		void NetMulticast_SetHP(float NewHp);
-
-
+	//UFUNCTION(Server, Reliable, WithValidation)
+	//	void Server_SetStatData(FMyCharacterrData* NewStatData);
+	//UFUNCTION(NetMulticast, Reliable, WithValidation)
+	//	void NetMulticast_SetStatData(FMyCharacterrData* NewStatData);
 
 public:
 	//ReplicatedUsing = OnRep_HP,

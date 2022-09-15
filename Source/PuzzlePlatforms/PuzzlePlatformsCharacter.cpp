@@ -150,6 +150,7 @@ void APuzzlePlatformsCharacter::PostInitializeComponents()
 void APuzzlePlatformsCharacter::BeginPlay()
 {
 	Super::BeginPlay();
+	
 	HeadsUpDisplayRef = Cast< UPuzzlePlatformsGameInstance>(UGameplayStatics::GetGameInstance(GetWorld()))->HeadsUpDisplay;
 	HeadsUpDisplayRef->ActionBar_UI->PlayerRef = this;
 	HeadsUpDisplayRef->ActionBar_UI->BindCharacterStat(CharacterStat);

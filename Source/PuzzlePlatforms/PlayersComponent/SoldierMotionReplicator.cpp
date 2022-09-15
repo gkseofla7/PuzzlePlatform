@@ -79,8 +79,12 @@ bool USoldierMotionReplicator::Server_SendRide_Validate(AActor* Car, APawn* Ride
 
 void USoldierMotionReplicator::Server_SendAttack_Implementation()
 {
-
 	auto MyOwner = Cast<ASoldier>(GetOwner());
+	if (MyOwner->EquippedItem == nullptr)
+	{
+		return;
+	}
+
 	MyOwner->EquippedItem->StartFire();
 
 	IsFiring = true;
@@ -99,14 +103,6 @@ void USoldierMotionReplicator::Server_SendAttackStop_Implementation()
 
 void USoldierMotionReplicator::Server_SendGetItem_Implementation(class AObject_Master* NewWeapon)
 {
-	//auto MyOwner = Cast<ASoldier>(GetOwner());
-	//PickupItem = NewWeapon;
-	//if (PickupItem == nullptr)
-	//	return;
-	//PickupItem->SetOwner(MyOwner);
-	//MyOwner->EquipItem(PickupItem, MyOwner->IsItemEquipped);
-	//MyOwner->CanAim = true;//나중에 애니메이션 노티파이로변환
-
 	Multicast_SendGetItem(NewWeapon);
 
 }

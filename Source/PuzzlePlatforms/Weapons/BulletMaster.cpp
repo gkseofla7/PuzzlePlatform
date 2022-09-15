@@ -65,13 +65,14 @@ void ABulletMaster::OnHit(UPrimitiveComponent* HitComponent, AActor* OtherActor,
 void ABulletMaster::OnOverlapBegin(class UPrimitiveComponent* OverlappedComp, class AActor* OtherActor, class UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
 
-
+	if (OtherActor == Shooter)
+		return;
 	if (OtherActor && (OtherActor != this) && OtherComp)
 	{
 		if (HasAuthority())
 		{
 
-			auto MyCharacter = Cast<APuzzlePlatformsCharacter>(OtherActor);
+			auto MyCharacter = Cast<ACharacter>(OtherActor);
 			if (MyCharacter != nullptr)
 			{
 				FDamageEvent DamageEvent;

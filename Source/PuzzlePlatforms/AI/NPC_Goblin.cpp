@@ -38,6 +38,8 @@ void ANPC_Goblin::BeginPlay()
 	MyAnim->OnAttackHitCheck.AddUObject(this, &ANPC_Goblin::AttackCheck);
 	MyAnim->OnMontageEnded.AddDynamic(this, &ANPC_Master::EndAnimation);
 	MonsterStat->CustomInitializeComponent(EMonsterEnum::TE_Goblin);
+
+
 	if (HasAuthority())
 	{
 		auto AIController = Cast< ANPCAIController>(GetController());
