@@ -260,13 +260,17 @@ void ASoldier::SetMuzzleRotation()
 
 	FRotator temp = UKismetMathLibrary::FindLookAtRotation(Start, EndTrace);
 
+
 	Server_SetMuzzleRotation(temp);
-	Everyone_SetMuzzleRotation(temp);
+
 }
 
 void ASoldier::Everyone_SetMuzzleRotation_Implementation(FRotator NewRotator)
 {
-
+	if (HasAuthority())
+	{
+		UE_LOG(LogTemp, Warning, TEXT("***********************"));
+	}
 	if (EquippedItem == nullptr)
 		return;
 	EquippedItem->SetMuzzleRotation(NewRotator);
@@ -284,9 +288,10 @@ bool ASoldier::Server_SetMuzzleRotation_Validate(FRotator NewRotator)
 
 void ASoldier::Server_SetMuzzleRotation_Implementation(FRotator NewRotator)
 {
-	if (EquippedItem == nullptr)
-		return;
-	EquippedItem->SetMuzzleRotation(NewRotator);
+	Everyone_SetMuzzleRotation(NewRotator);
+	//if (EquippedItem == nullptr)
+	//	return;
+	//EquippedItem->SetMuzzleRotation(NewRotator);
 
 }
 
@@ -367,9 +372,8 @@ void ASoldier::UnAimMissile()
 
 void ASoldier::Attack()
 {
-	if (EquippedItem == nullptr)
+	if (EquippedItem == nullptr || CanAim == false)
 	{
-		UE_LOG(LogTemp, Warning, TEXT("EquippedItem null"));
 		return;
 	}
 	SetMuzzleRotation();
@@ -464,6 +468,14 @@ void ASoldier::EquipItem(AObject_Master* Item, bool EquipAndHold)
 			IsItemEquipped = true;//전체
 			bUseControllerRotationYaw= true;
 			//자연스럽게 원하는 방향으로 회전
+			FTimerHandle WaitHandle;
+			EquippedItem->Reload();
+			float WaitTime = 1.73; //시간을 설정하고
+			GetWorld()->GetTimerManager().SetTimer(WaitHandle, FTimerDelegate::CreateLambda([&]()
+				{
+					CanAim = true;
+				}), WaitTime, false); //반복도 여기서 추가 변수를 선언해 설정가능
+			CanAim = true;//나중에 애니메이션 노티파이로변환 1.73
 			GetCharacterMovement()->bOrientRotationToMovement = false;
 			// 자동적으로 캐릭터의 이동방향을 움직이는 방향에 맞춰주며 회전보간을 해줌
 			
@@ -518,8 +530,8 @@ void ASoldier::InteractPressed()
 		Cast<USoldierMotionReplicator>(DaerimMotionReplicator)->Server_SendGetItem(PickupItem);
 		//SetFPSHudWidget();
 	}
-	else
-		Cast<USoldierMotionReplicator>(DaerimMotionReplicator)->Server_SendGetItem(PickupItem);
+	//else
+	//	Cast<USoldierMotionReplicator>(DaerimMotionReplicator)->Server_SendGetItem(PickupItem);
 
 }
 

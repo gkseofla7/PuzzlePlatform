@@ -56,7 +56,7 @@ private:
 public:
 	//UPROPERTY(ReplicatedUsing = OnRep_Attack)
 	bool IsFiring = false;
-	UPROPERTY(replicated, BlueprintReadWrite, EditAnywhere)
-		AObject_Master* PickupItem;
+	//UPROPERTY(replicated, BlueprintReadWrite, EditAnywhere)
+	//	AObject_Master* PickupItem;
 
 };

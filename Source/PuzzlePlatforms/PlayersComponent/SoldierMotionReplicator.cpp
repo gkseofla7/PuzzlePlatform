@@ -22,13 +22,13 @@ USoldierMotionReplicator::USoldierMotionReplicator()
 	// ...
 }
 
-void USoldierMotionReplicator::GetLifetimeReplicatedProps(TArray< FLifetimeProperty >& OutLifetimeProps) const
-{
-	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
-	DOREPLIFETIME(USoldierMotionReplicator, PickupItem);
-	//DOREPLIFETIME(USoldierMotionReplicator, IsFiring);
-
-}
+//void USoldierMotionReplicator::GetLifetimeReplicatedProps(TArray< FLifetimeProperty >& OutLifetimeProps) const
+//{
+//	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
+//	DOREPLIFETIME(USoldierMotionReplicator, PickupItem);
+//	//DOREPLIFETIME(USoldierMotionReplicator, IsFiring);
+//
+//}
 // Called when the game starts
 void USoldierMotionReplicator::BeginPlay()
 {
@@ -117,14 +117,13 @@ void USoldierMotionReplicator::Multicast_SendGetItem_Implementation(class AObjec
 
 	//if (MyOwner->HasAuthority())
 	//	return;
-	PickupItem = NewWeapon;
+	//PickupItem = NewWeapon;
 	if (MyOwner->DoPickupLinetrace)
 	{
-		if (PickupItem != nullptr)
+		if (NewWeapon != nullptr)
 		{
-			PickupItem->SetOwner(MyOwner);
-			MyOwner->EquipItem(PickupItem, MyOwner->IsItemEquipped);
-			MyOwner->CanAim = true;//나중에 애니메이션 노티파이로변환
+			NewWeapon->SetOwner(MyOwner);
+			MyOwner->EquipItem(NewWeapon, MyOwner->IsItemEquipped);
 
 		}
 	}

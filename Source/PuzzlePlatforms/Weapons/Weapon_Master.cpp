@@ -115,14 +115,6 @@ void AWeapon_Master::Shot()
     auto Soldier = Cast<ASoldier>(Player);
     UE_LOG(LogTemp, Warning, TEXT("Shoot!!"));
     AmmoCheck();//얘도 결국..
-    if (HasAuthority())
-    {
-        UE_LOG(LogTemp, Warning, TEXT("Server"));
-    }
-    else
-    {
-        UE_LOG(LogTemp, Warning, TEXT("Client"));
-    }
     //if (Soldier->IsLocallyControlled())
     //{//절대 나올 수가 없네,,ㅋㅋ
     //    UE_LOG(LogTemp, Warning, TEXT("IsLocclayControlled"));
@@ -159,13 +151,6 @@ void AWeapon_Master::Shot()
         {
             UGameplayStatics::PlaySoundAtLocation(this, FireSound, GetActorLocation());
         }
-        //if (GetWorld()->LineTraceSingleByChannel(Hit, StartTrace, EndTrace, ECC_Visibility, QueryParams))
-        //{
-        //    if (ImpactParticles)
-        //    {
-        //        UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), ImpactParticles, FTransform(Hit.ImpactNormal.Rotation(), Hit.ImpactPoint));
-        //    }
-        //}
         if (MuzzlesParticle)
         {
             UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), MuzzlesParticle, SkeletalMeshComponent->GetSocketTransform(FName("Muzzle")));
