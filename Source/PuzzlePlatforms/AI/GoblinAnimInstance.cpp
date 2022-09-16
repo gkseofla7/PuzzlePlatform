@@ -14,6 +14,14 @@ UGoblinAnimInstance::UGoblinAnimInstance()
 	{
 		SwordAttackMontage = SWORD_ATTACK_MONTAGE.Object;
 	}
+
+	static ConstructorHelpers::FObjectFinder<UAnimMontage> DEATH_MONTAGE(TEXT(
+		"/Game/Animation/Montage/GoblinDeath_Montage"
+	));
+	if (DEATH_MONTAGE.Succeeded())
+	{
+		DeathMontage = DEATH_MONTAGE.Object;
+	}
 }
 
 void UGoblinAnimInstance::PlaySwordAttackMontage()
@@ -21,14 +29,15 @@ void UGoblinAnimInstance::PlaySwordAttackMontage()
 	Montage_Play(SwordAttackMontage, 1.0);
 }
 
+void UGoblinAnimInstance::PlayDeathMontage()
+{
+	Montage_Play(DeathMontage, 1.0);
+}
+
+
 void UGoblinAnimInstance::AnimNotify_AttackHitCheck()
 {
 	OnAttackHitCheck.Broadcast();
 }
 
 
-void UGoblinAnimInstance::AnimNotify_EndTest()
-{
-	UE_LOG(LogTemp, Warning, TEXT("EndTEST"));
-	OnEndTestDelegate.Broadcast();
-}

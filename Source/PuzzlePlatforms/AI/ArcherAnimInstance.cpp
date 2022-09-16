@@ -13,6 +13,14 @@ UArcherAnimInstance::UArcherAnimInstance()
 	{
 		ArrowAttackMontage = ArrowAttackMontageAsset.Object;
 	}
+
+	static ConstructorHelpers::FObjectFinder<UAnimMontage> DEATH_MONTAGE(TEXT(
+		"/Game/Animation/Montage/ArcherDeath_Montage"
+	));
+	if (DEATH_MONTAGE.Succeeded())
+	{
+		DeathMontage = DEATH_MONTAGE.Object;
+	}
 }
 
 void UArcherAnimInstance::PlayArrowAttackMontage()
@@ -28,4 +36,10 @@ void UArcherAnimInstance::AnimNotify_ArrowShot()
 	{
 		OnArrowShotDelegate.Broadcast();
 	}
+}
+
+
+void UArcherAnimInstance::PlayDeathMontage()
+{
+	Montage_Play(DeathMontage, 1.0);
 }

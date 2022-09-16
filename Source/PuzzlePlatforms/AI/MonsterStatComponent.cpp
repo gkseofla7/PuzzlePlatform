@@ -3,6 +3,7 @@
 
 #include "MonsterStatComponent.h"
 #include "../PuzzlePlatformsGameInstance.h"
+#include "NPC_Master.h"
 
 
 // Sets default values for this component's properties
@@ -102,6 +103,7 @@ void UMonsterStatComponent::NetMulticast_SetHP_Implementation(float NewHp)
 	if (CurrentHP < KINDA_SMALL_NUMBER)
 	{
 		CurrentHP = 0.0f;
+		Cast<ANPC_Master>(GetOwner())->Die();
 		//OnHPIsZero.Broadcast();
 	}
 }

@@ -16,6 +16,7 @@ class PUZZLEPLATFORMS_API UArcherAnimInstance : public UAnimInstance
 public:
 	UArcherAnimInstance();
 	void PlayArrowAttackMontage();
+	void PlayDeathMontage();
 	UFUNCTION()
 		void AnimNotify_ArrowShot();
 public:
@@ -24,4 +25,7 @@ public:
 	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly, Category = Attack)
 		UAnimMontage* ArrowAttackMontage;
 	FOnArrowShotDelegate OnArrowShotDelegate;
+
+	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly)
+		UAnimMontage* DeathMontage;
 };

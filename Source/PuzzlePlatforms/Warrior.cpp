@@ -366,3 +366,18 @@ void AWarrior::EndAnimation(UAnimMontage* Montage, bool bInterrupted)
 		Cast<UCharacterMovementComponent>(GetMovementComponent())->GravityScale = 1;
 	}
 }
+void AWarrior::Die()
+{
+	auto Anim = Cast<UPlayerAnimInstance>(MyAnim);
+	if (Anim != nullptr)
+	{
+		Anim->PlayDeathMontage();
+		SetActorEnableCollision(false);
+		if (HasAuthority() == true)
+		{
+			FTimerHandle TimerHandler;
+			GetWorld()->GetTimerManager().SetTimer(TimerHandler, this, &APuzzlePlatformsCharacter::DestroyPlayer, 10, false);
+
+		}
+	}
+}

@@ -19,8 +19,8 @@ UBTService_StopMovement::UBTService_StopMovement()
 void UBTService_StopMovement::TickNode(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory, float DeltaSeconds)
 {
 	Super::TickNode(OwnerComp, NodeMemory, DeltaSeconds);
-	if (OwnerComp.GetBlackboardComponent()->GetValueAsBool(ANPCAIController::IsHitKey) == true)
-		return;
+	//if (OwnerComp.GetBlackboardComponent()->GetValueAsBool(ANPCAIController::IsHitKey) == true)
+	//	return;
 	APawn* ControllingPawn = OwnerComp.GetAIOwner()->GetPawn();
 	bool bResult;
 	auto Target = Cast<APuzzlePlatformsCharacter>(OwnerComp.GetBlackboardComponent()->GetValueAsObject(ANPCAIController::TargetKey));

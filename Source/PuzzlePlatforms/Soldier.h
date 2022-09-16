@@ -49,6 +49,7 @@ public:
 		void ClearPointsArray();
 	void SteamPack();
 	void UnSteamPack();
+	void Die() override;
 protected:
 	virtual void PostInitializeComponents() override;
 	virtual void BeginPlay() override;

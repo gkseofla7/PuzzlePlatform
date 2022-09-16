@@ -11,6 +11,7 @@
 
 #include "BehaviorTree/BlackboardComponent.h"
 #include "Kismet/KismetMathLibrary.h"
+#include "BrainComponent.h"
 #include "Net/UnrealNetwork.h"
 ANPC_Archer::ANPC_Archer()
 	:Super()
@@ -64,28 +65,8 @@ void ANPC_Archer::ArrowShot()
 		ArrowTransform.SetRotation(DirRot.Quaternion());
 		//ArrowTransform.SetScale3D(BulletScale);
 		GetWorld()->SpawnActor<AArrowMaster>(ArrowMasterClass, ArrowTransform);
-
-		//ABulletMaster* bullet = 
-		//if (bullet != nullptr)
-		//{
-		//	bullet->Shooter = Soldier;
-		//}
-		//else
-		//{
-		//	UE_LOG(LogTemp, Warning, TEXT("nullptr"));
-		//}
-		//Multicast_SetClipAmmo(ClipAmmo - AmmoCost);
-
-
-
-		//if (FireSound != NULL)//소리 다른애들한테도 해줘야됨
-		//{
-		//	UGameplayStatics::PlaySoundAtLocation(this, FireSound, GetActorLocation());
-		//}
-		//if (MuzzlesParticle)
-		//{
-		//	UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), MuzzlesParticle, SkeletalMeshComponent->GetSocketTransform(FName("Muzzle")));
-		//}
+		UE_LOG(LogTemp, Warning, TEXT("HEEEEEEEEEEEEEEEEEE"));
+		
 	}
 }
 
@@ -121,5 +102,18 @@ void ANPC_Archer::EndAnimation(UAnimMontage* Montage, bool bInterrupted)
 	if (Montage == MyAnim->ArrowAttackMontage)
 	{
 		OnAttackEnd.Broadcast();//이새끼가 계속 end때림.. 해도 왜.. Goblin까지 터짐? 아니 무슨 공용이여?
+	}
+}
+
+void ANPC_Archer::Die()
+{
+	MyAnim->PlayDeathMontage();
+	//SetActorEnableCollision(false);
+	if (HasAuthority() == true)
+	{
+		Cast<ANPCAIController>(GetController())->BrainComponent->StopLogic("Die");
+		FTimerHandle TimerHandler;
+		GetWorld()->GetTimerManager().SetTimer(TimerHandler, this, &ANPC_Master::DestroyMonster, 10, false);
+
 	}
 }

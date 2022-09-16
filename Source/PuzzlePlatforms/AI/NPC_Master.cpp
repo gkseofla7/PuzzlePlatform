@@ -7,6 +7,7 @@
 #include "MonsterStatComponent.h"
 #include "../HPBarWidget.h"
 #include "../PuzzlePlatformsCharacter.h"
+#include "NPC_Archer.h"
 
 #include "DrawDebugHelpers.h"
 #include "Components/WidgetComponent.h"
@@ -99,6 +100,11 @@ float ANPC_Master::TakeDamage(float DamageAmount, FDamageEvent const& DamageEven
 		auto Player = Cast< APuzzlePlatformsCharacter>(DamageCauser);
 		Cast<ANPCAIController>(GetController())->SetTargetKey(Player);
 		Cast<ANPCAIController>(GetController())->SetIsHitKey(true);
+		auto Archer = Cast<ANPC_Archer>(this);
+		if (Archer != nullptr)
+		{
+			Archer->NetMulticast_SetTarget(Player);
+		}
 	}
 
 	MonsterStat->IncreaseHP(-FinalDamage);
@@ -106,3 +112,12 @@ float ANPC_Master::TakeDamage(float DamageAmount, FDamageEvent const& DamageEven
 }
 
 
+void ANPC_Master::Die()
+{
+
+}
+
+void ANPC_Master::DestroyMonster()
+{
+	Destroy();
+}

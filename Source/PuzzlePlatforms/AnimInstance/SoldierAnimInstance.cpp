@@ -8,6 +8,14 @@
 USoldierAnimInstance::USoldierAnimInstance()
 {
 	CurrenPawnSpeed = 0.0f;
+
+	static ConstructorHelpers::FObjectFinder<UAnimMontage> DEATH_MONTAGE(TEXT(
+		"/Game/Animation/Montage/SoldierDeath_Montage"
+	));
+	if (DEATH_MONTAGE.Succeeded())
+	{
+		DeathMontage = DEATH_MONTAGE.Object;
+	}
 }
 
 void USoldierAnimInstance::NativeUpdateAnimation(float DeltaSeconds)
@@ -54,4 +62,9 @@ void USoldierAnimInstance::NativeUpdateAnimation(float DeltaSeconds)
 		}
 		IsReloading = Player->IsReloading;
 	}
+}
+
+void USoldierAnimInstance::PlayDeathMontage()
+{
+	Montage_Play(DeathMontage, 1.0);
 }

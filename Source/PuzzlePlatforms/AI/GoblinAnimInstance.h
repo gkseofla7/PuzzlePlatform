@@ -10,7 +10,7 @@
  * 
  */
 DECLARE_MULTICAST_DELEGATE(FOnAttackHitCheckDelegate);
-DECLARE_MULTICAST_DELEGATE(FOnEndTestDelegate);
+
 UCLASS()
 class PUZZLEPLATFORMS_API UGoblinAnimInstance : public UAnimInstance
 {
@@ -18,15 +18,17 @@ class PUZZLEPLATFORMS_API UGoblinAnimInstance : public UAnimInstance
 public:
 	UGoblinAnimInstance();
 	void PlaySwordAttackMontage();
+	void PlayDeathMontage();
 	UFUNCTION()
 		void AnimNotify_AttackHitCheck();
-	UFUNCTION()
-		void AnimNotify_EndTest();
+
 public:
 	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly, Category = Attack)
 		UAnimMontage* SwordAttackMontage;
+	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly)
+		UAnimMontage* DeathMontage;
 	FOnAttackHitCheckDelegate OnAttackHitCheck;
-	FOnEndTestDelegate OnEndTestDelegate;
+
 	UPROPERTY(EditAnywhere,BlueprintReadWrite)
 	float Speed;
 };

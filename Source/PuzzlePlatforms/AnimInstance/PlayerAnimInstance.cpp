@@ -60,6 +60,14 @@ UPlayerAnimInstance::UPlayerAnimInstance()
 		DashMontage = DASHMONTAGE.Object;
 	}
 
+	static ConstructorHelpers::FObjectFinder<UAnimMontage> DEATH_MONTAGE(TEXT(
+		"/Game/Animation/Montage/WarriorDeath_Montage"
+	));
+	if (DEATH_MONTAGE.Succeeded())
+	{
+		DeathMontage = DEATH_MONTAGE.Object;
+	}
+
 #pragma endregion MontageAssetsSetting
 	IsAttacking = false;
 }
@@ -176,3 +184,9 @@ FName UPlayerAnimInstance::GetAttackMontageSectionName(int32 Section)
 	return FName(*FString::Printf(TEXT("Attack%d"), Section));
 }
 
+
+
+void UPlayerAnimInstance::PlayDeathMontage()
+{
+	Montage_Play(DeathMontage, 1.0);
+}

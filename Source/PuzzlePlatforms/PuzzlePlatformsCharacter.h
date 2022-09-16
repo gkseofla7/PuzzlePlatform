@@ -42,6 +42,7 @@ public:
 	void SkillReleased();
 	void SetIsAttacking(bool NewIsAttacking);
 	void SetUsingSkill(bool NewUsingSkill);
+	void DestroyPlayer();
 
 public:
 	virtual void PostInitializeComponents() override;
@@ -56,6 +57,7 @@ public:
 	virtual void Attack();
 	virtual void AddControllerPitchInput(float Val);
 	virtual void AddControllerYawInput(float Val);
+	virtual void Die();
 protected:
 	// APawn interface
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;

@@ -4,7 +4,7 @@
 #include "MyCharacterStatComponent.h"
 #include "../PuzzlePlatformsGameInstance.h"
 #include "../DataTable/MyPlayerData.h"
-
+#include "../PuzzlePlatformsCharacter.h"
 #include "Net/UnrealNetwork.h"
 
 // Sets default values for this component's properties
@@ -155,6 +155,7 @@ void UMyCharacterStatComponent::NetMulticast_SetHP_Implementation(float NewHp)
 	if (CurrentHP < KINDA_SMALL_NUMBER)
 	{
 		CurrentHP = 0.0f;
+		Cast<APuzzlePlatformsCharacter>(GetOwner())->Die();
 		//OnHPIsZero.Broadcast();
 	}
 }

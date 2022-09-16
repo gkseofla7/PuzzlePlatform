@@ -73,7 +73,9 @@ void AMonsterSpawnSection::OnNPCSpawn()
 			OnNPCSpawn();
 			Toggle = true;
 		}
-		auto NPCController = Cast<ANPCAIController>(Monster->GetController());
+		auto Controller = Monster->GetController();
+		ABCHECK(Controller != nullptr)
+		auto NPCController = Cast<ANPCAIController>(Controller);
 		ABCHECK(NPCController != nullptr);
 		NPCController->SetHomePosKey(GetActorLocation());
 		//GetWorld()->SpawnActor <ANPC_Master>(GetActorLocation() + FVector::UpVector * 90,r);
@@ -91,7 +93,9 @@ void AMonsterSpawnSection::OnNPCSpawn()
 			Toggle = true;
 
 		}
-		auto NPCController = Cast<ANPCAIController>(Monster->GetController());
+		auto Controller = Monster->GetController();
+		ABCHECK(Controller != nullptr)
+		auto NPCController = Cast<ANPCAIController>(Controller);
 		ABCHECK(NPCController != nullptr);
 		NPCController->SetHomePosKey(GetActorLocation());
 	}

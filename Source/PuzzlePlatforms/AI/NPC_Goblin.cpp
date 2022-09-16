@@ -8,6 +8,7 @@
 #include "NPCAIController.h"
 
 #include "DrawDebugHelpers.h"
+#include "BrainComponent.h"
 #include "BehaviorTree/BlackboardData.h"
 #include "BehaviorTree/BlackboardComponent.h"
 #include "Net/UnrealNetwork.h"
@@ -40,8 +41,8 @@ void ANPC_Goblin::BeginPlay()
 	{
 
 		MyAnim->OnAttackHitCheck.AddUObject(this, &ANPC_Goblin::AttackCheck);
-		//MyAnim->OnMontageEnded.AddDynamic(this, &ANPC_Goblin::EndAnimation);
-		MyAnim->OnEndTestDelegate.AddUObject(this, &ANPC_Goblin::EndTest);
+		MyAnim->OnMontageEnded.AddDynamic(this, &ANPC_Goblin::EndAnimation);
+
 	}
 	if (MonsterStat != nullptr)
 	{
@@ -116,15 +117,23 @@ bool ANPC_Goblin::NetMulticast_Attack_Validate()
 
 void ANPC_Goblin::EndAnimation(UAnimMontage* Montage, bool bInterrupted)
 {
-	//if (Montage == MyAnim->SwordAttackMontage)
-	//{
-	//	OnAttackEnd.Broadcast();
-	//}
+	if (Montage == MyAnim->SwordAttackMontage)
+	{
+		OnAttackEnd.Broadcast();
+	}
+
 }
 
-void ANPC_Goblin::EndTest()
+
+void ANPC_Goblin::Die()
 {
+	MyAnim->PlayDeathMontage();
+	//SetActorEnableCollision(false);
+	if (HasAuthority()==true)
+	{
+		Cast<ANPCAIController>(GetController())->BrainComponent->StopLogic("Die");
+		FTimerHandle TimerHandler;
+		GetWorld()->GetTimerManager().SetTimer(TimerHandler, this, &ANPC_Master::DestroyMonster, 10, false);
 
-	OnAttackEnd.Broadcast();
-
+	}
 }

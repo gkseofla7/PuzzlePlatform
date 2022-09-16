@@ -25,6 +25,7 @@ public:
 	void ArrowShot();
 	UFUNCTION()
 		virtual void EndAnimation(UAnimMontage* Montage, bool bInterrupted);
+	virtual void Die() override;
 public:
 	UPROPERTY()
 		class UArcherAnimInstance* MyAnim;

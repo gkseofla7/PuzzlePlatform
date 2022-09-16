@@ -40,11 +40,13 @@ protected:
 	//void ClimbTheWall();
 	void Dash();
 	void Climb();
+
 private:
 	void AttackCheck();
 
 public:
 	void PlayHangToCrouchMontage();
+	void Die() override;
 
 private:	
 	//UPROPERTY()

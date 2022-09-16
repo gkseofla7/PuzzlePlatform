@@ -566,3 +566,19 @@ void ASoldier::WearItem()
 	else
 		PickupItem = nullptr;
 }
+
+void ASoldier::Die()
+{
+	auto Anim = Cast<USoldierAnimInstance>(MyAnim);
+	if (Anim != nullptr)
+	{
+		Anim->PlayDeathMontage();
+		SetActorEnableCollision(false);
+		if (HasAuthority() == true)
+		{
+			FTimerHandle TimerHandler;
+			GetWorld()->GetTimerManager().SetTimer(TimerHandler, this, &APuzzlePlatformsCharacter::DestroyPlayer, 10, false);
+
+		}
+	}
+}

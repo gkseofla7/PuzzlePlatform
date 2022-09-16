@@ -19,7 +19,7 @@ public:
 	USoldierAnimInstance();
 	virtual void NativeUpdateAnimation(float DeltaSeconds) override;//이건 Tick마다 호출하는 함수
 
-
+	void PlayDeathMontage();
 
 private:
 
@@ -41,6 +41,10 @@ private:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Pawn, Meta = (AllowPrivateAccess = true))
 		EGunType WeaponType;
 	class ASoldier* Player;
+public:
+
+	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly)
+		UAnimMontage* DeathMontage;
 
 public:
 

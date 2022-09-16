@@ -427,6 +427,16 @@ void APuzzlePlatformsCharacter::SetUsingSkill(bool NewUsingSkill)
 }
 
 
+void APuzzlePlatformsCharacter::Die()
+{
+
+}
+
+void APuzzlePlatformsCharacter::DestroyPlayer()
+{
+	Destroy();
+}
+
 void APuzzlePlatformsCharacter::GetInTheCar()
 {
 	ABCHECK(DaerimMotionReplicator != nullptr)
@@ -469,6 +479,8 @@ void APuzzlePlatformsCharacter::GetInTheCar()
 		}
 	}
 }
+
+
 
 //void APuzzlePlatformsCharacter::SeeMouseCursur()
 //{

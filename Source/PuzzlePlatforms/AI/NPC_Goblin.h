@@ -25,8 +25,7 @@ public:
 	UFUNCTION()
 		virtual void EndAnimation(UAnimMontage* Montage, bool bInterrupted);
 
-	void EndTest();
-
+	virtual void Die() override;
 public:
 	UPROPERTY()
 		class UGoblinAnimInstance* MyAnim;

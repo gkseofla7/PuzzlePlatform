@@ -52,6 +52,8 @@ public:
 	FName GetAttackMontageSectionName(int32 Section);
 	UFUNCTION()
 		void AnimNotify_AttackHitCheck();
+
+	void PlayDeathMontage();
 	
 public:
 
@@ -82,6 +84,8 @@ public:
 	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly, Category = Attack, Meta = (AllowPrivateAccess = true))
 		UAnimMontage* DashMontage;
 
+	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly)
+		UAnimMontage* DeathMontage;
 public:
 	FOnNextAttackCheckDelegate OnNextAttackCheck;
 	FOnAttackHitCheckDelegate OnAttackHitCheck;

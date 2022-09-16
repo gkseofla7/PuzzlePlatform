@@ -89,10 +89,10 @@ void UBTService_Detect::TickNode(UBehaviorTreeComponent& OwnerComp, uint8* NodeM
 			//UE_LOG(LogTemp, Warning, TEXT("Go to the Before Player"));
 			return;
 		}
-		//else
-		//{
-		//	OwnerComp.GetBlackboardComponent()->ClearValue(ANPCAIController::TargetKey);
-		//}
+		else
+		{
+			OwnerComp.GetBlackboardComponent()->ClearValue(ANPCAIController::TargetKey);
+		}
 
 	}
 
