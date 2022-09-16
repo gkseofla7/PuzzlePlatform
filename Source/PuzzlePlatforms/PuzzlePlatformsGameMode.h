@@ -16,15 +16,15 @@ public:
 	APuzzlePlatformsGameMode();
 
 	virtual void PostLogin(APlayerController* NewPlayer) override;
+	void RespawnRequested(APlayerController* PlayerController, FTransform SpawnTransform);
+	void PossessPlayer(APlayerController* PlayerController, class APuzzlePlatformsCharacter* NewPlayer);
 
 
 
 
-
-//protected:
-//	virtual void BeginPlay() override;
-private:
-
+public:
+	TSubclassOf<class APuzzlePlatformsCharacter> BPSoldierClass;
+	TSubclassOf<class APuzzlePlatformsCharacter> BPWarriorClass;
 };
 
 

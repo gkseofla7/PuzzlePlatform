@@ -65,14 +65,12 @@ void ANPC_Archer::ArrowShot()
 		ArrowTransform.SetRotation(DirRot.Quaternion());
 		//ArrowTransform.SetScale3D(BulletScale);
 		GetWorld()->SpawnActor<AArrowMaster>(ArrowMasterClass, ArrowTransform);
-		UE_LOG(LogTemp, Warning, TEXT("HEEEEEEEEEEEEEEEEEE"));
 		
 	}
 }
 
 void ANPC_Archer::Attack()
 {
-	UE_LOG(LogTemp, Warning, TEXT("Attacking"));
 	NetMulticast_Attack();
 }
 

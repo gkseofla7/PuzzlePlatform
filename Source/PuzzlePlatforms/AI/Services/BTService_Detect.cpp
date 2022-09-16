@@ -57,8 +57,10 @@ void UBTService_Detect::TickNode(UBehaviorTreeComponent& OwnerComp, uint8* NodeM
 			auto Current = OwnerComp.GetBlackboardComponent()->GetValueAsObject(ANPCAIController::TargetKey);
 			//bool same = false;
 			APuzzlePlatformsCharacter* Player = Cast< APuzzlePlatformsCharacter>(OverlapResult.GetActor());
-
-			if (Player && Player->GetController()->IsPlayerController())
+			AController* Controller =nullptr;
+			if(Player)
+				Controller=Player->GetController();
+			if (Player && Controller&&Controller->IsPlayerController())
 			{
 				if (Current == Player)//일단 nullptr이 아닌건 위에서 확보
 				{

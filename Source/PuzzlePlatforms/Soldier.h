@@ -50,6 +50,10 @@ public:
 	void SteamPack();
 	void UnSteamPack();
 	void Die() override;
+
+
+	void PlayersDied();
+	void RespawnCharacter();
 protected:
 	virtual void PostInitializeComponents() override;
 	virtual void BeginPlay() override;
@@ -73,7 +77,8 @@ private:
 		void Multicast_SetGun(class AWeapon_Master *NewItem);
 	UFUNCTION(Server, Reliable, WithValidation)
 		void Server_WeaponReload();
-
+	UFUNCTION(Server, Reliable, WithValidation)
+		void Server_RespawnPawn(APlayerController* NewController, FTransform SpawnTransform);
 	void AimMissile();
 	void UnAimMissile();
 	void WearItem();

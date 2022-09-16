@@ -22,6 +22,7 @@ public:
 	void SetInputModeGameAndUI();
 	void SetInputModeGame();
 	class UPlayerInfoWidget* GetHudWidget() const;
+	void RespawnPawn(FTransform SpawnTransform);
 
 protected:
 	virtual void BeginPlay() override;

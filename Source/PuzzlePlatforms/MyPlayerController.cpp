@@ -8,6 +8,7 @@
 #include "AbilitySystem/HudUpDisplayWidget.h"
 
 #include "MyLobbyGameMode.h"
+#include "Net/UnrealNetwork.h"
 AMyPlayerController::AMyPlayerController()
 {
 	static ConstructorHelpers::FClassFinder< UPlayerInfoWidget> UI_HUD_C(TEXT("/Game/PuzzlePlatforms/Widget/WBP_PlayerInfo"));
@@ -18,7 +19,7 @@ AMyPlayerController::AMyPlayerController()
 		HUDWidgetClass = UI_HUD_C.Class;
 	}
 
-
+	bReplicates = true;
 	//if (NEWUI_HUD_C.Succeeded())
 	//{
 	//	NewHUDWidgetClass = NEWUI_HUD_C.Class;
@@ -88,3 +89,13 @@ void AMyPlayerController::SetInputModeGame()
 	SetInputMode(InputMode);
 	SetShowMouseCursor(false);
 }
+
+void AMyPlayerController::RespawnPawn(FTransform SpawnTransform)//서버에서만 실행함
+{
+	//이걸 서버에서..?
+
+
+}
+
+
+

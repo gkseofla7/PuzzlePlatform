@@ -5,6 +5,8 @@
 #include "Weapons/Weapon_Master.h"
 #include "Weapons/FPSHudWidget.h"
 #include "Missile//Missile.h"
+#include "MyPlayerController.h"
+#include "PuzzlePlatformsGameMode.h"
 
 #include "PlayersComponent/SoldierMotionReplicator.h"
 #include "AnimInstance/SoldierAnimInstance.h"
@@ -573,12 +575,43 @@ void ASoldier::Die()
 	if (Anim != nullptr)
 	{
 		Anim->PlayDeathMontage();
-		SetActorEnableCollision(false);
-		if (HasAuthority() == true)
-		{
-			FTimerHandle TimerHandler;
-			GetWorld()->GetTimerManager().SetTimer(TimerHandler, this, &APuzzlePlatformsCharacter::DestroyPlayer, 10, false);
+		PlayersDied();
+		//FTimerHandle TimerHandler;
+		//GetWorld()->GetTimerManager().SetTimer(TimerHandler, this, &ASoldier::PlayersDied, 5, false);
 
-		}
+
 	}
+}
+
+void ASoldier::PlayersDied()
+{
+	GetMesh()->SetCollisionEnabled(ECollisionEnabled::PhysicsOnly);
+	GetMesh()->SetCollisionObjectType(ECollisionChannel::ECC_PhysicsBody);
+	//GetMesh()->SetSimulatePhysics(true);
+	GetCapsuleComponent()->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+
+
+	GetCharacterMovement()->DisableMovement();
+	if (IsLocallyControlled())
+	{
+		FTimerHandle TimerHandler;
+		GetWorld()->GetTimerManager().SetTimer(TimerHandler, this, &ASoldier::RespawnCharacter, 5, false);
+	}
+}
+
+void ASoldier::RespawnCharacter()//Run on Owning Client
+{
+	Server_RespawnPawn(Cast<APlayerController>(GetController()), GetActorTransform());
+	//Cast<AMyPlayerController>(GetController())->Server_RespawnPawn(GetActorTransform());//위치 임시로
+	UnPossessed();
+}
+
+void ASoldier::Server_RespawnPawn_Implementation(APlayerController* NewController, FTransform SpawnTransform)
+{
+	Cast<APuzzlePlatformsGameMode>(UGameplayStatics::GetGameMode(GetWorld()))->RespawnRequested(NewController, SpawnTransform);
+}
+
+bool ASoldier::Server_RespawnPawn_Validate(APlayerController* NewController, FTransform SpawnTransform)
+{
+	return true;
 }

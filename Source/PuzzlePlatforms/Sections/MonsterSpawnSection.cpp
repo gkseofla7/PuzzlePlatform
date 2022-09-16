@@ -70,8 +70,9 @@ void AMonsterSpawnSection::OnNPCSpawn()
 		auto Monster = GetWorld()->SpawnActor <ANPC_Master>(NPC_MasterClass1.Get(), MonsterTransform);
 		if (Monster == nullptr)
 		{
-			OnNPCSpawn();
 			Toggle = true;
+			OnNPCSpawn();
+			return;
 		}
 		auto Controller = Monster->GetController();
 		ABCHECK(Controller != nullptr)
