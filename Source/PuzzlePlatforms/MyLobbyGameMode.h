@@ -14,7 +14,7 @@ class PUZZLEPLATFORMS_API AMyLobbyGameMode : public APuzzlePlatformsGameMode
 {
 	GENERATED_BODY()
 public:
-
+	AMyLobbyGameMode();
 
 	virtual void Logout(AController* Exiting) override;
 	virtual void PostLogin(APlayerController* NewPlayer) override;

@@ -11,7 +11,8 @@ void UCastBarWidget::NativeConstruct()
 {
 	Super::NativeConstruct();
 	PlayerCharacter = Cast<APuzzlePlatformsCharacter>(UGameplayStatics::GetPlayerCharacter(GetWorld(),0));
-	PlayerCharacter->InterruptCasting.AddDynamic(this, &UCastBarWidget::InterruptedCast);
+	if(PlayerCharacter!= nullptr)
+		PlayerCharacter->InterruptCasting.AddDynamic(this, &UCastBarWidget::InterruptedCast);
 }
 void UCastBarWidget::NativeTick(const FGeometry& MyGeometry, float InDeltaTime)
 {

@@ -7,7 +7,14 @@
 
 #include "TimerManager.h"
 
-
+AMyLobbyGameMode::AMyLobbyGameMode()
+{
+	static ConstructorHelpers::FClassFinder<APawn> LobbyBPCharacter(TEXT("/Game/ThirdPersonCPP/Blueprints/BP_LobbyCharacter"));
+	if (LobbyBPCharacter.Class != NULL)
+	{
+		DefaultPawnClass = LobbyBPCharacter.Class;
+	}
+}
 void AMyLobbyGameMode::Logout(AController* Exiting)
 {
 	Super::Logout(Exiting);
@@ -37,7 +44,7 @@ void AMyLobbyGameMode::PostLogin(APlayerController* NewPlayer)
 	if (NumberOfPlayers >= 2)
 	{
 		//FTimerDelegate RespawnDelegate = FTimerDelegate::CreateUObject(this, &AMyLobbyGameMode::StartPlay,);
-		GetWorldTimerManager().SetTimer(GameStartTimer, this, &AMyLobbyGameMode::StartGame, 20.0f);
+		GetWorldTimerManager().SetTimer(GameStartTimer, this, &AMyLobbyGameMode::StartGame, 10.0f);
 
 	}
 }

@@ -1,6 +1,6 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
-
+#include "../PuzzlePlatforms.h"
 #include "NPC_Master.h"
 #include "NPCAIController.h"
 #include "GoblinAnimInstance.h"
@@ -59,8 +59,11 @@ void ANPC_Master::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
-
-	auto Dir = UGameplayStatics::GetPlayerController(GetWorld(), 0)->GetPawn()->GetActorLocation() - GetActorLocation();
+	auto PlayerController = UGameplayStatics::GetPlayerController(GetWorld(), 0);
+	ABCHECK(PlayerController != nullptr);
+	auto Pawn = PlayerController->GetPawn();
+	ABCHECK(Pawn!=nullptr);
+	auto Dir = PlayerController->GetPawn()->GetActorLocation() - GetActorLocation();
 	auto DirRot = UKismetMathLibrary::MakeRotFromX(Dir);
 	HPBarWidget->SetWorldRotation(DirRot);
 

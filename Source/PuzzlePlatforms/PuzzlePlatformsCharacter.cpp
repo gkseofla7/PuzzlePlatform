@@ -247,7 +247,11 @@ void APuzzlePlatformsCharacter::Tick(float DeltaTime)
 
 	if (!IsLocallyControlled())
 	{
-		auto Dir = UGameplayStatics::GetPlayerController(GetWorld(), 0)->GetPawn()->GetActorLocation() - GetActorLocation();
+		auto MyController = UGameplayStatics::GetPlayerController(GetWorld(), 0);
+		ABCHECK(MyController != nullptr);
+		auto MyPawn = MyController->GetPawn();
+		ABCHECK(MyPawn != nullptr);
+		auto Dir = MyPawn->GetActorLocation() - GetActorLocation();
 		auto DirRot = UKismetMathLibrary::MakeRotFromX(Dir);
 		HPBarWidget->SetWorldRotation(DirRot);
 		//UE_LOG(LogTemp, Warning, TEXT("%s"), *(GetController()->GetName()));
