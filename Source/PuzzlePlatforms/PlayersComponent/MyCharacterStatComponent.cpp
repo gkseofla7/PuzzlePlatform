@@ -27,8 +27,9 @@ void UMyCharacterStatComponent::BeginPlay()
 {
 	Super::BeginPlay();
 	SetIsReplicated(true);
-	auto PawnRef = Cast<APawn>(GetOwner());
-	SetNewLevel(Level);
+	//auto PawnRef = Cast<APawn>(GetOwner());
+	//SetNewLevel(Level);
+	// 
 	//if (PawnRef->HasAuthority()&&PawnRef->IsLocallyControlled() == true)
 	//	SetNewLevel(Level);
 	//else if (PawnRef->HasAuthority() == false && PawnRef->IsLocallyControlled() == true)

@@ -6,6 +6,7 @@
 #include "PuzzlePlatformsCharacter.h"
 #include "PuzzlePlatformsGameInstance.h"
 #include "AbilitySystem/HudUpDisplayWidget.h"
+#include"PlayersComponent/MyCharacterStatComponent.h"
 
 #include "MyLobbyGameMode.h"
 #include "Net/UnrealNetwork.h"
@@ -20,6 +21,8 @@ AMyPlayerController::AMyPlayerController()
 	}
 
 	bReplicates = true;
+
+	//CharacterStat = CreateDefaultSubobject<UMyCharacterStatComponent>(TEXT("CHARACTERSTAT"));
 	//if (NEWUI_HUD_C.Succeeded())
 	//{
 	//	NewHUDWidgetClass = NEWUI_HUD_C.Class;
@@ -35,6 +38,11 @@ void AMyPlayerController::OnPossess(APawn* aPawn)
 {
 
 	Super::OnPossess(aPawn);
+	auto MyCharacter = Cast<APuzzlePlatformsCharacter>(aPawn);
+	if (MyCharacter != nullptr)
+	{
+		MyCharacter->Level = Level;
+	}
 }
 
 void AMyPlayerController::BeginPlay()

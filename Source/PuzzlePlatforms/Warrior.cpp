@@ -377,7 +377,12 @@ void AWarrior::Die()
 		{
 			FTimerHandle TimerHandler;
 			GetWorld()->GetTimerManager().SetTimer(TimerHandler, this, &APuzzlePlatformsCharacter::DestroyPlayer, 10, false);
-
+			
+		}
+		if (HasAuthority())
+		{
+			FTimerHandle DestroyTimerHandler;
+			GetWorld()->GetTimerManager().SetTimer(DestroyTimerHandler, this, &APuzzlePlatformsCharacter::DestroyPlayer, 10, false);
 		}
 	}
 }

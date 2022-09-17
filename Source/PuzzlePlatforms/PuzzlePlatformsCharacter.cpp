@@ -100,14 +100,20 @@ APuzzlePlatformsCharacter::APuzzlePlatformsCharacter()
 	HPBarWidget = CreateDefaultSubobject<UWidgetComponent>(TEXT("HPBarWidget"));
 	HPBarWidget->SetupAttachment(GetMesh());
 
-	HPBarWidget->SetRelativeLocation(FVector(0.f, 0.f, 180.f));
-	HPBarWidget->SetWidgetSpace(EWidgetSpace::Screen);
+	HPBarWidget->SetRelativeLocation(FVector(0.f, 0.f, 220.f));
+	HPBarWidget->SetWidgetSpace(EWidgetSpace::World);
 	static ConstructorHelpers::FClassFinder<UUserWidget> UI_HUD(TEXT("/Game/PuzzlePlatforms/Widget/WBP_HPBar"));
 	if (UI_HUD.Succeeded())
 	{
 		HPBarWidget->SetWidgetClass(UI_HUD.Class);
 		HPBarWidget->SetDrawSize(FVector2D(150.f, 50.f));
 	}
+}
+
+void APuzzlePlatformsCharacter::GetLifetimeReplicatedProps(TArray< FLifetimeProperty >& OutLifetimeProps) const
+{
+	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
+	DOREPLIFETIME(APuzzlePlatformsCharacter, Level);
 }
 
 
@@ -154,23 +160,42 @@ void APuzzlePlatformsCharacter::BeginPlay()
 	HeadsUpDisplayRef = Cast< UPuzzlePlatformsGameInstance>(UGameplayStatics::GetGameInstance(GetWorld()))->HeadsUpDisplay;
 	HeadsUpDisplayRef->ActionBar_UI->PlayerRef = this;
 	HeadsUpDisplayRef->ActionBar_UI->BindCharacterStat(CharacterStat);
-
 	auto gamemode = Cast<AMyLobbyGameMode>(UGameplayStatics::GetGameMode(GetWorld()));
 	if (IsLocallyControlled()&& gamemode != nullptr)
 	{
 		Cast<UPuzzlePlatformsGameInstance>(GetGameInstance())->LoadSetNameMenu();
 	}
-	if (IsLocallyControlled())//체력 주기적으로 회복
-	{
-		FTimerHandle TimerHandler;
-		GetWorld()->GetTimerManager().SetTimer(TimerHandler, this, &APuzzlePlatformsCharacter::UpdateStat, 10, true);
-	}
+
 	//widget은 beginplay에서 초기화시켜야됨
 	auto CharacterWidget = Cast< UHPBarWidget>(HPBarWidget->GetUserWidgetObject());
 	if (nullptr != CharacterWidget)
 	{
 		CharacterWidget->BindCharacterStat(CharacterStat);
 	}
+	if (Level == 0)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("Why Zero"));
+	}
+	if (Level == 1)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("Why One"));
+	}
+
+	if (IsLocallyControlled())//체력 주기적으로 회복 아 애초에 이것도 실행을 안하는구나.. 누가 들어와도
+	{
+		FTimerHandle TimerHandler;
+		GetWorld()->GetTimerManager().SetTimer(TimerHandler, this, &APuzzlePlatformsCharacter::UpdateStat, 10, true);
+	
+		Server_SetLevel(Cast<AMyPlayerController>(GetController())->Level);
+	}
+	if (!IsLocallyControlled())
+	{
+		CharacterStat->SetNewLevel(Level);//Replicate돼있어서 이미 존재하는 애들 다 바뀜, 단 이미 있던애들은 내가 안바뀜
+	}
+	//if (IsLocallyControlled() == true)
+	//{
+	//	CharacterWidget->SetVisibility(ESlateVisibility::Hidden);
+	//}
 }
 
 void APuzzlePlatformsCharacter::Tick(float DeltaTime)
@@ -180,7 +205,19 @@ void APuzzlePlatformsCharacter::Tick(float DeltaTime)
 	if (IsLocallyControlled())
 	{
 		SetTargetPlayerWithLineTrace();
+
 	}
+
+	if (!IsLocallyControlled())
+	{
+		auto Dir = UGameplayStatics::GetPlayerController(GetWorld(), 0)->GetPawn()->GetActorLocation() - GetActorLocation();
+		auto DirRot = UKismetMathLibrary::MakeRotFromX(Dir);
+		HPBarWidget->SetWorldRotation(DirRot);
+		//UE_LOG(LogTemp, Warning, TEXT("%s"), *(GetController()->GetName()));
+
+		//아 자기가 0번째니깐!!
+	}
+	//HPBarWidget->SetWorldRotation(FVector(0.f, 0.f, 180.f));
 }
 
 void APuzzlePlatformsCharacter::AddControllerPitchInput(float Val)
@@ -435,6 +472,30 @@ void APuzzlePlatformsCharacter::Die()
 void APuzzlePlatformsCharacter::DestroyPlayer()
 {
 	Destroy();
+}
+
+
+void APuzzlePlatformsCharacter::Server_SetLevel_Implementation(int NewLevel)
+{
+	Multicast_SetLevel(NewLevel);
+}
+
+void APuzzlePlatformsCharacter::Multicast_SetLevel_Implementation(int NewLevel)
+{
+	CharacterStat->Level = NewLevel;
+	UE_LOG(LogTemp, Warning, TEXT("SetLevel"));
+	CharacterStat->SetNewLevel(NewLevel);
+}
+
+
+bool APuzzlePlatformsCharacter::Server_SetLevel_Validate(int NewLevel)
+{
+	return true;
+}
+
+bool APuzzlePlatformsCharacter::Multicast_SetLevel_Validate(int NewLevel)
+{
+	return true;
 }
 
 void APuzzlePlatformsCharacter::GetInTheCar()

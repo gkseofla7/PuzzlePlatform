@@ -11,6 +11,7 @@
 
 #include "DrawDebugHelpers.h"
 #include "Components/WidgetComponent.h"
+#include "Kismet/KismetMathLibrary.h"
 #include "Net/UnrealNetwork.h"
 
 // Sets default values
@@ -31,7 +32,7 @@ ANPC_Master::ANPC_Master()
 	HPBarWidget->SetupAttachment(GetMesh());
 
 	HPBarWidget->SetRelativeLocation(FVector(0.f, 0.f, 180.f));
-	HPBarWidget->SetWidgetSpace(EWidgetSpace::Screen);
+	HPBarWidget->SetWidgetSpace(EWidgetSpace::World);
 	static ConstructorHelpers::FClassFinder<UUserWidget> UI_HUD(TEXT("/Game/PuzzlePlatforms/Widget/WBP_HPBar"));
 	if (UI_HUD.Succeeded())
 	{
@@ -58,7 +59,12 @@ void ANPC_Master::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
-	//SetSpeed(GetVelocity().Size());
+
+	auto Dir = UGameplayStatics::GetPlayerController(GetWorld(), 0)->GetPawn()->GetActorLocation() - GetActorLocation();
+	auto DirRot = UKismetMathLibrary::MakeRotFromX(Dir);
+	HPBarWidget->SetWorldRotation(DirRot);
+
+	
 
 }
 

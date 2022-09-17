@@ -592,10 +592,16 @@ void ASoldier::PlayersDied()
 
 
 	GetCharacterMovement()->DisableMovement();
+	if (HasAuthority())
+	{
+		FTimerHandle DestroyTimerHandler;
+		GetWorld()->GetTimerManager().SetTimer(DestroyTimerHandler, this, &APuzzlePlatformsCharacter::DestroyPlayer, 10, false);
+	}
 	if (IsLocallyControlled())
 	{
 		FTimerHandle TimerHandler;
 		GetWorld()->GetTimerManager().SetTimer(TimerHandler, this, &ASoldier::RespawnCharacter, 5, false);
+		
 	}
 }
 
