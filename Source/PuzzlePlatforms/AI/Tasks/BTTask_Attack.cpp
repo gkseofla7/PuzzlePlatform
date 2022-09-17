@@ -42,7 +42,7 @@ void UBTTask_Attack::TickTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemo
 	if (!IsAttacking)
 	{//때리면 되돌림
 		auto Monster = Cast<ANPC_Master>(OwnerComp.GetAIOwner()->GetPawn());
-		UE_LOG(LogTemp, Warning, TEXT("%s"), *(Monster->GetName()));
+
 		OwnerComp.GetBlackboardComponent()->SetValueAsBool(ANPCAIController::IsHitKey, false);
 
 		FinishLatentTask(OwnerComp, EBTNodeResult::Succeeded);

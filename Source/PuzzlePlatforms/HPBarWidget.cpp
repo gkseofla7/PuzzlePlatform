@@ -40,7 +40,6 @@ void UHPBarWidget::UpdateHPWidget()
 		if (nullptr != HPProgressBar)
 		{
 
-			UE_LOG(LogTemp, Warning, TEXT("New : GetRatio %f"), CurrentCharacterStat->GetHPRatio());
 			HPProgressBar->SetPercent(CurrentCharacterStat->GetHPRatio());
 		}
 	}

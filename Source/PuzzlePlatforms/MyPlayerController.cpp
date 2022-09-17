@@ -21,7 +21,7 @@ AMyPlayerController::AMyPlayerController()
 	}
 
 	bReplicates = true;
-
+	Level = 1;
 	//CharacterStat = CreateDefaultSubobject<UMyCharacterStatComponent>(TEXT("CHARACTERSTAT"));
 	//if (NEWUI_HUD_C.Succeeded())
 	//{
@@ -33,16 +33,21 @@ void AMyPlayerController::PostInitializeComponents()
 {
 	Super::PostInitializeComponents();
 
+
 }
 void AMyPlayerController::OnPossess(APawn* aPawn)
 {
 
 	Super::OnPossess(aPawn);
-	auto MyCharacter = Cast<APuzzlePlatformsCharacter>(aPawn);
-	if (MyCharacter != nullptr)
-	{
-		MyCharacter->Level = Level;
-	}
+
+
+	//auto MyCharacter = Cast<APuzzlePlatformsCharacter>(aPawn);
+	//if (MyCharacter != nullptr)
+	//{
+	//	UE_LOG(LogTemp, Warning, TEXT("%s : POSSEEEEEESS %s %d"), *GetName(), *MyCharacter->GetName(), Level);
+	//	MyCharacter->Multicast_SetLevel(Level);
+
+	//}
 }
 
 void AMyPlayerController::BeginPlay()
@@ -63,7 +68,6 @@ void AMyPlayerController::BeginPlay()
 			HUDWidget->AddToViewport();
 			//Cast<UPuzzlePlatformsGameInstance>(GetGameInstance());
 			Cast<UPuzzlePlatformsGameInstance>(GetGameInstance())->GetHeadsUpDisplay()->AddToViewport();
-			UE_LOG(LogTemp, Warning, TEXT("Here Is"));
 			auto MyPawn = Cast<APuzzlePlatformsCharacter>(GetPawn());
 			if (MyPawn != nullptr)
 			{
@@ -72,7 +76,10 @@ void AMyPlayerController::BeginPlay()
 			
 		}
 	}
+
 }
+
+
 
 UPlayerInfoWidget* AMyPlayerController::GetHudWidget() const
 {

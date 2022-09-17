@@ -153,10 +153,34 @@ void APuzzlePlatformsCharacter::PostInitializeComponents()
 
 }
 
+void APuzzlePlatformsCharacter::PossessedBy(AController* NewController)
+{
+	Super::PossessedBy(NewController);
+	UE_LOG(LogTemp, Warning, TEXT("%s : POSSEEEEEESSBy %s %d"), *NewController->GetName(),*GetName(), Level);
+	auto MyController = Cast<AMyPlayerController>(NewController);
+	if (MyController != nullptr)
+	{
+		//UE_LOG(LogTemp, Warning, TEXT("%s : POSSEEEEEESS %s %d"), *GetName(), *MyCharacter->GetName(), Level);
+		FTimerHandle UniqueHandle;
+		FTimerDelegate RespawnDelegate = FTimerDelegate::CreateUObject(this, &APuzzlePlatformsCharacter::Multicast_SetLevel, MyController->Level);
+		GetWorldTimerManager().SetTimer(UniqueHandle, RespawnDelegate, .2f, false);
+		//Multicast_SetLevel(MyController->Level);
+
+	}
+}
+
 void APuzzlePlatformsCharacter::BeginPlay()
 {
 	Super::BeginPlay();
-	
+	if (HasAuthority())
+	{
+		UE_LOG(LogTemp, Warning, TEXT("Server : %s : BeginPlay"), *GetName());
+	}
+	else
+	{
+		UE_LOG(LogTemp, Warning, TEXT("Client : %s : BeginPlay"), *GetName());
+	}
+
 	HeadsUpDisplayRef = Cast< UPuzzlePlatformsGameInstance>(UGameplayStatics::GetGameInstance(GetWorld()))->HeadsUpDisplay;
 	HeadsUpDisplayRef->ActionBar_UI->PlayerRef = this;
 	HeadsUpDisplayRef->ActionBar_UI->BindCharacterStat(CharacterStat);
@@ -172,30 +196,34 @@ void APuzzlePlatformsCharacter::BeginPlay()
 	{
 		CharacterWidget->BindCharacterStat(CharacterStat);
 	}
-	if (Level == 0)
-	{
-		UE_LOG(LogTemp, Warning, TEXT("Why Zero"));
-	}
-	if (Level == 1)
-	{
-		UE_LOG(LogTemp, Warning, TEXT("Why One"));
-	}
+
 
 	if (IsLocallyControlled())//체력 주기적으로 회복 아 애초에 이것도 실행을 안하는구나.. 누가 들어와도
 	{
 		FTimerHandle TimerHandler;
 		GetWorld()->GetTimerManager().SetTimer(TimerHandler, this, &APuzzlePlatformsCharacter::UpdateStat, 10, true);
-	
-		Server_SetLevel(Cast<AMyPlayerController>(GetController())->Level);
 	}
-	if (!IsLocallyControlled())
+	if (!IsLocallyControlled()&&!HasAuthority())//사실 서버입장에서는 뒤늦게 만들어 주면 되는거아님?
 	{
-		CharacterStat->SetNewLevel(Level);//Replicate돼있어서 이미 존재하는 애들 다 바뀜, 단 이미 있던애들은 내가 안바뀜
+		UE_LOG(LogTemp, Warning, TEXT("gkseofla : IsNotLocallyControlled : %d"), Level);
+		//그냥 서버꺼를 가져와야되네,,ㅋㅋ
+		Server_SetServerLevel();//아니 애초에 실행이 안되네 ㅅㅂ
+
+		FTimerHandle UniqueHandle;
+		FTimerDelegate RespawnDelegate = FTimerDelegate::CreateUObject(this, &APuzzlePlatformsCharacter::SetStatComponentLevel);//어차피 자기 자신만 실행함
+		GetWorldTimerManager().SetTimer(UniqueHandle, RespawnDelegate, 1.1f, false);
+	//	CharacterStat->SetNewLevel(Level);//Replicate돼있어서 이미 존재하는 애들 다 바뀜, 단 이미 있던애들은 내가 안바뀜
 	}
 	//if (IsLocallyControlled() == true)
 	//{
 	//	CharacterWidget->SetVisibility(ESlateVisibility::Hidden);
 	//}
+}
+
+void APuzzlePlatformsCharacter::SetStatComponentLevel()
+{
+	CharacterStat->Level = Level;
+	CharacterStat->SetNewLevel(Level);
 }
 
 void APuzzlePlatformsCharacter::Tick(float DeltaTime)
@@ -204,7 +232,7 @@ void APuzzlePlatformsCharacter::Tick(float DeltaTime)
 	SkillAvailable = !(HeadsUpDisplayRef->CastBar_UI->WhileBuffering);
 	if (IsLocallyControlled())
 	{
-		SetTargetPlayerWithLineTrace();
+		//SetTargetPlayerWithLineTrace();
 
 	}
 
@@ -448,7 +476,6 @@ void APuzzlePlatformsCharacter::Skill5Clicked()
 
 void APuzzlePlatformsCharacter::SkillReleased()
 {
-	UE_LOG(LogTemp, Warning, TEXT("ButtonReleased"));
 	OnSkillReleased.Broadcast();
 }
 
@@ -482,11 +509,29 @@ void APuzzlePlatformsCharacter::Server_SetLevel_Implementation(int NewLevel)
 
 void APuzzlePlatformsCharacter::Multicast_SetLevel_Implementation(int NewLevel)
 {
+	if(HasAuthority())
+	{
+		UE_LOG(LogTemp, Warning, TEXT("Server : SetLevel*"));
+	}
+	else
+	{
+		UE_LOG(LogTemp, Warning, TEXT("Client : SetLevel*"));
+	}
 	CharacterStat->Level = NewLevel;
-	UE_LOG(LogTemp, Warning, TEXT("SetLevel"));
+	Level = NewLevel;
 	CharacterStat->SetNewLevel(NewLevel);
 }
 
+
+
+void APuzzlePlatformsCharacter::Server_SetServerLevel_Implementation()
+{
+	Multicast_SetLevel(Level);//사실 여기서 내껏만 하면되지않나 싶긴함..ㅋㅋ
+}
+bool APuzzlePlatformsCharacter::Server_SetServerLevel_Validate()
+{
+	return true;
+}
 
 bool APuzzlePlatformsCharacter::Server_SetLevel_Validate(int NewLevel)
 {

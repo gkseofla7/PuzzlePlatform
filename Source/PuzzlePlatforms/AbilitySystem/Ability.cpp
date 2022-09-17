@@ -112,7 +112,7 @@ void AAbility::DetachAbilityFromPlayer()
 
 void AAbility::EndAnimation(UAnimMontage* Montage, bool bInterrupted)
 {
-	UE_LOG(LogTemp, Warning, TEXT("EndAnimation"));
+	//UE_LOG(LogTemp, Warning, TEXT("EndAnimation"));
 	//PlayerRef->SetIsAttacking(false);
 	PlayerRef->SetUsingSkill(false);
 	AnimationEnd = true;

@@ -41,7 +41,7 @@ void AArrowMaster::OnOverlapBegin(class UPrimitiveComponent* OverlappedComp, cla
 {
 	FString s_a = OtherActor->GetName();
 	FString s = OtherComp->GetName();
-	UE_LOG(LogTemp, Warning, TEXT("Overlap %s %s"), *s_a, *s);
+
 
 	if (OtherActor && (OtherActor != this) && OtherComp)
 	{

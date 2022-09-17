@@ -80,7 +80,7 @@ bool USoldierMotionReplicator::Server_SendRide_Validate(AActor* Car, APawn* Ride
 void USoldierMotionReplicator::Server_SendAttack_Implementation()
 {
 	auto MyOwner = Cast<ASoldier>(GetOwner());
-	if (MyOwner->EquippedItem == nullptr)
+	if (MyOwner&&MyOwner->EquippedItem == nullptr)
 	{
 		return;
 	}
@@ -95,6 +95,11 @@ void USoldierMotionReplicator::Server_SendAttack_Implementation()
 void USoldierMotionReplicator::Server_SendAttackStop_Implementation()
 {
 	auto MyOwner = Cast<ASoldier>(GetOwner());
+
+	if (MyOwner&&MyOwner->EquippedItem == nullptr)
+	{
+		return;
+	}
 	MyOwner->EquippedItem->StopFire();
 	IsFiring = false;
 }

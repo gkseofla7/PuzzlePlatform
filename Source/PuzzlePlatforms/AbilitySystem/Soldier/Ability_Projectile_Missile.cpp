@@ -89,10 +89,10 @@ void AAbility_Projectile_Missile::OnOverlapBegin(class UPrimitiveComponent* Over
 	if (OtherActor == PlayerRef)
 		return;
 	//UE_LOG(LogTemp, Warning, TEXT("Hit %s, %s %s"), *OverlappedComp->GetName(), *OtherActor->GetName(), *OtherComp->GetName());
-	UE_LOG(LogTemp, Warning, TEXT("FIRST"));
+
 	if (HasAuthority() == true)
 	{
-		UE_LOG(LogTemp, Warning, TEXT("InServer"));
+
 		NetMulticast_Spark(GetActorLocation());
 		//auto Player = Cast<APuzzlePlatformsCharacter>(OtherActor);
 		//if (Player != nullptr)

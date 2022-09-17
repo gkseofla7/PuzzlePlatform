@@ -94,7 +94,7 @@ void AAbility_Projectile_Fireball::OnOverlapBegin(class UPrimitiveComponent* Ove
 {
 	if (OtherActor == PlayerRef)
 		return;
-	UE_LOG(LogTemp, Warning, TEXT("Hit %s, %s %s") ,*OverlappedComp->GetName(),*OtherActor->GetName(), *OtherComp->GetName());
+	//UE_LOG(LogTemp, Warning, TEXT("Hit %s, %s %s") ,*OverlappedComp->GetName(),*OtherActor->GetName(), *OtherComp->GetName());
 	NetMulticast_Spark(OtherActor->GetActorLocation());
 	if (HasAuthority() == true)
 	{

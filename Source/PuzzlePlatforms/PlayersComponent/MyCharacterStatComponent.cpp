@@ -53,6 +53,7 @@ void UMyCharacterStatComponent::InitializeComponent() //Post Initialize 전에 일�
 
 void UMyCharacterStatComponent::SetNewLevel(int32 NewLevel)
 {
+
 	auto PawnRef = Cast<APawn>(GetOwner());
 
 
@@ -72,25 +73,11 @@ void UMyCharacterStatComponent::SetNewLevel(int32 NewLevel)
 
 	if (nullptr != CurrentStatData)
 	{
-		if (PawnRef->HasAuthority() && PawnRef->IsLocallyControlled() == true)
-		{
-			UE_LOG(LogTemp, Warning, TEXT("CheckThisOut Server and LocallyControl %s : %f"), *PawnRef->GetName(), CurrentStatData->MaxHP);
-		}
-		else if (PawnRef->HasAuthority() && PawnRef->IsLocallyControlled() == false)
-		{
-			UE_LOG(LogTemp, Warning, TEXT("CheckThisOut  Server and Not %s : %f"), *PawnRef->GetName(), CurrentStatData->MaxHP);
-		}
-		else if (PawnRef->HasAuthority() == false && PawnRef->IsLocallyControlled() == true)
-		{
-			UE_LOG(LogTemp, Warning, TEXT("CheckThisOut Client and LoccalControl %s : %f"), *PawnRef->GetName(), CurrentStatData->MaxHP);
-		}
-		else if (PawnRef->HasAuthority() == false && PawnRef->IsLocallyControlled() == false)
-		{
-			UE_LOG(LogTemp, Warning, TEXT("CheckThisOut Client and Not %s : %f "), *PawnRef->GetName(), CurrentStatData->MaxHP);
-		}
+
 		Level = NewLevel;
 		CurrentHP = CurrentStatData->MaxHP;//처음에만 해주기위해..ㅋㅋ
 		OnHPChanged.Broadcast();
+		//UE_LOG(LogTemp, Warning, TEXT("SetNewLevel : %f"), CurrentStatData->MaxHP);
 		SetHP(CurrentStatData->MaxHP);
 		SetMP(CurrentStatData->MaxMP);
 	}
@@ -126,9 +113,6 @@ float UMyCharacterStatComponent::GetHPRatio()
 	if (CurrentStatData == nullptr)
 		return .5f;
 
-	UE_LOG(LogTemp, Warning, TEXT("New : HPRatio CurrentHP %f"), CurrentHP);
-	UE_LOG(LogTemp, Warning, TEXT("New : HPRatio MaxHP %f"), CurrentStatData->MaxHP);
-	
 	return CurrentHP / CurrentStatData->MaxHP;
 	//return (CurrentStatData->MaxHP < KINDA_SMALL_NUMBER) ? 0.0f : (CurrentHP / CurrentStatData->MaxHP);
 }
@@ -150,7 +134,6 @@ void UMyCharacterStatComponent::Server_SetHP_Implementation(float NewHp)
 
 void UMyCharacterStatComponent::NetMulticast_SetHP_Implementation(float NewHp)
 {
-	UE_LOG(LogTemp, Warning, TEXT("NewHP : %f"), NewHp);
 	CurrentHP = NewHp;
 	OnHPChanged.Broadcast();
 	if (CurrentHP < KINDA_SMALL_NUMBER)

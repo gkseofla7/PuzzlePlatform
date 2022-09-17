@@ -43,7 +43,7 @@ public:
 	void SetIsAttacking(bool NewIsAttacking);
 	void SetUsingSkill(bool NewUsingSkill);
 	void DestroyPlayer();
-
+	virtual void PossessedBy(AController* NewController) override;
 public:
 	virtual void PostInitializeComponents() override;
 	virtual void BeginPlay() override;
@@ -63,6 +63,10 @@ public:
 		void Server_SetLevel(int NewLevel);
 	UFUNCTION(NetMulticast, Reliable, WithValidation)
 		void Multicast_SetLevel(int NewLevel);
+	void SetStatComponentLevel();
+	UFUNCTION(Server, Reliable, WithValidation)
+		void Server_SetServerLevel();
+
 protected:
 	// APawn interface
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
