@@ -167,6 +167,7 @@ void APuzzlePlatformsCharacter::PossessedBy(AController* NewController)
 		//Multicast_SetLevel(MyController->Level);
 
 	}
+
 }
 
 void APuzzlePlatformsCharacter::BeginPlay()
@@ -209,9 +210,9 @@ void APuzzlePlatformsCharacter::BeginPlay()
 		//그냥 서버꺼를 가져와야되네,,ㅋㅋ
 		Server_SetServerLevel();//아니 애초에 실행이 안되네 ㅅㅂ
 
-		FTimerHandle UniqueHandle;
+
 		FTimerDelegate RespawnDelegate = FTimerDelegate::CreateUObject(this, &APuzzlePlatformsCharacter::SetStatComponentLevel);//어차피 자기 자신만 실행함
-		GetWorldTimerManager().SetTimer(UniqueHandle, RespawnDelegate, 1.1f, false);
+		GetWorldTimerManager().SetTimer(StatResetHandle, RespawnDelegate, .1f, true);
 	//	CharacterStat->SetNewLevel(Level);//Replicate돼있어서 이미 존재하는 애들 다 바뀜, 단 이미 있던애들은 내가 안바뀜
 	}
 	//if (IsLocallyControlled() == true)
@@ -222,8 +223,16 @@ void APuzzlePlatformsCharacter::BeginPlay()
 
 void APuzzlePlatformsCharacter::SetStatComponentLevel()
 {
-	CharacterStat->Level = Level;
-	CharacterStat->SetNewLevel(Level);
+	UE_LOG(LogTemp, Warning, TEXT("Timer"));
+	if (Level == 0)
+		return;
+	else
+	{
+		CharacterStat->Level = Level;
+		CharacterStat->SetNewLevel(Level);
+		GetWorldTimerManager().ClearTimer(StatResetHandle);
+
+	}
 }
 
 void APuzzlePlatformsCharacter::Tick(float DeltaTime)

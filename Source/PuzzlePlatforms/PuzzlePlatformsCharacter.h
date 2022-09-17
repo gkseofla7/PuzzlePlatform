@@ -111,7 +111,7 @@ public:
 
 	UPROPERTY()
 		class UAnimInstance_Master* MyAnim;
-
+	FTimerHandle StatResetHandle;
 	bool SkillAvailable = true;
 	bool MouseCursorToggle = false;
 	bool IsDashing = false;

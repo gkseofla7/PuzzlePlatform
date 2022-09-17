@@ -78,7 +78,7 @@ private:
 	UFUNCTION(Server, Reliable, WithValidation)
 		void Server_WeaponReload();
 	UFUNCTION(Server, Reliable, WithValidation)
-		void Server_RespawnPawn(APlayerController* NewController, FTransform SpawnTransform);
+		void Server_RespawnPawn(APlayerController* NewController);
 	void AimMissile();
 	void UnAimMissile();
 	void WearItem();

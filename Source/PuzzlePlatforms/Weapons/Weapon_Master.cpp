@@ -113,7 +113,6 @@ void AWeapon_Master::Shot()
     
     FString name = GetName();
     auto Soldier = Cast<ASoldier>(Player);
-    UE_LOG(LogTemp, Warning, TEXT("Shoot!!"));
     AmmoCheck();//얘도 결국..
     //if (Soldier->IsLocallyControlled())
     //{//절대 나올 수가 없네,,ㅋㅋ

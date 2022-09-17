@@ -7,6 +7,7 @@
 #include "Missile//Missile.h"
 #include "MyPlayerController.h"
 #include "PuzzlePlatformsGameMode.h"
+#include "Sections/RespawnSection.h"
 
 #include "PlayersComponent/SoldierMotionReplicator.h"
 #include "AnimInstance/SoldierAnimInstance.h"
@@ -607,17 +608,23 @@ void ASoldier::PlayersDied()
 
 void ASoldier::RespawnCharacter()//Run on Owning Client
 {
-	Server_RespawnPawn(Cast<APlayerController>(GetController()), GetActorTransform());
+
+	Server_RespawnPawn(Cast<APlayerController>(GetController()));
 	//Cast<AMyPlayerController>(GetController())->Server_RespawnPawn(GetActorTransform());//위치 임시로
 	UnPossessed();
 }
 
-void ASoldier::Server_RespawnPawn_Implementation(APlayerController* NewController, FTransform SpawnTransform)
+void ASoldier::Server_RespawnPawn_Implementation(APlayerController* NewController)
 {
-	Cast<APuzzlePlatformsGameMode>(UGameplayStatics::GetGameMode(GetWorld()))->RespawnRequested(NewController, SpawnTransform);
+	TArray<AActor*>Respawns;
+	UGameplayStatics::GetAllActorsOfClass(GetWorld(), ARespawnSection::StaticClass(), Respawns);
+	if (Respawns.Num() == 0)
+		return;
+	auto RespawnTransform = Cast< ARespawnSection>(Respawns[0])->GetRandomTransform();
+	Cast<APuzzlePlatformsGameMode>(UGameplayStatics::GetGameMode(GetWorld()))->RespawnRequested(NewController, RespawnTransform);
 }
 
-bool ASoldier::Server_RespawnPawn_Validate(APlayerController* NewController, FTransform SpawnTransform)
+bool ASoldier::Server_RespawnPawn_Validate(APlayerController* NewController)
 {
 	return true;
 }

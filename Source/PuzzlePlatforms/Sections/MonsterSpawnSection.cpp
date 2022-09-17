@@ -59,7 +59,7 @@ void AMonsterSpawnSection::OnNPCSpawn()
 	}
 	else
 		return;
-	UE_LOG(LogTemp, Warning, TEXT("Spawn!!"));
+	//UE_LOG(LogTemp, Warning, TEXT("Spawn!!"));
 	if (Toggle == false&&NPC_MasterClass1!= nullptr)
 	{
 		Toggle = true;

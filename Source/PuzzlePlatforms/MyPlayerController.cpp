@@ -105,12 +105,6 @@ void AMyPlayerController::SetInputModeGame()
 	SetShowMouseCursor(false);
 }
 
-void AMyPlayerController::RespawnPawn(FTransform SpawnTransform)//서버에서만 실행함
-{
-	//이걸 서버에서..?
-
-
-}
 
 
 

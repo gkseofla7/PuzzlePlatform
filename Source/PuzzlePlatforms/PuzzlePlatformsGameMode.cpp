@@ -42,8 +42,9 @@ APuzzlePlatformsGameMode::APuzzlePlatformsGameMode()
 void APuzzlePlatformsGameMode::PostLogin(APlayerController* NewPlayer)
 {
 	Super::PostLogin(NewPlayer);
-
+	UE_LOG(LogTemp, Warning, TEXT("PostLogin"));
 	auto MyPlaerState = Cast<AMyPlayerState>(NewPlayer->PlayerState);
+
 	//ABCHECK(nullptr != MyPlaerState)
 	MyPlaerState->InitPlayerData();
 }
