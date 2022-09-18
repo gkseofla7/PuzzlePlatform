@@ -21,6 +21,8 @@ public:
 	virtual void OnPossess(APawn* aPawn) override;
 	void SetInputModeGameAndUI();
 	void SetInputModeGame();
+	void SetWidget();
+	void BindWidget(class UMyCharacterStatComponent* NewCharacterStat);
 	//class UPlayerInfoWidget* GetHudWidget() const;
 
 
@@ -36,7 +38,11 @@ public:
 	//UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Stat)
 	//class UMyCharacterStatComponent* CharacterStat;//이게 근데 생각해보면.. controller에 있으면..다른애들 stat은 어찌함?
 	int Level = 1;
-
+	UPROPERTY()
+		class UPlayerInfoWidget* PlayerInfoHUDWidget;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = UI)
+		TSubclassOf<class UPlayerInfoWidget> PlayerInfoHUDWidgetClass;
+	bool HasWidget = false;
 	//UPROPERTY()
 	//	class UUserWidget* NewHUDWidget;
 };

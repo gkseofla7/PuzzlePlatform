@@ -24,6 +24,12 @@ AMyPlayerController::AMyPlayerController()
 	//{
 	//	NewHUDWidgetClass = NEWUI_HUD_C.Class;
 	//}
+
+	static ConstructorHelpers::FClassFinder< UPlayerInfoWidget> UI_HUD_C(TEXT("/Game/PuzzlePlatforms/Widget/WBP_PlayerInfo"));
+	if (UI_HUD_C.Succeeded())
+	{
+		PlayerInfoHUDWidgetClass = UI_HUD_C.Class;
+	}
 }
 
 void AMyPlayerController::PostInitializeComponents()
@@ -91,5 +97,38 @@ void AMyPlayerController::SetInputModeGame()
 }
 
 
+void AMyPlayerController::SetWidget()
+{
+	//if (IsLocallyControlled() && IsPlayerControlled())
+	{
 
 
+		PlayerInfoHUDWidget = CreateWidget<UPlayerInfoWidget>(GetWorld(), PlayerInfoHUDWidgetClass);
+		if (PlayerInfoHUDWidget != nullptr)
+		{
+			PlayerInfoHUDWidget->AddToViewport();
+			//이게 ability
+			auto HeadUpDispaly = Cast<UPuzzlePlatformsGameInstance>(GetGameInstance())->GetHeadsUpDisplay();
+			if (HeadUpDispaly != nullptr)
+				HeadUpDispaly->AddToViewport();
+
+
+		}
+		auto MyGameInstance = Cast< UPuzzlePlatformsGameInstance>(GetGameInstance());
+		if (!(MyGameInstance->PlayerName.EqualTo(FText::GetEmpty())))
+		{//이름등록
+			if (PlayerInfoHUDWidget != nullptr)
+				PlayerInfoHUDWidget->BindCharacterName(MyGameInstance->PlayerName);
+		}
+		HasWidget = true;
+	}
+}
+
+void AMyPlayerController::BindWidget(class UMyCharacterStatComponent* NewCharacterStat)
+{
+	if (PlayerInfoHUDWidget != nullptr)
+	{
+		//Cast<UPuzzlePlatformsGameInstance>(GetGameInstance());
+		PlayerInfoHUDWidget->BindCharacterStat(NewCharacterStat);
+	}
+}

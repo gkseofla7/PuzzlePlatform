@@ -109,11 +109,7 @@ APuzzlePlatformsCharacter::APuzzlePlatformsCharacter()
 		HPBarWidget->SetDrawSize(FVector2D(150.f, 50.f));
 	}
 
-	static ConstructorHelpers::FClassFinder< UPlayerInfoWidget> UI_HUD_C(TEXT("/Game/PuzzlePlatforms/Widget/WBP_PlayerInfo"));
-	if (UI_HUD_C.Succeeded())
-	{
-		PlayerInfoHUDWidgetClass = UI_HUD_C.Class;
-	}
+
 }
 
 void APuzzlePlatformsCharacter::GetLifetimeReplicatedProps(TArray< FLifetimeProperty >& OutLifetimeProps) const
@@ -159,11 +155,12 @@ void APuzzlePlatformsCharacter::PostInitializeComponents()
 
 }
 
-void APuzzlePlatformsCharacter::PossessedBy(AController* NewController)
-{
+void APuzzlePlatformsCharacter::PossessedBy(AController* NewController)//이것도 결국 서버에서 실행함
+{//입장하면 자기 자신의 Level을 다른애들한테도 뿌림
 	Super::PossessedBy(NewController);
 	UE_LOG(LogTemp, Warning, TEXT("%s : POSSEEEEEESSBy %s %d"), *NewController->GetName(),*GetName(), Level);
 	auto MyController = Cast<AMyPlayerController>(NewController);
+
 	if (MyController != nullptr)
 	{
 		//UE_LOG(LogTemp, Warning, TEXT("%s : POSSEEEEEESS %s %d"), *GetName(), *MyCharacter->GetName(), Level);
@@ -172,26 +169,9 @@ void APuzzlePlatformsCharacter::PossessedBy(AController* NewController)
 		GetWorldTimerManager().SetTimer(UniqueHandle, RespawnDelegate, .2f, false);
 		//Multicast_SetLevel(MyController->Level);
 
-	}
-	if (IsLocallyControlled() == true)//당연 맞겠지만 혹시나
-	{
-		auto MyGameInstance = Cast< UPuzzlePlatformsGameInstance>(GetGameInstance());
-		PlayerInfoHUDWidget = CreateWidget<UPlayerInfoWidget>(GetWorld(), PlayerInfoHUDWidgetClass);
-		if (PlayerInfoHUDWidget != nullptr)
-		{
-			//Cast<UPuzzlePlatformsGameInstance>(GetGameInstance());
-			PlayerInfoHUDWidget->BindCharacterStat(this->CharacterStat);
-			PlayerInfoHUDWidget->AddToViewport();
-			Cast<UPuzzlePlatformsGameInstance>(GetGameInstance())->GetHeadsUpDisplay()->AddToViewport();
-			
 
-		}
-		if (!(MyGameInstance->PlayerName.EqualTo(FText::GetEmpty())))
-		{
-			if (PlayerInfoHUDWidget != nullptr)
-				PlayerInfoHUDWidget->BindCharacterName(MyGameInstance->PlayerName);
-		}
 	}
+
 
 }
 
@@ -233,18 +213,28 @@ void APuzzlePlatformsCharacter::BeginPlay()
 	{
 		UE_LOG(LogTemp, Warning, TEXT("gkseofla : IsNotLocallyControlled : %d"), Level);
 		//그냥 서버꺼를 가져와야되네,,ㅋㅋ
-		Server_SetServerLevel();//아니 애초에 실행이 안되네 ㅅㅂ
+		//Server_SetServerLevel();//아니 애초에 실행이 안되네 ㅅㅂ
 
 
 		FTimerDelegate RespawnDelegate = FTimerDelegate::CreateUObject(this, &APuzzlePlatformsCharacter::SetStatComponentLevel);//어차피 자기 자신만 실행함
 		GetWorldTimerManager().SetTimer(StatResetHandle, RespawnDelegate, .1f, true);
 	//	CharacterStat->SetNewLevel(Level);//Replicate돼있어서 이미 존재하는 애들 다 바뀜, 단 이미 있던애들은 내가 안바뀜
 	}
-	//if (IsLocallyControlled() == true)
-	//{
-	//	CharacterWidget->SetVisibility(ESlateVisibility::Hidden);
-	//}
+	if (IsLocallyControlled() == true)
+	{
+		CharacterWidget->SetVisibility(ESlateVisibility::Hidden);
+	}
+
+
+
+
+	//FTimerDelegate SetWidgetDelegate = FTimerDelegate::CreateUObject(this, &APuzzlePlatformsCharacter::SetWidget);//어차피 자기 자신만 실행함
+	//GetWorldTimerManager().SetTimer(StatResetHandle, SetWidgetDelegate, .5f, false);
+	
 }
+
+
+
 
 void APuzzlePlatformsCharacter::SetStatComponentLevel()
 {
@@ -255,6 +245,7 @@ void APuzzlePlatformsCharacter::SetStatComponentLevel()
 	{
 		CharacterStat->Level = Level;
 		CharacterStat->SetNewLevel(Level);
+
 		GetWorldTimerManager().ClearTimer(StatResetHandle);
 
 	}
@@ -560,6 +551,15 @@ void APuzzlePlatformsCharacter::Multicast_SetLevel_Implementation(int NewLevel)
 	CharacterStat->Level = NewLevel;
 	Level = NewLevel;
 	CharacterStat->SetNewLevel(NewLevel);
+	if (IsLocallyControlled() == true && IsPlayerControlled() == true)
+	{
+		auto MyController = Cast<AMyPlayerController>(GetController());
+		ABCHECK(MyController);
+		if (MyController->HasWidget == false)
+			MyController->SetWidget();
+
+		MyController->BindWidget(CharacterStat);
+	}
 }
 
 
