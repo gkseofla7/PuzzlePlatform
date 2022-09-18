@@ -42,14 +42,7 @@ void AMyPlayerController::OnPossess(APawn* aPawn)
 {
 
 	Super::OnPossess(aPawn);
-	
-	//auto MyCharacter = Cast<APuzzlePlatformsCharacter>(aPawn);
-	//if (MyCharacter != nullptr)
-	//{
-	//	UE_LOG(LogTemp, Warning, TEXT("%s : POSSEEEEEESS %s %d"), *GetName(), *MyCharacter->GetName(), Level);
-	//	MyCharacter->Multicast_SetLevel(Level);
 
-	//}
 }
 
 void AMyPlayerController::BeginPlay()
@@ -65,6 +58,19 @@ void AMyPlayerController::BeginPlay()
 
 		//NewHUDWidget = CreateWidget<UUserWidget>(this, NewHUDWidgetClass);
 
+
+	}
+	if (HasAuthority() == true)//당연 true
+	{
+		auto MyInstance = Cast< UPuzzlePlatformsGameInstance>(GetGameInstance());
+		if (MyInstance != nullptr)
+		{
+			if (MyInstance->CharacterIndex == 1)
+			{
+				TArray<AActor*> AllActors;
+				UGameplayStatics::GetAllActorsOfClass(GetWorld(), AActor::StaticClass(), AllActors);
+			}
+		}
 
 	}
 
@@ -111,15 +117,8 @@ void AMyPlayerController::SetWidget()
 			auto HeadUpDispaly = Cast<UPuzzlePlatformsGameInstance>(GetGameInstance())->GetHeadsUpDisplay();
 			if (HeadUpDispaly != nullptr)
 				HeadUpDispaly->AddToViewport();
-
-
 		}
-		auto MyGameInstance = Cast< UPuzzlePlatformsGameInstance>(GetGameInstance());
-		if (!(MyGameInstance->PlayerName.EqualTo(FText::GetEmpty())))
-		{//이름등록
-			if (PlayerInfoHUDWidget != nullptr)
-				PlayerInfoHUDWidget->BindCharacterName(MyGameInstance->PlayerName);
-		}
+
 		HasWidget = true;
 	}
 }
@@ -130,5 +129,11 @@ void AMyPlayerController::BindWidget(class UMyCharacterStatComponent* NewCharact
 	{
 		//Cast<UPuzzlePlatformsGameInstance>(GetGameInstance());
 		PlayerInfoHUDWidget->BindCharacterStat(NewCharacterStat);
+		auto MyGameInstance = Cast< UPuzzlePlatformsGameInstance>(GetGameInstance());
+		if (!(MyGameInstance->PlayerName.EqualTo(FText::GetEmpty())))
+		{//이름등록
+			if (PlayerInfoHUDWidget != nullptr)
+				PlayerInfoHUDWidget->BindCharacterName(MyGameInstance->PlayerName);
+		}
 	}
 }

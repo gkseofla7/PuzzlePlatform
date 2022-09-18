@@ -85,4 +85,6 @@ public:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = UI)
 		class UHudUpDisplayWidget* HeadsUpDisplay;
 	FText PlayerName;
+
+	int CharacterIndex = 1;// 1번이면 Soldier 2번이면 Warrior 
 };

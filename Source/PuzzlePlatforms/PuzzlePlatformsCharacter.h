@@ -59,13 +59,11 @@ public:
 	virtual void AddControllerYawInput(float Val);
 	virtual void Die();
 
-	UFUNCTION(Server, Reliable, WithValidation)
-		void Server_SetLevel(int NewLevel);
+
 	UFUNCTION(NetMulticast, Reliable, WithValidation)
 		void Multicast_SetLevel(int NewLevel);
 	void SetStatComponentLevel();
-	UFUNCTION(Server, Reliable, WithValidation)
-		void Server_SetServerLevel();
+
 
 protected:
 	// APawn interface

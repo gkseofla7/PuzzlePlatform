@@ -63,10 +63,7 @@ void APuzzlePlatformsGameMode::RespawnRequested(APlayerController* PlayerControl
 		GetWorldTimerManager().SetTimer(UniqueHandle, RespawnDelegate, .5f, false);
 
 	}
-	else
-	{
 
-	}
 }
 
 void APuzzlePlatformsGameMode::PossessPlayer(APlayerController* PlayerController, class APuzzlePlatformsCharacter* NewPlayer)
