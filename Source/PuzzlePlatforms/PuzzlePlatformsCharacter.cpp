@@ -108,6 +108,12 @@ APuzzlePlatformsCharacter::APuzzlePlatformsCharacter()
 		HPBarWidget->SetWidgetClass(UI_HUD.Class);
 		HPBarWidget->SetDrawSize(FVector2D(150.f, 50.f));
 	}
+
+	static ConstructorHelpers::FClassFinder< UPlayerInfoWidget> UI_HUD_C(TEXT("/Game/PuzzlePlatforms/Widget/WBP_PlayerInfo"));
+	if (UI_HUD_C.Succeeded())
+	{
+		PlayerInfoHUDWidgetClass = UI_HUD_C.Class;
+	}
 }
 
 void APuzzlePlatformsCharacter::GetLifetimeReplicatedProps(TArray< FLifetimeProperty >& OutLifetimeProps) const
@@ -167,6 +173,25 @@ void APuzzlePlatformsCharacter::PossessedBy(AController* NewController)
 		//Multicast_SetLevel(MyController->Level);
 
 	}
+	if (IsLocallyControlled() == true)//당연 맞겠지만 혹시나
+	{
+		auto MyGameInstance = Cast< UPuzzlePlatformsGameInstance>(GetGameInstance());
+		PlayerInfoHUDWidget = CreateWidget<UPlayerInfoWidget>(GetWorld(), PlayerInfoHUDWidgetClass);
+		if (PlayerInfoHUDWidget != nullptr)
+		{
+			//Cast<UPuzzlePlatformsGameInstance>(GetGameInstance());
+			PlayerInfoHUDWidget->BindCharacterStat(this->CharacterStat);
+			PlayerInfoHUDWidget->AddToViewport();
+			Cast<UPuzzlePlatformsGameInstance>(GetGameInstance())->GetHeadsUpDisplay()->AddToViewport();
+			
+
+		}
+		if (!(MyGameInstance->PlayerName.EqualTo(FText::GetEmpty())))
+		{
+			if (PlayerInfoHUDWidget != nullptr)
+				PlayerInfoHUDWidget->BindCharacterName(MyGameInstance->PlayerName);
+		}
+	}
 
 }
 
@@ -188,7 +213,7 @@ void APuzzlePlatformsCharacter::BeginPlay()
 	auto gamemode = Cast<AMyLobbyGameMode>(UGameplayStatics::GetGameMode(GetWorld()));
 	if (IsLocallyControlled()&& gamemode != nullptr)
 	{
-		Cast<UPuzzlePlatformsGameInstance>(GetGameInstance())->LoadSetNameMenu();
+		//Cast<UPuzzlePlatformsGameInstance>(GetGameInstance())->LoadSetNameMenu();
 	}
 
 	//widget은 beginplay에서 초기화시켜야됨
@@ -223,7 +248,7 @@ void APuzzlePlatformsCharacter::BeginPlay()
 
 void APuzzlePlatformsCharacter::SetStatComponentLevel()
 {
-	UE_LOG(LogTemp, Warning, TEXT("Timer"));
+
 	if (Level == 0)
 		return;
 	else
@@ -277,6 +302,8 @@ void APuzzlePlatformsCharacter::AddControllerYawInput(float Val)
 }
 void APuzzlePlatformsCharacter::UpdateStat()
 {
+	if (CharacterStat == nullptr)
+		return;
 	CharacterStat->IncreaseHP(.5);
 	CharacterStat->IncreaseMP(.5);
 }

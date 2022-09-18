@@ -84,4 +84,5 @@ private:
 public:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = UI)
 		class UHudUpDisplayWidget* HeadsUpDisplay;
+	FText PlayerName;
 };

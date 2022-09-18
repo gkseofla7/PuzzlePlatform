@@ -25,10 +25,14 @@ public:
 	void SetMP(float NewMP);
 	void SetNewLevel(int32 NewLevel);
 	void IncreaseHP(float NewHP) {
+		if (CurrentStatData == nullptr)
+			return;
 		if (CurrentHP == CurrentStatData->MaxHP&&NewHP > 0)
 			return;
 		SetHP(CurrentHP + NewHP); }
 	void IncreaseMP(float NewMP) {
+		if (CurrentStatData == nullptr)
+			return;
 		if (CurrentMP == CurrentStatData->MaxMP && NewMP > 0)
 			return;
 		SetMP(CurrentMP + NewMP); }

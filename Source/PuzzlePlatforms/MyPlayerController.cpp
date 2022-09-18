@@ -12,13 +12,10 @@
 #include "Net/UnrealNetwork.h"
 AMyPlayerController::AMyPlayerController()
 {
-	static ConstructorHelpers::FClassFinder< UPlayerInfoWidget> UI_HUD_C(TEXT("/Game/PuzzlePlatforms/Widget/WBP_PlayerInfo"));
+	
 	//static ConstructorHelpers::FClassFinder< UUserWidget> NEWUI_HUD_C(TEXT("/Game/AbilitySystem/UI/HeadsUpDisplay"));
 	///Game/AbilitySystem/UI/HeadsUpDisplay
-	if (UI_HUD_C.Succeeded())
-	{
-		HUDWidgetClass = UI_HUD_C.Class;
-	}
+
 
 	bReplicates = true;
 	Level = 1;
@@ -39,8 +36,7 @@ void AMyPlayerController::OnPossess(APawn* aPawn)
 {
 
 	Super::OnPossess(aPawn);
-
-
+	
 	//auto MyCharacter = Cast<APuzzlePlatformsCharacter>(aPawn);
 	//if (MyCharacter != nullptr)
 	//{
@@ -60,31 +56,20 @@ void AMyPlayerController::BeginPlay()
 		FInputModeGameOnly InputMode;
 		SetInputMode(InputMode);
 		//위젯은 무조건 beginplay에서 초기화시켜야됨
-		HUDWidget = CreateWidget<UPlayerInfoWidget>(this, HUDWidgetClass);
+
 		//NewHUDWidget = CreateWidget<UUserWidget>(this, NewHUDWidgetClass);
 
-		if (HUDWidget != nullptr)
-		{
-			HUDWidget->AddToViewport();
-			//Cast<UPuzzlePlatformsGameInstance>(GetGameInstance());
-			Cast<UPuzzlePlatformsGameInstance>(GetGameInstance())->GetHeadsUpDisplay()->AddToViewport();
-			auto MyPawn = Cast<APuzzlePlatformsCharacter>(GetPawn());
-			if (MyPawn != nullptr)
-			{
-				HUDWidget->BindCharacterStat(MyPawn->CharacterStat);
-			}
-			
-		}
+
 	}
 
 }
 
 
 
-UPlayerInfoWidget* AMyPlayerController::GetHudWidget() const
-{
-	return HUDWidget;
-}
+//UPlayerInfoWidget* AMyPlayerController::GetHudWidget() const
+//{
+//	return HUDWidget;
+//}
 
 void AMyPlayerController::SetInputModeGameAndUI()
 {

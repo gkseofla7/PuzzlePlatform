@@ -101,7 +101,10 @@ public:
 		class UParticleSystemComponent* ParticleSystemComponent;
 	UPROPERTY(VisibleAnywhere, Category = UI)
 		class UWidgetComponent* HPBarWidget;
-
+	UPROPERTY()
+		class UPlayerInfoWidget* PlayerInfoHUDWidget;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = UI)
+		TSubclassOf<class UPlayerInfoWidget> PlayerInfoHUDWidgetClass;
 	class UHudUpDisplayWidget* HeadsUpDisplayRef;
 	APuzzlePlatformsCharacter* TargetPlayer;
 

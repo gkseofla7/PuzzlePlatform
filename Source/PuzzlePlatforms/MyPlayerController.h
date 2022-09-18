@@ -21,19 +21,17 @@ public:
 	virtual void OnPossess(APawn* aPawn) override;
 	void SetInputModeGameAndUI();
 	void SetInputModeGame();
-	class UPlayerInfoWidget* GetHudWidget() const;
+	//class UPlayerInfoWidget* GetHudWidget() const;
 
 
 protected:
 	virtual void BeginPlay() override;
 
-	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = UI)
-		TSubclassOf<class UPlayerInfoWidget> HUDWidgetClass;
+
 	//UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = UI)
 	//	TSubclassOf<class UUserWidget> NewHUDWidgetClass;
 public:
-	UPROPERTY()
-	class UPlayerInfoWidget* HUDWidget;
+
 
 	//UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Stat)
 	//class UMyCharacterStatComponent* CharacterStat;//이게 근데 생각해보면.. controller에 있으면..다른애들 stat은 어찌함?

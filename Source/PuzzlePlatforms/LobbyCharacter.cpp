@@ -2,6 +2,7 @@
 
 
 #include "LobbyCharacter.h"
+#include "PuzzlePlatformsGameInstance.h"
 
 #include "GameFramework/SpringArmComponent.h"
 #include "Camera/CameraComponent.h"
@@ -46,7 +47,9 @@ void ALobbyCharacter::SetupPlayerInputComponent(class UInputComponent* PlayerInp
 void ALobbyCharacter::BeginPlay()
 {
 	Super::BeginPlay();
-	
+	auto MyGameInstance = Cast<UPuzzlePlatformsGameInstance>(GetGameInstance());
+	if(MyGameInstance!= nullptr&&IsLocallyControlled())
+		MyGameInstance->LoadSetNameMenu();
 }
 
 // Called every frame

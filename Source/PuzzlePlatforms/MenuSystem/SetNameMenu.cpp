@@ -7,6 +7,7 @@
 
 #include "../PlayerInfoWidget.h"
 #include "../MyPlayerController.h"
+#include "../PuzzlePlatformsGameInstance.h"
 bool USetNameMenu::Initialize()
 {
 	bool Success = Super::Initialize();
@@ -29,8 +30,8 @@ void USetNameMenu::ConfirmID()
 	//UE_LOG(LogTemp, Warning, TEXT("%s"), *SendPlayerID.ToString());
 	if (!(PlayerID->GetText().EqualTo( FText::GetEmpty())))
 	{
-		Cast<AMyPlayerController>(GetOwningPlayer())->HUDWidget->BindCharacterName(PlayerID->GetText());
-
+		//Cast<AMyPlayerController>(GetOwningPlayer())->HUDWidget->BindCharacterName(PlayerID->GetText());
+		Cast< UPuzzlePlatformsGameInstance>(GetGameInstance())->PlayerName = PlayerID->GetText();
 		//PlayerController->SetName(SendPlayerID.ToString());//애초에 여기까지
 		Teardown();
 		//이제 이 메뉴 없애고 
