@@ -30,12 +30,16 @@ void AAbility_Projectile_Fireball::BeginPlay()
 	Super::BeginPlay();
 
 	auto warrior = Cast<AWarrior>(PlayerRef);
+
 	bReplicates = true;
 	AttachToComponent(PlayerRef->GetMesh(), FAttachmentTransformRules::SnapToTargetNotIncludingScale, "hand_rSocket");
 	AsPlayerAnimInstance = Cast<UPlayerAnimInstance>(AnimRef);
 	AsPlayerAnimInstance->Montage_JumpToSection(FName("Defualt"), AsPlayerAnimInstance->FireballAttackMontage);
+	if(PlayerRef->IsLocallyControlled())
+	{ 
+		AsPlayerAnimInstance->OnFireBall.AddUObject(this, &AAbility_Projectile::ActivateEffect);
+	}
 
-	AsPlayerAnimInstance->OnFireBall.AddUObject(this, &AAbility_Projectile::ActivateEffect);
 	//AsPlayerAnimInstance->OnFireBall.AddUObject(this, &AAbility_Projectile::DetachAbilityFromPlayer);
 	AsPlayerAnimInstance->PlayFireballAttackMontage();
 	//AsPlayerAnimInstance->OnFireBall.Add()
@@ -45,7 +49,8 @@ void AAbility_Projectile_Fireball::BeginPlay()
 void AAbility_Projectile_Fireball::CastAbility_Implementation()
 {
 	Super::CastAbility_Implementation();
-	AsPlayerAnimInstance->Montage_JumpToSection(FName("EndCast"), AsPlayerAnimInstance->FireballAttackMontage);
+
+	Server_PlayNextAnimation();
 	//AsPlayerAnimInstance->PlayFireballAttackMontage();
 
 }
@@ -84,6 +89,43 @@ bool AAbility_Projectile_Fireball::NetMulticast_Spark_Validate(FVector Location)
 	return true;
 }
 
+void AAbility_Projectile_Fireball::Server_PlayNextAnimation_Implementation()
+{
+	NetMulticast_PlayNextAnimation();
+}
+
+bool AAbility_Projectile_Fireball::Server_PlayNextAnimation_Validate()
+{
+	return true;
+}
+
+void AAbility_Projectile_Fireball::NetMulticast_PlayNextAnimation_Implementation()
+{
+
+	ABCHECK(AsPlayerAnimInstance != nullptr);
+	if (HasAuthority() == true)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("SERVER Shot"));
+	}
+	AsPlayerAnimInstance->Montage_JumpToSection(FName("EndCast"), AsPlayerAnimInstance->FireballAttackMontage);
+}
+
+bool AAbility_Projectile_Fireball::NetMulticast_PlayNextAnimation_Validate()
+{
+	return true;
+}
+
+
+void AAbility_Projectile_Fireball::NetMulticast_DeactivateParticle_Implementation()
+{
+	ParticleSystemComponent->Deactivate();
+}
+
+bool AAbility_Projectile_Fireball::NetMulticast_DeactivateParticle_Validate()
+{
+	return true;
+}
+
 //void AAbility_Projectile_Fireball::OnHit(UPrimitiveComponent* HitComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit)
 //{
 //	NetMulticast_Spark(Hit.Location);
@@ -95,12 +137,22 @@ void AAbility_Projectile_Fireball::OnOverlapBegin(class UPrimitiveComponent* Ove
 	if (OtherActor == PlayerRef)
 		return;
 	//UE_LOG(LogTemp, Warning, TEXT("Hit %s, %s %s") ,*OverlappedComp->GetName(),*OtherActor->GetName(), *OtherComp->GetName());
-	NetMulticast_Spark(OtherActor->GetActorLocation());
+
 	if (HasAuthority() == true)
 	{
-		auto Player = Cast<APuzzlePlatformsCharacter>(OtherActor);
-		if (Player != nullptr)
+		NetMulticast_Spark(OtherActor->GetActorLocation());
+		auto Player = Cast<ACharacter>(OtherActor);
+		auto PuzzleCharacter = Cast<APuzzlePlatformsCharacter>(OtherActor);
+		bool Check = false;
+		if (PuzzleCharacter != nullptr)
 		{
+			if (PuzzleCharacter->TeamNum == PlayerRef->TeamNum)
+				Check = true;
+
+		}
+		if (Player != nullptr&&Check==false)//같은팀이아닌 Character면 데미지
+		{
+
 			UGameplayStatics::ApplyDamage(Player, DamageAmount, PlayerRef->GetController(), PlayerRef, UDamageType::StaticClass());
 
 		}
@@ -113,6 +165,7 @@ void AAbility_Projectile_Fireball::OnOverlapBegin(class UPrimitiveComponent* Ove
 	}
 	else
 	{
+		NetMulticast_DeactivateParticle();
 		NeedToDestroy = true;
 	}
 }

@@ -26,13 +26,21 @@ void AAbility_AoE_HolyGround::ActivateEffect_Implementation()
 	if (HasAuthority())
 	{
 		TArray<AActor*>OverlappingActors;
-		AbilityRoot->GetOverlappingActors(OverlappingActors, APuzzlePlatformsCharacter::StaticClass());
+		AbilityRoot->GetOverlappingActors(OverlappingActors, ACharacter::StaticClass());
 
 		for (auto Actors : OverlappingActors)
 		{
-			if (Actors == PlayerRef)
+			auto Player = Cast < ACharacter>(Actors);
+			if (Player == nullptr)
 				continue;
-			UGameplayStatics::ApplyDamage(Actors, DamageAmount, PlayerRef->GetController(), PlayerRef, UDamageType::StaticClass());
+			auto PuzzleCharacter = Cast<APuzzlePlatformsCharacter>(Actors);
+			if (PuzzleCharacter != nullptr)
+			{
+				if (PuzzleCharacter == PlayerRef||PuzzleCharacter->TeamNum==PlayerRef->TeamNum)//자기 자신이던가 같은팀이면
+					continue;
+			}
+
+			UGameplayStatics::ApplyDamage(Player, DamageAmount, PlayerRef->GetController(), PlayerRef, UDamageType::StaticClass());
 
 		}
 

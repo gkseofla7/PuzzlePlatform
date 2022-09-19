@@ -75,6 +75,14 @@ void ABulletMaster::OnOverlapBegin(class UPrimitiveComponent* OverlappedComp, cl
 			auto MyCharacter = Cast<ACharacter>(OtherActor);
 			if (MyCharacter != nullptr)
 			{
+				auto Player = Cast<APuzzlePlatformsCharacter>(MyCharacter);
+				if (Player != nullptr)
+				{
+					if (Player->TeamNum == Shooter->TeamNum)
+					{
+						return;
+					}
+				}
 				FDamageEvent DamageEvent;
 				//여기서 컨트롤러가..ㅋㅋ 다른 서버쪽 기준 컨트롤러로 돼있을텐데
 

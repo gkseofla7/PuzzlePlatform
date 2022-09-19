@@ -41,7 +41,7 @@ void AMyLobbyGameMode::PostLogin(APlayerController* NewPlayer)
 
 
 	//Cast<UPuzzlePlatformsGameInstance>(GetGameInstance())->LoadSetNameMenu(NewPlayer);
-	if (NumberOfPlayers >= 2)
+	if (NumberOfPlayers == NumberOfReady && NumberOfPlayers % 2 == 0)
 	{
 		//FTimerDelegate RespawnDelegate = FTimerDelegate::CreateUObject(this, &AMyLobbyGameMode::StartPlay,);
 		GetWorldTimerManager().SetTimer(GameStartTimer, this, &AMyLobbyGameMode::StartGame, 10.0f);

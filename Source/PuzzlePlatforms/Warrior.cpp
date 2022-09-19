@@ -38,7 +38,7 @@ AWarrior::AWarrior()
 
 	}
 	
-
+	TeamNum = 2;
 
 }
 void AWarrior::PostInitializeComponents()
@@ -118,6 +118,14 @@ void AWarrior::AttackCheck()
 			Rotation, DrawColor, false, 5.f);
 		if (bResult && HitResult.Actor.IsValid())
 		{
+			auto Player = Cast<APuzzlePlatformsCharacter>(HitResult.Actor);
+			if (Player != nullptr)
+			{
+				if (Player->TeamNum == TeamNum)
+				{
+					return;
+				}
+			}
 			FDamageEvent DamageEvent;
 			HitResult.Actor->TakeDamage(50.0f, DamageEvent, GetController(), this);
 			//UAISense_Damage::ReportDamageEvent(GetWorld(), HitResult.Actor.Get(), this, 10., HitResult.TraceStart, HitResult.Location);

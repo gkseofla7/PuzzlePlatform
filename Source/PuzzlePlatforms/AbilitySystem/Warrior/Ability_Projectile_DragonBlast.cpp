@@ -38,7 +38,10 @@ void AAbility_Projectile_DragonBlast::BeginPlay()
 	AsPlayerAnimInstance = Cast<UPlayerAnimInstance>(warrior->GetMesh()->GetAnimInstance());
 	AsPlayerAnimInstance->Montage_JumpToSection(FName("Defualt"), AsPlayerAnimInstance->SwordBlastMontage);
 	//AsPlayerAnimInstance->IsAttacking = true;
-	AsPlayerAnimInstance->OnFireDragonBlastDelegate.AddUObject(this, &AAbility_Projectile::ActivateEffect);
+	if (PlayerRef->IsLocallyControlled())
+	{
+		AsPlayerAnimInstance->OnFireDragonBlastDelegate.AddUObject(this, &AAbility_Projectile::ActivateEffect);
+	}
 	//AsPlayerAnimInstance->OnFireDragonBlastDelegate.AddUObject(this, &AAbility_Projectile::DetachAbilityFromPlayer);
 
 	AsPlayerAnimInstance->PlaySwordBlastMontage();
@@ -67,7 +70,7 @@ void AAbility_Projectile_DragonBlast::Tick(float DeltaTime)
 void AAbility_Projectile_DragonBlast::CastAbility_Implementation()
 {
 	Super::CastAbility_Implementation();
-	AsPlayerAnimInstance->Montage_JumpToSection(FName("EndCast"), AsPlayerAnimInstance->SwordBlastMontage);
+	Server_PlayNextAnimation();
 
 }
 
@@ -100,16 +103,45 @@ void AAbility_Projectile_DragonBlast::OnOverlapBegin(class UPrimitiveComponent* 
 		int32 index = SweepArray.Find(OtherActor);
 		if (index == -1)
 		{
-			auto Player = Cast<APuzzlePlatformsCharacter>(OtherActor);
-			if (Player != nullptr && Player != PlayerRef)
+
+			auto Player = Cast<ACharacter>(OtherActor);
+			auto PuzzleCharacter = Cast<APuzzlePlatformsCharacter>(OtherActor);
+			if (PuzzleCharacter != nullptr && PuzzleCharacter->TeamNum == PlayerRef->TeamNum)
+				return;
+			if ((Player != nullptr && Player != PlayerRef) )
 			{
 				UGameplayStatics::ApplyDamage(OtherActor, DamageAmount, PlayerRef->GetController(), this, UDamageType::StaticClass());
-
-				Player->DaerimMotionReplicator->AbilitySpawn(Ability_Buff_Fortitude_Class);
+				//고블린도 진행해야됨
+				if(PuzzleCharacter!=nullptr)
+					PuzzleCharacter->DaerimMotionReplicator->AbilitySpawn(Ability_Buff_Fortitude_Class);
 				SweepArray.Add(OtherActor);
 			}
+			
 		}
 	}
 }
 
 
+
+void AAbility_Projectile_DragonBlast::Server_PlayNextAnimation_Implementation()
+{
+	NetMulticast_PlayNextAnimation();
+}
+
+bool AAbility_Projectile_DragonBlast::Server_PlayNextAnimation_Validate()
+{
+	return true;
+}
+
+
+void AAbility_Projectile_DragonBlast::NetMulticast_PlayNextAnimation_Implementation()
+{
+
+	ABCHECK(AsPlayerAnimInstance != nullptr);
+	AsPlayerAnimInstance->Montage_JumpToSection(FName("EndCast"), AsPlayerAnimInstance->SwordBlastMontage);
+}
+
+bool AAbility_Projectile_DragonBlast::NetMulticast_PlayNextAnimation_Validate()
+{
+	return true;
+}

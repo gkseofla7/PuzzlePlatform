@@ -69,6 +69,7 @@ ASoldier::ASoldier()
 		FPSHudClass = FPSHudBPClass.Class;
 
 	}
+	TeamNum = 1;
 }
 
 void ASoldier::SteamPack()

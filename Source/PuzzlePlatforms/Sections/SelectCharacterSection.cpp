@@ -4,6 +4,7 @@
 #include "SelectCharacterSection.h"
 #include "../LobbyCharacter.h"
 #include "../PuzzlePlatformsGameInstance.h"
+#include "../MyLobbyGameMode.h"
 
 #include "Components/BoxComponent.h"
 #include "Components/DecalComponent.h"
@@ -27,6 +28,7 @@ void ASelectCharacterSection::BeginPlay()
 {
 	Super::BeginPlay();
 	BoxComponent->OnComponentBeginOverlap.AddDynamic(this, &ASelectCharacterSection::OnBoxBeginOverlap);
+	BoxComponent->OnComponentEndOverlap.AddDynamic(this, &ASelectCharacterSection::OnBoxEndOverlap);
 }
 
 // Called every frame
@@ -45,5 +47,29 @@ void ASelectCharacterSection::OnBoxBeginOverlap(UPrimitiveComponent* OverlappedC
 		auto MyGameInstance = Cast< UPuzzlePlatformsGameInstance>(GetGameInstance());
 		ABCHECK(MyGameInstance);
 		MyGameInstance->CharacterIndex = CharacterIndex;
+	}
+	if (HasAuthority())
+	{
+		auto MyGameMode = Cast< AMyLobbyGameMode>(UGameplayStatics::GetGameMode(GetWorld()));
+		ABCHECK(MyGameMode);
+		MyGameMode->NumberOfReady++;
+		if (MyGameMode->NumberOfPlayers == MyGameMode->NumberOfReady && MyGameMode->NumberOfPlayers % 2 == 0)
+		{
+			//FTimerDelegate RespawnDelegate = FTimerDelegate::CreateUObject(this, &AMyLobbyGameMode::StartPlay,);
+			MyGameMode->StartGame();
+			//GetWorldTimerManager().SetTimer(GameStartTimer, this, &AMyLobbyGameMode::StartGame, 10.0f);
+
+		}
+	}
+}
+
+void ASelectCharacterSection::OnBoxEndOverlap(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex)
+{
+	if (HasAuthority())
+	{
+		auto MyGameMode = Cast< AMyLobbyGameMode>(UGameplayStatics::GetGameMode(GetWorld()));
+		ABCHECK(MyGameMode);
+		MyGameMode->NumberOfReady--;
+
 	}
 }
