@@ -7,6 +7,8 @@
 #include "PuzzlePlatformsGameInstance.h"
 #include "AbilitySystem/HudUpDisplayWidget.h"
 #include"PlayersComponent/MyCharacterStatComponent.h"
+#include "Soldier.h"
+#include "Warrior.h"
 
 #include "MyLobbyGameMode.h"
 #include "Net/UnrealNetwork.h"
@@ -60,19 +62,13 @@ void AMyPlayerController::BeginPlay()
 
 
 	}
-	if (HasAuthority() == true)//당연 true
-	{
-		auto MyInstance = Cast< UPuzzlePlatformsGameInstance>(GetGameInstance());
-		if (MyInstance != nullptr)
-		{
-			if (MyInstance->CharacterIndex == 1)
-			{
-				TArray<AActor*> AllActors;
-				UGameplayStatics::GetAllActorsOfClass(GetWorld(), AActor::StaticClass(), AllActors);
-			}
-		}
-
-	}
+	auto GameMode = Cast< AMyLobbyGameMode>(UGameplayStatics::GetGameMode(GetWorld()));
+	//if (GameMode==nullptr&&HasAuthority() == true)//당연 true
+	//{
+	//	FTimerHandle PossessCharacterHandle;
+	//	FTimerDelegate PossessCharacterDelegate = FTimerDelegate::CreateUObject(this, &AMyPlayerController::PossessCharacter);
+	//	GetWorldTimerManager().SetTimer(PossessCharacterHandle, PossessCharacterDelegate, .2f, false);
+	//}
 
 }
 
@@ -137,3 +133,42 @@ void AMyPlayerController::BindWidget(class UMyCharacterStatComponent* NewCharact
 		}
 	}
 }
+
+//void AMyPlayerController::PossessCharacter()//아 애초에.. 서버쪽이 아닌 클라이언트구나
+//{
+//	auto MyInstance = Cast< UPuzzlePlatformsGameInstance>(GetGameInstance());
+//	if (MyInstance != nullptr)
+//	{
+//		if (MyInstance->CharacterIndex == 1)
+//		{
+//			TArray<AActor*> AllActors;
+//			UGameplayStatics::GetAllActorsOfClass(GetWorld(), ASoldier::StaticClass(), AllActors);
+//			for (auto AllActor : AllActors)
+//			{
+//				auto Soldier = Cast<ASoldier>(AllActor);
+//				if (Soldier->bPossessed == false)
+//				{
+//					Soldier->bPossessed = true;
+//					Possess(Soldier);
+//					break;
+//				}
+//			}
+//		}
+//
+//		else if (MyInstance->CharacterIndex == 2)
+//		{
+//			TArray<AActor*> AllActors;
+//			UGameplayStatics::GetAllActorsOfClass(GetWorld(), AWarrior::StaticClass(), AllActors);
+//			for (auto AllActor : AllActors)
+//			{
+//				auto Warrior = Cast<AWarrior>(AllActor);
+//				if (Warrior->bPossessed == false)
+//				{
+//					Warrior->bPossessed = true;
+//					Possess(Warrior);
+//					break;
+//				}
+//			}
+//		}
+//	}
+//}

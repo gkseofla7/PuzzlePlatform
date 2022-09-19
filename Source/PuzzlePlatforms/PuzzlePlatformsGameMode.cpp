@@ -5,11 +5,13 @@
 #include "UObject/ConstructorHelpers.h"
 #include "TimerManager.h"
 #include "Blueprint/UserWidget.h"
+#include "MyDefaultPawn.h"
 
 #include "MyPlayerState.h"
 #include "PuzzlePlatformsGameInstance.h"
 #include "MyPlayerController.h"
 #include "Cars/MyProjectPawn.h"
+#include "GameFramework/DefaultPawn.h"
 
 APuzzlePlatformsGameMode::APuzzlePlatformsGameMode()
 {
@@ -18,9 +20,14 @@ APuzzlePlatformsGameMode::APuzzlePlatformsGameMode()
 	//static ConstructorHelpers::FClassFinder<APawn> PlayerPawnBPClass(TEXT("/Game/ThirdPersonCPP/Blueprints/ThirdPersonCharacter"));
 	static ConstructorHelpers::FClassFinder<APawn> SoldierBPClass(TEXT("/Game/ThirdPersonCPP/Blueprints/BP_Soldier_2"));
 	static ConstructorHelpers::FClassFinder<APawn> WarriorBPClass(TEXT("/Game/ThirdPersonCPP/Blueprints/BP_Warrior"));
+	//static ConstructorHelpers::FClassFinder<APawn> LobbyBPCharacter(TEXT("/Game/ThirdPersonCPP/Blueprints/BP_LobbyCharacter"));
+
+	DefaultPawnClass = AMyDefaultPawn::StaticClass();
+	
+	//DefaultPawnClass = ADefaultPawn::StaticClass();
 	if (SoldierBPClass.Class != NULL)
 	{
-		DefaultPawnClass = SoldierBPClass.Class;
+
 		BPSoldierClass = SoldierBPClass.Class;
 	}
 	if (WarriorBPClass.Class != NULL)

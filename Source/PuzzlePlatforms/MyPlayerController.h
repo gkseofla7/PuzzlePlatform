@@ -24,7 +24,7 @@ public:
 	void SetWidget();
 	void BindWidget(class UMyCharacterStatComponent* NewCharacterStat);
 	//class UPlayerInfoWidget* GetHudWidget() const;
-
+	//void PossessCharacter();
 
 protected:
 	virtual void BeginPlay() override;

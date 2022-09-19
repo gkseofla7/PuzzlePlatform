@@ -3,6 +3,8 @@
 
 #include "LobbyCharacter.h"
 #include "PuzzlePlatformsGameInstance.h"
+#include "MyLobbyGameMode.h"
+
 
 #include "GameFramework/SpringArmComponent.h"
 #include "Camera/CameraComponent.h"
@@ -11,7 +13,7 @@ ALobbyCharacter::ALobbyCharacter()
 {
  	// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
-
+	bReplicates = true;
 	BaseTurnRate = 45.f;
 	BaseLookUpRate = 45.f;
 	bUseControllerRotationPitch = false;
@@ -47,9 +49,13 @@ void ALobbyCharacter::SetupPlayerInputComponent(class UInputComponent* PlayerInp
 void ALobbyCharacter::BeginPlay()
 {
 	Super::BeginPlay();
+
 	auto MyGameInstance = Cast<UPuzzlePlatformsGameInstance>(GetGameInstance());
 	if(MyGameInstance!= nullptr&&IsLocallyControlled())
 		MyGameInstance->LoadSetNameMenu();
+
+
+
 }
 
 // Called every frame
@@ -101,3 +107,4 @@ void ALobbyCharacter::MoveRight(float Value)
 		AddMovementInput(Direction, Value);
 	}
 }
+
