@@ -24,23 +24,8 @@ void AAbility_Debuff::BeginPlay()
 	AttachToComponent(PlayerRef->GetMesh(), FAttachmentTransformRules::SnapToTargetNotIncludingScale, "hand_rSocket");
 }
 
-void AAbility_Debuff::CastAbility_Implementation()
-{
-	Super::CastAbility_Implementation();
-
-}
-
-
-
 
 void AAbility_Debuff::TickBuff()
 {
 
-}
-
-
-
-void AAbility_Debuff::ApplyBuff()
-{
-	Super::ApplyBuff();
 }

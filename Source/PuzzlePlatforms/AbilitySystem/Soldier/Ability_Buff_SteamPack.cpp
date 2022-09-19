@@ -13,6 +13,8 @@ AAbility_Buff_SteamPack::AAbility_Buff_SteamPack()
 void AAbility_Buff_SteamPack::BeginPlay()
 {
 	Super::BeginPlay();
+	BuffLifeSpan = 10;
+	bIsRepeat = false;
 	if (PlayerRef->IsLocallyControlled())
 	{
 		auto Soldier = Cast<ASoldier>(PlayerRef);
@@ -20,12 +22,23 @@ void AAbility_Buff_SteamPack::BeginPlay()
 	}
 	
 }
-void AAbility_Buff_SteamPack::TickBuff()
+void AAbility_Buff_SteamPack::TickBuff()//이건 시간지나고 나한테 실행해야됨
 {
-	if (PlayerRef->IsLocallyControlled())
+	NetMulticast_UnSteamPack();
+
+	Destroy();
+}
+
+void AAbility_Buff_SteamPack::NetMulticast_UnSteamPack_Implementation()
+{
+	auto Soldier = Cast<ASoldier>(PlayerRef);
+	if (Soldier != nullptr)
 	{
-		auto Soldier = Cast<ASoldier>(PlayerRef);
 		Soldier->UnSteamPack();
 	}
-	Destroy();
+}
+
+bool AAbility_Buff_SteamPack::NetMulticast_UnSteamPack_Validate()
+{
+	return true;
 }

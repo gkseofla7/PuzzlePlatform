@@ -7,7 +7,7 @@
 AAbility_Buff_Fire::AAbility_Buff_Fire()
 	:Super()
 {
-
+	DamageAmount = 2.f;
 }
 
 void AAbility_Buff_Fire::BeginPlay()
@@ -15,12 +15,15 @@ void AAbility_Buff_Fire::BeginPlay()
 	Super::BeginPlay();
 	AttachToComponent(PlayerRef->GetMesh(), FAttachmentTransformRules::SnapToTargetNotIncludingScale, "hand_rSocket");
 }
+
+
+
 void AAbility_Buff_Fire::TickBuff()
 {
 	if (HasAuthority())
 	{
-
-		UGameplayStatics::ApplyDamage(PlayerRef, DamageAmount, PlayerRef->GetController(), PlayerRef, UDamageType::StaticClass());
+		UE_LOG(LogTemp,Warning, TEXT("Give Damage %f"), DamageAmount)
+		UGameplayStatics::ApplyDamage(PlayerRef, DamageAmount, PlayerRef->GetController(), this, UDamageType::StaticClass());
 	}
 }
 

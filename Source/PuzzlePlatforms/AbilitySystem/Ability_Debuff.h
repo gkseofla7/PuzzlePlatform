@@ -16,10 +16,8 @@ class PUZZLEPLATFORMS_API AAbility_Debuff : public AAbility_Buff_Master
 
 protected:
 	virtual void BeginPlay();
-
-	virtual void CastAbility_Implementation() override;
 public:
-	virtual void ApplyBuff() override;
+//	virtual void ApplyBuff() override;
 	virtual void TickBuff() override;
 	//void ClearBuff();
 	//void TickBuff();

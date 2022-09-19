@@ -17,4 +17,6 @@ public:
 	AAbility_Buff_SteamPack();
 	virtual void BeginPlay() override;
 	virtual void TickBuff();
+	UFUNCTION(NetMulticast, Reliable, WithValidation)
+		void NetMulticast_UnSteamPack();
 };

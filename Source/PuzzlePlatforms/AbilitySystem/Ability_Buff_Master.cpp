@@ -15,6 +15,8 @@ void AAbility_Buff_Master::BeginPlay()
 
 	bReplicates = true;
 	AbilityRoot->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+	ClearDuplicates();
+	bReplicates = true;
 	//FTimerHandle TimerHandler;
 	//GetWorld()->GetTimerManager().SetTimer(TimerHandler, this, &AAbility_Buff_Master::TickBuff, BuffLifeSpan, false);
 
@@ -37,32 +39,36 @@ void AAbility_Buff_Master::CastAbility_Implementation()
 	{
 		PlayerRef = PlayerRef->TargetPlayer;
 	}
+	//if (HasAuthority())
+	//{
+	//	
+	//	SetLifeSpan(BuffLifeSpan);
+	//}
+	//else
+	//{
+	//}
 
-	if (HasAuthority())
-	{
-		
-		SetLifeSpan(BuffLifeSpan);
-	}
-	else
-	{
-	}
-
-
-	ApplyBuff();
-
-}
-
-void AAbility_Buff_Master::ApplyBuff()
-{
-
-	FTimerHandle TimerHandler;
-	GetWorld()->GetTimerManager().SetTimer(TimerHandler, this, &AAbility_Buff_Master::TickBuff, BuffTickRate, true);
-	
-	if (PlayerRef->IsLocallyControlled() == true)
+	if (PlayerRef->IsLocallyControlled() == true)//어차피 나 자신
 	{
 		HudUI->BuffPanel_UI->AddBufftoUI(this);
 	}
+	Server_ApplyBuff();
+
+
 }
+
+void AAbility_Buff_Master::Server_ApplyBuff_Implementation()
+{
+	FTimerHandle TimerHandler;
+	GetWorld()->GetTimerManager().SetTimer(TimerHandler, this, &AAbility_Buff_Master::TickBuff, BuffTickRate, bIsRepeat);
+}
+
+bool AAbility_Buff_Master::Server_ApplyBuff_Validate()
+{
+	return true;
+}
+
+
 void AAbility_Buff_Master::ClearBuff()
 {
 

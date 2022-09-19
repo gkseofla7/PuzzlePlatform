@@ -21,7 +21,8 @@ protected:
 	virtual void CastAbility_Implementation() override;
 	virtual void Tick(float DeltaTime) override;
 public:
-	virtual void ApplyBuff();
+	UFUNCTION(Server, Reliable, WithValidation)
+	virtual void Server_ApplyBuff();
 	virtual void TickBuff();
 	void ClearBuff();
 
@@ -34,6 +35,7 @@ public:
 	float BuffLifeSpan = 10;
 	float TimeSpend = 0;
 	float BuffTickRate = .5;
+	bool bIsRepeat = true;
 	FOnEndBuffDelegate OnEndBuffDelegate;
 	float StartTimeSeconds;
 };

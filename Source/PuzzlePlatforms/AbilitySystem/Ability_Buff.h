@@ -15,17 +15,4 @@ class PUZZLEPLATFORMS_API AAbility_Buff : public AAbility_Buff_Master
 protected:
 	virtual void BeginPlay();
 
-	virtual void CastAbility_Implementation() override;
-public:
-	virtual void ApplyBuff();
-	//void ClearBuff();
-	//void TickBuff();
-	//void ClearDuplicates();
-	//virtual void EndPlay(const EEndPlayReason::Type EndPlayReason) override;
-public:
-	//UPROPERTY(BlueprintReadWrite, EditAnywhere)
-	//	class UPlayerAnimInstance* AsPlayerAnimInstance;
-	//float BuffLifeSpan = 10;
-	//float BuffTickRate =.5;
-	//FOnEndBuffDelegate OnEndBuffDelegate;
 };
