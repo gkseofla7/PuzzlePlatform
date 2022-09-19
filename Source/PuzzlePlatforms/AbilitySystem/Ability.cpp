@@ -4,7 +4,7 @@
 #include "Ability.h"
 #include "../PuzzlePlatformsCharacter.h"
 #include "../PuzzlePlatformsGameInstance.h"
-#include "HudUpDisplayWidget.h"
+#include "UI/HudUpDisplayWidget.h"
 #include "../AnimInstance/AnimInstance_Master.h"
 #include "Ability_Buff_Master.h"
 
@@ -12,7 +12,7 @@
 #include "Components/SphereComponent.h"
 #include "Kismet/GameplayStatics.h"
 #include "Blueprint/UserWidget.h"
-#include "CastBarWidget.h"
+#include "UI/CastBarWidget.h"
 #include "Kismet/KismetMathLibrary.h"
 
 // Sets default values

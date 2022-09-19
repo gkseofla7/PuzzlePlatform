@@ -3,8 +3,8 @@
 
 #include "Spellbook_UI.h"
 
-#include "../PuzzlePlatformsCharacter.h"
-#include "ActorAbilities.h"
+#include "../../PuzzlePlatformsCharacter.h"
+#include "../ActorAbilities.h"
 #include "SpellbookSlot_UI.h"
 
 #include "Kismet/GameplayStatics.h"

@@ -6,8 +6,8 @@
 
 #include "../Warrior.h"
 #include "../AnimInstance/PlayerAnimInstance.h"
-#include "HudUpDisplayWidget.h"
-#include "BuffPanel_UI.h"
+#include "UI/HudUpDisplayWidget.h"
+#include "UI/BuffPanel_UI.h"
 #include "Ability_Debuff.h"
 void AAbility_Buff_Master::BeginPlay()
 {

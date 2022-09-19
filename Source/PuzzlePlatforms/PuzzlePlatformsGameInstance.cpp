@@ -11,7 +11,7 @@
 #include "MenuSystem/QuitMenu.h"
 #include "MenuSystem/MainMenu.h"
 #include "MenuSystem/SetNameMenu.h"
-#include "AbilitySystem/HudUpDisplayWidget.h"
+#include "AbilitySystem/UI/HudUpDisplayWidget.h"
 const static FName SESSION_NAME = NAME_GameSession;
 
 UPuzzlePlatformsGameInstance::UPuzzlePlatformsGameInstance(const FObjectInitializer& ObjectInitializer)

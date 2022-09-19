@@ -12,10 +12,10 @@
 #include "PlayersComponent/SoldierMotionReplicator.h"
 #include "MyLobbyGameMode.h"
 #include "AbilitySystem/Ability.h"
-#include "AbilitySystem/ActionBarSlotWidget.h"
-#include "AbilitySystem/HudUpDisplayWidget.h"
-#include "AbilitySystem/ActionBarWidget.h"
-#include "AbilitySystem/CastBarWidget.h"
+#include "AbilitySystem/UI/ActionBarSlotWidget.h"
+#include "AbilitySystem/UI/HudUpDisplayWidget.h"
+#include "AbilitySystem/UI/ActionBarWidget.h"
+#include "AbilitySystem/UI/CastBarWidget.h"
 #include "AbilitySystem/ActorAbilities.h"
 #include "HPBarWidget.h"
 
@@ -138,6 +138,7 @@ void APuzzlePlatformsCharacter::SetupPlayerInputComponent(class UInputComponent*
 	PlayerInputComponent->BindAction("Skill3", IE_Released, this, &APuzzlePlatformsCharacter::SkillReleased);
 	PlayerInputComponent->BindAction("Skill4", IE_Released, this, &APuzzlePlatformsCharacter::SkillReleased);
 	PlayerInputComponent->BindAction("Skill5", IE_Released, this, &APuzzlePlatformsCharacter::SkillReleased);
+	PlayerInputComponent->BindAction("SkillTree", IE_Pressed, this, &APuzzlePlatformsCharacter::OpenSkillTree);
 	PlayerInputComponent->BindAxis("MoveForward", this, &APuzzlePlatformsCharacter::MoveForward);
 	PlayerInputComponent->BindAxis("MoveRight", this, &APuzzlePlatformsCharacter::MoveRight);
 	PlayerInputComponent->BindAxis("Turn", this, &APuzzlePlatformsCharacter::AddControllerYawInput);
@@ -148,7 +149,25 @@ void APuzzlePlatformsCharacter::SetupPlayerInputComponent(class UInputComponent*
 
 }
 
+void APuzzlePlatformsCharacter::OpenSkillTree()
+{
+	auto controller = Cast<AMyPlayerController>(GetController());
+	ABCHECK(controller != nullptr);
+	ABCHECK(HeadsUpDisplayRef != nullptr);
+	if (MouseCursorToggle == false)
+	{
+		HeadsUpDisplayRef->ToggleSpellBook();
+		controller->SetInputModeGameAndUI();
 
+		MouseCursorToggle = true;
+	}
+	else
+	{
+		HeadsUpDisplayRef->ToggleSpellBook();
+		controller->SetInputModeGame();
+		MouseCursorToggle = false;
+	}
+}
 void APuzzlePlatformsCharacter::PostInitializeComponents()
 {
 	Super::PostInitializeComponents();
@@ -417,6 +436,8 @@ void APuzzlePlatformsCharacter::Skill1Clicked()
 	if (SkillAvailable == false)
 		return;
 	auto Slot_UI = HeadsUpDisplayRef->ActionBar_UI->ActionBarSlot_UI;
+	if (Slot_UI == nullptr)
+		return;
 	if (Slot_UI->IsAvailable==false||Slot_UI->IsManaAvailable ==false )
 		return;
 	if (UsingSkill == true)
@@ -432,6 +453,8 @@ void APuzzlePlatformsCharacter::Skill2Clicked()
 		return;
 
 	auto Slot_UI = HeadsUpDisplayRef->ActionBar_UI->ActionBarSlot_UI_1;
+	if (Slot_UI == nullptr)
+		return;
 	if (Slot_UI->IsAvailable == false || Slot_UI->IsManaAvailable == false)
 		return;
 	auto SlotClass = HeadsUpDisplayRef->ActionBar_UI->ActionBarSlot_UI_1->AbilityClass;
@@ -445,6 +468,8 @@ void APuzzlePlatformsCharacter::Skill3Clicked()
 		return;
 
 	auto Slot_UI = HeadsUpDisplayRef->ActionBar_UI->ActionBarSlot_UI_2;
+	if (Slot_UI == nullptr)
+		return;
 	if (Slot_UI->IsAvailable == false || Slot_UI->IsManaAvailable == false)
 		return;
 	auto SlotClass = HeadsUpDisplayRef->ActionBar_UI->ActionBarSlot_UI_2->AbilityClass;
@@ -458,6 +483,8 @@ void APuzzlePlatformsCharacter::Skill4Clicked()
 		return;
 
 	auto Slot_UI = HeadsUpDisplayRef->ActionBar_UI->ActionBarSlot_UI_3;
+	if (Slot_UI == nullptr)
+		return;
 	if (Slot_UI->IsAvailable == false || Slot_UI->IsManaAvailable == false)
 		return;
 	auto SlotClass = HeadsUpDisplayRef->ActionBar_UI->ActionBarSlot_UI_3->AbilityClass;
@@ -472,6 +499,8 @@ void APuzzlePlatformsCharacter::Skill5Clicked()
 		return;
 
 	auto Slot_UI = HeadsUpDisplayRef->ActionBar_UI->ActionBarSlot_UI_4;
+	if (Slot_UI == nullptr)
+		return;
 	if (Slot_UI->IsAvailable == false || Slot_UI->IsManaAvailable == false)
 		return;
 	auto SlotClass = HeadsUpDisplayRef->ActionBar_UI->ActionBarSlot_UI_4->AbilityClass;

@@ -3,14 +3,14 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "../Ability_Buff.h"
+#include "../Ability_Buff_Master.h"
 #include "Ability_Buff_SteamPack.generated.h"
 
 /**
  * 
  */
 UCLASS()
-class PUZZLEPLATFORMS_API AAbility_Buff_SteamPack : public AAbility_Buff
+class PUZZLEPLATFORMS_API AAbility_Buff_SteamPack : public AAbility_Buff_Master
 {
 	GENERATED_BODY()
 public:

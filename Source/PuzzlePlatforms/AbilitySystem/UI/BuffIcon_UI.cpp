@@ -3,7 +3,7 @@
 
 #include "BuffIcon_UI.h"
 
-#include "Ability_Buff_Master.h"
+#include "../Ability_Buff_Master.h"
 #include "BuffPanel_UI.h"
 
 #include "Components/WrapBox.h"

@@ -5,7 +5,7 @@
 #include "PlayerInfoWidget.h"
 #include "PuzzlePlatformsCharacter.h"
 #include "PuzzlePlatformsGameInstance.h"
-#include "AbilitySystem/HudUpDisplayWidget.h"
+#include "AbilitySystem/UI/HudUpDisplayWidget.h"
 #include"PlayersComponent/MyCharacterStatComponent.h"
 #include "Soldier.h"
 #include "Warrior.h"

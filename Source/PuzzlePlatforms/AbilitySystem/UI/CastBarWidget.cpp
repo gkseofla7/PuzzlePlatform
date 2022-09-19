@@ -2,7 +2,7 @@
 
 
 #include "CastBarWidget.h"
-#include "../PuzzlePlatformsCharacter.h"
+#include "../../PuzzlePlatformsCharacter.h"
 
 #include "Kismet/GameplayStatics.h"
 #include "Kismet/KismetMathLibrary.h"
