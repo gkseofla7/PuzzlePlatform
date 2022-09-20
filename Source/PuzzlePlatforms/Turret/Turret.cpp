@@ -2,6 +2,7 @@
 
 
 #include "Turret.h"
+#include"../PuzzlePlatformsCharacter.h"
 
 #include "Components/StaticMeshComponent.h"
 
@@ -58,6 +59,12 @@ void ATurret::FindBestTarget()
 			
 				
 			CurrentTarget = OutActors[i];
+			auto PuzzleCharacter = Cast<APuzzlePlatformsCharacter>(CurrentTarget);
+			if (PuzzleCharacter != nullptr)
+			{
+				if (PuzzleCharacter->TeamNum == TeamNum)
+					continue;//³Ñ±è
+			}
 			CurrentDistance = CurrentTarget->GetDistanceTo(this);
 			if (CurrentDistance < BestDistance || BestTarget==nullptr)
 			{

@@ -622,7 +622,7 @@ void ASoldier::Server_RespawnPawn_Implementation(APlayerController* NewControlle
 	if (Respawns.Num() == 0)
 		return;
 	auto RespawnTransform = Cast< ARespawnSection>(Respawns[0])->GetRandomTransform();
-	Cast<APuzzlePlatformsGameMode>(UGameplayStatics::GetGameMode(GetWorld()))->RespawnRequested(NewController, RespawnTransform);
+	Cast<APuzzlePlatformsGameMode>(UGameplayStatics::GetGameMode(GetWorld()))->RespawnRequested(NewController, RespawnTransform, TeamNum);
 }
 
 bool ASoldier::Server_RespawnPawn_Validate(APlayerController* NewController)

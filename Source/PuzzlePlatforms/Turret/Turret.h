@@ -54,4 +54,7 @@ public:
 		float RateOfFire;
 		UPROPERTY(EditAnywhere, BlueprintReadWrite)
 			float RotateSpeed;
+		UPROPERTY(EditAnywhere)
+			int TeamNum = 1;
+
 };

@@ -16,7 +16,7 @@ public:
 	APuzzlePlatformsGameMode();
 
 	virtual void PostLogin(APlayerController* NewPlayer) override;
-	void RespawnRequested(APlayerController* PlayerController, FTransform SpawnTransform);
+	void RespawnRequested(APlayerController* PlayerController, FTransform SpawnTransform, int TeamNum);
 	void PossessPlayer(APlayerController* PlayerController, class APuzzlePlatformsCharacter* NewPlayer);
 
 

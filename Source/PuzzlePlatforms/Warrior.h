@@ -47,7 +47,10 @@ private:
 public:
 	void PlayHangToCrouchMontage();
 	void Die() override;
-
+	void PlayersDied();
+	void RespawnCharacter();
+	UFUNCTION(Server, Reliable, WithValidation)
+	void Server_RespawnPawn(APlayerController* NewController);
 private:	
 	//UPROPERTY()
 	//class UPlayerAnimInstance* MyAnim;

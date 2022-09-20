@@ -17,6 +17,7 @@ void AMyDefaultPawn::BeginPlay()
 		{
 			Server_PossessCharacter(Cast<APlayerController>(GetController()), MyGameInstance->CharacterIndex);
 			UnPossessed();
+			Destroy();
 			return;
 		}
 	}

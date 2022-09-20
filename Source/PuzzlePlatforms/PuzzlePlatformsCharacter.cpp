@@ -392,6 +392,8 @@ float APuzzlePlatformsCharacter::TakeDamage(float DamageAmount, FDamageEvent con
 {
 	if (!HasAuthority())
 		return 0;
+	if (bDead == true)
+		return 0;
 	//ABCHECK(MotionReplicator != nullptr)
 	
 	float FinalDamage = Super::TakeDamage(DamageAmount, DamageEvent, EventInstigator, DamageCauser);
@@ -443,6 +445,8 @@ void APuzzlePlatformsCharacter::Skill1Clicked()
 	if (UsingSkill == true)
 		return;
 	auto SlotClass = HeadsUpDisplayRef->ActionBar_UI->ActionBarSlot_UI->AbilityClass;
+	if (SlotClass == nullptr)
+		return;
 	CharacterStat->IncreaseMP(-SlotClass.GetDefaultObject()->AbilityDetails.Cost);
 	HeadsUpDisplayRef->ActionBar_UI->ActionBarSlot_UI->StartCooldown();
 	DaerimMotionReplicator->Server_Skill1Clicked(SlotClass);
@@ -458,6 +462,8 @@ void APuzzlePlatformsCharacter::Skill2Clicked()
 	if (Slot_UI->IsAvailable == false || Slot_UI->IsManaAvailable == false)
 		return;
 	auto SlotClass = HeadsUpDisplayRef->ActionBar_UI->ActionBarSlot_UI_1->AbilityClass;
+	if (SlotClass == nullptr)
+		return;
 	CharacterStat->IncreaseMP(-SlotClass.GetDefaultObject()->AbilityDetails.Cost);
 	HeadsUpDisplayRef->ActionBar_UI->ActionBarSlot_UI_1->StartCooldown();
 	DaerimMotionReplicator->Server_Skill2Clicked(SlotClass);
@@ -473,6 +479,8 @@ void APuzzlePlatformsCharacter::Skill3Clicked()
 	if (Slot_UI->IsAvailable == false || Slot_UI->IsManaAvailable == false)
 		return;
 	auto SlotClass = HeadsUpDisplayRef->ActionBar_UI->ActionBarSlot_UI_2->AbilityClass;
+	if (SlotClass == nullptr)
+		return;
 	CharacterStat->IncreaseMP(-SlotClass.GetDefaultObject()->AbilityDetails.Cost);
 	HeadsUpDisplayRef->ActionBar_UI->ActionBarSlot_UI_2->StartCooldown();
 	DaerimMotionReplicator->Server_Skill3Clicked(SlotClass);
@@ -488,6 +496,8 @@ void APuzzlePlatformsCharacter::Skill4Clicked()
 	if (Slot_UI->IsAvailable == false || Slot_UI->IsManaAvailable == false)
 		return;
 	auto SlotClass = HeadsUpDisplayRef->ActionBar_UI->ActionBarSlot_UI_3->AbilityClass;
+	if (SlotClass == nullptr)
+		return;
 	CharacterStat->IncreaseMP(-SlotClass.GetDefaultObject()->AbilityDetails.Cost);
 
 	HeadsUpDisplayRef->ActionBar_UI->ActionBarSlot_UI_3->StartCooldown();
@@ -504,6 +514,8 @@ void APuzzlePlatformsCharacter::Skill5Clicked()
 	if (Slot_UI->IsAvailable == false || Slot_UI->IsManaAvailable == false)
 		return;
 	auto SlotClass = HeadsUpDisplayRef->ActionBar_UI->ActionBarSlot_UI_4->AbilityClass;
+	if (SlotClass == nullptr)
+		return;
 	CharacterStat->IncreaseMP(-SlotClass.GetDefaultObject()->AbilityDetails.Cost);
 	HeadsUpDisplayRef->ActionBar_UI->ActionBarSlot_UI_4->StartCooldown();
 	DaerimMotionReplicator->Server_Skill5Clicked(SlotClass);

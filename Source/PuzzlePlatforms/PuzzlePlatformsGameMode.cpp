@@ -57,14 +57,20 @@ void APuzzlePlatformsGameMode::PostLogin(APlayerController* NewPlayer)
 }
 
 
-void APuzzlePlatformsGameMode::RespawnRequested(APlayerController* PlayerController, FTransform SpawnTransform)//서버에서만함
+void APuzzlePlatformsGameMode::RespawnRequested(APlayerController* PlayerController, FTransform SpawnTransform, int TeamNum)//서버에서만함
 {
 	ABCHECK(PlayerController != nullptr);
 	if (HasAuthority())
 	{
-		auto Player = GetWorld()->SpawnActor<APuzzlePlatformsCharacter>(BPSoldierClass, SpawnTransform);
+		APuzzlePlatformsCharacter* Player = nullptr;
+		if(TeamNum==1)
+			Player = GetWorld()->SpawnActor<APuzzlePlatformsCharacter>(BPSoldierClass, SpawnTransform);
+		else if(TeamNum ==2)
+			Player = GetWorld()->SpawnActor<APuzzlePlatformsCharacter>(BPWarriorClass, SpawnTransform);
+		
 		//Delay 해줌 0.2초
-
+		if (Player == nullptr)
+			return;
 		FTimerHandle UniqueHandle;
 		FTimerDelegate RespawnDelegate = FTimerDelegate::CreateUObject(this, &APuzzlePlatformsGameMode::PossessPlayer, PlayerController, Player);
 		GetWorldTimerManager().SetTimer(UniqueHandle, RespawnDelegate, .5f, false);

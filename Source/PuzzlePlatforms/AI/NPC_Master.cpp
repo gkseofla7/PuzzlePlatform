@@ -62,7 +62,8 @@ void ANPC_Master::Tick(float DeltaTime)
 	auto PlayerController = UGameplayStatics::GetPlayerController(GetWorld(), 0);
 	ABCHECK(PlayerController != nullptr);
 	auto Pawn = PlayerController->GetPawn();
-	ABCHECK(Pawn!=nullptr);
+	if (Pawn == nullptr)
+		return;
 	auto Dir = PlayerController->GetPawn()->GetActorLocation() - GetActorLocation();
 	auto DirRot = UKismetMathLibrary::MakeRotFromX(Dir);
 	HPBarWidget->SetWorldRotation(DirRot);

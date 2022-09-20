@@ -3,6 +3,9 @@
 #include "AnimInstance/PlayerAnimInstance.h"
 #include "PlayersComponent/PlayersMotionReplicator.h"
 #include "Weapons/Sword_Master.h"
+#include "MyPlayerController.h"
+#include "PuzzlePlatformsGameMode.h"
+#include "Sections/RespawnSection.h"
 
 #include "DrawDebugHelpers.h"
 #include "Kismet/KismetSystemLibrary.h"
@@ -374,23 +377,83 @@ void AWarrior::EndAnimation(UAnimMontage* Montage, bool bInterrupted)
 		Cast<UCharacterMovementComponent>(GetMovementComponent())->GravityScale = 1;
 	}
 }
+//void AWarrior::Die()
+//{
+//	auto Anim = Cast<UPlayerAnimInstance>(MyAnim);
+//	if (Anim != nullptr)
+//	{
+//		Anim->PlayDeathMontage();
+//		SetActorEnableCollision(false);
+//		if (HasAuthority() == true)
+//		{
+//			FTimerHandle TimerHandler;
+//			GetWorld()->GetTimerManager().SetTimer(TimerHandler, this, &APuzzlePlatformsCharacter::DestroyPlayer, 10, false);
+//			
+//		}
+//		if (HasAuthority())
+//		{
+//			FTimerHandle DestroyTimerHandler;
+//			GetWorld()->GetTimerManager().SetTimer(DestroyTimerHandler, this, &APuzzlePlatformsCharacter::DestroyPlayer, 10, false);
+//		}
+//	}
+//}
+
+
 void AWarrior::Die()
 {
 	auto Anim = Cast<UPlayerAnimInstance>(MyAnim);
 	if (Anim != nullptr)
 	{
 		Anim->PlayDeathMontage();
-		SetActorEnableCollision(false);
-		if (HasAuthority() == true)
-		{
-			FTimerHandle TimerHandler;
-			GetWorld()->GetTimerManager().SetTimer(TimerHandler, this, &APuzzlePlatformsCharacter::DestroyPlayer, 10, false);
-			
-		}
-		if (HasAuthority())
-		{
-			FTimerHandle DestroyTimerHandler;
-			GetWorld()->GetTimerManager().SetTimer(DestroyTimerHandler, this, &APuzzlePlatformsCharacter::DestroyPlayer, 10, false);
-		}
+		PlayersDied();
+		//FTimerHandle TimerHandler;
+		//GetWorld()->GetTimerManager().SetTimer(TimerHandler, this, &ASoldier::PlayersDied, 5, false);
+
+
 	}
+}
+
+void AWarrior::PlayersDied()
+{
+	GetMesh()->SetCollisionEnabled(ECollisionEnabled::PhysicsOnly);
+	GetMesh()->SetCollisionObjectType(ECollisionChannel::ECC_PhysicsBody);
+	//GetMesh()->SetSimulatePhysics(true);
+	GetCapsuleComponent()->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+
+
+	GetCharacterMovement()->DisableMovement();
+	if (HasAuthority())
+	{
+		FTimerHandle DestroyTimerHandler;
+		GetWorld()->GetTimerManager().SetTimer(DestroyTimerHandler, this, &APuzzlePlatformsCharacter::DestroyPlayer, 10, false);
+	}
+	if (IsLocallyControlled())
+	{
+		FTimerHandle TimerHandler;
+		GetWorld()->GetTimerManager().SetTimer(TimerHandler, this, &AWarrior::RespawnCharacter, 5, false);
+
+	}
+}
+
+void AWarrior::RespawnCharacter()//Run on Owning Client
+{
+
+	Server_RespawnPawn(Cast<APlayerController>(GetController()));
+	//Cast<AMyPlayerController>(GetController())->Server_RespawnPawn(GetActorTransform());//위치 임시로
+	UnPossessed();
+}
+
+void AWarrior::Server_RespawnPawn_Implementation(APlayerController* NewController)
+{
+	TArray<AActor*>Respawns;
+	UGameplayStatics::GetAllActorsOfClass(GetWorld(), ARespawnSection::StaticClass(), Respawns);
+	if (Respawns.Num() == 0)
+		return;
+	auto RespawnTransform = Cast< ARespawnSection>(Respawns[1])->GetRandomTransform();
+	Cast<APuzzlePlatformsGameMode>(UGameplayStatics::GetGameMode(GetWorld()))->RespawnRequested(NewController, RespawnTransform,TeamNum);
+}
+
+bool AWarrior::Server_RespawnPawn_Validate(APlayerController* NewController)
+{
+	return true;
 }

@@ -3,6 +3,7 @@
 
 #include "BulletMaster.h"
 #include "../Soldier.h"
+#include "../Turret/Turret.h"
 
 #include "Engine/StaticMesh.h"
 #include "Components/CapsuleComponent.h"
@@ -77,8 +78,12 @@ void ABulletMaster::OnOverlapBegin(class UPrimitiveComponent* OverlappedComp, cl
 			{
 				auto Player = Cast<APuzzlePlatformsCharacter>(MyCharacter);
 				if (Player != nullptr)
-				{
-					if (Player->TeamNum == Shooter->TeamNum)
+				{//°Á °°Àº ÆÀÀÌ¸é ¾È¸Â°ÔÇÔ
+					if (Shooter!=nullptr&&Player->TeamNum == Shooter->TeamNum)
+					{
+						return;
+					}
+					if (TurretRef != nullptr && Player->TeamNum == TurretRef->TeamNum)
 					{
 						return;
 					}

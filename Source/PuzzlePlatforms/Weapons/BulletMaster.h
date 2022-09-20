@@ -36,5 +36,7 @@ private:
 public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Gameplay)
 		class UParticleSystem* ImpactParticles;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+		class ATurret * TurretRef;
 	class ASoldier* Shooter;
 };

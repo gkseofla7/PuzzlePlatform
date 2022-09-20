@@ -123,7 +123,7 @@ public:
 	bool bPossessed = false;
 	UPROPERTY(EditAnywhere)
 	int TeamNum = 0;
-
+	bool bDead = false;
 
 };
 
