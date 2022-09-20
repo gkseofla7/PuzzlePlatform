@@ -21,6 +21,7 @@ protected:
 	virtual void NativeConstruct() override;
 	void UpdateHPWidget();
 
+
 private:
 	TWeakObjectPtr<class UMyCharacterStatComponent> CurrentCharacterStat;
 	TWeakObjectPtr<class UMonsterStatComponent> CurrentMonsterStat;

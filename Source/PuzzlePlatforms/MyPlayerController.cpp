@@ -2,7 +2,7 @@
 
 
 #include "MyPlayerController.h"
-#include "PlayerInfoWidget.h"
+#include "UI/PlayerInfoWidget.h"
 #include "PuzzlePlatformsCharacter.h"
 #include "PuzzlePlatformsGameInstance.h"
 #include "AbilitySystem/UI/HudUpDisplayWidget.h"
@@ -57,7 +57,6 @@ void AMyPlayerController::BeginPlay()
 		FInputModeGameOnly InputMode;
 		SetInputMode(InputMode);
 		//위젯은 무조건 beginplay에서 초기화시켜야됨
-
 		//NewHUDWidget = CreateWidget<UUserWidget>(this, NewHUDWidgetClass);
 
 

@@ -5,7 +5,7 @@
 #include "Components/Button.h"
 #include "Components/EditableTextBox.h"
 
-#include "../PlayerInfoWidget.h"
+#include "../UI/PlayerInfoWidget.h"
 #include "../MyPlayerController.h"
 #include "../PuzzlePlatformsGameInstance.h"
 bool USetNameMenu::Initialize()

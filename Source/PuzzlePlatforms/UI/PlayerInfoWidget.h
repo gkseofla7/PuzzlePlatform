@@ -2,7 +2,7 @@
 
 #pragma once
 
-#include"PuzzlePlatforms.h"
+#include"../PuzzlePlatforms.h"
 #include "Blueprint/UserWidget.h"
 #include "PlayerInfoWidget.generated.h"
 

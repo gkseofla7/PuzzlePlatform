@@ -2,8 +2,8 @@
 
 
 #include "PlayerInfoWidget.h"
-#include "PlayersComponent/MyCharacterStatComponent.h"
-#include "MyPlayerState.h"
+#include "../PlayersComponent/MyCharacterStatComponent.h"
+#include "../MyPlayerState.h"
 
 
 #include "Components/TextBlock.h"

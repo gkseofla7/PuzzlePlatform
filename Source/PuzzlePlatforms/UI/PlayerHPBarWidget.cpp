@@ -1,0 +1,78 @@
+// Fill out your copyright notice in the Description page of Project Settings.
+
+
+#include "PlayerHPBarWidget.h"
+#include "../PlayersComponent/MyCharacterStatComponent.h"
+#include "../PuzzlePlatformsGameInstance.h"
+
+#include "Components/ProgressBar.h"
+#include "Components/TextBlock.h"
+
+void UPlayerHPBarWidget::BindCharacterStat(UMyCharacterStatComponent* NewCharacterStat)
+{
+	ABCHECK(nullptr != NewCharacterStat);
+
+	CurrentCharacterStat = NewCharacterStat;
+	NewCharacterStat->OnHPChanged.AddUObject(this, &UPlayerHPBarWidget::UpdateHPBar);
+	NewCharacterStat->OnMPChanged.AddUObject(this, &UPlayerHPBarWidget::UpdateMPBar);
+	NewCharacterStat->OnLevelChanged.AddUObject(this, &UPlayerHPBarWidget::UpdateLevelText);
+	NewCharacterStat->OnNameChanged.AddUObject(this, &UPlayerHPBarWidget::UpdateNameText);
+}
+
+
+
+void UPlayerHPBarWidget::NativeConstruct()
+{
+	Super::NativeConstruct();
+	//UpdateWidget();
+}
+
+void UPlayerHPBarWidget::UpdateHPBar()
+{
+	if (CurrentCharacterStat.IsValid())
+	{
+		if (nullptr != PB_HPBar)
+		{
+
+			PB_HPBar->SetPercent(CurrentCharacterStat->GetHPRatio());
+		}
+	}
+
+}
+
+void UPlayerHPBarWidget::UpdateMPBar()
+{
+	if (CurrentCharacterStat.IsValid())
+	{
+
+		if (nullptr != PB_MPBar)
+		{
+			PB_MPBar->SetPercent(CurrentCharacterStat->GetMPRatio());
+		}
+	}
+}
+
+void UPlayerHPBarWidget::UpdateLevelText()
+{
+	if (CurrentCharacterStat.IsValid())
+	{
+		if (nullptr != T_Level)
+		{
+			FString Level = FString::Printf(TEXT("% d"), CurrentCharacterStat->Level);
+			T_Level->SetText(FText::FromString(Level));
+		}
+	}
+}
+
+
+void UPlayerHPBarWidget::UpdateNameText()
+{
+	if (CurrentCharacterStat.IsValid())
+	{
+		if (nullptr != T_Name)
+		{
+			T_Name->SetText(CurrentCharacterStat->Name);
+			
+		}
+	}
+}

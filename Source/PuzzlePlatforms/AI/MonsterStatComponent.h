@@ -26,7 +26,7 @@ public:
 	UMonsterStatComponent();
 	void CustomInitializeComponent(EMonsterEnum NewMonsterEnum);
 	void SetHP(float NewHP);
-	void SetNewLevel(int32 NewLevel);
+	void LevelUp(int32 NewLevel);
 	void IncreaseHP(float NewHP) {
 		if (CurrentHP == CurrentStatData->MaxHP && NewHP > 0)
 			return;

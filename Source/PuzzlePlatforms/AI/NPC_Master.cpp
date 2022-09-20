@@ -5,7 +5,7 @@
 #include "NPCAIController.h"
 #include "GoblinAnimInstance.h"
 #include "MonsterStatComponent.h"
-#include "../HPBarWidget.h"
+#include "../UI/HPBarWidget.h"
 #include "../PuzzlePlatformsCharacter.h"
 #include "NPC_Archer.h"
 

@@ -10,14 +10,11 @@
 // Sets default values for this component's properties
 UMyCharacterStatComponent::UMyCharacterStatComponent()
 {
-	// Set this component to be initialized when the game starts, and to be ticked every frame.  You can turn these features
-	// off to improve performance if you don't need them.
 	PrimaryComponentTick.bCanEverTick = false;
 	bWantsInitializeComponent = true; //이걸 해야 initializecomponent 실행
 
 	Level = 1;
 
-	// ...
 }
 
 
@@ -27,20 +24,6 @@ void UMyCharacterStatComponent::BeginPlay()
 {
 	Super::BeginPlay();
 	SetIsReplicated(true);
-	//auto PawnRef = Cast<APawn>(GetOwner());
-	//SetNewLevel(Level);
-	// 
-	//if (PawnRef->HasAuthority()&&PawnRef->IsLocallyControlled() == true)
-	//	SetNewLevel(Level);
-	//else if (PawnRef->HasAuthority() == false && PawnRef->IsLocallyControlled() == true)
-	//{
-	//	//만들고 유포
-	//}
-	//else if(PawnRef->HasAuthority()  && PawnRef->IsLocallyControlled() == true)
-	//	Server_BringServerState();
-
-	// ...
-	
 }
 
 void UMyCharacterStatComponent::InitializeComponent() //Post Initialize 전에 일어남 이새끼 내생각엔 서버에서 한번 실행할때 일언
@@ -51,35 +34,38 @@ void UMyCharacterStatComponent::InitializeComponent() //Post Initialize 전에 일�
 
  }
 
-void UMyCharacterStatComponent::SetNewLevel(int32 NewLevel)
+void UMyCharacterStatComponent::LevelUp(int32 NewLevel)//모든 애들이 다 이걸 실행함
 {
 
 	auto PawnRef = Cast<APawn>(GetOwner());
-
-
+	ABCHECK(PawnRef != nullptr);
 	auto MyGameInstance = Cast<UPuzzlePlatformsGameInstance>(UGameplayStatics::GetGameInstance(GetWorld()));
-
-	//if (MyGameInstance == nullptr)
-	//{
-	//	return;
-	//}
-	CurrentStatData = MyGameInstance->GetMyCharacterData(NewLevel);
-	if (MyGameInstance != nullptr)
-	{
-		
-
-		//Server_SetStatData(CurrentStatData);
-	}
+	ABCHECK(MyGameInstance != nullptr);
+	CurrentStatData = MyGameInstance->GetMyCharacterData(NewLevel);//모든애들 가져옴, 꼭 이래야될까..?ㅋㅋ
 
 	if (nullptr != CurrentStatData)
 	{
 
-		Level = NewLevel;
-		CurrentHP = CurrentStatData->MaxHP;//처음에만 해주기위해..ㅋㅋ
-		OnHPChanged.Broadcast();
-		//UE_LOG(LogTemp, Warning, TEXT("SetNewLevel : %f"), CurrentStatData->MaxHP);
-		SetHP(CurrentStatData->MaxHP);
-		SetMP(CurrentStatData->MaxMP);
+		Level = NewLevel;//모든애들 Level Set
+		OnLevelChanged.Broadcast();
+		//CurrentHP = CurrentStatData->MaxHP;//처음에만 해주기위해..ㅋㅋ
+		//OnHPChanged.Broadcast();
+		//UE_LOG(LogTemp, Warning, TEXT("LevelUp : %f"), CurrentStatData->MaxHP);
+		//전원 돌림..ㅋㅋ
+		
+		if (PawnRef->HasAuthority())
+		{
+			SetHP(CurrentStatData->MaxHP);
+			SetMP(CurrentStatData->MaxMP);
+		}
+		if (PawnRef->IsLocallyControlled() && PawnRef->IsPlayerControlled())
+		{
+			auto GameInstance = Cast<UPuzzlePlatformsGameInstance>(UGameplayStatics::GetGameInstance(GetWorld()));
+			if (GameInstance != nullptr)
+			{
+				Server_SetName(GameInstance->PlayerName);
+			}
+		}
 	}
 	else
 	{
@@ -96,25 +82,27 @@ void UMyCharacterStatComponent::SetHP(float NewHP)
 
 void UMyCharacterStatComponent::SetMP(float NewMP)
 {
+	Server_SetMP(NewMP);
+}
 
-	CurrentMP = NewMP;
-
-	OnMPChanged.Broadcast();
-	if (CurrentMP < KINDA_SMALL_NUMBER)
+void UMyCharacterStatComponent::SetLevel(float NewLevel)
+{
+	if (Level != NewLevel)
 	{
-		CurrentMP = 0.0f;
+		Server_SetLevel(NewLevel);
 	}
 }
+
+//void UMyCharacterStatComponent::SetName(FText NewName)
+//{
+//
+//}
 
 
 float UMyCharacterStatComponent::GetHPRatio()
 {
-	//ABCHECK(nullptr != CurrentStatData, 0.5f);
-	if (CurrentStatData == nullptr)
-		return .5f;
-
+	ABCHECK(nullptr != CurrentStatData, 0.f);
 	return CurrentHP / CurrentStatData->MaxHP;
-	//return (CurrentStatData->MaxHP < KINDA_SMALL_NUMBER) ? 0.0f : (CurrentHP / CurrentStatData->MaxHP);
 }
 
 float UMyCharacterStatComponent::GetMPRatio()
@@ -144,6 +132,50 @@ void UMyCharacterStatComponent::NetMulticast_SetHP_Implementation(float NewHp)
 	}
 }
 
+
+void UMyCharacterStatComponent::Server_SetMP_Implementation(float NewMp)
+{
+	NetMulticast_SetMP(NewMp);
+}
+
+
+
+void UMyCharacterStatComponent::NetMulticast_SetMP_Implementation(float NewMp)
+{
+
+	CurrentMP = NewMp;
+
+	OnMPChanged.Broadcast();
+	if (CurrentMP < KINDA_SMALL_NUMBER)
+	{
+		CurrentMP = 0.0f;
+	}
+}
+
+
+
+void UMyCharacterStatComponent::Server_SetLevel_Implementation(float NewLevel)
+{
+	NetMulticast_SetLevel(NewLevel);
+}
+
+
+void UMyCharacterStatComponent::NetMulticast_SetLevel_Implementation(float NewLevel)
+{
+	LevelUp(NewLevel);
+}
+
+void UMyCharacterStatComponent::Server_SetName_Implementation(const FText& NewName)
+{
+	NetMulticast_SetName(NewName);
+}
+
+void UMyCharacterStatComponent::NetMulticast_SetName_Implementation(const FText& NewName)
+{
+	Name = NewName;
+	OnNameChanged.Broadcast();
+}
+
 bool UMyCharacterStatComponent::Server_SetHP_Validate(float NewHp)
 {
 	return true;
@@ -155,6 +187,35 @@ bool UMyCharacterStatComponent::NetMulticast_SetHP_Validate(float NewHp)
 }
 
 
+bool UMyCharacterStatComponent::Server_SetMP_Validate(float NewHp)
+{
+	return true;
+}
+bool UMyCharacterStatComponent::NetMulticast_SetMP_Validate(float NewHp)
+{
+	return true;
+}
+
+bool UMyCharacterStatComponent::Server_SetLevel_Validate(float NewLevel)
+{
+	return true;
+}
+
+bool UMyCharacterStatComponent::NetMulticast_SetLevel_Validate(float NewLevel)
+{
+	return true;
+}
+
+
+bool UMyCharacterStatComponent::Server_SetName_Validate(const FText& NewName)
+{
+	return true;
+}
+
+bool UMyCharacterStatComponent::NetMulticast_SetName_Validate(const FText& NewName)
+{
+	return true;
+}
 
 
 //void Server_SetStatData_Implementation(FMyCharacterrData* NewStatData)

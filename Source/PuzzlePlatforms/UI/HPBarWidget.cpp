@@ -2,8 +2,8 @@
 
 
 #include "HPBarWidget.h"
-#include "PlayersComponent/MyCharacterStatComponent.h"
-#include "AI/MonsterStatComponent.h"
+#include "../PlayersComponent/MyCharacterStatComponent.h"
+#include "../AI/MonsterStatComponent.h"
 
 #include "Components/ProgressBar.h"
 

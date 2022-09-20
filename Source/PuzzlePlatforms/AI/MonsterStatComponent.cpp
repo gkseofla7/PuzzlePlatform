@@ -21,7 +21,7 @@ void UMonsterStatComponent::BeginPlay()
 {
 	Super::BeginPlay();
 	SetIsReplicated(true);
-	SetNewLevel(Level);//beginplay의 경우 새로 생길때만..
+	LevelUp(Level);//beginplay의 경우 새로 생길때만..
 }
 
 
@@ -45,7 +45,7 @@ void UMonsterStatComponent::CustomInitializeComponent(EMonsterEnum NewMonsterEnu
 
 }
 
-void UMonsterStatComponent::SetNewLevel(int32 NewLevel)
+void UMonsterStatComponent::LevelUp(int32 NewLevel)
 {
 	auto MyGameInstance = Cast<UPuzzlePlatformsGameInstance>(UGameplayStatics::GetGameInstance(GetWorld()));
 

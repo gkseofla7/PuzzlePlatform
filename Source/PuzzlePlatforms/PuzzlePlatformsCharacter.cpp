@@ -8,7 +8,7 @@
 #include "Cars/MyProjectPawn.h"
 #include "PuzzlePlatformsGameInstance.h"
 #include "MyPlayerController.h"
-#include "PlayerInfoWidget.h"
+#include "UI/PlayerInfoWidget.h"
 #include "PlayersComponent/SoldierMotionReplicator.h"
 #include "MyLobbyGameMode.h"
 #include "AbilitySystem/Ability.h"
@@ -17,7 +17,7 @@
 #include "AbilitySystem/UI/ActionBarWidget.h"
 #include "AbilitySystem/UI/CastBarWidget.h"
 #include "AbilitySystem/ActorAbilities.h"
-#include "HPBarWidget.h"
+#include "UI/PlayerHPBarWidget.h"
 
 #include "HeadMountedDisplayFunctionLibrary.h"
 #include "Camera/CameraComponent.h"
@@ -102,7 +102,7 @@ APuzzlePlatformsCharacter::APuzzlePlatformsCharacter()
 
 	HPBarWidget->SetRelativeLocation(FVector(0.f, 0.f, 220.f));
 	HPBarWidget->SetWidgetSpace(EWidgetSpace::World);
-	static ConstructorHelpers::FClassFinder<UUserWidget> UI_HUD(TEXT("/Game/PuzzlePlatforms/Widget/WBP_HPBar"));
+	static ConstructorHelpers::FClassFinder<UUserWidget> UI_HUD(TEXT("/Game/PuzzlePlatforms/Widget/WBP_PlayerHPBar"));
 	if (UI_HUD.Succeeded())
 	{
 		HPBarWidget->SetWidgetClass(UI_HUD.Class);
@@ -185,7 +185,6 @@ void APuzzlePlatformsCharacter::PossessedBy(AController* NewController)//이것도 
 		FTimerDelegate StatUpdateDelegate = FTimerDelegate::CreateUObject(this, &APuzzlePlatformsCharacter::Multicast_SetLevel, MyController->Level);
 		GetWorldTimerManager().SetTimer(UniqueHandle, StatUpdateDelegate, .2f, false);
 		//바로 안하고 beginplay 후에 실행
-
 		//Multicast_SetLevel(MyController->Level);
 
 	}
@@ -196,16 +195,6 @@ void APuzzlePlatformsCharacter::PossessedBy(AController* NewController)//이것도 
 void APuzzlePlatformsCharacter::BeginPlay()
 {
 	Super::BeginPlay();
-	if (HasAuthority())
-	{
-		UE_LOG(LogTemp, Warning, TEXT("Server : %s : BeginPlay"), *GetName());
-	}
-	else
-	{
-		UE_LOG(LogTemp, Warning, TEXT("Client : %s : BeginPlay"), *GetName());
-	}
-
-
 
 	if (IsLocallyControlled())//체력 주기적으로 회복 아 애초에 이것도 실행을 안하는구나.. 누가 들어와도
 	{
@@ -214,10 +203,9 @@ void APuzzlePlatformsCharacter::BeginPlay()
 	}
 	if (!IsLocallyControlled()&&!HasAuthority())//사실 서버입장에서는 뒤늦게 만들어 주면 되는거아님?
 	{
-
 		FTimerDelegate RespawnDelegate = FTimerDelegate::CreateUObject(this, &APuzzlePlatformsCharacter::SetStatComponentLevel);//어차피 자기 자신만 실행함
 		GetWorldTimerManager().SetTimer(StatResetHandle, RespawnDelegate, .1f, true);
-	//	CharacterStat->SetNewLevel(Level);//Replicate돼있어서 이미 존재하는 애들 다 바뀜, 단 이미 있던애들은 내가 안바뀜
+	//	CharacterStat->LevelUp(Level);//Replicate돼있어서 이미 존재하는 애들 다 바뀜, 단 이미 있던애들은 내가 안바뀜
 	}
 	
 }
@@ -232,9 +220,9 @@ void APuzzlePlatformsCharacter::SetStatComponentLevel()
 		return;
 	else
 	{
-		CharacterStat->Level = Level;
-		CharacterStat->SetNewLevel(Level);
-		auto CharacterWidget = Cast< UHPBarWidget>(HPBarWidget->GetUserWidgetObject());
+		CharacterStat->Level = Level;//뒤늦게 level 들어옴
+		CharacterStat->LevelUp(Level);
+		auto CharacterWidget = Cast< UPlayerHPBarWidget>(HPBarWidget->GetUserWidgetObject());
 		if (nullptr != CharacterWidget)
 		{
 			CharacterWidget->BindCharacterStat(CharacterStat);
@@ -555,8 +543,8 @@ void APuzzlePlatformsCharacter::Multicast_SetLevel_Implementation(int NewLevel)
 {
 	CharacterStat->Level = NewLevel;
 	Level = NewLevel;
-	CharacterStat->SetNewLevel(NewLevel);
-	auto CharacterWidget = Cast< UHPBarWidget>(HPBarWidget->GetUserWidgetObject());
+	CharacterStat->LevelUp(NewLevel);//전원 HP MP Level 초기화
+	auto CharacterWidget = Cast< UPlayerHPBarWidget>(HPBarWidget->GetUserWidgetObject());
 	if (nullptr != CharacterWidget)
 	{
 		CharacterWidget->BindCharacterStat(CharacterStat);

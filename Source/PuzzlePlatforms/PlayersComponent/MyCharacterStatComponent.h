@@ -10,6 +10,8 @@
 
 DECLARE_MULTICAST_DELEGATE(FOnHPChangedDelegate);
 DECLARE_MULTICAST_DELEGATE(FOnMPChangedDelegate);
+DECLARE_MULTICAST_DELEGATE(FOnLevelChangedDelegate);
+DECLARE_MULTICAST_DELEGATE(FOnNameChangedDelegate);
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
 class PUZZLEPLATFORMS_API UMyCharacterStatComponent : public UActorComponent
 {
@@ -23,7 +25,9 @@ public:
 
 	void SetHP(float NewHP);
 	void SetMP(float NewMP);
-	void SetNewLevel(int32 NewLevel);
+	void SetLevel(float NewLevel);
+	//void SetName(FText NewName);
+	void LevelUp(int32 NewLevel);
 	void IncreaseHP(float NewHP) {
 		if (CurrentStatData == nullptr)
 			return;
@@ -40,12 +44,25 @@ public:
 	float GetMP() { return CurrentMP; }
 	float GetHPRatio();
 	float GetMPRatio();
+	
 	//UFUNCTION()
 	//	void OnRep_HP();
 	UFUNCTION(Server, Reliable, WithValidation)
 		void Server_SetHP(float NewHp);
 	UFUNCTION(NetMulticast, Reliable, WithValidation)
 		void NetMulticast_SetHP(float NewHp);
+	UFUNCTION(Server, Reliable, WithValidation)
+		void Server_SetMP(float NewMp);
+	UFUNCTION(NetMulticast, Reliable, WithValidation)
+		void NetMulticast_SetMP(float NewMp);
+	UFUNCTION(Server, Reliable, WithValidation)
+		void Server_SetLevel(float NewLevel);
+	UFUNCTION(NetMulticast, Reliable, WithValidation)
+		void NetMulticast_SetLevel(float NewLevel);
+	UFUNCTION(Server, Reliable, WithValidation)
+		void Server_SetName(const FText& NewName);
+	UFUNCTION(NetMulticast, Reliable, WithValidation)
+		void NetMulticast_SetName(const FText& NewName);
 	//UFUNCTION(Server, Reliable, WithValidation)
 	//	void Server_SetStatData(FMyCharacterrData* NewStatData);
 	//UFUNCTION(NetMulticast, Reliable, WithValidation)
@@ -53,15 +70,16 @@ public:
 
 public:
 	//ReplicatedUsing = OnRep_HP,
-	UPROPERTY(EditAnywhere, BlueprintReadWrite,  Transient,   Category = Stat)
+	UPROPERTY(EditAnywhere, Transient)
 		float CurrentHP;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(EditAnywhere, Transient)
 		float CurrentMP;
-	UPROPERTY(EditInstanceOnly, Category = Stat, Meta = (AllowPrivateAccess = true))
-		int32 Level;
+	int32 Level;
+	FText Name;
 	FMyCharacterrData* CurrentStatData = nullptr;
-
-	FOnHPChangedDelegate OnHPChanged;
+	FOnHPChangedDelegate OnHPChanged;//걍 이거 다 리셋하는게..?
 	FOnMPChangedDelegate OnMPChanged;
+	FOnLevelChangedDelegate OnLevelChanged;
+	FOnNameChangedDelegate OnNameChanged;
 
 };
