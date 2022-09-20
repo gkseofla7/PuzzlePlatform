@@ -290,7 +290,9 @@ void APuzzlePlatformsCharacter::Tick(float DeltaTime)
 		auto MyController = UGameplayStatics::GetPlayerController(GetWorld(), 0);
 		ABCHECK(MyController != nullptr);
 		auto MyPawn = Cast< APuzzlePlatformsCharacter>(MyController->GetPawn());
-		ABCHECK(MyPawn != nullptr);
+		if (MyPawn == nullptr)
+			return;
+		//ABCHECK(MyPawn != nullptr);
 		ABCHECK(HPBarWidget!=nullptr)
 		auto Dir = MyPawn->FollowCamera->GetComponentLocation() - HPBarWidget->GetComponentLocation();
 		auto DirRot = UKismetMathLibrary::MakeRotFromX(Dir);

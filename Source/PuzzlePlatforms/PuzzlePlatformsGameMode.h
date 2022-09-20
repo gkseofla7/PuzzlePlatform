@@ -23,7 +23,6 @@ public:
 
 
 public:
-	int CharacterNum = 1;
 	TSubclassOf<class APuzzlePlatformsCharacter> BPSoldierClass;
 	TSubclassOf<class APuzzlePlatformsCharacter> BPWarriorClass;
 };

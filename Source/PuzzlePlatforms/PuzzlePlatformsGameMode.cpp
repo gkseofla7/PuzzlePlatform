@@ -38,7 +38,7 @@ APuzzlePlatformsGameMode::APuzzlePlatformsGameMode()
 	PlayerStateClass = AMyPlayerState::StaticClass();
 	PlayerControllerClass = AMyPlayerController::StaticClass();
 
-	CharacterNum = 1;
+
 }
 
 //void APuzzlePlatformsGameMode::BeginPlay()
@@ -54,12 +54,7 @@ void APuzzlePlatformsGameMode::PostLogin(APlayerController* NewPlayer)
 
 	//ABCHECK(nullptr != MyPlaerState)
 	MyPlaerState->InitPlayerData();
-	auto PlayerController = Cast<AMyPlayerController>(NewPlayer);
-	if(PlayerController!=nullptr)
-	{
-		PlayerController->CharacterNum = CharacterNum;
-		CharacterNum++;
-	}
+
 }
 
 
