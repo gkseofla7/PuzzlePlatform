@@ -16,6 +16,10 @@ class PUZZLEPLATFORMS_API UPlayerInfoWidget : public UUserWidget
 
 protected:
 	virtual bool Initialize();
+
+public:
+	UFUNCTION(BlueprintImplementableEvent)
+	void CustomInitialize(int Num);
 private:
 public:
 

@@ -279,7 +279,7 @@ void AWarrior::HeightTrace()
 	TArray<AActor*> Ignore;
 	Ignore.Add(this);
 	FHitResult OutHit;
-	bool ClimbUp = UKismetSystemLibrary::SphereTraceSingle(GetWorld(), StartLoc, EndLoc, 10., ETraceTypeQuery::TraceTypeQuery1, false, Ignore, EDrawDebugTrace::ForOneFrame, OutHit, true);
+	bool ClimbUp = UKismetSystemLibrary::SphereTraceSingle(GetWorld(), StartLoc, EndLoc, 10., ETraceTypeQuery::TraceTypeQuery5, false, Ignore, EDrawDebugTrace::ForOneFrame, OutHit, true);
 	if (ClimbUp == true)
 	{
 		HeightLocation = OutHit.Location;

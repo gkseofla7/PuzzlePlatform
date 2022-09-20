@@ -82,7 +82,10 @@ public:
 	virtual float TakeDamage(float DamageAmount, struct FDamageEvent const& DamageEvent,
 		class AController* EventInstigator, AActor* DamageCauser) override;
 	void SetTargetPlayerWithLineTrace();
-
+	UFUNCTION(BlueprintCallable)
+		UTextureRenderTarget2D* CreateRenderTarget2D(int32 width, int32 height, bool makeHDR);
+	//UFUNCTION(BlueprintCallable)
+	//	bool SaveRenderTarget(UTextureRenderTarget2D* renderTarget, FString path, FString fileName);
 
 
 
@@ -101,7 +104,12 @@ public:
 		class UParticleSystemComponent* ParticleSystemComponent;
 	UPROPERTY(VisibleAnywhere, Category = UI)
 		class UWidgetComponent* HPBarWidget;
-
+	UPROPERTY(BlueprintReadWrite, EditAnywhere)
+		class USpringArmComponent* MiniMapSpringArm;
+	UPROPERTY(BlueprintReadWrite, EditAnywhere)
+		class USceneCaptureComponent2D* SceneCaptureComponent;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+		UTextureRenderTarget2D* TextureRenderTarget;
 	class UHudUpDisplayWidget* HeadsUpDisplayRef;
 	APuzzlePlatformsCharacter* TargetPlayer;
 
@@ -124,6 +132,7 @@ public:
 	UPROPERTY(EditAnywhere)
 	int TeamNum = 0;
 	bool bDead = false;
-
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	int CharacterNum = 0;
 };
 

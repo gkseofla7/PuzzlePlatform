@@ -108,10 +108,14 @@ void AMyPlayerController::SetWidget()
 		if (PlayerInfoHUDWidget != nullptr)
 		{
 			PlayerInfoHUDWidget->AddToViewport();
+			auto PlayerChar = Cast<APuzzlePlatformsCharacter>(GetPawn());
+			if(PlayerChar !=nullptr)
+				PlayerInfoHUDWidget->CustomInitialize(PlayerChar->CharacterNum);
 			//¿Ã∞‘ ability
 			auto HeadUpDispaly = Cast<UPuzzlePlatformsGameInstance>(GetGameInstance())->GetHeadsUpDisplay();
 			if (HeadUpDispaly != nullptr)
 				HeadUpDispaly->AddToViewport();
+
 		}
 
 		HasWidget = true;

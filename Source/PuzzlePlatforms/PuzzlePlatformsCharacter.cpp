@@ -33,6 +33,10 @@
 #include "Kismet/KismetMathLibrary.h"
 #include "Components/DecalComponent.h"
 #include "Components/WidgetComponent.h"
+#include "Components/SceneCaptureComponent2D.h"
+#include "Engine/TextureRenderTarget2D.h"
+#include "ImageUtils.h"
+
 
 #include "Net/UnrealNetwork.h"
 
@@ -81,7 +85,14 @@ APuzzlePlatformsCharacter::APuzzlePlatformsCharacter()
 	FollowCamera = CreateDefaultSubobject<UCameraComponent>(TEXT("FollowCamera"));
 	FollowCamera->SetupAttachment(CameraBoom, USpringArmComponent::SocketName); // Attach the camera to the end of the boom and let the boom adjust to match the controller orientation
 	FollowCamera->bUsePawnControlRotation = false; // Camera does not rotate relative to arm
-
+	
+	MiniMapSpringArm = CreateDefaultSubobject<USpringArmComponent>(TEXT("MiniMapSpringArm"));
+	MiniMapSpringArm->SetupAttachment(RootComponent);
+	MiniMapSpringArm->TargetArmLength = 300.0f; // The camera follows at this distance behind the character	
+	//MiniMapSpringArm->bUsePawnControlRotation = true; // Rotate the arm based on the controller
+	SceneCaptureComponent = CreateDefaultSubobject<USceneCaptureComponent2D>(TEXT("SceneCaptureComponent"));
+	SceneCaptureComponent->SetupAttachment(MiniMapSpringArm, USpringArmComponent::SocketName); // Attach the camera to the end of the boom and let the boom adjust to match the controller orientation
+	//MiniMapCamera->bUsePawnControlRotation = false; // Camera does not rotate relative to arm
 #pragma endregion Region_1
 	//Component 초기화
 	CharacterStat = CreateDefaultSubobject<UMyCharacterStatComponent>(TEXT("CHARACTERSTAT"));
@@ -149,25 +160,44 @@ void APuzzlePlatformsCharacter::SetupPlayerInputComponent(class UInputComponent*
 
 }
 
-void APuzzlePlatformsCharacter::OpenSkillTree()
-{
-	auto controller = Cast<AMyPlayerController>(GetController());
-	ABCHECK(controller != nullptr);
-	ABCHECK(HeadsUpDisplayRef != nullptr);
-	if (MouseCursorToggle == false)
-	{
-		HeadsUpDisplayRef->ToggleSpellBook();
-		controller->SetInputModeGameAndUI();
 
-		MouseCursorToggle = true;
-	}
+UTextureRenderTarget2D* APuzzlePlatformsCharacter::CreateRenderTarget2D(int32 width, int32 height, bool makeHDR)
+{
+	UTextureRenderTarget2D* renderTarget = NewObject<UTextureRenderTarget2D>();
+
+	if (makeHDR)
+		renderTarget->InitAutoFormat(width, height);
 	else
-	{
-		HeadsUpDisplayRef->ToggleSpellBook();
-		controller->SetInputModeGame();
-		MouseCursorToggle = false;
-	}
+		renderTarget->InitCustomFormat(width, height, PF_B8G8R8A8, false);
+
+	return renderTarget;
 }
+
+//bool APuzzlePlatformsCharacter::SaveRenderTarget(UTextureRenderTarget2D* renderTarget, FString path, FString fileName)
+//{
+//	FTextureRenderTargetResource* resource = renderTarget->GameThread_GetRenderTargetResource();
+//	FReadSurfaceDataFlags readPixelFlags(RCM_UNorm);
+//
+//	TArray<FColor> outBMP;
+//	outBMP.AddUninitialized(renderTarget->GetSurfaceWidth() * renderTarget->GetSurfaceHeight());
+//	resource->ReadPixels(outBMP, readPixelFlags);
+//
+//	for (FColor& color : outBMP)
+//	{
+//		color.A = 255;
+//	}
+//
+//	FIntPoint destSize(renderTarget->GetSurfaceWidth(), renderTarget->GetSurfaceHeight());
+//	TArray<uint8> compressedBitmap;
+//	FImageUtils::CompressImageArray(destSize.X, destSize.Y, outBMP, compressedBitmap);
+//
+//	//FString fullPath = FPaths::Combine(path, fileName);
+//
+//	//bool imageSavedOK = FFileHelper::SaveArrayToFile(compressedBitmap, *fullPath);
+//
+//	return imageSavedOK;
+//}
+
 void APuzzlePlatformsCharacter::PostInitializeComponents()
 {
 	Super::PostInitializeComponents();
@@ -200,6 +230,8 @@ void APuzzlePlatformsCharacter::BeginPlay()
 	{
 		FTimerHandle TimerHandler;
 		GetWorld()->GetTimerManager().SetTimer(TimerHandler, this, &APuzzlePlatformsCharacter::UpdateStat, 10, true);
+		//SceneCaptureComponent->TextureTarget=
+
 	}
 	if (!IsLocallyControlled()&&!HasAuthority())//사실 서버입장에서는 뒤늦게 만들어 주면 되는거아님?
 	{
@@ -207,7 +239,19 @@ void APuzzlePlatformsCharacter::BeginPlay()
 		GetWorldTimerManager().SetTimer(StatResetHandle, RespawnDelegate, .1f, true);
 	//	CharacterStat->LevelUp(Level);//Replicate돼있어서 이미 존재하는 애들 다 바뀜, 단 이미 있던애들은 내가 안바뀜
 	}
-	
+	auto LobbyGameMode = Cast< AMyLobbyGameMode>(UGameplayStatics::GetGameMode(GetWorld()));
+	if (LobbyGameMode != nullptr)
+	{
+		auto CharacterWidget = Cast< UPlayerHPBarWidget>(HPBarWidget->GetUserWidgetObject());
+
+		CharacterWidget->SetVisibility(ESlateVisibility::Hidden);
+	}
+	//if (IsLocallyControlled())
+	//{
+	//	TextureRenderTarget = CreateRenderTarget2D(1024, 1024, true);
+	//	SceneCaptureComponent->TextureTarget = TextureRenderTarget;
+	//	//TextureRenderTarget->
+	//}
 }
 
 
@@ -240,16 +284,15 @@ void APuzzlePlatformsCharacter::Tick(float DeltaTime)
 	if (IsLocallyControlled())
 	{
 		//SetTargetPlayerWithLineTrace();
-
 	}
-
 	if (!IsLocallyControlled())
 	{
 		auto MyController = UGameplayStatics::GetPlayerController(GetWorld(), 0);
 		ABCHECK(MyController != nullptr);
-		auto MyPawn = MyController->GetPawn();
+		auto MyPawn = Cast< APuzzlePlatformsCharacter>(MyController->GetPawn());
 		ABCHECK(MyPawn != nullptr);
-		auto Dir = MyPawn->GetActorLocation() - GetActorLocation();
+		ABCHECK(HPBarWidget!=nullptr)
+		auto Dir = MyPawn->FollowCamera->GetComponentLocation() - HPBarWidget->GetComponentLocation();
 		auto DirRot = UKismetMathLibrary::MakeRotFromX(Dir);
 		HPBarWidget->SetWorldRotation(DirRot);
 		//UE_LOG(LogTemp, Warning, TEXT("%s"), *(GetController()->GetName()));
@@ -568,8 +611,25 @@ void APuzzlePlatformsCharacter::Multicast_SetLevel_Implementation(int NewLevel)
 
 	}
 }
+void APuzzlePlatformsCharacter::OpenSkillTree()
+{
+	auto controller = Cast<AMyPlayerController>(GetController());
+	ABCHECK(controller != nullptr);
+	ABCHECK(HeadsUpDisplayRef != nullptr);
+	if (MouseCursorToggle == false)
+	{
+		HeadsUpDisplayRef->ToggleSpellBook();
+		controller->SetInputModeGameAndUI();
 
-
+		MouseCursorToggle = true;
+	}
+	else
+	{
+		HeadsUpDisplayRef->ToggleSpellBook();
+		controller->SetInputModeGame();
+		MouseCursorToggle = false;
+	}
+}
 
 bool APuzzlePlatformsCharacter::Multicast_SetLevel_Validate(int NewLevel)
 {
