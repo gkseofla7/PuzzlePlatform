@@ -6,6 +6,7 @@
 #include "../MyPlayerController.h"
 #include "../UI/PlayerInfoWidget.h"
 #include "../UI/MinimapWidget.h"
+#include "../UI/MapWidget.h"
 // Sets default values for this component's properties
 UPointOfInterestComponent::UPointOfInterestComponent()
 {
@@ -38,7 +39,7 @@ void UPointOfInterestComponent::TickComponent(float DeltaTime, ELevelTick TickTy
 void UPointOfInterestComponent::AddPOI()
 {
 	auto Pawn = Cast<APawn>(GetOwner());
-	if (Pawn != nullptr && Pawn->IsLocallyControlled() == true && Pawn->IsPlayerControlled() == true)
+	if (Pawn != nullptr && Pawn->IsLocallyControlled() == true&&Pawn->IsPlayerControlled() )//자기 자신은 안그림
 		return;
 
 	UE_LOG(LogTemp, Warning, TEXT("AddPOI"));
@@ -50,6 +51,9 @@ void UPointOfInterestComponent::AddPOI()
 	auto PlayerInfoHUDWidget = MyController->PlayerInfoHUDWidget;
 	ABCHECK(	PlayerInfoHUDWidget!=nullptr);
 	auto Minimap_Widget = PlayerInfoHUDWidget->Minimap_Widget;
-	ABCHECK(Minimap_Widget != nullptr);
-	Minimap_Widget->AddsPOI(GetOwner());
+	if(Minimap_Widget != nullptr)
+		Minimap_Widget->AddsPOI(GetOwner());
+	auto MapWidget = PlayerInfoHUDWidget->MapWidget;
+	if(MapWidget!=nullptr)
+		MapWidget->AddsPOI(GetOwner());
 }

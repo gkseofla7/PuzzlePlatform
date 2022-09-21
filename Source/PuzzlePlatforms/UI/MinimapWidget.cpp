@@ -4,6 +4,7 @@
 #include "MinimapWidget.h"
 #include "PointOfInterestWidget.h"
 #include "../PlayersComponent/PointOfInterestComponent.h"
+#include "../PuzzlePlatformsCharacter.h"
 
 #include "Components/Overlay.h"
 #include "Components/OverlaySlot.h"
@@ -24,7 +25,19 @@ void UMinimapWidget::AddsPOI(AActor* Owner)
 	auto PointOfInterestComponent = Cast< UPointOfInterestComponent>(FindComp);
 	UPointOfInterestWidget* PointOfInterestWidget = CreateWidget<UPointOfInterestWidget>(GetWorld(), PointOfInterestWidgetClass);
 	ABCHECK(PointOfInterestWidget!= nullptr);
-	PointOfInterestWidget->CustomInitialize(Owner, PointOfInterestComponent->IsStatic);
+	auto MyCharacter = Cast<APuzzlePlatformsCharacter>(Owner);
+	if (MyCharacter != nullptr)
+	{
+		auto MyPawn = UGameplayStatics::GetPlayerController(GetWorld(), 0)->GetPawn();
+		if (MyPawn != nullptr)
+		{
+			if (MyCharacter->TeamNum == Cast< APuzzlePlatformsCharacter>(MyPawn)->TeamNum)//같은팀이면
+			{
+				PointOfInterestComponent->IsStatic = true;//이러면 멀리 떨어져도 보임
+			}
+		}
+	}
+	PointOfInterestWidget->CustomInitialize(Owner, PointOfInterestComponent->IsStatic, true);
 	auto MySlot = MapOverlay->AddChildToOverlay(PointOfInterestWidget);
 	MySlot->SetHorizontalAlignment(EHorizontalAlignment::HAlign_Center);
 	MySlot->SetVerticalAlignment(EVerticalAlignment::VAlign_Center);

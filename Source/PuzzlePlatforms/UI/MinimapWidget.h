@@ -16,8 +16,6 @@ class PUZZLEPLATFORMS_API UMinimapWidget : public UUserWidget
 
 public:
 	UMinimapWidget(const FObjectInitializer& ObjectInitializer);
-	UFUNCTION(BlueprintCallable, BlueprintImplementableEvent)
-	void AddPOI(AActor * Owner);
 	void AddsPOI(AActor* Owner);
 public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)

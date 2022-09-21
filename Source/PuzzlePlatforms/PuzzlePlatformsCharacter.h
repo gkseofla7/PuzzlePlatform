@@ -130,7 +130,7 @@ public:
 	int Level;//입장과 동시에 Replicated 됨 단 서버쪽에서는 아니겠지..ㅋㅋ
 	UPROPERTY(EditAnywhere)
 	bool bPossessed = false;
-	UPROPERTY(EditAnywhere)
+	UPROPERTY(EditAnywhere,BlueprintReadWrite)
 	int TeamNum = 0;
 	bool bDead = false;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
