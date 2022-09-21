@@ -150,6 +150,7 @@ void APuzzlePlatformsCharacter::SetupPlayerInputComponent(class UInputComponent*
 	PlayerInputComponent->BindAction("Skill4", IE_Released, this, &APuzzlePlatformsCharacter::SkillReleased);
 	PlayerInputComponent->BindAction("Skill5", IE_Released, this, &APuzzlePlatformsCharacter::SkillReleased);
 	PlayerInputComponent->BindAction("SkillTree", IE_Pressed, this, &APuzzlePlatformsCharacter::OpenSkillTree);
+	PlayerInputComponent->BindAction("OpenMap", IE_Pressed, this, &APuzzlePlatformsCharacter::OpenMap);
 	PlayerInputComponent->BindAxis("MoveForward", this, &APuzzlePlatformsCharacter::MoveForward);
 	PlayerInputComponent->BindAxis("MoveRight", this, &APuzzlePlatformsCharacter::MoveRight);
 	PlayerInputComponent->BindAxis("Turn", this, &APuzzlePlatformsCharacter::AddControllerYawInput);
@@ -622,7 +623,6 @@ void APuzzlePlatformsCharacter::OpenSkillTree()
 	{
 		HeadsUpDisplayRef->ToggleSpellBook();
 		controller->SetInputModeGameAndUI();
-
 		MouseCursorToggle = true;
 	}
 	else
@@ -631,6 +631,17 @@ void APuzzlePlatformsCharacter::OpenSkillTree()
 		controller->SetInputModeGame();
 		MouseCursorToggle = false;
 	}
+}
+
+void APuzzlePlatformsCharacter::OpenMap()
+{
+	auto controller = Cast<AMyPlayerController>(GetController());
+	auto PlayerWidget = controller->PlayerInfoHUDWidget;
+	ABCHECK(PlayerWidget != nullptr);
+
+	PlayerWidget->ToggleMap();
+	
+
 }
 
 bool APuzzlePlatformsCharacter::Multicast_SetLevel_Validate(int NewLevel)

@@ -4,6 +4,7 @@
 #include "HudUpDisplayWidget.h"
 #include "CastBarWidget.h"
 #include "Spellbook_UI.h"
+
 UHudUpDisplayWidget::UHudUpDisplayWidget(const FObjectInitializer& ObjectInitializer)
 :Super(ObjectInitializer)
 {
@@ -22,3 +23,4 @@ void UHudUpDisplayWidget::ToggleSpellBook()
 		Spellbook_UI->SetVisibility(ESlateVisibility::Hidden);
 	}
 }
+

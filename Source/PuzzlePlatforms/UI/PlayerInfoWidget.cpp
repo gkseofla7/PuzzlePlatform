@@ -4,6 +4,7 @@
 #include "PlayerInfoWidget.h"
 #include "../PlayersComponent/MyCharacterStatComponent.h"
 #include "../MyPlayerState.h"
+#include "../UI/MapWidget.h"
 
 
 #include "Components/TextBlock.h"
@@ -64,4 +65,16 @@ void UPlayerInfoWidget::BindCharacterStat(class UMyCharacterStatComponent* NewCh
 void UPlayerInfoWidget::BindCharacterName(FText NewName)
 {
 	PlayerName->SetText(NewName);
+}
+
+void UPlayerInfoWidget::ToggleMap()
+{
+	if (MapWidget->GetVisibility() == ESlateVisibility::Hidden)
+	{
+		MapWidget->SetVisibility(ESlateVisibility::Visible);
+	}
+	else
+	{
+		MapWidget->SetVisibility(ESlateVisibility::Hidden);
+	}
 }

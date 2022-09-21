@@ -29,5 +29,8 @@ public:
 		class UProgressBar* PB_HPBar;
 	UPROPERTY(meta = (BindWidget))
 		class UProgressBar* PB_MPBar;
+
 	TWeakObjectPtr<class UMyCharacterStatComponent> CurrentCharacterStat;
 };
+
+

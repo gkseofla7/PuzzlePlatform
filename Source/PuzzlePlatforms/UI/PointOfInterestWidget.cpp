@@ -26,6 +26,10 @@ UPointOfInterestWidget::UPointOfInterestWidget(const FObjectInitializer& ObjectI
 void UPointOfInterestWidget::NativeTick(const FGeometry& MyGeometry, float InDeltaTime)
 {
 	Super::NativeTick(MyGeometry, InDeltaTime);
+	if (Owner == nullptr)
+	{
+		RemoveFromParent();
+	}
 	auto Controller = UGameplayStatics::GetPlayerController(GetWorld(), 0);
 	ABCHECK(Controller != nullptr);
 	auto MyController = Cast< AMyPlayerController>(Controller);
@@ -39,7 +43,7 @@ void UPointOfInterestWidget::NativeTick(const FGeometry& MyGeometry, float InDel
 
 			auto Target = MyController->GetPawn();
 			ABCHECK(Target != nullptr);
-			ABCHECK(Owner != nullptr);
+
 
 
 			auto TargetLoc = Target->GetActorLocation();
@@ -56,13 +60,13 @@ void UPointOfInterestWidget::NativeTick(const FGeometry& MyGeometry, float InDel
 			SetRenderTranslation(CoordVec);
 			if (IsStatic== false)
 			{
-				if (CoordVec.Size() >= 130.)
+				if (CoordVec.Size() >= 129.)
 				{
 					DefaultImage->SetVisibility(ESlateVisibility::Hidden);//이미지 있으면 이미지로 해야됨
 				}
 				else
 				{
-					UE_LOG(LogTemp, Warning, TEXT("Here Is Problem"));
+
 					DefaultImage->SetVisibility(ESlateVisibility::Visible);
 				}
 			}

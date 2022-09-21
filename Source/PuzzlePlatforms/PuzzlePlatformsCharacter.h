@@ -44,6 +44,7 @@ public:
 	void SetUsingSkill(bool NewUsingSkill);
 	void DestroyPlayer();
 	void OpenSkillTree();
+	void OpenMap();
 	virtual void PossessedBy(AController* NewController) override;
 public:
 	virtual void PostInitializeComponents() override;

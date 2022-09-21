@@ -31,5 +31,6 @@ public:
 		class UBuffPanel_UI* BuffPanel_UI;
 	UPROPERTY(meta = (BindWidget), BlueprintReadWrite)
 	class USpellbook_UI* Spellbook_UI;
+
 	//TSubclassOf<class UUserWidget>CastBarClass;
 };

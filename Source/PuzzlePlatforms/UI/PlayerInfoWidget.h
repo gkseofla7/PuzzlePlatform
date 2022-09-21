@@ -35,10 +35,13 @@ public:
 	UPROPERTY(meta = (BindWidget))
 		class UTextBlock* MpNum;
 	UPROPERTY(meta = (BindWidget),BlueprintReadWrite)
+		class UMapWidget* MapWidget;
+	UPROPERTY(meta = (BindWidget),BlueprintReadWrite)
 		class UMinimapWidget* Minimap_Widget;
 public:
 	void BindCharacterStat(class UMyCharacterStatComponent* NewCharacterStat);
 	void BindCharacterName(FText NewName);
+	void ToggleMap();
 
 private:
 	TWeakObjectPtr<class UMyCharacterStatComponent> CurrentCharacterStat;

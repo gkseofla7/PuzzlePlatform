@@ -37,11 +37,16 @@ void UPointOfInterestComponent::TickComponent(float DeltaTime, ELevelTick TickTy
 
 void UPointOfInterestComponent::AddPOI()
 {
+	auto Pawn = Cast<APawn>(GetOwner());
+	if (Pawn != nullptr && Pawn->IsLocallyControlled() == true && Pawn->IsPlayerControlled() == true)
+		return;
+
 	UE_LOG(LogTemp, Warning, TEXT("AddPOI"));
 	auto Controller = UGameplayStatics::GetPlayerController(GetWorld(), 0);
 	ABCHECK(Controller!=nullptr);
 	auto MyController = Cast<AMyPlayerController>(Controller);
 	ABCHECK(MyController!=nullptr);
+	
 	auto PlayerInfoHUDWidget = MyController->PlayerInfoHUDWidget;
 	ABCHECK(	PlayerInfoHUDWidget!=nullptr);
 	auto Minimap_Widget = PlayerInfoHUDWidget->Minimap_Widget;
