@@ -44,7 +44,7 @@ FTransform ARespawnSection::GetRandomTransform()
 	if (NavSystem->GetRandomPointInNavigableRadius(Origin, 500, NextPatrol))
 	{
 		RandomLoc = NextPatrol.Location;
-		RandomLoc.Z += 90;
+		RandomLoc.Z += 200;
 
 	}
 	FTransform OutTransform;

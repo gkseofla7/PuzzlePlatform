@@ -15,6 +15,7 @@ class PUZZLEPLATFORMS_API UPlayerHPBarWidget : public UUserWidget
 	GENERATED_BODY()
 public:
 	void NativeConstruct();
+	void NativeTick(const FGeometry& MyGeometry, float InDeltaTime);
 	void BindCharacterStat(class UMyCharacterStatComponent* NewCharacterStat);
 	void UpdateHPBar();
 	void UpdateMPBar();

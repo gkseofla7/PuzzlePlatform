@@ -28,6 +28,10 @@ UPointOfInterestWidget::UPointOfInterestWidget(const FObjectInitializer& ObjectI
 void UPointOfInterestWidget::NativeTick(const FGeometry& MyGeometry, float InDeltaTime)
 {
 	Super::NativeTick(MyGeometry, InDeltaTime);
+	if (Owner == nullptr)
+	{
+		RemoveFromParent();
+	}
 	if (IsMinimap == true)
 	{
 		MinimapCoord();
@@ -126,10 +130,7 @@ void UPointOfInterestWidget::MapCoord()
 
 void UPointOfInterestWidget::MinimapCoord()
 {
-	if (Owner == nullptr)
-	{
-		RemoveFromParent();
-	}
+
 	auto Controller = UGameplayStatics::GetPlayerController(GetWorld(), 0);
 	ABCHECK(Controller != nullptr);
 	auto MyController = Cast< AMyPlayerController>(Controller);

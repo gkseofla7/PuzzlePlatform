@@ -50,8 +50,15 @@ void AMyPlayerController::OnPossess(APawn* aPawn)
 void AMyPlayerController::BeginPlay()
 {
 	Super::BeginPlay();
-	
-
+	test = 1;
+	if (HasAuthority())
+	{
+		UE_LOG(LogTemp, Warning, TEXT("Server Controller Beginplay %s %d"), *GetName(), test);
+	}
+	else
+	{
+		UE_LOG(LogTemp, Warning, TEXT("Client Controller Beginplay %s %d"), *GetName(), test);
+	}
 	if (IsLocalController() )
 	{
 		FInputModeGameOnly InputMode;

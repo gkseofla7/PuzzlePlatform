@@ -43,7 +43,7 @@ public:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = UI)
 		TSubclassOf<class UPlayerInfoWidget> PlayerInfoHUDWidgetClass;
 	bool HasWidget = false;
-
+	int test = 0;
 	//UPROPERTY()
 	//	class UUserWidget* NewHUDWidget;
 };

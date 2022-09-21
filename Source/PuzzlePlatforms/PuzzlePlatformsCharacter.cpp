@@ -226,6 +226,9 @@ void APuzzlePlatformsCharacter::PossessedBy(AController* NewController)//이것도 
 void APuzzlePlatformsCharacter::BeginPlay()
 {
 	Super::BeginPlay();
+	FTimerHandle TestHandle;
+	FTimerDelegate TestDeleage = FTimerDelegate::CreateUObject(this, &APuzzlePlatformsCharacter::Test);//어차피 자기 자신만 실행함
+	GetWorldTimerManager().SetTimer(TestHandle, TestDeleage, 5.f, true);
 
 	if (IsLocallyControlled())//체력 주기적으로 회복 아 애초에 이것도 실행을 안하는구나.. 누가 들어와도
 	{
@@ -241,7 +244,7 @@ void APuzzlePlatformsCharacter::BeginPlay()
 	//	CharacterStat->LevelUp(Level);//Replicate돼있어서 이미 존재하는 애들 다 바뀜, 단 이미 있던애들은 내가 안바뀜
 	}
 	auto LobbyGameMode = Cast< AMyLobbyGameMode>(UGameplayStatics::GetGameMode(GetWorld()));
-	if (LobbyGameMode != nullptr)
+	if (LobbyGameMode != nullptr)//Lobby에서 안보이게 하려고
 	{
 		auto CharacterWidget = Cast< UPlayerHPBarWidget>(HPBarWidget->GetUserWidgetObject());
 
@@ -253,9 +256,25 @@ void APuzzlePlatformsCharacter::BeginPlay()
 	//	SceneCaptureComponent->TextureTarget = TextureRenderTarget;
 	//	//TextureRenderTarget->
 	//}
+
 }
+void APuzzlePlatformsCharacter::Test()
+{
+	if (GetController() != nullptr)
+	{
+		auto MyController = Cast<AMyPlayerController>(GetController());
+		ABCHECK(MyController !=nullptr);
+		if (HasAuthority() == true)
+		{
 
-
+			UE_LOG(LogTemp, Warning, TEXT("Server Character Beginplay %s  : %d"), *GetName(), MyController->test);
+		}
+		else
+		{
+			UE_LOG(LogTemp, Warning, TEXT("Client Character Beginplay %s  : %d"), *GetName(), Cast<AMyPlayerController>(GetController())->test);
+		}
+	}
+}
 
 
 void APuzzlePlatformsCharacter::SetStatComponentLevel()
@@ -590,6 +609,7 @@ void APuzzlePlatformsCharacter::Multicast_SetLevel_Implementation(int NewLevel)
 	CharacterStat->Level = NewLevel;
 	Level = NewLevel;
 	CharacterStat->LevelUp(NewLevel);//전원 HP MP Level 초기화
+
 	auto CharacterWidget = Cast< UPlayerHPBarWidget>(HPBarWidget->GetUserWidgetObject());
 	if (nullptr != CharacterWidget)
 	{

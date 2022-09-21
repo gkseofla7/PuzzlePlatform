@@ -17,6 +17,10 @@ void UPlayerHPBarWidget::BindCharacterStat(UMyCharacterStatComponent* NewCharact
 	NewCharacterStat->OnMPChanged.AddUObject(this, &UPlayerHPBarWidget::UpdateMPBar);
 	NewCharacterStat->OnLevelChanged.AddUObject(this, &UPlayerHPBarWidget::UpdateLevelText);
 	NewCharacterStat->OnNameChanged.AddUObject(this, &UPlayerHPBarWidget::UpdateNameText);
+	UpdateHPBar();
+	UpdateMPBar();
+	UpdateLevelText();
+	UpdateNameText();
 }
 
 
@@ -24,7 +28,14 @@ void UPlayerHPBarWidget::BindCharacterStat(UMyCharacterStatComponent* NewCharact
 void UPlayerHPBarWidget::NativeConstruct()
 {
 	Super::NativeConstruct();
-	//UpdateWidget();
+
+}
+
+void UPlayerHPBarWidget::NativeTick(const FGeometry& MyGeometry, float InDeltaTime)
+{
+	Super::NativeTick(MyGeometry, InDeltaTime);
+	/*if(CurrentCharacterStat!=nullptr)
+		UE_LOG(LogTemp, Warning, TEXT("HP : %f"), CurrentCharacterStat->GetHPRatio());*/
 }
 
 void UPlayerHPBarWidget::UpdateHPBar()
@@ -34,7 +45,16 @@ void UPlayerHPBarWidget::UpdateHPBar()
 		if (nullptr != PB_HPBar)
 		{
 
+			if (CurrentCharacterStat->GetOwner()->HasAuthority())
+			{
+				UE_LOG(LogTemp, Warning, TEXT("Server %s HP : %f"), *(CurrentCharacterStat->GetOwner()->GetName()), CurrentCharacterStat->GetHPRatio());
+			}
+			else
+			{
+				UE_LOG(LogTemp, Warning, TEXT("Client %s HP : %f"), *(CurrentCharacterStat->GetOwner()->GetName()), CurrentCharacterStat->GetHPRatio());
+			}
 			PB_HPBar->SetPercent(CurrentCharacterStat->GetHPRatio());
+
 		}
 	}
 
@@ -47,6 +67,7 @@ void UPlayerHPBarWidget::UpdateMPBar()
 
 		if (nullptr != PB_MPBar)
 		{
+
 			PB_MPBar->SetPercent(CurrentCharacterStat->GetMPRatio());
 		}
 	}

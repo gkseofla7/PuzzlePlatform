@@ -82,8 +82,8 @@ void AWarrior::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
-	ForwardTrace();
-	HeightTrace();
+	//ForwardTrace();
+	//HeightTrace();
 }
 
 void AWarrior::AttackCheck()

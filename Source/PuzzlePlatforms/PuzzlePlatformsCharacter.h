@@ -60,7 +60,7 @@ public:
 	virtual void AddControllerPitchInput(float Val);
 	virtual void AddControllerYawInput(float Val);
 	virtual void Die();
-
+	void Test();
 
 	UFUNCTION(NetMulticast, Reliable, WithValidation)
 		void Multicast_SetLevel(int NewLevel);
