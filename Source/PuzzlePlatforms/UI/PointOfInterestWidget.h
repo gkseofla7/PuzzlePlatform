@@ -17,6 +17,7 @@ class PUZZLEPLATFORMS_API UPointOfInterestWidget : public UUserWidget
 	GENERATED_BODY()
 public:
 	UPointOfInterestWidget(const FObjectInitializer& ObjectInitializer);
+	UFUNCTION(BlueprintCallable)
 	void CustomInitialize(AActor* NewOwner, bool NewIsStatic);
 	void NativeTick(const FGeometry& MyGeometry, float InDeltaTime) override;
 	float FindAngle(FVector2D A, FVector2D B);

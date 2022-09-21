@@ -2,7 +2,10 @@
 
 
 #include "PointOfInterestComponent.h"
-
+#include "../UI/MinimapWidget.h"
+#include "../MyPlayerController.h"
+#include "../UI/PlayerInfoWidget.h"
+#include "../UI/MinimapWidget.h"
 // Sets default values for this component's properties
 UPointOfInterestComponent::UPointOfInterestComponent()
 {
@@ -18,9 +21,9 @@ UPointOfInterestComponent::UPointOfInterestComponent()
 void UPointOfInterestComponent::BeginPlay()
 {
 	Super::BeginPlay();
-
-	// ...
-	
+	FTimerHandle PossessCharacterHandle;
+	FTimerDelegate PossessCharacterDelegate = FTimerDelegate::CreateUObject(this, &UPointOfInterestComponent::AddPOI);
+	GetOwner()->GetWorldTimerManager().SetTimer(PossessCharacterHandle, PossessCharacterDelegate, .4f, false);
 }
 
 
@@ -32,3 +35,16 @@ void UPointOfInterestComponent::TickComponent(float DeltaTime, ELevelTick TickTy
 	// ...
 }
 
+void UPointOfInterestComponent::AddPOI()
+{
+	UE_LOG(LogTemp, Warning, TEXT("AddPOI"));
+	auto Controller = UGameplayStatics::GetPlayerController(GetWorld(), 0);
+	ABCHECK(Controller!=nullptr);
+	auto MyController = Cast<AMyPlayerController>(Controller);
+	ABCHECK(MyController!=nullptr);
+	auto PlayerInfoHUDWidget = MyController->PlayerInfoHUDWidget;
+	ABCHECK(	PlayerInfoHUDWidget!=nullptr);
+	auto Minimap_Widget = PlayerInfoHUDWidget->Minimap_Widget;
+	ABCHECK(Minimap_Widget != nullptr);
+	Minimap_Widget->AddsPOI(GetOwner());
+}

@@ -35,18 +35,23 @@ void UPointOfInterestWidget::NativeTick(const FGeometry& MyGeometry, float InDel
 		auto MinimapWidget = MyController->PlayerInfoHUDWidget->Minimap_Widget;
 		if (MinimapWidget != nullptr)
 		{
+			float MapDimensions = MinimapWidget->Zoom * (MinimapWidget->Dimensions / 300);
+
 			auto Target = MyController->GetPawn();
 			ABCHECK(Target != nullptr);
 			ABCHECK(Owner != nullptr);
-			float MapDimensions = MinimapWidget->Zoom * (MinimapWidget->Dimensions / 300);
+
+
 			auto TargetLoc = Target->GetActorLocation();
 			auto OwnerLoc = Owner->GetActorLocation();
 			float deltaX = (TargetLoc.X - OwnerLoc.X)/MapDimensions;
 			float deltaY = -1*(TargetLoc.Y - OwnerLoc.Y)/MapDimensions;
 			FVector2D Point = FVector2D(deltaX, deltaY);
 			FVector2D PlayerPoint = FVector2D(0, 0);
+
 			float Angle = FindAngle(PlayerPoint, Point);
 			float Radius = Point.Size();
+			//UE_LOG(LogTemp, Warning, TEXT("%f"),  Angle);
 			FVector2D CoordVec = FindCoord(Radius, Angle);
 			SetRenderTranslation(CoordVec);
 			if (IsStatic== false)
@@ -57,6 +62,7 @@ void UPointOfInterestWidget::NativeTick(const FGeometry& MyGeometry, float InDel
 				}
 				else
 				{
+					UE_LOG(LogTemp, Warning, TEXT("Here Is Problem"));
 					DefaultImage->SetVisibility(ESlateVisibility::Visible);
 				}
 			}
@@ -72,11 +78,12 @@ void UPointOfInterestWidget::CustomInitialize(AActor* NewOwner, bool NewIsStatic
 	UActorComponent*  Comp = Owner->GetComponentByClass(PointOfInterestComponentClass);//걍bp말고 일반찾아도,,ㅋㅋ
 	ABCHECK(Comp != nullptr);
 	auto PointOfInterest = Cast<UPointOfInterestComponent>(Comp);
-	ABCHECK(PointOfInterest);
+	ABCHECK(PointOfInterest!=nullptr);
 	if (PointOfInterest->IconImage != nullptr)
 	{
 		CustomImage->SetBrushFromTexture(PointOfInterest->IconImage);
 		DefaultImage->SetVisibility(ESlateVisibility::Hidden);
+
 	}
 	else
 	{
@@ -89,7 +96,7 @@ float UPointOfInterestWidget::FindAngle(FVector2D A, FVector2D B)
 {
 	float DeltaX = A.X - B.X;
 	float DeltaY = A.Y - B.Y;
-	float angle = UKismetMathLibrary::Atan2(DeltaY, DeltaX);
+	float angle = UKismetMathLibrary::DegAtan2(DeltaY, DeltaX);
 	return angle;
 }
 FVector2D UPointOfInterestWidget::FindCoord(float Radius, float Angle)
