@@ -14,18 +14,8 @@
 #include "Net/UnrealNetwork.h"
 AMyPlayerController::AMyPlayerController()
 {
-	
-	//static ConstructorHelpers::FClassFinder< UUserWidget> NEWUI_HUD_C(TEXT("/Game/AbilitySystem/UI/HeadsUpDisplay"));
-	///Game/AbilitySystem/UI/HeadsUpDisplay
-
-
 	bReplicates = true;
-	Level = 1;
-	//CharacterStat = CreateDefaultSubobject<UMyCharacterStatComponent>(TEXT("CHARACTERSTAT"));
-	//if (NEWUI_HUD_C.Succeeded())
-	//{
-	//	NewHUDWidgetClass = NEWUI_HUD_C.Class;
-	//}
+
 
 	static ConstructorHelpers::FClassFinder< UPlayerInfoWidget> UI_HUD_C(TEXT("/Game/PuzzlePlatforms/Widget/WBP_PlayerInfo"));
 	if (UI_HUD_C.Succeeded())
@@ -50,40 +40,16 @@ void AMyPlayerController::OnPossess(APawn* aPawn)
 void AMyPlayerController::BeginPlay()
 {
 	Super::BeginPlay();
-	test = 1;
-	if (HasAuthority())
-	{
-		UE_LOG(LogTemp, Warning, TEXT("Server Controller Beginplay %s %d"), *GetName(), test);
-	}
-	else
-	{
-		UE_LOG(LogTemp, Warning, TEXT("Client Controller Beginplay %s %d"), *GetName(), test);
-	}
+
+
 	if (IsLocalController() )
 	{
 		FInputModeGameOnly InputMode;
 		SetInputMode(InputMode);
-		//위젯은 무조건 beginplay에서 초기화시켜야됨
-		//NewHUDWidget = CreateWidget<UUserWidget>(this, NewHUDWidgetClass);
-
-
 	}
 	auto GameMode = Cast< AMyLobbyGameMode>(UGameplayStatics::GetGameMode(GetWorld()));
-	//if (GameMode==nullptr&&HasAuthority() == true)//당연 true
-	//{
-	//	FTimerHandle PossessCharacterHandle;
-	//	FTimerDelegate PossessCharacterDelegate = FTimerDelegate::CreateUObject(this, &AMyPlayerController::PossessCharacter);
-	//	GetWorldTimerManager().SetTimer(PossessCharacterHandle, PossessCharacterDelegate, .2f, false);
-	//}
-
 }
 
-
-
-//UPlayerInfoWidget* AMyPlayerController::GetHudWidget() const
-//{
-//	return HUDWidget;
-//}
 
 void AMyPlayerController::SetInputModeGameAndUI()
 {

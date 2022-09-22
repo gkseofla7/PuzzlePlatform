@@ -66,14 +66,10 @@ public:
 	void Server_BindCharacterStat();
 	UFUNCTION(NetMulticast, Reliable, WithValidation)
 	void  NetMulticast_BindCharacterStat();
-	void SetStatComponentLevel();
 
 
 protected:
-	// APawn interface
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
-
-	// End of APawn interface
 
 public:
 	/** Returns CameraBoom subobject **/
@@ -81,12 +77,10 @@ public:
 	/** Returns FollowCamera subobject **/
 	FORCEINLINE class UCameraComponent* GetFollowCamera() const { return FollowCamera; }
 
-
 	virtual float TakeDamage(float DamageAmount, struct FDamageEvent const& DamageEvent,
 		class AController* EventInstigator, AActor* DamageCauser) override;
 	void SetTargetPlayerWithLineTrace();
-	UFUNCTION(BlueprintCallable)
-		UTextureRenderTarget2D* CreateRenderTarget2D(int32 width, int32 height, bool makeHDR);
+
 	//UFUNCTION(BlueprintCallable)
 	//	bool SaveRenderTarget(UTextureRenderTarget2D* renderTarget, FString path, FString fileName);
 
@@ -107,15 +101,10 @@ public:
 		class UParticleSystemComponent* ParticleSystemComponent;
 	UPROPERTY(VisibleAnywhere, Category = UI)
 		class UWidgetComponent* HPBarWidget;
-	UPROPERTY(BlueprintReadWrite, EditAnywhere)
-		class USpringArmComponent* MiniMapSpringArm;
-	UPROPERTY(BlueprintReadWrite, EditAnywhere)
-		class USceneCaptureComponent2D* SceneCaptureComponent;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-		UTextureRenderTarget2D* TextureRenderTarget;
+
+
 	class UHudUpDisplayWidget* HeadsUpDisplayRef;
 	APuzzlePlatformsCharacter* TargetPlayer;
-
 	UPROPERTY(BlueprintAssignable, BlueprintCallable)
 	FInterruptCastingDeleagate InterruptCasting;
 	FOnSkillReleased OnSkillReleased;

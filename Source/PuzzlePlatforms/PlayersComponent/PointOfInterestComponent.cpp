@@ -24,7 +24,7 @@ void UPointOfInterestComponent::BeginPlay()
 	Super::BeginPlay();
 	FTimerHandle PossessCharacterHandle;
 	FTimerDelegate PossessCharacterDelegate = FTimerDelegate::CreateUObject(this, &UPointOfInterestComponent::AddPOI);
-	GetOwner()->GetWorldTimerManager().SetTimer(PossessCharacterHandle, PossessCharacterDelegate, .4f, false);
+	GetOwner()->GetWorldTimerManager().SetTimer(PossessCharacterHandle, PossessCharacterDelegate, 1.f, false);
 }
 
 
@@ -41,8 +41,6 @@ void UPointOfInterestComponent::AddPOI()
 	auto Pawn = Cast<APawn>(GetOwner());
 	if (Pawn != nullptr && Pawn->IsLocallyControlled() == true&&Pawn->IsPlayerControlled() )//자기 자신은 안그림
 		return;
-
-	UE_LOG(LogTemp, Warning, TEXT("AddPOI"));
 	auto Controller = UGameplayStatics::GetPlayerController(GetWorld(), 0);
 	ABCHECK(Controller!=nullptr);
 	auto MyController = Cast<AMyPlayerController>(Controller);

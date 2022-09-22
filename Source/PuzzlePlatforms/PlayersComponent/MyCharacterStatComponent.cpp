@@ -29,50 +29,7 @@ void UMyCharacterStatComponent::BeginPlay()
 void UMyCharacterStatComponent::InitializeComponent() //Post Initialize 전에 일어남 이새끼 내생각엔 서버에서 한번 실행할때 일언
 {
 	Super::InitializeComponent();
-
-
-
  }
-
-void UMyCharacterStatComponent::LevelUp(int32 NewLevel)//모든 애들이 다 이걸 실행함
-{
-
-	auto PawnRef = Cast<APawn>(GetOwner());
-	ABCHECK(PawnRef != nullptr);
-	auto MyGameInstance = Cast<UPuzzlePlatformsGameInstance>(UGameplayStatics::GetGameInstance(GetWorld()));
-	ABCHECK(MyGameInstance != nullptr);
-	CurrentStatData = MyGameInstance->GetMyCharacterData(NewLevel);//모든애들 가져옴, 꼭 이래야될까..?ㅋㅋ
-
-	if (nullptr != CurrentStatData)
-	{
-
-		Level = NewLevel;//모든애들 Level Set
-		OnLevelChanged.Broadcast();
-		//CurrentHP = CurrentStatData->MaxHP;//처음에만 해주기위해..ㅋㅋ
-		//OnHPChanged.Broadcast();
-		//UE_LOG(LogTemp, Warning, TEXT("LevelUp : %f"), CurrentStatData->MaxHP);
-		//전원 돌림..ㅋㅋ
-		
-		if (PawnRef->HasAuthority())
-		{
-			SetHP(CurrentStatData->MaxHP);
-			SetMP(CurrentStatData->MaxMP);
-		}
-		if (PawnRef->IsLocallyControlled() && PawnRef->IsPlayerControlled())
-		{
-			auto GameInstance = Cast<UPuzzlePlatformsGameInstance>(UGameplayStatics::GetGameInstance(GetWorld()));
-			if (GameInstance != nullptr)
-			{
-				Server_SetName(GameInstance->PlayerName);
-			}
-		}
-	}
-	else
-	{
-		UE_LOG(LogTemp, Warning, TEXT("Level %d data doesn't exist"), NewLevel);
-	}
-
-}
 
 void UMyCharacterStatComponent::SetHP(float NewHP)
 {
@@ -113,19 +70,12 @@ void UMyCharacterStatComponent::SetLevel(float NewLevel)
 		SetHP(CurrentStatData->MaxHP);
 		SetMP(CurrentStatData->MaxMP);
 		//Attack도 해줌
-
 	}
 	else
 	{
 		UE_LOG(LogTemp, Warning, TEXT("Level %d data doesn't exist"), NewLevel);
 	}
 }
-
-//void UMyCharacterStatComponent::SetName(FText NewName)
-//{
-//
-//}
-
 
 float UMyCharacterStatComponent::GetHPRatio()
 {
@@ -231,21 +181,3 @@ bool UMyCharacterStatComponent::NetMulticast_SetName_Validate(const FText& NewNa
 	return true;
 }
 
-
-//void Server_SetStatData_Implementation(FMyCharacterrData* NewStatData)
-//{
-//	NetMulticast_SetStatData_Implementation(NewStatData);
-//}
-//bool Server_SetStatData_Validate(FMyCharacterrData* NewStatData)
-//{
-//	return true;
-//}
-//
-//void NetMulticast_SetStatData_Implementation(FMyCharacterrData* NewStatData)
-//{
-//	CurrentStatData = NewStatData;
-//}
-//bool NetMulticast_SetStatData_Validate(FMyCharacterrData* NewStatData)
-//{
-//	return true;
-//}

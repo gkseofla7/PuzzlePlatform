@@ -44,15 +44,6 @@ void UPlayerHPBarWidget::UpdateHPBar()
 	{
 		if (nullptr != PB_HPBar)
 		{
-
-			if (CurrentCharacterStat->GetOwner()->HasAuthority())
-			{
-				UE_LOG(LogTemp, Warning, TEXT("Server %s HP : %f"), *(CurrentCharacterStat->GetOwner()->GetName()), CurrentCharacterStat->GetHPRatio());
-			}
-			else
-			{
-				UE_LOG(LogTemp, Warning, TEXT("Client %s HP : %f"), *(CurrentCharacterStat->GetOwner()->GetName()), CurrentCharacterStat->GetHPRatio());
-			}
 			PB_HPBar->SetPercent(CurrentCharacterStat->GetHPRatio());
 
 		}

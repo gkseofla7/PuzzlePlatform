@@ -34,8 +34,8 @@
 #include "Kismet/KismetMathLibrary.h"
 #include "Components/DecalComponent.h"
 #include "Components/WidgetComponent.h"
-#include "Components/SceneCaptureComponent2D.h"
-#include "Engine/TextureRenderTarget2D.h"
+
+
 #include "ImageUtils.h"
 
 
@@ -87,13 +87,7 @@ APuzzlePlatformsCharacter::APuzzlePlatformsCharacter()
 	FollowCamera->SetupAttachment(CameraBoom, USpringArmComponent::SocketName); // Attach the camera to the end of the boom and let the boom adjust to match the controller orientation
 	FollowCamera->bUsePawnControlRotation = false; // Camera does not rotate relative to arm
 	
-	MiniMapSpringArm = CreateDefaultSubobject<USpringArmComponent>(TEXT("MiniMapSpringArm"));
-	MiniMapSpringArm->SetupAttachment(RootComponent);
-	MiniMapSpringArm->TargetArmLength = 300.0f; // The camera follows at this distance behind the character	
-	//MiniMapSpringArm->bUsePawnControlRotation = true; // Rotate the arm based on the controller
-	SceneCaptureComponent = CreateDefaultSubobject<USceneCaptureComponent2D>(TEXT("SceneCaptureComponent"));
-	SceneCaptureComponent->SetupAttachment(MiniMapSpringArm, USpringArmComponent::SocketName); // Attach the camera to the end of the boom and let the boom adjust to match the controller orientation
-	//MiniMapCamera->bUsePawnControlRotation = false; // Camera does not rotate relative to arm
+	
 #pragma endregion Region_1
 	//Component 초기화
 	CharacterStat = CreateDefaultSubobject<UMyCharacterStatComponent>(TEXT("CHARACTERSTAT"));
@@ -163,42 +157,9 @@ void APuzzlePlatformsCharacter::SetupPlayerInputComponent(class UInputComponent*
 }
 
 
-UTextureRenderTarget2D* APuzzlePlatformsCharacter::CreateRenderTarget2D(int32 width, int32 height, bool makeHDR)
-{
-	UTextureRenderTarget2D* renderTarget = NewObject<UTextureRenderTarget2D>();
 
-	if (makeHDR)
-		renderTarget->InitAutoFormat(width, height);
-	else
-		renderTarget->InitCustomFormat(width, height, PF_B8G8R8A8, false);
 
-	return renderTarget;
-}
 
-//bool APuzzlePlatformsCharacter::SaveRenderTarget(UTextureRenderTarget2D* renderTarget, FString path, FString fileName)
-//{
-//	FTextureRenderTargetResource* resource = renderTarget->GameThread_GetRenderTargetResource();
-//	FReadSurfaceDataFlags readPixelFlags(RCM_UNorm);
-//
-//	TArray<FColor> outBMP;
-//	outBMP.AddUninitialized(renderTarget->GetSurfaceWidth() * renderTarget->GetSurfaceHeight());
-//	resource->ReadPixels(outBMP, readPixelFlags);
-//
-//	for (FColor& color : outBMP)
-//	{
-//		color.A = 255;
-//	}
-//
-//	FIntPoint destSize(renderTarget->GetSurfaceWidth(), renderTarget->GetSurfaceHeight());
-//	TArray<uint8> compressedBitmap;
-//	FImageUtils::CompressImageArray(destSize.X, destSize.Y, outBMP, compressedBitmap);
-//
-//	//FString fullPath = FPaths::Combine(path, fileName);
-//
-//	//bool imageSavedOK = FFileHelper::SaveArrayToFile(compressedBitmap, *fullPath);
-//
-//	return imageSavedOK;
-//}
 
 void APuzzlePlatformsCharacter::PostInitializeComponents()
 {
@@ -231,7 +192,7 @@ void APuzzlePlatformsCharacter::BeginPlay()
 	}
 	//여기서 애들 Stat 초기화 시킴
 	FTimerDelegate RespawnDelegate = FTimerDelegate::CreateUObject(this, &APuzzlePlatformsCharacter::SetPlayerStat);//어차피 자기 자신만 실행함
-	GetWorldTimerManager().SetTimer(StatResetHandle, RespawnDelegate, .3f, false);
+	GetWorldTimerManager().SetTimer(StatResetHandle, RespawnDelegate, .6f, false);
 
 
 
@@ -260,7 +221,9 @@ void APuzzlePlatformsCharacter::SetPlayerStat()
 			if (MyController->HasWidget == false)//Widget아직 안열려있으면 widget viewport함, 죽었다 살아났다해서
 				MyController->SetWidget();
 			MyController->BindWidget(CharacterStat);
+			
 			MyController->PlayerInfoHUDWidget->BindCharacterName(FText::FromString(MyPlayerState->GetPlayerName()));
+			HeadsUpDisplayRef = Cast< UPuzzlePlatformsGameInstance>(GetGameInstance())->HeadsUpDisplay;
 		}
 		if (!IsLocallyControlled())//클라이언트가 순차적으로 들어오니 문제발생해서
 		{
@@ -292,43 +255,9 @@ bool  APuzzlePlatformsCharacter::NetMulticast_BindCharacterStat_Validate()
 {
 	return true;
 }
-//void APuzzlePlatformsCharacter::Test()
-//{
-//	if (GetController() != nullptr)
-//	{
-//		auto MyController = Cast<AMyPlayerController>(GetController());
-//		ABCHECK(MyController !=nullptr);
-//		if (HasAuthority() == true)
-//		{
-//
-//			UE_LOG(LogTemp, Warning, TEXT("Server Character Beginplay %s  : %d"), *GetName(), MyController->test);
-//		}
-//		else
-//		{
-//			UE_LOG(LogTemp, Warning, TEXT("Client Character Beginplay %s  : %d"), *GetName(), Cast<AMyPlayerController>(GetController())->test);
-//		}
-//	}
-//}
 
 
-void APuzzlePlatformsCharacter::SetStatComponentLevel()
-{
 
-	if (Level == 0)
-		return;
-	else
-	{
-		CharacterStat->Level = Level;//뒤늦게 level 들어옴
-		CharacterStat->LevelUp(Level);
-		auto CharacterWidget = Cast< UPlayerHPBarWidget>(HPBarWidget->GetUserWidgetObject());
-		if (nullptr != CharacterWidget)
-		{
-			CharacterWidget->BindCharacterStat(CharacterStat);
-		}
-		GetWorldTimerManager().ClearTimer(StatResetHandle);
-
-	}
-}
 
 void APuzzlePlatformsCharacter::Tick(float DeltaTime)
 {//시작하자마자 로그인되는거임;;ㅋㅋ
@@ -634,10 +563,6 @@ void APuzzlePlatformsCharacter::DestroyPlayer()
 {
 	Destroy();
 }
-
-
-
-
 
 void APuzzlePlatformsCharacter::OpenSkillTree()
 {
