@@ -122,6 +122,8 @@ public:
 		TArray<class USplineMeshComponent*> PointsArray;
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
 	bool ShowPath = false;
+	bool ShowTarget = false;
+
 	TSubclassOf<class AMissile>MissileClass;
 	TSubclassOf<class ATargetMarker>TargetMarkerClass;
 	UStaticMesh* SplineStaticMesh;

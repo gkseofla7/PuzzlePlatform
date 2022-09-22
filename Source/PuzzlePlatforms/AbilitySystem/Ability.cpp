@@ -43,9 +43,9 @@ void AAbility::BeginPlay()
 	if (PlayerRef->IsLocallyControlled() == true)
 	{
 		AnimRef->OnMontageEnded.AddDynamic(this, &AAbility::EndAnimation);
+		HudUI = Cast< UPuzzlePlatformsGameInstance>(UGameplayStatics::GetGameInstance(GetWorld()))->HeadsUpDisplay;
 	}
 	//이건 Local에서만 진행해도 되는거아님?
-		HudUI =Cast< UPuzzlePlatformsGameInstance>(UGameplayStatics::GetGameInstance(GetWorld()))->HeadsUpDisplay;
 		if(PlayerRef->IsLocallyControlled())//애초에 서버에서만 실행하고 마지막 모두한테 해야될건 그냥 서버가 알려줌
 			BeginCasting();
 	
@@ -66,7 +66,6 @@ void AAbility::BeginCasting()
 	{
 		CastBar = HudUI->DisplayCastBar(this);
 		//이거에서 중복되는구나..
-
 		CastBar->CastSuccessful.AddDynamic(this, &AAbility::CastAbility);
 	}
 	else
@@ -83,8 +82,6 @@ void AAbility::InterruptCast()
 
 void AAbility::CastAbility()
 {
-
-
 	CastAbility_Implementation();
 }
 void AAbility::CastAbility_Implementation()

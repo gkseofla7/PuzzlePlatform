@@ -9,9 +9,14 @@
 /**
  * 
  */
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FDele_Dynamic);
 UCLASS()
 class PUZZLEPLATFORMS_API UTargetWidget : public UUserWidget
 {
 	GENERATED_BODY()
 	
+
+public:
+	UPROPERTY(BlueprintAssignable, VisibleAnywhere, BlueprintCallable)
+		FDele_Dynamic LockedOnDelegate;
 };

@@ -239,10 +239,8 @@ void ASoldier::Tick(float DeltaTime)
 	{
 		
 		auto Target = FindBestTarget();
-		if (Target != nullptr)
-		{
-			SetCurrentTarget(Target);
-		}
+		SetCurrentTarget(Target);
+		
 	}
 }
 

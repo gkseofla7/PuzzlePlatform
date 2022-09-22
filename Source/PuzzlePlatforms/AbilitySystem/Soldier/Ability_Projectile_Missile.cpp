@@ -24,7 +24,7 @@ void AAbility_Projectile_Missile::BeginPlay()
 {
 	Super::BeginPlay();
 
-	if (PlayerRef->IsLocallyControlled() == true)
+	if (PlayerRef->IsLocallyControlled() == true)//조종하는사람만
 	{
 
 		SoldierRef = Cast<ASoldier>(PlayerRef);
@@ -32,14 +32,10 @@ void AAbility_Projectile_Missile::BeginPlay()
 		//SoldierRef->SetUsingSkill(true);
 		SoldierRef->GridSphere->SetVisibility(true, true);
 		SoldierRef->GetMesh()->bPauseAnims = true;
-		PlayerRef->OnSkillReleased.AddUObject(this, &AAbility_Projectile_Missile::ActivateEffect);
+		PlayerRef->OnSkillReleased.AddUObject(this, &AAbility_Projectile_Missile::ActivateEffect);//등록하는애들만
 	}
 }
 
-void AAbility_Projectile_Missile::CastAbility_Implementation()
-{
-	Super::CastAbility_Implementation();
-}
 void AAbility_Projectile_Missile::ActivateEffect_Implementation()
 {
 

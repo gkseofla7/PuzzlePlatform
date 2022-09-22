@@ -150,8 +150,6 @@ bool AAbility_Projectile::NetMulticast_SetLocation_Validate(FVector NewLocation)
 }
 
 
-
-
 bool AAbility_Projectile::Server_Activate_Validate()
 {
 	return true;

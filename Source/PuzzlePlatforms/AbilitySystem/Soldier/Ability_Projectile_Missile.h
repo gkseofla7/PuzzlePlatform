@@ -17,7 +17,6 @@ class PUZZLEPLATFORMS_API AAbility_Projectile_Missile : public AAbility_Projecti
 public:
 	AAbility_Projectile_Missile();
 	virtual void BeginPlay();
-	virtual void CastAbility_Implementation() override;
 	virtual void ActivateEffect_Implementation() override;
 	UFUNCTION(BlueprintCallable, BlueprintImplementableEvent)
 		void DelayCollision();

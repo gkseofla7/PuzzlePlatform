@@ -22,5 +22,10 @@ protected:
 public:	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
-
+	UFUNCTION()
+	void LockedOn();
+public:
+	UPROPERTY(BlueprintReadWrite, EditAnywhere)
+	class UWidgetComponent* WidgetComponent;
+	bool bIsLockOn = false;
 };
