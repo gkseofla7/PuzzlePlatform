@@ -21,6 +21,7 @@ public:
 	void UpdateMPBar();
 	void UpdateLevelText();
 	void UpdateNameText();
+	void SetNameText(FText NewName);
 public:
 	UPROPERTY(meta = (BindWidget))
 		class UTextBlock* T_Level;

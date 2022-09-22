@@ -18,15 +18,24 @@ public:
 	AMyPlayerState();
 
 	int32 GetGameScore() const;
-	int32 GetCharacterLevel() const;
 
 	void InitPlayerData();
+	UFUNCTION(Server, Reliable, WithValidation)
+		void Server_SetPlayerName(const FText& NewPlayerName);
+	UFUNCTION(Server, Reliable, WithValidation)
+		void Server_SetPlayerLevel(const int32& NewLevel);
+	UFUNCTION(NetMulticast, Reliable, WithValidation)
+		void NetMulticast_SetPlayerLevel(const int32& NewLeve);
+	UFUNCTION(Server, Reliable, WithValidation)
+		void Server_InitializeCharacterStat();
+	UFUNCTION(NetMulticast, Reliable, WithValidation)
+		void NetMulticast_InitializeCharacterStat();
 
-protected:
+public:
 	UPROPERTY(Transient)
 		int32 GameScore;
-
-	UPROPERTY(Transient)
-		int32 CharacterLevel;
+	UPROPERTY()
+		int32 PlayerLevel = 1;
+	//FText PlayerName;
 
 };

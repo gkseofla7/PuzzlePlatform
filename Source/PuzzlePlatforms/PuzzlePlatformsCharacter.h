@@ -60,10 +60,12 @@ public:
 	virtual void AddControllerPitchInput(float Val);
 	virtual void AddControllerYawInput(float Val);
 	virtual void Die();
-	void Test();
-
+	//void Test();
+	void SetPlayerStat();
+	UFUNCTION(Server, Reliable, WithValidation)
+	void Server_BindCharacterStat();
 	UFUNCTION(NetMulticast, Reliable, WithValidation)
-		void Multicast_SetLevel(int NewLevel);
+	void  NetMulticast_BindCharacterStat();
 	void SetStatComponentLevel();
 
 

@@ -18,6 +18,7 @@
 #include "AbilitySystem/UI/CastBarWidget.h"
 #include "AbilitySystem/ActorAbilities.h"
 #include "UI/PlayerHPBarWidget.h"
+#include "MyPlayerState.h"
 
 #include "HeadMountedDisplayFunctionLibrary.h"
 #include "Camera/CameraComponent.h"
@@ -208,73 +209,106 @@ void APuzzlePlatformsCharacter::PostInitializeComponents()
 void APuzzlePlatformsCharacter::PossessedBy(AController* NewController)//이것도 결국 서버에서 실행함
 {//입장하면 자기 자신의 Level을 다른애들한테도 뿌림
 	Super::PossessedBy(NewController);
-	//UE_LOG(LogTemp, Warning, TEXT("%s : POSSEEEEEESSBy %s %d"), *NewController->GetName(),*GetName(), Level);
 	auto MyController = Cast<AMyPlayerController>(NewController);
-	if (MyController != nullptr)
-	{	
-		FTimerHandle UniqueHandle;
-		FTimerDelegate StatUpdateDelegate = FTimerDelegate::CreateUObject(this, &APuzzlePlatformsCharacter::Multicast_SetLevel, MyController->Level);
-		GetWorldTimerManager().SetTimer(UniqueHandle, StatUpdateDelegate, .2f, false);
-		//바로 안하고 beginplay 후에 실행
-		//Multicast_SetLevel(MyController->Level);
-
-	}
-
 
 }
 
 void APuzzlePlatformsCharacter::BeginPlay()
 {
 	Super::BeginPlay();
-	FTimerHandle TestHandle;
-	FTimerDelegate TestDeleage = FTimerDelegate::CreateUObject(this, &APuzzlePlatformsCharacter::Test);//어차피 자기 자신만 실행함
-	GetWorldTimerManager().SetTimer(TestHandle, TestDeleage, 5.f, true);
 
 	if (IsLocallyControlled())//체력 주기적으로 회복 아 애초에 이것도 실행을 안하는구나.. 누가 들어와도
 	{
 		FTimerHandle TimerHandler;
-		GetWorld()->GetTimerManager().SetTimer(TimerHandler, this, &APuzzlePlatformsCharacter::UpdateStat, 10, true);
-		//SceneCaptureComponent->TextureTarget=
+		GetWorld()->GetTimerManager().SetTimer(TimerHandler, this, &APuzzlePlatformsCharacter::UpdateStat, 7, true);
+	}
 
-	}
-	if (!IsLocallyControlled()&&!HasAuthority())//사실 서버입장에서는 뒤늦게 만들어 주면 되는거아님?
-	{
-		FTimerDelegate RespawnDelegate = FTimerDelegate::CreateUObject(this, &APuzzlePlatformsCharacter::SetStatComponentLevel);//어차피 자기 자신만 실행함
-		GetWorldTimerManager().SetTimer(StatResetHandle, RespawnDelegate, .1f, true);
-	//	CharacterStat->LevelUp(Level);//Replicate돼있어서 이미 존재하는 애들 다 바뀜, 단 이미 있던애들은 내가 안바뀜
-	}
 	auto LobbyGameMode = Cast< AMyLobbyGameMode>(UGameplayStatics::GetGameMode(GetWorld()));
 	if (LobbyGameMode != nullptr)//Lobby에서 안보이게 하려고
 	{
 		auto CharacterWidget = Cast< UPlayerHPBarWidget>(HPBarWidget->GetUserWidgetObject());
-
 		CharacterWidget->SetVisibility(ESlateVisibility::Hidden);
 	}
-	//if (IsLocallyControlled())
-	//{
-	//	TextureRenderTarget = CreateRenderTarget2D(1024, 1024, true);
-	//	SceneCaptureComponent->TextureTarget = TextureRenderTarget;
-	//	//TextureRenderTarget->
-	//}
+	//여기서 애들 Stat 초기화 시킴
+	FTimerDelegate RespawnDelegate = FTimerDelegate::CreateUObject(this, &APuzzlePlatformsCharacter::SetPlayerStat);//어차피 자기 자신만 실행함
+	GetWorldTimerManager().SetTimer(StatResetHandle, RespawnDelegate, .3f, false);
+
+
 
 }
-void APuzzlePlatformsCharacter::Test()
+
+void APuzzlePlatformsCharacter::SetPlayerStat()
 {
-	if (GetController() != nullptr)
+	auto CharacterWidget = Cast< UPlayerHPBarWidget>(HPBarWidget->GetUserWidgetObject());
+	auto tmpPlayerState = GetPlayerState();
+	if (tmpPlayerState == nullptr)
+		return;
+	auto MyPlayerState = Cast<AMyPlayerState>(tmpPlayerState);
+	if (MyPlayerState != nullptr)
 	{
+		//여기서 모두(중간에 들어오는 경우는 없으니)
+		CharacterWidget->SetNameText(FText::FromString(MyPlayerState->GetPlayerName()));
 		auto MyController = Cast<AMyPlayerController>(GetController());
-		ABCHECK(MyController !=nullptr);
-		if (HasAuthority() == true)
-		{
 
-			UE_LOG(LogTemp, Warning, TEXT("Server Character Beginplay %s  : %d"), *GetName(), MyController->test);
-		}
-		else
+		if (IsLocallyControlled() && IsPlayerControlled())//새로입장
 		{
-			UE_LOG(LogTemp, Warning, TEXT("Client Character Beginplay %s  : %d"), *GetName(), Cast<AMyPlayerController>(GetController())->test);
+			//PlayerStat 초기화(다른애들 모두) 시키고 Widget에 바인딩
+			MyPlayerState->Server_InitializeCharacterStat();//얘는 처음 입장한애만 Stat초기화시킴
+			
+			Server_BindCharacterStat();//모두에게 해당 Stat을 UI에 Binding
+			//나만 바인딩하는애
+			if (MyController->HasWidget == false)//Widget아직 안열려있으면 widget viewport함, 죽었다 살아났다해서
+				MyController->SetWidget();
+			MyController->BindWidget(CharacterStat);
+			MyController->PlayerInfoHUDWidget->BindCharacterName(FText::FromString(MyPlayerState->GetPlayerName()));
 		}
+		if (!IsLocallyControlled())//클라이언트가 순차적으로 들어오니 문제발생해서
+		{
+			CharacterStat->SetLevel(MyPlayerState->PlayerLevel);
+			CharacterWidget->BindCharacterStat(CharacterStat);
+		}
+
 	}
+	
 }
+
+
+void APuzzlePlatformsCharacter::Server_BindCharacterStat_Implementation()
+{
+	NetMulticast_BindCharacterStat();
+}
+
+bool APuzzlePlatformsCharacter::Server_BindCharacterStat_Validate()
+{
+	return true;
+}
+void  APuzzlePlatformsCharacter::NetMulticast_BindCharacterStat_Implementation()
+{
+	auto CharacterWidget = Cast< UPlayerHPBarWidget>(HPBarWidget->GetUserWidgetObject());
+	CharacterWidget->BindCharacterStat(CharacterStat);
+}
+
+bool  APuzzlePlatformsCharacter::NetMulticast_BindCharacterStat_Validate()
+{
+	return true;
+}
+//void APuzzlePlatformsCharacter::Test()
+//{
+//	if (GetController() != nullptr)
+//	{
+//		auto MyController = Cast<AMyPlayerController>(GetController());
+//		ABCHECK(MyController !=nullptr);
+//		if (HasAuthority() == true)
+//		{
+//
+//			UE_LOG(LogTemp, Warning, TEXT("Server Character Beginplay %s  : %d"), *GetName(), MyController->test);
+//		}
+//		else
+//		{
+//			UE_LOG(LogTemp, Warning, TEXT("Client Character Beginplay %s  : %d"), *GetName(), Cast<AMyPlayerController>(GetController())->test);
+//		}
+//	}
+//}
 
 
 void APuzzlePlatformsCharacter::SetStatComponentLevel()
@@ -342,8 +376,8 @@ void APuzzlePlatformsCharacter::UpdateStat()
 {
 	if (CharacterStat == nullptr)
 		return;
-	CharacterStat->IncreaseHP(.5);
-	CharacterStat->IncreaseMP(.5);
+	CharacterStat->Server_SetHP(CharacterStat->CurrentHP+.5);
+	CharacterStat->Server_SetMP(CharacterStat->CurrentMP+.5);
 }
 
 void APuzzlePlatformsCharacter::SetTargetPlayerWithLineTrace()
@@ -454,7 +488,7 @@ float APuzzlePlatformsCharacter::TakeDamage(float DamageAmount, FDamageEvent con
 
 	float HP =  CharacterStat->GetHP();
 
-	CharacterStat->SetHP(HP - FinalDamage);
+	CharacterStat->Server_SetHP(HP - FinalDamage);
 
 	return FinalDamage;
 
@@ -500,7 +534,7 @@ void APuzzlePlatformsCharacter::Skill1Clicked()
 	auto SlotClass = HeadsUpDisplayRef->ActionBar_UI->ActionBarSlot_UI->AbilityClass;
 	if (SlotClass == nullptr)
 		return;
-	CharacterStat->IncreaseMP(-SlotClass.GetDefaultObject()->AbilityDetails.Cost);
+	CharacterStat->Server_SetMP(CharacterStat->CurrentMP-SlotClass.GetDefaultObject()->AbilityDetails.Cost);
 	HeadsUpDisplayRef->ActionBar_UI->ActionBarSlot_UI->StartCooldown();
 	DaerimMotionReplicator->Server_Skill1Clicked(SlotClass);
 }
@@ -517,7 +551,7 @@ void APuzzlePlatformsCharacter::Skill2Clicked()
 	auto SlotClass = HeadsUpDisplayRef->ActionBar_UI->ActionBarSlot_UI_1->AbilityClass;
 	if (SlotClass == nullptr)
 		return;
-	CharacterStat->IncreaseMP(-SlotClass.GetDefaultObject()->AbilityDetails.Cost);
+	CharacterStat->Server_SetMP(CharacterStat->CurrentMP - SlotClass.GetDefaultObject()->AbilityDetails.Cost);
 	HeadsUpDisplayRef->ActionBar_UI->ActionBarSlot_UI_1->StartCooldown();
 	DaerimMotionReplicator->Server_Skill2Clicked(SlotClass);
 }
@@ -534,7 +568,7 @@ void APuzzlePlatformsCharacter::Skill3Clicked()
 	auto SlotClass = HeadsUpDisplayRef->ActionBar_UI->ActionBarSlot_UI_2->AbilityClass;
 	if (SlotClass == nullptr)
 		return;
-	CharacterStat->IncreaseMP(-SlotClass.GetDefaultObject()->AbilityDetails.Cost);
+	CharacterStat->Server_SetMP(CharacterStat->CurrentMP - SlotClass.GetDefaultObject()->AbilityDetails.Cost);
 	HeadsUpDisplayRef->ActionBar_UI->ActionBarSlot_UI_2->StartCooldown();
 	DaerimMotionReplicator->Server_Skill3Clicked(SlotClass);
 }
@@ -551,7 +585,7 @@ void APuzzlePlatformsCharacter::Skill4Clicked()
 	auto SlotClass = HeadsUpDisplayRef->ActionBar_UI->ActionBarSlot_UI_3->AbilityClass;
 	if (SlotClass == nullptr)
 		return;
-	CharacterStat->IncreaseMP(-SlotClass.GetDefaultObject()->AbilityDetails.Cost);
+	CharacterStat->Server_SetMP(CharacterStat->CurrentMP - SlotClass.GetDefaultObject()->AbilityDetails.Cost);
 
 	HeadsUpDisplayRef->ActionBar_UI->ActionBarSlot_UI_3->StartCooldown();
 	DaerimMotionReplicator->Server_Skill4Clicked(SlotClass);
@@ -569,7 +603,7 @@ void APuzzlePlatformsCharacter::Skill5Clicked()
 	auto SlotClass = HeadsUpDisplayRef->ActionBar_UI->ActionBarSlot_UI_4->AbilityClass;
 	if (SlotClass == nullptr)
 		return;
-	CharacterStat->IncreaseMP(-SlotClass.GetDefaultObject()->AbilityDetails.Cost);
+	CharacterStat->Server_SetMP(CharacterStat->CurrentMP - SlotClass.GetDefaultObject()->AbilityDetails.Cost);
 	HeadsUpDisplayRef->ActionBar_UI->ActionBarSlot_UI_4->StartCooldown();
 	DaerimMotionReplicator->Server_Skill5Clicked(SlotClass);
 }
@@ -604,36 +638,7 @@ void APuzzlePlatformsCharacter::DestroyPlayer()
 
 
 
-void APuzzlePlatformsCharacter::Multicast_SetLevel_Implementation(int NewLevel)
-{
-	CharacterStat->Level = NewLevel;
-	Level = NewLevel;
-	CharacterStat->LevelUp(NewLevel);//전원 HP MP Level 초기화
 
-	auto CharacterWidget = Cast< UPlayerHPBarWidget>(HPBarWidget->GetUserWidgetObject());
-	if (nullptr != CharacterWidget)
-	{
-		CharacterWidget->BindCharacterStat(CharacterStat);
-	}
-
-	if (IsLocallyControlled() == true && IsPlayerControlled() == true)
-	{
-		auto MyController = Cast<AMyPlayerController>(GetController());
-		ABCHECK(MyController);
-		if (MyController->HasWidget == false)//Widget아직 안열려있으면 widget viewport함
-			MyController->SetWidget();
-
-		MyController->BindWidget(CharacterStat);
-
-		HeadsUpDisplayRef = Cast< UPuzzlePlatformsGameInstance>(UGameplayStatics::GetGameInstance(GetWorld()))->HeadsUpDisplay;
-		HeadsUpDisplayRef->ActionBar_UI->PlayerRef = this;
-		HeadsUpDisplayRef->ActionBar_UI->BindCharacterStat(CharacterStat);//어찌보면..
-
-
-		CharacterWidget->SetVisibility(ESlateVisibility::Hidden);
-
-	}
-}
 void APuzzlePlatformsCharacter::OpenSkillTree()
 {
 	auto controller = Cast<AMyPlayerController>(GetController());
@@ -664,10 +669,6 @@ void APuzzlePlatformsCharacter::OpenMap()
 
 }
 
-bool APuzzlePlatformsCharacter::Multicast_SetLevel_Validate(int NewLevel)
-{
-	return true;
-}
 
 void APuzzlePlatformsCharacter::GetInTheCar()
 {

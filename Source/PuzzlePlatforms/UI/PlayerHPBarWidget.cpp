@@ -20,7 +20,7 @@ void UPlayerHPBarWidget::BindCharacterStat(UMyCharacterStatComponent* NewCharact
 	UpdateHPBar();
 	UpdateMPBar();
 	UpdateLevelText();
-	UpdateNameText();
+	//UpdateNameText();
 }
 
 
@@ -96,4 +96,9 @@ void UPlayerHPBarWidget::UpdateNameText()
 			
 		}
 	}
+}
+
+void UPlayerHPBarWidget::SetNameText(FText NewName)
+{
+	T_Name->SetText(NewName);
 }

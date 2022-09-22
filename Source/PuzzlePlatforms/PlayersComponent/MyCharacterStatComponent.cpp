@@ -76,20 +76,48 @@ void UMyCharacterStatComponent::LevelUp(int32 NewLevel)//∏µÁ æ÷µÈ¿Ã ¥Ÿ ¿Ã∞… Ω««
 
 void UMyCharacterStatComponent::SetHP(float NewHP)
 {
-	//º≠πˆ∑Œ ∫∏≥ªæﬂµ 
-	Server_SetHP(NewHP);
+	CurrentHP = NewHP;
+	OnHPChanged.Broadcast();
+	if (CurrentHP < KINDA_SMALL_NUMBER)
+	{
+		CurrentHP = 0.0f;
+		Cast<APuzzlePlatformsCharacter>(GetOwner())->Die();
+	}
+
 }
 
 void UMyCharacterStatComponent::SetMP(float NewMP)
 {
-	Server_SetMP(NewMP);
+	CurrentMP = NewMP;
+
+	OnMPChanged.Broadcast();
+	if (CurrentMP < KINDA_SMALL_NUMBER)
+	{
+		CurrentMP = 0.0f;
+	}
 }
 
 void UMyCharacterStatComponent::SetLevel(float NewLevel)
 {
-	if (Level != NewLevel)
+
+	auto MyGameInstance = Cast<UPuzzlePlatformsGameInstance>(UGameplayStatics::GetGameInstance(GetWorld()));
+	ABCHECK(MyGameInstance != nullptr);
+	CurrentStatData = MyGameInstance->GetMyCharacterData(NewLevel);//∏µÁæ÷µÈ ∞°¡Æø», ≤¿ ¿Ã∑°æﬂµ…±Ó..?§ª§ª
+
+	if (nullptr != CurrentStatData)
 	{
-		Server_SetLevel(NewLevel);
+		{
+			Level = NewLevel;//BroadCastµµ «ÿ¡‡æﬂµ 
+		}
+		OnLevelChanged.Broadcast();
+		SetHP(CurrentStatData->MaxHP);
+		SetMP(CurrentStatData->MaxMP);
+		//Attackµµ «ÿ¡‹
+
+	}
+	else
+	{
+		UE_LOG(LogTemp, Warning, TEXT("Level %d data doesn't exist"), NewLevel);
 	}
 }
 
@@ -122,14 +150,7 @@ void UMyCharacterStatComponent::Server_SetHP_Implementation(float NewHp)
 
 void UMyCharacterStatComponent::NetMulticast_SetHP_Implementation(float NewHp)
 {
-	CurrentHP = NewHp;
-	OnHPChanged.Broadcast();
-	if (CurrentHP < KINDA_SMALL_NUMBER)
-	{
-		CurrentHP = 0.0f;
-		Cast<APuzzlePlatformsCharacter>(GetOwner())->Die();
-		//OnHPIsZero.Broadcast();
-	}
+	SetHP(NewHp);
 }
 
 
@@ -142,14 +163,7 @@ void UMyCharacterStatComponent::Server_SetMP_Implementation(float NewMp)
 
 void UMyCharacterStatComponent::NetMulticast_SetMP_Implementation(float NewMp)
 {
-
-	CurrentMP = NewMp;
-
-	OnMPChanged.Broadcast();
-	if (CurrentMP < KINDA_SMALL_NUMBER)
-	{
-		CurrentMP = 0.0f;
-	}
+	SetMP(NewMp);
 }
 
 
@@ -162,7 +176,7 @@ void UMyCharacterStatComponent::Server_SetLevel_Implementation(float NewLevel)
 
 void UMyCharacterStatComponent::NetMulticast_SetLevel_Implementation(float NewLevel)
 {
-	LevelUp(NewLevel);
+	SetLevel(NewLevel);
 }
 
 void UMyCharacterStatComponent::Server_SetName_Implementation(const FText& NewName)
