@@ -126,5 +126,6 @@ public:
 	bool bDead = false;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	int CharacterNum = 0;
+
 };
 

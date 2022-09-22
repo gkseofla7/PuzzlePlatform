@@ -425,6 +425,7 @@ void AWarrior::PlayersDied()
 	if (HasAuthority())
 	{
 		FTimerHandle DestroyTimerHandler;
+		EquippedItem->Destroy();
 		GetWorld()->GetTimerManager().SetTimer(DestroyTimerHandler, this, &APuzzlePlatformsCharacter::DestroyPlayer, 10, false);
 	}
 	if (IsLocallyControlled())
@@ -449,8 +450,17 @@ void AWarrior::Server_RespawnPawn_Implementation(APlayerController* NewControlle
 	UGameplayStatics::GetAllActorsOfClass(GetWorld(), ARespawnSection::StaticClass(), Respawns);
 	if (Respawns.Num() == 0)
 		return;
-	auto RespawnTransform = Cast< ARespawnSection>(Respawns[1])->GetRandomTransform();
-	Cast<APuzzlePlatformsGameMode>(UGameplayStatics::GetGameMode(GetWorld()))->RespawnRequested(NewController, RespawnTransform,TeamNum);
+	for (auto Respawn : Respawns)
+	{
+		auto tmp = Cast< ARespawnSection>(Respawn);
+		if (tmp->TeamNum == TeamNum)
+		{
+			auto RespawnTransform = tmp->GetRandomTransform();
+			Cast<APuzzlePlatformsGameMode>(UGameplayStatics::GetGameMode(GetWorld()))->RespawnRequested(NewController, RespawnTransform, TeamNum);
+			break;
+		}
+	}
+	
 }
 
 bool AWarrior::Server_RespawnPawn_Validate(APlayerController* NewController)

@@ -8,6 +8,7 @@
 #include "../UI/MinimapWidget.h"
 #include "../UI/MapWidget.h"
 #include "../PlayersComponent/PointOfInterestComponent.h"
+#include "../PuzzlePlatformsCharacter.h"
 
 #include "Components/Image.h"
 #include "Components/Throbber.h"
@@ -28,9 +29,18 @@ UPointOfInterestWidget::UPointOfInterestWidget(const FObjectInitializer& ObjectI
 void UPointOfInterestWidget::NativeTick(const FGeometry& MyGeometry, float InDeltaTime)
 {
 	Super::NativeTick(MyGeometry, InDeltaTime);
-	if (Owner == nullptr)
+	if (Owner != nullptr)
 	{
-		RemoveFromParent();
+		auto Player = Cast<APuzzlePlatformsCharacter>(Owner);
+		if (Player != nullptr)
+		{
+			if (Player->bDead == true)
+			{
+				RemoveFromParent();
+			}
+		}
+
+
 	}
 	if (IsMinimap == true)
 	{

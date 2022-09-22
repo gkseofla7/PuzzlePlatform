@@ -4,16 +4,16 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
-#include "RespawnSection.generated.h"
+#include "TargetMarker.generated.h"
 
 UCLASS()
-class PUZZLEPLATFORMS_API ARespawnSection : public AActor
+class PUZZLEPLATFORMS_API ATargetMarker : public AActor
 {
 	GENERATED_BODY()
 	
 public:	
 	// Sets default values for this actor's properties
-	ARespawnSection();
+	ATargetMarker();
 
 protected:
 	// Called when the game starts or when spawned
@@ -22,12 +22,5 @@ protected:
 public:	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
-	FTransform GetRandomTransform();
-
-public:
-	UPROPERTY(EditAnywhere)
-		int TeamNum;
-	UPROPERTY(EditAnywhere, Category = Trigger)
-		class USphereComponent* RecoverySpace;
 
 };

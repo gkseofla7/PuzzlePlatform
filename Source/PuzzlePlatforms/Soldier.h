@@ -82,8 +82,10 @@ private:
 	void AimMissile();
 	void UnAimMissile();
 	void WearItem();
-
-
+	AActor* FindBestTarget();
+	void SetCurrentTarget( AActor* Target);
+	void EndTarget();
+	void BeginTarget();
 public:
 	//Classes
 	TSubclassOf<class AWeapon_Master>WeaponMasterClass;
@@ -121,6 +123,7 @@ public:
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
 	bool ShowPath = false;
 	TSubclassOf<class AMissile>MissileClass;
+	TSubclassOf<class ATargetMarker>TargetMarkerClass;
 	UStaticMesh* SplineStaticMesh;
 	class UMaterial* SplineStaticMaterial;
 	FOnSkillReleased OnSkillReleased;
@@ -138,6 +141,11 @@ public:
 	float SteamPackWalkSpeed = 1000;
 	float GeneralAcceleration = 2048.0;
 	float SteamPackAcceleration = 4000;
+	const float TargetingRange = 3000;
+	const float TargetingConeAngle = 40;
+	AActor* CurrentTarget;
+	class ATargetMarker* TargetMarker;
+
 //Component
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
 		UStaticMeshComponent* RocketHolderComponent;
@@ -151,6 +159,8 @@ public:
 		UStaticMeshComponent* GridSphere;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Camera)
 		class UCameraComponent* ADSCam_;
+	UPROPERTY(BlueprintReadWrite, EditAnywhere)
+		class UTargetableComponent* TargetableComponent;
 	TSubclassOf<class AObject_Master> GunClass;
 
 

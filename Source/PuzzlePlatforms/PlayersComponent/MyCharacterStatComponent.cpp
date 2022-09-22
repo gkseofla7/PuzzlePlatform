@@ -38,6 +38,7 @@ void UMyCharacterStatComponent::SetHP(float NewHP)
 	if (CurrentHP < KINDA_SMALL_NUMBER)
 	{
 		CurrentHP = 0.0f;
+		Cast<APuzzlePlatformsCharacter>(GetOwner())->bDead = true;
 		Cast<APuzzlePlatformsCharacter>(GetOwner())->Die();
 	}
 

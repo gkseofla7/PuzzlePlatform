@@ -8,6 +8,9 @@
 #include "MyPlayerController.h"
 #include "PuzzlePlatformsGameMode.h"
 #include "Sections/RespawnSection.h"
+#include "Missile/TargetMarker.h"
+#include "Missile/TargetableComponent.h"
+
 
 #include "PlayersComponent/SoldierMotionReplicator.h"
 #include "AnimInstance/SoldierAnimInstance.h"
@@ -19,6 +22,7 @@
 #include "Kismet/GameplayStatics.h"
 #include "UObject/ConstructorHelpers.h"
 #include "GameFramework/ProjectileMovementComponent.h"
+#include "Kismet/KismetSystemLibrary.h"
 
 #include "Net/UnrealNetwork.h"
 
@@ -29,6 +33,9 @@ ASoldier::ASoldier()
 	//Asset Settings
 	static ConstructorHelpers::FClassFinder<AMissile> MissileBPClass((TEXT("/Game/RocketPath/BP_Missile")));
 	if (MissileBPClass.Succeeded())	MissileClass = MissileBPClass.Class;
+
+	static ConstructorHelpers::FClassFinder<ATargetMarker> TargetMarkerBPClass((TEXT("/Game/TargetMissiles/BP_TargetMarker")));
+	if (TargetMarkerBPClass.Succeeded())	TargetMarkerClass = TargetMarkerBPClass.Class;
 	//static ConstructorHelpers::FClassFinder<AMissile> GunBPClass((TEXT("/Game/Weapons/BP_Weapon_Master")));
 	//if (GunBPClass.Succeeded())	GunClass = GunBPClass.Class;
 	static ConstructorHelpers::FClassFinder<USoldierAnimInstance> SOLDIER_ANIM((TEXT("/Game/Animation/BP_SoldierAnim")));
@@ -223,8 +230,20 @@ void ASoldier::Tick(float DeltaTime)
 	{
 		UnAimMissile();
 	}
+
+
+
 #pragma endregion SettingMissile
 
+	if (IsLocallyControlled())
+	{
+		
+		auto Target = FindBestTarget();
+		if (Target != nullptr)
+		{
+			SetCurrentTarget(Target);
+		}
+	}
 }
 
 void ASoldier::AddControllerPitchInput(float Val)
@@ -541,7 +560,7 @@ void ASoldier::InteractPressed()
 
 
 
-void ASoldier::WearItem()
+void ASoldier::WearItem()//먹을게 있는지 찾아봄
 {
 	if (DoPickupLinetrace == true)
 	{
@@ -628,4 +647,75 @@ void ASoldier::Server_RespawnPawn_Implementation(APlayerController* NewControlle
 bool ASoldier::Server_RespawnPawn_Validate(APlayerController* NewController)
 {
 	return true;
+}
+
+AActor* ASoldier::FindBestTarget()
+{
+	TArray<TEnumAsByte<EObjectTypeQuery> > ObjectTypes;//
+	UClass* ActorClassFilter = AActor::StaticClass();
+	TArray<AActor*> ActorsToIgnore;// TArray<AActor*>& OutActors)
+	ObjectTypes.Add(EObjectTypeQuery::ObjectTypeQuery7);//아마 이게 Character
+	ObjectTypes.Add(EObjectTypeQuery::ObjectTypeQuery3);//아마 이게 Pawn
+	ActorsToIgnore.Add(this);
+	TArray<AActor*> OutActors;
+	UKismetSystemLibrary::SphereOverlapActors(GetWorld(), GetActorLocation(), TargetingRange, ObjectTypes, ActorClassFilter, ActorsToIgnore, OutActors);
+	AActor* BestTarget =nullptr;
+	float CurrentValue = 0;
+	float BestValue = 1000 ;
+	for (auto L_CurrentTarget : OutActors)
+	{
+		auto Comp = L_CurrentTarget->GetComponentByClass(UTargetableComponent::StaticClass());
+		if (Comp != nullptr)
+		{
+			auto ForwardVector = GetActorForwardVector();
+			auto DirectionToTarget = UKismetMathLibrary::GetDirectionUnitVector(GetActorLocation(), L_CurrentTarget->GetActorLocation());
+			CurrentValue = FVector::DotProduct(ForwardVector, DirectionToTarget);
+			if (BestValue > 100 || CurrentValue > BestValue)
+			{
+				BestTarget = L_CurrentTarget;
+				BestValue = CurrentValue;
+			}
+
+		}
+			
+	}
+	if (BestValue <100 && UKismetMathLibrary::DegAcos(BestValue) <= TargetingConeAngle)
+	{
+		return BestTarget;
+	}
+	else
+	{
+		return nullptr;
+	}
+}
+
+void ASoldier::SetCurrentTarget(AActor* Target)
+{
+	if (CurrentTarget != Target)
+	{
+		EndTarget();
+		CurrentTarget = Target;
+		BeginTarget();
+	}
+}
+
+void ASoldier::EndTarget()
+{
+	if (TargetMarker != nullptr)
+	{
+		TargetMarker->Destroy();
+		TargetMarker = nullptr;
+	}
+}
+void ASoldier::BeginTarget()
+{
+	if (CurrentTarget != nullptr)
+	{
+		CurrentTarget->GetActorLocation();
+		FActorSpawnParameters ActorSpawnParameters;
+		FTransform ActorTransform;
+		ActorTransform.SetLocation(CurrentTarget->GetActorLocation());
+		TargetMarker = GetWorld()->SpawnActor<ATargetMarker>(TargetMarkerClass.Get(), ActorTransform);
+		TargetMarker->AttachToActor(CurrentTarget, FAttachmentTransformRules::SnapToTargetNotIncludingScale);
+	}
 }
