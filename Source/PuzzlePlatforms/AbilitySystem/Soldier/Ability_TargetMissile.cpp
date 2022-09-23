@@ -4,22 +4,29 @@
 #include "Ability_TargetMissile.h"
 #include "../../Soldier.h"
 #include "TargetMissileMovementComponent.h"
+#include "TargetMissileReplicateComponent.h"
 #include "../../Weapons/Weapon_Master.h"
 
 AAbility_TargetMissile::AAbility_TargetMissile()
 	:Super()
 {
 	MissileMovementComponent = CreateDefaultSubobject<UTargetMissileMovementComponent>(TEXT("MissileMovementComponent"));
-	
+	MissileReplicateComponent = CreateDefaultSubobject<UTargetMissileReplicateComponent>(TEXT("MissileReplicateComponent"));
+	AbilityRoot->OnComponentBeginOverlap.AddDynamic(this, &AAbility_TargetMissile::OnOverlapBegin);
 	MissileComponent = CreateDefaultSubobject< UStaticMeshComponent>(TEXT("MissileComponent"));
 	MissileComponent->SetupAttachment(RootComponent);
 	MissileComponent->SetVisibility(false);
+	static ConstructorHelpers::FObjectFinder<UParticleSystem> ParticleAsset(TEXT("/Game/Etcs/p_Turret_Explosion"));
+	if (ParticleAsset.Succeeded())
+	{
+		ParticleTemplate = ParticleAsset.Object;
+	}
 }
 void AAbility_TargetMissile::BeginPlay()
 {
 	Super::BeginPlay();
 
-	if (PlayerRef->IsLocallyControlled() == true)//조종하는사람만
+	if (HasAuthority() == true)
 	{
 
 		SoldierRef = Cast<ASoldier>(PlayerRef);
@@ -44,12 +51,12 @@ void AAbility_TargetMissile::ActivateEffect_Implementation()
 	SoldierRef->GetMesh()->bPauseAnims = false;
 	SoldierRef->ShowTarget = false;
 	//SoldierRef->SetUsingSkill(false);
-	Server_SetTransform(SoldierRef->EquippedItem->SkeletalMeshComponent->GetSocketTransform("Muzzle"));
+	Server_SetTransform(SoldierRef->RocketHolderComponent->GetSocketTransform("Mouth"));
 	Server_SetVisibility();
 	Server_DetachAbilityFromPlayer();//모두 일단 띄어냄
 
 	MissileMovementComponent->Target = SoldierRef->CurrentTarget;
-	MissileMovementComponent->bActivate = true;
+	NetMulticast_SetActive();
 }
 
 void AAbility_TargetMissile::Server_SetVisibility_Implementation()
@@ -69,6 +76,52 @@ bool AAbility_TargetMissile::Server_SetVisibility_Validate()
 }
 
 bool AAbility_TargetMissile::NetMulticast_SetVisibility_Validate()
+{
+	return true;
+}
+
+void AAbility_TargetMissile::OnOverlapBegin(class UPrimitiveComponent* OverlappedComp, class AActor* OtherActor, class UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
+{
+
+	if (OtherActor == PlayerRef)
+		return;
+	UE_LOG(LogTemp, Warning, TEXT("Hit %s, %s, %s %s"), *OtherActor->GetName(), *OverlappedComp->GetName(), *OtherActor->GetName(), *OtherComp->GetName());
+	if (HasAuthority() == true)
+	{
+
+		NetMulticast_Spark(GetActorLocation());
+		//auto Player = Cast<APuzzlePlatformsCharacter>(OtherActor);
+		//if (Player != nullptr)
+		//{
+		//	UGameplayStatics::ApplyDamage(Player, DamageAmount, PlayerRef->GetController(), PlayerRef, UDamageType::StaticClass());
+
+		//}
+		Destroy();
+	}
+
+}
+
+
+void AAbility_TargetMissile::NetMulticast_Spark_Implementation(FVector Location)
+{
+	UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), ParticleTemplate, Location, FRotator(0, 0, 0));
+}
+
+bool AAbility_TargetMissile::NetMulticast_Spark_Validate(FVector Location)
+{
+	return true;
+}
+
+
+
+
+
+void AAbility_TargetMissile::NetMulticast_SetActive_Implementation()
+{
+	bActive = true;
+}
+
+bool AAbility_TargetMissile::NetMulticast_SetActive_Validate()
 {
 	return true;
 }

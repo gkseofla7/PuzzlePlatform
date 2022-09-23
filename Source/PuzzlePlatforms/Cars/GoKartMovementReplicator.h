@@ -73,23 +73,10 @@ public:
 
 	FGoKartState GetServerState() { return ServerState; }
 	void UpdateServerState(FGoKartMove Move);
-private:
-	FTransform ClientStartTransform;
-
-	TArray<struct FGoKartMove> UnacknowledgeMoves;
-
-	float ClientTimeSinceUpdate;//어디까지했는지
-	float ClientTimeBetweenLastUpdates;//총범위
-
 	void ClientTick(float DeltaTime);
+private:
 
-	UPROPERTY(ReplicatedUsing = OnRep_ServerState)
-		FGoKartState ServerState;
-	//UPROPERTY(VisibleAnywhere)
-	//	UGoKartMovementComponent* OurMovementComponent;
-	UPROPERTY(VisibleAnywhere)
-		UUpgradeMovementComponent* OurMovementComponent;
-	FVector ClientStartVelocity;
+
 
 
 	//임시방편으로 
@@ -98,13 +85,23 @@ private:
 	void InterpolateLocation(FHermitCubicSpline Input, float LerpRatio);
 	void InterpolateVelocity(FHermitCubicSpline Input, float LerpRatio);
 	void InterpolateRotation(float LerpRatio);
-
+	UFUNCTION(BlueprintCallable)
+	void SetMeshOffsetRoot(USceneComponent* Root) { MeshOffsetRoot = Root; }
 	UPROPERTY()
 		USceneComponent* MeshOffsetRoot;
 	float ClientSimulatedTime;
+	UPROPERTY(ReplicatedUsing = OnRep_ServerState)
+		FGoKartState ServerState;
+	//UPROPERTY(VisibleAnywhere)
+	//	UGoKartMovementComponent* OurMovementComponent;
+	UPROPERTY(VisibleAnywhere)
+		UUpgradeMovementComponent* OurMovementComponent;
+	FVector ClientStartVelocity;
+	float ClientTimeSinceUpdate;//어디까지했는지
+	float ClientTimeBetweenLastUpdates;//총범위
+	FTransform ClientStartTransform;
+	TArray<struct FGoKartMove> UnacknowledgeMoves;
 
-	UFUNCTION(BlueprintCallable)
-		void SetMeshOffsetRoot(USceneComponent* Root) { MeshOffsetRoot = Root; }
 
 
 

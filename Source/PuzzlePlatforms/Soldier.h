@@ -143,7 +143,7 @@ public:
 	float SteamPackWalkSpeed = 1000;
 	float GeneralAcceleration = 2048.0;
 	float SteamPackAcceleration = 4000;
-	const float TargetingRange = 3000;
+	const float TargetingRange = 10000;
 	const float TargetingConeAngle = 40;
 	AActor* CurrentTarget;
 	class ATargetMarker* TargetMarker;

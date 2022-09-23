@@ -17,16 +17,28 @@ public:
 	virtual void BeginPlay() override;
 	AAbility_TargetMissile();
 	void ActivateEffect_Implementation() override;
+	UFUNCTION()
+		void OnOverlapBegin(class UPrimitiveComponent* OverlappedComp, class AActor* OtherActor, class UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
 	UFUNCTION(Server, Reliable, WithValidation)
 		void Server_SetVisibility();
 	UFUNCTION(NetMulticast, Reliable, WithValidation)
 		void NetMulticast_SetVisibility();
+	UFUNCTION(NetMulticast, Reliable, WithValidation)
+		void NetMulticast_Spark(FVector Location);
+	UFUNCTION(NetMulticast, Reliable, WithValidation)
+		void NetMulticast_SetActive();
 
 public:
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
 		UStaticMeshComponent* MissileComponent;
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
 		class UTargetMissileMovementComponent* MissileMovementComponent;
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
+		class UTargetMissileReplicateComponent* MissileReplicateComponent;
 	class ASoldier* SoldierRef;
 	class AActor* TargetPlayer;
+
+	class UParticleSystem* ParticleTemplate;
+
+	bool bActive = false;
 };

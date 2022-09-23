@@ -36,11 +36,11 @@ public:
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 
 	void SimulateMove(const FTargetMissileMove& Move);
-//	FVector GetVelocity() { return Velocity; };
-//	void SetVelocity(FVector Val) { Velocity = Val; };
+	FVector GetVelocity() { return Velocity; };
+	void SetVelocity(FVector Val) { Velocity = Val; };
 //	void SetThrottle(float Val) { Throttle = Val; };
 //	void SetSteeringThrow(float Val) { SteeringThrow = Val; };
-//	FTargetMissileMove GetLastMove() { return LastMove; };
+	FTargetMissileMove GetLastMove() { return LastMove; };
 
 	void UpdatesLocationFromVelocity(float DeltaTime);
 //	FTargetMissileMove GetLastMove() { return LastMove; }
@@ -62,7 +62,7 @@ public:
 		float MinTurningRadius = 10;
 	// Higher means more drag.
 	UPROPERTY(EditAnywhere)
-		float DragCoefficient = 16;
+		float DragCoefficient = 30;
 	// Higher means more rolling resistance.
 	UPROPERTY(EditAnywhere)
 		float RollingResistanceCoefficient = 0.015;

@@ -89,9 +89,6 @@ void UGoKartMovementReplicator::TickComponent(float DeltaTime, ELevelTick TickTy
 
 		ClientTick(DeltaTime);
 	}
-
-
-	// ...
 }
 void UGoKartMovementReplicator::UpdateServerState(FGoKartMove Move)
 {
