@@ -55,6 +55,8 @@ void AAbility_Projectile_Missile::ActivateEffect_Implementation()
 	Server_SetVisibility();
 	Server_DetachAbilityFromPlayer();//¸ðµÎ ÀÏ´Ü ¶ç¾î³¿
 	Server_SetVelocity(SoldierRef->MissileVelocity);
+	auto tmp = SoldierRef->RocketHolderComponent->GetSocketTransform("Mouth").GetLocation();
+	UE_LOG(LogTemp, Warning, TEXT("Mouth %f, %f, %f"), tmp.X, tmp.Y, tmp.Z);
 	Server_SetTransform(SoldierRef->RocketHolderComponent->GetSocketTransform("Mouth"));
 	Server_Activate();
 }

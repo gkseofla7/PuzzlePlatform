@@ -72,13 +72,14 @@ private:
 		void Everyone_SetMuzzleRotation(FRotator NewRotator);
 	UFUNCTION(Server, Reliable, WithValidation)
 		void Server_SetMuzzleRotation(FRotator NewRotator);
-
 	UFUNCTION(NetMulticast, Reliable, WithValidation)
 		void Multicast_SetGun(class AWeapon_Master *NewItem);
 	UFUNCTION(Server, Reliable, WithValidation)
 		void Server_WeaponReload();
 	UFUNCTION(Server, Reliable, WithValidation)
 		void Server_RespawnPawn(APlayerController* NewController);
+
+
 	void AimMissile();
 	void UnAimMissile();
 	void WearItem();

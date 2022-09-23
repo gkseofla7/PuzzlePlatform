@@ -43,7 +43,7 @@ AGoKart::AGoKart()
 	bReplicates = true;
 	SetReplicateMovement(false);
 	//OurMovementComponent__ = CreateDefaultSubobject<UGoKartMovementComponent>(TEXT("CustomMovement_Component"));
-	OurMovementComponent__ = CreateDefaultSubobject<UUpgradeMovementComponent>(TEXT("UpgradeMovementComponent"));
+	OurMovementComponent__ = CreateDefaultSubobject<UGoKartMovementComponent>(TEXT("UpgradeMovementComponent"));
 	if (OurMovementComponent__ == nullptr)
 		UE_LOG(LogTemp, Warning, TEXT("Null PTR"));
 	MovementReplicator = CreateDefaultSubobject<UGoKartMovementReplicator>(TEXT("Movement_Replicator"));

@@ -22,7 +22,7 @@ struct FTargetMissileState
 		FVector Velocity;
 };
 
-struct FHermitCubicSpline
+struct FHermitCubicSplines
 {
 	FVector StartLocation, StartDerivative, TargetLocatioin, TargetDerivative;
 
@@ -62,12 +62,12 @@ public:
 	void SimulatedProxy_OnRep_ServerState();
 	void AutonomousProxy_OnRep_ServerState();
 	void AddToUnacknowledgeMoves(FTargetMissileMove Move) { UnacknowledgeMoves.Add(Move); }
-	FHermitCubicSpline CreateSpline();
+	FHermitCubicSplines CreateSpline();
 	FTargetMissileState GetServerState() { return ServerState; }
 	void UpdateServerState(FTargetMissileMove Move);
 	void ClientTick(float DeltaTime);
-	void InterpolateLocation(FHermitCubicSpline Input, float LerpRatio);
-	void InterpolateVelocity(FHermitCubicSpline Input, float LerpRatio);
+	void InterpolateLocation(FHermitCubicSplines Input, float LerpRatio);
+	void InterpolateVelocity(FHermitCubicSplines Input, float LerpRatio);
 	void InterpolateRotation(float LerpRatio);
 
 public:

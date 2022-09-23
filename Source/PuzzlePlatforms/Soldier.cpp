@@ -719,3 +719,4 @@ void ASoldier::BeginTarget()
 		TargetMarker->AttachToActor(CurrentTarget, FAttachmentTransformRules::SnapToTargetNotIncludingScale);
 	}
 }
+

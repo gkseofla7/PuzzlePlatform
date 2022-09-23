@@ -25,9 +25,12 @@ public:
 		void NetMulticast_SetVisibility();
 	UFUNCTION(NetMulticast, Reliable, WithValidation)
 		void NetMulticast_Spark(FVector Location);
+	UFUNCTION(Server, Reliable, WithValidation)
+		void Server_SetActive();
 	UFUNCTION(NetMulticast, Reliable, WithValidation)
 		void NetMulticast_SetActive();
-
+	UFUNCTION(Server, Reliable, WithValidation)
+		void Server_SetTarget(AActor* NewTarget);
 public:
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
 		UStaticMeshComponent* MissileComponent;
@@ -37,7 +40,8 @@ public:
 		class UTargetMissileReplicateComponent* MissileReplicateComponent;
 	class ASoldier* SoldierRef;
 	class AActor* TargetPlayer;
-
+	UPROPERTY(BlueprintReadWrite, EditAnywhere)
+		USceneComponent* MeshOffsetRoot;
 	class UParticleSystem* ParticleTemplate;
 
 	bool bActive = false;

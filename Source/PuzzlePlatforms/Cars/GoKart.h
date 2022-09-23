@@ -42,10 +42,9 @@ private:
 
 
 public:
-	//UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
-	//	UGoKartMovementComponent* OurMovementComponent__;	
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
-		UUpgradeMovementComponent* OurMovementComponent__;
+		UGoKartMovementComponent* OurMovementComponent__;	
+
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
 		UGoKartMovementReplicator* MovementReplicator;
 

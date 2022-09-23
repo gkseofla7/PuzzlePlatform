@@ -10,11 +10,13 @@
 AAbility_TargetMissile::AAbility_TargetMissile()
 	:Super()
 {
+	MeshOffsetRoot = CreateDefaultSubobject<USceneComponent>(TEXT("MeshOffsetRoot"));
+	MeshOffsetRoot->SetupAttachment(RootComponent);
 	MissileMovementComponent = CreateDefaultSubobject<UTargetMissileMovementComponent>(TEXT("MissileMovementComponent"));
 	MissileReplicateComponent = CreateDefaultSubobject<UTargetMissileReplicateComponent>(TEXT("MissileReplicateComponent"));
 	AbilityRoot->OnComponentBeginOverlap.AddDynamic(this, &AAbility_TargetMissile::OnOverlapBegin);
 	MissileComponent = CreateDefaultSubobject< UStaticMeshComponent>(TEXT("MissileComponent"));
-	MissileComponent->SetupAttachment(RootComponent);
+	MissileComponent->SetupAttachment(MeshOffsetRoot);
 	MissileComponent->SetVisibility(false);
 	static ConstructorHelpers::FObjectFinder<UParticleSystem> ParticleAsset(TEXT("/Game/Etcs/p_Turret_Explosion"));
 	if (ParticleAsset.Succeeded())
@@ -26,7 +28,7 @@ void AAbility_TargetMissile::BeginPlay()
 {
 	Super::BeginPlay();
 
-	if (HasAuthority() == true)
+	if (PlayerRef->IsLocallyControlled())//애초에 서버로 알려줘야되니,,ㅋ
 	{
 
 		SoldierRef = Cast<ASoldier>(PlayerRef);
@@ -44,19 +46,22 @@ void AAbility_TargetMissile::ActivateEffect_Implementation()
 	//Super::ActivateEffect_Implementation();
 
 	PlayerRef->OnSkillReleased.Clear();//Release하는 순간 초기화
-	if (SoldierRef->IsLocallyControlled() == false)
-		return;//애초에 여기에 올일은 없음
+	//if (SoldierRef->IsLocallyControlled() == false)
+	//	return;//애초에 여기에 올일은 없음
 
-	SoldierRef->SetUsingSkill(false);
-	SoldierRef->GetMesh()->bPauseAnims = false;
-	SoldierRef->ShowTarget = false;
+		SoldierRef->SetUsingSkill(false);
+		SoldierRef->GetMesh()->bPauseAnims = false;
+		SoldierRef->ShowTarget = false;
+	
+
 	//SoldierRef->SetUsingSkill(false);
+
 	Server_SetTransform(SoldierRef->RocketHolderComponent->GetSocketTransform("Mouth"));
 	Server_SetVisibility();
 	Server_DetachAbilityFromPlayer();//모두 일단 띄어냄
-
-	MissileMovementComponent->Target = SoldierRef->CurrentTarget;
-	NetMulticast_SetActive();
+	Server_SetTarget(SoldierRef->CurrentTarget);
+	//MissileMovementComponent->Target = SoldierRef->CurrentTarget;
+	Server_SetActive();
 }
 
 void AAbility_TargetMissile::Server_SetVisibility_Implementation()
@@ -114,7 +119,15 @@ bool AAbility_TargetMissile::NetMulticast_Spark_Validate(FVector Location)
 
 
 
+void AAbility_TargetMissile::Server_SetActive_Implementation()
+{
+	NetMulticast_SetActive();
+}
 
+bool AAbility_TargetMissile::Server_SetActive_Validate()
+{
+	return true;
+}
 
 void AAbility_TargetMissile::NetMulticast_SetActive_Implementation()
 {
@@ -125,3 +138,14 @@ bool AAbility_TargetMissile::NetMulticast_SetActive_Validate()
 {
 	return true;
 }
+
+void AAbility_TargetMissile::Server_SetTarget_Implementation(AActor* NewTarget)
+{
+	MissileMovementComponent->Target = NewTarget;
+}
+
+bool AAbility_TargetMissile::Server_SetTarget_Validate(AActor* NewTarget)
+{
+	return true;
+}
+

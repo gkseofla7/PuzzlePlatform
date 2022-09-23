@@ -103,7 +103,7 @@ void AAbility_Projectile::Server_SetTransform_Implementation(FTransform NewTrans
 }
 void AAbility_Projectile::NetMulticast_SetTransform_Implementation(FTransform NewTransform)
 {
-	AbilityRoot->SetWorldTransform(NewTransform);
+	RootComponent->SetWorldTransform(NewTransform);
 }
 
 bool AAbility_Projectile::Server_SetTransform_Validate(FTransform NewTransform)
