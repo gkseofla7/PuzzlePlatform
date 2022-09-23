@@ -235,13 +235,17 @@ void ASoldier::Tick(float DeltaTime)
 
 #pragma endregion SettingMissile
 
-	if (IsLocallyControlled())
+	if (IsLocallyControlled()&& ShowTarget == true)
 	{
 		
 		auto Target = FindBestTarget();
 		SetCurrentTarget(Target);
-		
 	}
+	else if (IsLocallyControlled() && ShowTarget == false)
+	{
+		EndTarget();
+	}
+
 }
 
 void ASoldier::AddControllerPitchInput(float Val)
@@ -288,10 +292,7 @@ void ASoldier::SetMuzzleRotation()
 
 void ASoldier::Everyone_SetMuzzleRotation_Implementation(FRotator NewRotator)
 {
-	if (HasAuthority())
-	{
-		UE_LOG(LogTemp, Warning, TEXT("***********************"));
-	}
+
 	if (EquippedItem == nullptr)
 		return;
 	EquippedItem->SetMuzzleRotation(NewRotator);
@@ -694,6 +695,7 @@ void ASoldier::SetCurrentTarget(AActor* Target)
 		EndTarget();
 		CurrentTarget = Target;
 		BeginTarget();
+
 	}
 }
 

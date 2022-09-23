@@ -4,6 +4,7 @@
 #include "Ability_Projectile_Missile.h"
 #include "../../Soldier.h"
 
+
 AAbility_Projectile_Missile::AAbility_Projectile_Missile()
 	:Super()
 {
@@ -44,7 +45,7 @@ void AAbility_Projectile_Missile::ActivateEffect_Implementation()
 	if (PlayerRef->IsLocallyControlled() == false)
 		return;//애초에 여기에 올일은 없음
 
-	Super::ActivateEffect_Implementation();
+	//Super::ActivateEffect_Implementation();
 	PlayerRef->SetUsingSkill(false);
 	SoldierRef->ClearPointsArray();
 	SoldierRef->GridSphere->SetVisibility(false, true);

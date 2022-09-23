@@ -17,8 +17,16 @@ public:
 	virtual void BeginPlay() override;
 	AAbility_TargetMissile();
 	void ActivateEffect_Implementation() override;
+	UFUNCTION(Server, Reliable, WithValidation)
+		void Server_SetVisibility();
+	UFUNCTION(NetMulticast, Reliable, WithValidation)
+		void NetMulticast_SetVisibility();
+
 public:
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
 		UStaticMeshComponent* MissileComponent;
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
+		class UTargetMissileMovementComponent* MissileMovementComponent;
 	class ASoldier* SoldierRef;
+	class AActor* TargetPlayer;
 };
