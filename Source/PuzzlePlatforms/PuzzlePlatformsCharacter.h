@@ -103,7 +103,7 @@ public:
 		class UWidgetComponent* HPBarWidget;
 
 
-	class UHudUpDisplayWidget* HeadsUpDisplayRef;
+	class UPlayerInfoWidget* PlayerInfoHUDWidget;
 	APuzzlePlatformsCharacter* TargetPlayer;
 	UPROPERTY(BlueprintAssignable, BlueprintCallable)
 	FInterruptCastingDeleagate InterruptCasting;

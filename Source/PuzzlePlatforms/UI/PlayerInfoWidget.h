@@ -16,6 +16,16 @@ class PUZZLEPLATFORMS_API UPlayerInfoWidget : public UUserWidget
 
 protected:
 	virtual bool Initialize();
+public:
+	UFUNCTION(BlueprintImplementableEvent, BlueprintCallable)
+		class UCastBarWidget* DisplayCastBar(class AAbility* CastToAbility);
+
+	void ToggleSpellBook();
+	void BindCharacterStat(class UMyCharacterStatComponent* NewCharacterStat);
+	void BindCharacterName(FText NewName);
+	void ToggleMap();
+
+private:
 
 
 public:
@@ -31,15 +41,19 @@ public:
 		class UTextBlock* HpNum;
 	UPROPERTY(meta = (BindWidget))
 		class UTextBlock* MpNum;
-	UPROPERTY(meta = (BindWidget),BlueprintReadWrite)
+	UPROPERTY(meta = (BindWidget), BlueprintReadWrite)
 		class UMapWidget* MapWidget;
-	UPROPERTY(meta = (BindWidget),BlueprintReadWrite)
+	UPROPERTY(meta = (BindWidget), BlueprintReadWrite)
 		class UMinimapWidget* Minimap_Widget;
-public:
-	void BindCharacterStat(class UMyCharacterStatComponent* NewCharacterStat);
-	void BindCharacterName(FText NewName);
-	void ToggleMap();
 
-private:
+	UPROPERTY(meta = (BindWidget), BlueprintReadWrite)
+		class UCastBarWidget* CastBar_UI;
+	UPROPERTY(meta = (BindWidget), BlueprintReadWrite)
+		class UActionBarWidget* ActionBar_UI;
+	UPROPERTY(meta = (BindWidget), BlueprintReadWrite)
+		class UBuffPanel_UI* BuffPanel_UI;
+	UPROPERTY(meta = (BindWidget), BlueprintReadWrite)
+		class USpellbook_UI* Spellbook_UI;
+
 	TWeakObjectPtr<class UMyCharacterStatComponent> CurrentCharacterStat;
 };

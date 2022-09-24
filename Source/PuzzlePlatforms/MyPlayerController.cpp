@@ -9,6 +9,7 @@
 #include"PlayersComponent/MyCharacterStatComponent.h"
 #include "Soldier.h"
 #include "Warrior.h"
+#include "MyPlayerState.h"
 
 #include "MyLobbyGameMode.h"
 #include "Net/UnrealNetwork.h"
@@ -70,25 +71,47 @@ void AMyPlayerController::SetInputModeGame()
 	SetShowMouseCursor(false);
 }
 
+//
+//void AMyPlayerController::SetWidget()
+//{
+//	//if (IsLocallyControlled() && IsPlayerControlled())
+//	
+//	if (HasWidget == true)//Widget아직 안열려있으면 widget viewport함, 죽었다 살아났다해서
+//		return;
+//
+//
+//	PlayerInfoHUDWidget = CreateWidget<UPlayerInfoWidget>(GetWorld(), PlayerInfoHUDWidgetClass);
+//	if (PlayerInfoHUDWidget != nullptr)
+//	{
+//		PlayerInfoHUDWidget->AddToViewport();
+//	}
+//		//이게 ability
+//	auto HeadUpDispaly = Cast<UPuzzlePlatformsGameInstance>(GetGameInstance())->GetHeadsUpDisplay();
+//	if (HeadUpDispaly != nullptr)
+//		HeadUpDispaly->AddToViewport();
+//	HasWidget = true;
+//	
+//}
 
-void AMyPlayerController::SetWidget()
+void AMyPlayerController::SetWidget(class UMyCharacterStatComponent* NewCharacterStat)
 {
-	//if (IsLocallyControlled() && IsPlayerControlled())
+
+	PlayerInfoHUDWidget = Cast<UPuzzlePlatformsGameInstance>(GetGameInstance())->PlayerInfoWidget;
+	if (PlayerInfoHUDWidget != nullptr&&PlayerInfoHUDWidget->IsInViewport() ==false)
 	{
-
-
-		PlayerInfoHUDWidget = CreateWidget<UPlayerInfoWidget>(GetWorld(), PlayerInfoHUDWidgetClass);
-		if (PlayerInfoHUDWidget != nullptr)
-		{
-			PlayerInfoHUDWidget->AddToViewport();
-		}
-		//이게 ability
-		auto HeadUpDispaly = Cast<UPuzzlePlatformsGameInstance>(GetGameInstance())->GetHeadsUpDisplay();
-		if (HeadUpDispaly != nullptr)
-			HeadUpDispaly->AddToViewport();
-		HasWidget = true;
+		PlayerInfoHUDWidget->AddToViewport();
 	}
+	if (PlayerInfoHUDWidget != nullptr)
+	{
+		//Cast<UPuzzlePlatformsGameInstance>(GetGameInstance());
+		PlayerInfoHUDWidget->BindCharacterStat(NewCharacterStat);
+		auto MyGameInstance = Cast< UPuzzlePlatformsGameInstance>(GetGameInstance());
+		auto MyPlayerState = GetPlayerState<AMyPlayerState>();
+		PlayerInfoHUDWidget->BindCharacterName(FText::FromString(PlayerState->GetPlayerName()));//내 HP MP 위젯에 이름 등록
+	}
+	
 }
+
 
 void AMyPlayerController::BindWidget(class UMyCharacterStatComponent* NewCharacterStat)
 {

@@ -5,6 +5,8 @@
 #include "../PlayersComponent/MyCharacterStatComponent.h"
 #include "../MyPlayerState.h"
 #include "../UI/MapWidget.h"
+#include "../AbilitySystem/UI/CastBarWidget.h"
+#include "../AbilitySystem/UI/Spellbook_UI.h"
 
 
 #include "Components/TextBlock.h"
@@ -78,3 +80,17 @@ void UPlayerInfoWidget::ToggleMap()
 		MapWidget->SetVisibility(ESlateVisibility::Hidden);
 	}
 }
+
+void UPlayerInfoWidget::ToggleSpellBook()
+{
+	if (Spellbook_UI->GetVisibility() == ESlateVisibility::Hidden)
+	{
+		Spellbook_UI->SetVisibility(ESlateVisibility::Visible);
+
+	}
+	else
+	{
+		Spellbook_UI->SetVisibility(ESlateVisibility::Hidden);
+	}
+}
+

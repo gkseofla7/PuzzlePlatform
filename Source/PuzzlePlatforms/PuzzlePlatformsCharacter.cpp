@@ -210,19 +210,19 @@ void APuzzlePlatformsCharacter::SetPlayerStat()
 		CharacterWidget->SetNameText(FText::FromString(MyPlayerState->GetPlayerName()));
 		auto MyController = Cast<AMyPlayerController>(GetController());
 
-		if (IsLocallyControlled() && IsPlayerControlled())//새로입장
+		if (IsLocallyControlled() && IsPlayerControlled())//새로입장 or 리스폰
 		{
 			//PlayerStat 초기화(다른애들 모두) 시키고 Widget에 바인딩
-			MyPlayerState->Server_InitializeCharacterStat();//얘는 처음 입장한애만 Stat초기화시킴
+			MyPlayerState->Server_InitializeCharacterStat();//Stat을 플레이어의 레벨에 맞게 초기화 시킴
 			
-			Server_BindCharacterStat();//모두에게 해당 Stat을 UI에 Binding
+			Server_BindCharacterStat();//다른 플레이어들에게 내 플레이어의 Stat을 바인딩 해줌
 			//나만 바인딩하는애
-			if (MyController->HasWidget == false)//Widget아직 안열려있으면 widget viewport함, 죽었다 살아났다해서
-				MyController->SetWidget();
-			MyController->BindWidget(CharacterStat);
-			
-			MyController->PlayerInfoHUDWidget->BindCharacterName(FText::FromString(MyPlayerState->GetPlayerName()));
-			HeadsUpDisplayRef = Cast< UPuzzlePlatformsGameInstance>(GetGameInstance())->HeadsUpDisplay;
+
+			MyController->SetWidget(CharacterStat);//입장할때는 위젯 열어줌, Respawn하는 경우에는 이미 열려잇음, 얘는 내 HP, MP 위젯
+			//MyController->PlayerInfoHUDWidget->BindCharacterName(FText::FromString(MyPlayerState->GetPlayerName()));//내 HP MP 위젯에 이름 등록
+			//
+			PlayerInfoHUDWidget = MyController->PlayerInfoHUDWidget;
+		
 		}
 		if (!IsLocallyControlled())//클라이언트가 순차적으로 들어오니 문제발생해서
 		{
@@ -261,9 +261,8 @@ bool  APuzzlePlatformsCharacter::NetMulticast_BindCharacterStat_Validate()
 void APuzzlePlatformsCharacter::Tick(float DeltaTime)
 {//시작하자마자 로그인되는거임;;ㅋㅋ
 	Super::Tick(DeltaTime);
-	//UE_LOG(LogTemp, Warning, TEXT("Tick Spellbook Num : %d "), ActorAbilitiesComponent->Spells.Num());
-	if(HeadsUpDisplayRef!=nullptr)
-		SkillAvailable = !(HeadsUpDisplayRef->CastBar_UI->WhileBuffering);
+	if(PlayerInfoHUDWidget !=nullptr)
+		SkillAvailable = !(PlayerInfoHUDWidget->CastBar_UI->WhileBuffering);
 	if (IsLocallyControlled())
 	{
 		//SetTargetPlayerWithLineTrace();
@@ -453,18 +452,18 @@ void APuzzlePlatformsCharacter::Skill1Clicked()
 {
 	if (SkillAvailable == false)
 		return;
-	auto Slot_UI = HeadsUpDisplayRef->ActionBar_UI->ActionBarSlot_UI;
+	auto Slot_UI = PlayerInfoHUDWidget->ActionBar_UI->ActionBarSlot_UI;
 	if (Slot_UI == nullptr)
 		return;
 	if (Slot_UI->IsAvailable==false||Slot_UI->IsManaAvailable ==false )
 		return;
 	if (UsingSkill == true)
 		return;
-	auto SlotClass = HeadsUpDisplayRef->ActionBar_UI->ActionBarSlot_UI->AbilityClass;
+	auto SlotClass = PlayerInfoHUDWidget->ActionBar_UI->ActionBarSlot_UI->AbilityClass;
 	if (SlotClass == nullptr)
 		return;
 	CharacterStat->Server_SetMP(CharacterStat->CurrentMP-SlotClass.GetDefaultObject()->AbilityDetails.Cost);
-	HeadsUpDisplayRef->ActionBar_UI->ActionBarSlot_UI->StartCooldown();
+	PlayerInfoHUDWidget->ActionBar_UI->ActionBarSlot_UI->StartCooldown();
 	DaerimMotionReplicator->Server_Skill1Clicked(SlotClass);
 }
 void APuzzlePlatformsCharacter::Skill2Clicked()
@@ -472,16 +471,16 @@ void APuzzlePlatformsCharacter::Skill2Clicked()
 	if (SkillAvailable == false)
 		return;
 
-	auto Slot_UI = HeadsUpDisplayRef->ActionBar_UI->ActionBarSlot_UI_1;
+	auto Slot_UI = PlayerInfoHUDWidget->ActionBar_UI->ActionBarSlot_UI_1;
 	if (Slot_UI == nullptr)
 		return;
 	if (Slot_UI->IsAvailable == false || Slot_UI->IsManaAvailable == false)
 		return;
-	auto SlotClass = HeadsUpDisplayRef->ActionBar_UI->ActionBarSlot_UI_1->AbilityClass;
+	auto SlotClass = PlayerInfoHUDWidget->ActionBar_UI->ActionBarSlot_UI_1->AbilityClass;
 	if (SlotClass == nullptr)
 		return;
 	CharacterStat->Server_SetMP(CharacterStat->CurrentMP - SlotClass.GetDefaultObject()->AbilityDetails.Cost);
-	HeadsUpDisplayRef->ActionBar_UI->ActionBarSlot_UI_1->StartCooldown();
+	PlayerInfoHUDWidget->ActionBar_UI->ActionBarSlot_UI_1->StartCooldown();
 	DaerimMotionReplicator->Server_Skill2Clicked(SlotClass);
 }
 void APuzzlePlatformsCharacter::Skill3Clicked()
@@ -489,16 +488,16 @@ void APuzzlePlatformsCharacter::Skill3Clicked()
 	if (SkillAvailable == false)
 		return;
 
-	auto Slot_UI = HeadsUpDisplayRef->ActionBar_UI->ActionBarSlot_UI_2;
+	auto Slot_UI = PlayerInfoHUDWidget->ActionBar_UI->ActionBarSlot_UI_2;
 	if (Slot_UI == nullptr)
 		return;
 	if (Slot_UI->IsAvailable == false || Slot_UI->IsManaAvailable == false)
 		return;
-	auto SlotClass = HeadsUpDisplayRef->ActionBar_UI->ActionBarSlot_UI_2->AbilityClass;
+	auto SlotClass = PlayerInfoHUDWidget->ActionBar_UI->ActionBarSlot_UI_2->AbilityClass;
 	if (SlotClass == nullptr)
 		return;
 	CharacterStat->Server_SetMP(CharacterStat->CurrentMP - SlotClass.GetDefaultObject()->AbilityDetails.Cost);
-	HeadsUpDisplayRef->ActionBar_UI->ActionBarSlot_UI_2->StartCooldown();
+	PlayerInfoHUDWidget->ActionBar_UI->ActionBarSlot_UI_2->StartCooldown();
 	DaerimMotionReplicator->Server_Skill3Clicked(SlotClass);
 }
 void APuzzlePlatformsCharacter::Skill4Clicked()
@@ -506,17 +505,17 @@ void APuzzlePlatformsCharacter::Skill4Clicked()
 	if (SkillAvailable == false)
 		return;
 
-	auto Slot_UI = HeadsUpDisplayRef->ActionBar_UI->ActionBarSlot_UI_3;
+	auto Slot_UI = PlayerInfoHUDWidget->ActionBar_UI->ActionBarSlot_UI_3;
 	if (Slot_UI == nullptr)
 		return;
 	if (Slot_UI->IsAvailable == false || Slot_UI->IsManaAvailable == false)
 		return;
-	auto SlotClass = HeadsUpDisplayRef->ActionBar_UI->ActionBarSlot_UI_3->AbilityClass;
+	auto SlotClass = PlayerInfoHUDWidget->ActionBar_UI->ActionBarSlot_UI_3->AbilityClass;
 	if (SlotClass == nullptr)
 		return;
 	CharacterStat->Server_SetMP(CharacterStat->CurrentMP - SlotClass.GetDefaultObject()->AbilityDetails.Cost);
 
-	HeadsUpDisplayRef->ActionBar_UI->ActionBarSlot_UI_3->StartCooldown();
+	PlayerInfoHUDWidget->ActionBar_UI->ActionBarSlot_UI_3->StartCooldown();
 	DaerimMotionReplicator->Server_Skill4Clicked(SlotClass);
 }
 void APuzzlePlatformsCharacter::Skill5Clicked()
@@ -524,16 +523,16 @@ void APuzzlePlatformsCharacter::Skill5Clicked()
 	if (SkillAvailable == false)
 		return;
 
-	auto Slot_UI = HeadsUpDisplayRef->ActionBar_UI->ActionBarSlot_UI_4;
+	auto Slot_UI = PlayerInfoHUDWidget->ActionBar_UI->ActionBarSlot_UI_4;
 	if (Slot_UI == nullptr)
 		return;
 	if (Slot_UI->IsAvailable == false || Slot_UI->IsManaAvailable == false)
 		return;
-	auto SlotClass = HeadsUpDisplayRef->ActionBar_UI->ActionBarSlot_UI_4->AbilityClass;
+	auto SlotClass = PlayerInfoHUDWidget->ActionBar_UI->ActionBarSlot_UI_4->AbilityClass;
 	if (SlotClass == nullptr)
 		return;
 	CharacterStat->Server_SetMP(CharacterStat->CurrentMP - SlotClass.GetDefaultObject()->AbilityDetails.Cost);
-	HeadsUpDisplayRef->ActionBar_UI->ActionBarSlot_UI_4->StartCooldown();
+	PlayerInfoHUDWidget->ActionBar_UI->ActionBarSlot_UI_4->StartCooldown();
 	DaerimMotionReplicator->Server_Skill5Clicked(SlotClass);
 }
 
@@ -568,16 +567,16 @@ void APuzzlePlatformsCharacter::OpenSkillTree()
 {
 	auto controller = Cast<AMyPlayerController>(GetController());
 	ABCHECK(controller != nullptr);
-	ABCHECK(HeadsUpDisplayRef != nullptr);
+	ABCHECK(PlayerInfoHUDWidget != nullptr);
 	if (MouseCursorToggle == false)
 	{
-		HeadsUpDisplayRef->ToggleSpellBook();
+		PlayerInfoHUDWidget->ToggleSpellBook();
 		controller->SetInputModeGameAndUI();
 		MouseCursorToggle = true;
 	}
 	else
 	{
-		HeadsUpDisplayRef->ToggleSpellBook();
+		PlayerInfoHUDWidget->ToggleSpellBook();
 		controller->SetInputModeGame();
 		MouseCursorToggle = false;
 	}

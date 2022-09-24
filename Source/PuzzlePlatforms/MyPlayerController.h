@@ -21,7 +21,7 @@ public:
 	virtual void OnPossess(APawn* aPawn) override;
 	void SetInputModeGameAndUI();
 	void SetInputModeGame();
-	void SetWidget();
+	void SetWidget(class UMyCharacterStatComponent* NewCharacterStat);
 	void BindWidget(class UMyCharacterStatComponent* NewCharacterStat);
 	//class UPlayerInfoWidget* GetHudWidget() const;
 	//void PossessCharacter();

@@ -60,6 +60,7 @@ private:
 	TSubclassOf<class UUserWidget>CloseMenuClass;
 	TSubclassOf<class UUserWidget> SetNameMenuClass;
 	TSubclassOf<class UUserWidget> NewHUDWidgetClass;
+	TSubclassOf<class UPlayerInfoWidget> PlayerInfoHUDWidgetClass;
 	class UMainMenu* Menu;
 	class UQuitMenu* QuitMenu;
 	class USetNameMenu* SetNameMenu;
@@ -84,6 +85,7 @@ private:
 public:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = UI)
 		class UHudUpDisplayWidget* HeadsUpDisplay;
+	class UPlayerInfoWidget* PlayerInfoWidget;
 	FText PlayerName;
 
 	int CharacterIndex = 1;// 1번이면 Soldier 2번이면 Warrior 

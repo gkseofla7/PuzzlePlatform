@@ -5,7 +5,7 @@
 
 #include "Blueprint/UserWidget.h"
 #include "OnlineSessionSettings.h"
-
+#include "UI/PlayerInfoWidget.h"
 
 #include "PlatformTrigger.h"
 #include "MenuSystem/QuitMenu.h"
@@ -54,7 +54,11 @@ UPuzzlePlatformsGameInstance::UPuzzlePlatformsGameInstance(const FObjectInitiali
 		NewHUDWidgetClass = NEWUI_HUD_C.Class;
 	}
 	//static ConstructorHelpers::FClassFinder< UUserWidget> NEWUI_HUD_C(TEXT("/Game/AbilitySystem/UI/HeadsUpDisplay"));
-
+	static ConstructorHelpers::FClassFinder< UPlayerInfoWidget> UI_HUD_C(TEXT("/Game/PuzzlePlatforms/Widget/WBP_PlayerInfo"));
+	if (UI_HUD_C.Succeeded())
+	{
+		PlayerInfoHUDWidgetClass = UI_HUD_C.Class;
+	}
 }
 
 void UPuzzlePlatformsGameInstance::Init()
@@ -93,6 +97,14 @@ void UPuzzlePlatformsGameInstance::Init()
 	{
 		UE_LOG(LogTemp, Warning, TEXT("In GameInstance Init nullptr"));
 	}
+
+
+	PlayerInfoWidget = Cast< UPlayerInfoWidget>(CreateWidget<UUserWidget>(this, PlayerInfoHUDWidgetClass));
+	if (PlayerInfoWidget == nullptr)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("In GameInstance Init nullptr"));
+	}
+
 
 }
 FMyCharacterrData* UPuzzlePlatformsGameInstance::GetMyCharacterData(int32 Level)

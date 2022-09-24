@@ -6,6 +6,9 @@
 
 #include "../Ability.h"
 #include"../../PuzzlePlatformsCharacter.h"
+#include "DragDrop.h"
+#include "ActionBarWidget.h"
+
 
 #include "Components/Image.h"
 #include "Components/Button.h"
@@ -135,5 +138,16 @@ void UActionBarSlotWidget::UpdateAppearance()
 
 bool UActionBarSlotWidget::NativeOnDrop(const FGeometry& InGeometry, const FDragDropEvent& InDragDropEvent, UDragDropOperation* InOperation)
 {
+	auto DragDrop = Cast<UDragDrop>(InOperation);
+	if (DragDrop == nullptr)
+		return false;
+	AbilityClass = DragDrop->AbilityClass;
+	IconImage->SetVisibility(ESlateVisibility::Visible);
+	AAbility* ability = Cast<AAbility>(AbilityClass->GetDefaultObject());
+	IconImage->SetBrushFromTexture(ability->AbilityDetails.Icon);
+	IsAvailable = true;
+	if(ParentsWidget->CurrentCharacterStat!=nullptr)
+		ParentsWidget->BindCharacterStat(ParentsWidget->CurrentCharacterStat);
+
 	return true;
 }
