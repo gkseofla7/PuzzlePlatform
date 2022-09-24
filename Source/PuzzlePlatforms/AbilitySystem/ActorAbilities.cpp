@@ -19,6 +19,7 @@ void UActorAbilities::BeginPlay()
 {
 	Super::BeginPlay();
 
+
 	// ...
 	
 }

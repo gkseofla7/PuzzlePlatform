@@ -6,6 +6,7 @@
 #include "GameFramework/Actor.h"
 #include "Engine/Texture2D.h"
 #include "AbilityDetailStruct.h"
+#include "../MyPlayerState.h"
 #include "Ability.generated.h"
 
 DECLARE_MULTICAST_DELEGATE(FCastSuccessDeleagate);
@@ -37,7 +38,7 @@ public:
 	UFUNCTION(BlueprintCallable)
 		void ActivateEffect();
 	virtual void ActivateEffect_Implementation();
-
+	virtual void SetAbilityLevel();
 	virtual void DetachAbilityFromPlayer();
 	UFUNCTION()
 	void EndAnimation(UAnimMontage* Montage, bool bInterrupted);
@@ -62,6 +63,7 @@ public:
 		float DamageAmount;
 	bool AnimationEnd = false;
 	bool NeedToDestroy = false;
+	int32 AbilityLevel = 0;
 
 
 };

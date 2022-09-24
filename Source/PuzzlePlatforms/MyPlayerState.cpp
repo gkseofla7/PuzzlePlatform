@@ -9,6 +9,7 @@ AMyPlayerState::AMyPlayerState()
 {
 //	CharacterLevel = 1;
 	GameScore = 0;
+	SpellsUpgrade.SetNum(10);
 }
 
 
@@ -81,6 +82,25 @@ void AMyPlayerState::NetMulticast_InitializeCharacterStat_Implementation()
 }
 
 bool AMyPlayerState::NetMulticast_InitializeCharacterStat_Validate ()
+{
+	return true;
+}
+
+void AMyPlayerState::Server_SpellsUpgrade_Implementation(int index)
+{
+	NetMulticast_SpellsUpgrade(index);
+}
+
+bool AMyPlayerState::Server_SpellsUpgrade_Validate(int index)
+{
+	return true;
+}
+void AMyPlayerState::NetMulticast_SpellsUpgrade_Implementation(int index)
+{
+	SpellsUpgrade[index]++;
+}
+
+bool AMyPlayerState::NetMulticast_SpellsUpgrade_Validate(int index)
 {
 	return true;
 }

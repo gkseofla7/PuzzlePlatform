@@ -83,23 +83,23 @@ void UActionBarSlotWidget::CastButtonClicked()
 	//GetWorld()->SpawnActor();
 }
 
-void UActionBarSlotWidget::AbilitySpawn(APuzzlePlatformsCharacter* NewPlayer)
-{
-	if (!NewPlayer->HasAuthority())
-		return;
-	FTransform PlayerTransform = NewPlayer->GetActorTransform();
-	FActorSpawnParameters Params;
-	FActorSpawnParameters SpawnInfo;
-	Owner = NewPlayer;
-	SpawnInfo.Owner = NewPlayer;
-	SpawnInfo.Instigator = NewPlayer;
-	//auto ability = GetWorld()->SpawnActorDeferred<AAbility>(AbilityClass, PlayerTransform,NewPlayer,NewPlayer);
-	auto ability = GetWorld()->SpawnActor<AAbility>(AbilityClass, PlayerTransform, SpawnInfo);
-
-		//ability->PlayerRef = NewPlayer;//컨트롤러가 있는 플레이어
-	//UWorld::SpawnActor(AbilityClass, PlayerTransform);
-	//GetWorld()->SpawnActor();
-}
+//void UActionBarSlotWidget::AbilitySpawn(APuzzlePlatformsCharacter* NewPlayer)
+//{
+//	if (!NewPlayer->HasAuthority())
+//		return;
+//	FTransform PlayerTransform = NewPlayer->GetActorTransform();
+//	FActorSpawnParameters Params;
+//	FActorSpawnParameters SpawnInfo;
+//	Owner = NewPlayer;
+//	SpawnInfo.Owner = NewPlayer;
+//	SpawnInfo.Instigator = NewPlayer;
+//	//auto ability = GetWorld()->SpawnActorDeferred<AAbility>(AbilityClass, PlayerTransform,NewPlayer,NewPlayer);
+//	auto ability = GetWorld()->SpawnActor<AAbility>(AbilityClass, PlayerTransform, SpawnInfo);
+//
+//		//ability->PlayerRef = NewPlayer;//컨트롤러가 있는 플레이어
+//	//UWorld::SpawnActor(AbilityClass, PlayerTransform);
+//	//GetWorld()->SpawnActor();
+//}
 //애초에 ability에 하는데..ㅋㅋ
 void UActionBarSlotWidget::StartCooldown()
 {
@@ -131,4 +131,9 @@ void UActionBarSlotWidget::UpdateAppearance()
 		CooldownBar->SetPercent(0);
 	}
 
+}
+
+bool UActionBarSlotWidget::NativeOnDrop(const FGeometry& InGeometry, const FDragDropEvent& InDragDropEvent, UDragDropOperation* InOperation)
+{
+	return true;
 }

@@ -8,6 +8,7 @@
 #include "../AnimInstance/AnimInstance_Master.h"
 #include "Ability_Buff_Master.h"
 
+
 #include "GameFramework/Character.h"
 #include "Components/SphereComponent.h"
 #include "Kismet/GameplayStatics.h"
@@ -36,7 +37,8 @@ void AAbility::BeginPlay()
 	PlayerRef = Cast<APuzzlePlatformsCharacter>(GetOwner());
 	AnimRef = Cast<UAnimInstance_Master>(PlayerRef->GetMesh()->GetAnimInstance());
 	auto IsBuff = Cast<AAbility_Buff_Master>(this);
-
+	SetAbilityLevel();
+	UE_LOG(LogTemp, Warning, TEXT("Ability Level %d"), AbilityLevel);
 	//AnimRef->IsAttacking = true;
 	if(IsBuff== nullptr)
 		PlayerRef->SetUsingSkill(true);
@@ -48,17 +50,12 @@ void AAbility::BeginPlay()
 	//이건 Local에서만 진행해도 되는거아님?
 		if(PlayerRef->IsLocallyControlled())//애초에 서버에서만 실행하고 마지막 모두한테 해야될건 그냥 서버가 알려줌
 			BeginCasting();
-	
-	
-
 }
 
 // Called every frame
 void AAbility::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
-
-
 }
 void AAbility::BeginCasting()
 {
@@ -117,4 +114,9 @@ void AAbility::EndAnimation(UAnimMontage* Montage, bool bInterrupted)
 	{
 		Destroy();
 	}
+}
+
+void AAbility::SetAbilityLevel()
+{
+
 }

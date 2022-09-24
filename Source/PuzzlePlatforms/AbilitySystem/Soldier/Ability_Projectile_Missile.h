@@ -18,6 +18,7 @@ public:
 	AAbility_Projectile_Missile();
 	virtual void BeginPlay();
 	virtual void ActivateEffect_Implementation() override;
+	virtual void SetAbilityLevel() override;
 	UFUNCTION(BlueprintCallable, BlueprintImplementableEvent)
 		void DelayCollision();
 
@@ -29,6 +30,7 @@ public:
 		void OnOverlapBegin(class UPrimitiveComponent* OverlappedComp, class AActor* OtherActor, class UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
 	UFUNCTION(NetMulticast, Reliable, WithValidation)
 		void NetMulticast_Spark(FVector Location);
+
 public:
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
 		UStaticMeshComponent* MissileComponent; 

@@ -195,7 +195,6 @@ void APuzzlePlatformsCharacter::BeginPlay()
 	GetWorldTimerManager().SetTimer(StatResetHandle, RespawnDelegate, .6f, false);
 
 
-
 }
 
 void APuzzlePlatformsCharacter::SetPlayerStat()
@@ -262,6 +261,7 @@ bool  APuzzlePlatformsCharacter::NetMulticast_BindCharacterStat_Validate()
 void APuzzlePlatformsCharacter::Tick(float DeltaTime)
 {//시작하자마자 로그인되는거임;;ㅋㅋ
 	Super::Tick(DeltaTime);
+	//UE_LOG(LogTemp, Warning, TEXT("Tick Spellbook Num : %d "), ActorAbilitiesComponent->Spells.Num());
 	if(HeadsUpDisplayRef!=nullptr)
 		SkillAvailable = !(HeadsUpDisplayRef->CastBar_UI->WhileBuffering);
 	if (IsLocallyControlled())

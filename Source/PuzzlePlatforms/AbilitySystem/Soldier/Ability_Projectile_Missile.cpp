@@ -3,7 +3,7 @@
 
 #include "Ability_Projectile_Missile.h"
 #include "../../Soldier.h"
-
+#include "../ActorAbilities.h"
 
 AAbility_Projectile_Missile::AAbility_Projectile_Missile()
 	:Super()
@@ -39,13 +39,12 @@ void AAbility_Projectile_Missile::BeginPlay()
 
 void AAbility_Projectile_Missile::ActivateEffect_Implementation()
 {
-
+	Super::ActivateEffect_Implementation();
 
 	PlayerRef->OnSkillReleased.Clear();//Release하는 순간 초기화
 	if (PlayerRef->IsLocallyControlled() == false)
 		return;//애초에 여기에 올일은 없음
 
-	Super::ActivateEffect_Implementation();
 	PlayerRef->SetUsingSkill(false);
 	SoldierRef->ClearPointsArray();
 	SoldierRef->GridSphere->SetVisibility(false, true);
@@ -112,4 +111,18 @@ void AAbility_Projectile_Missile::NetMulticast_Spark_Implementation(FVector Loca
 bool AAbility_Projectile_Missile::NetMulticast_Spark_Validate(FVector Location)
 {
 	return true;
+}
+
+void AAbility_Projectile_Missile::SetAbilityLevel()
+{
+	//쓸때마다 불러옴
+	auto Spells = PlayerRef->ActorAbilitiesComponent->PlayerSpells;
+	//UE_LOG(LogTemp, Warning, TEXT("Spellbook Num : %d "), Spells.Num());
+	for (int i = 0; i < Spells.Num(); i++)
+	{
+		if (Spells[i]->IsChildOf(AAbility_Projectile_Missile::StaticClass()) == true)
+		{
+			AbilityLevel = Cast< AMyPlayerState>(PlayerRef->GetPlayerState())->SpellsUpgrade[i];
+		}
+	}
 }

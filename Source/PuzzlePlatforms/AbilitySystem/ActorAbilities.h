@@ -26,7 +26,8 @@ public:
 
 
 public:
+
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
-	TArray<TSubclassOf<class AAbility>> Spells;
+		TArray<TSubclassOf<class AAbility>> PlayerSpells;
 		
 };

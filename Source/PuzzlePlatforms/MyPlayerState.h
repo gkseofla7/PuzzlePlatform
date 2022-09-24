@@ -30,12 +30,18 @@ public:
 		void Server_InitializeCharacterStat();
 	UFUNCTION(NetMulticast, Reliable, WithValidation)
 		void NetMulticast_InitializeCharacterStat();
+	UFUNCTION(Server, Reliable, WithValidation)
+		void Server_SpellsUpgrade(int index);
+	UFUNCTION(NetMulticast, Reliable, WithValidation)
+		void NetMulticast_SpellsUpgrade(int index);
 
 public:
 	UPROPERTY(Transient)
 		int32 GameScore;
 	UPROPERTY()
 		int32 PlayerLevel = 1;
+	UPROPERTY(BlueprintReadWrite, EditAnywhere)
+		TArray<int> SpellsUpgrade;
 	//FText PlayerName;
 
 };

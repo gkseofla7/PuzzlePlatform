@@ -16,7 +16,7 @@ class PUZZLEPLATFORMS_API UActionBarSlotWidget : public UUserWidget
 public:
 	UFUNCTION()
 	void CastButtonClicked();
-	void AbilitySpawn(class APuzzlePlatformsCharacter* NewPlayer);
+	//void AbilitySpawn(class APuzzlePlatformsCharacter* NewPlayer);
 	UActionBarSlotWidget(const FObjectInitializer& ObjectInitializer);
 	//virtual void PreConstruct(bool IsDesignTime) override;
 	virtual void NativePreConstruct();
@@ -25,6 +25,7 @@ public:
 	void StartCooldown();
 	void EndCooldown();
 	void UpdateAppearance();
+	bool NativeOnDrop(const FGeometry& InGeometry, const FDragDropEvent& InDragDropEvent, UDragDropOperation* InOperation) override;
 public:
 	UPROPERTY(meta = (BindWidget), BlueprintReadWrite)
 	class UImage* IconImage;

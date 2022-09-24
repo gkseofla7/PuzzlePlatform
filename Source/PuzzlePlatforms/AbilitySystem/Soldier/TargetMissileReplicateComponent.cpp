@@ -78,7 +78,6 @@ void UTargetMissileReplicateComponent::TickComponent(float DeltaTime, ELevelTick
 		//UpdateServerState(LastMove);
 		//Server_SendMove(LastMove);
 	//}
-
 	////서버고 아무도 안타고 자기꺼 아닐때는?
 //if ((OurMovementComponent->riden == false && GetOwnerRole() == ROLE_Authority)
 //	&& (Cast<APawn>(GetOwner()))->IsLocallyControlled())//서버고 자기꺼일때 
@@ -94,16 +93,11 @@ void UTargetMissileReplicateComponent::TickComponent(float DeltaTime, ELevelTick
 
 	if (GetOwnerRole() == ROLE_Authority)
 	{
-		auto tmp = GetOwner()->GetActorLocation();
-		UE_LOG(LogTemp, Warning, TEXT("ServerLocation : %f, %f, %f"), tmp.X, tmp.Y, tmp.Z);
 		FTargetMissileMove LastMove = OurMovementComponent->GetLastMove();
 		Server_SendMove(LastMove);
 	}
 	if (!GetOwner()->HasAuthority())
 	{
-
-		auto tmp = GetOwner()->GetActorLocation();
-		UE_LOG(LogTemp, Warning, TEXT("ClientLocation : %f, %f, %f"), tmp.X, tmp.Y, tmp.Z);
 		ClientTick(DeltaTime);
 	}
 
@@ -151,7 +145,6 @@ void UTargetMissileReplicateComponent::ClientTick(float DeltaTime)
 	if (ClientTimeBetweenLastUpdates < KINDA_SMALL_NUMBER) return;
 	if (OurMovementComponent == nullptr) return;
 
-	UE_LOG(LogTemp, Warning, TEXT("Delta %f"), DeltaTime);
 	//UE_LOG(LogTemp, Warning, TEXT("Total %f"), ClientTimeBetweenLastUpdates);
 	float LerpRatio = ClientTimeSinceUpdate / ClientTimeBetweenLastUpdates;
 	//UE_LOG(LogTemp, Warning, TEXT("LerpRatio %f"), LerpRatio);
@@ -183,8 +176,6 @@ FHermitCubicSplines UTargetMissileReplicateComponent::CreateSpline()
 void UTargetMissileReplicateComponent::InterpolateLocation(FHermitCubicSplines Spline, float LerpRatio)
 {
 	FVector NextLocation = Spline.InterpolateLocation(LerpRatio);
-	//UE_LOG(LogTemp, Warning, TEXT("Start Velocity %f, %f, %f"), Spline.StartDerivative.X, Spline.StartDerivative.Y, Spline.StartDerivative.Z);
-	//UE_LOG(LogTemp, Warning, TEXT("End Velocity %f, %f, %f"), Spline.TargetDerivative.X, Spline.TargetDerivative.Y, Spline.TargetDerivative.Z);
 
 	FVector LocalNextLocation = GetOwner()->GetActorTransform().InverseTransformPosition(NextLocation);
 	MeshOffsetRoot->SetRelativeLocation(LocalNextLocation);//Mesh만 움직여서 훼이크
@@ -211,7 +202,6 @@ void UTargetMissileReplicateComponent::InterpolateRotation(float LerpRatio)
 	FQuat LocalNextRotation = GetOwner()->GetActorTransform().InverseTransformRotation(NextRotation);
 	//GetOwner()->SetActorRotation(NextRotation);
 	MeshOffsetRoot->SetRelativeRotation(LocalNextRotation);//자기 자신만 바꿈
-
 	//if (MeshOffsetRoot != nullptr)
 	//{
 	//	MeshOffsetRoot->SetWorldRotation(NextRotation);
@@ -219,20 +209,7 @@ void UTargetMissileReplicateComponent::InterpolateRotation(float LerpRatio)
 }
 
 void UTargetMissileReplicateComponent::OnRep_ServerState()//약간 모두한테 실행되는듯?
-{//State가 바뀌면 자동 모두에게 실행됨
-	//걍 Client 모두에게 해야됨
-	//switch (GetOwnerRole())
-	//{
-	//case ROLE_AutonomousProxy:
-	//	AutonomousProxy_OnRep_ServerState();
-	//	break;
-	//case ROLE_SimulatedProxy:
-	//	//UE_LOG(LogTemp, Warning, TEXT("On Rep ServerState %f *************************"), ClientTimeSinceUpdate);
-	//	SimulatedProxy_OnRep_ServerState();
-	//	break;
-	//default:
-	//	break;
-	//}
+{
 	if (!GetOwner()->HasAuthority())
 	{
 
@@ -268,28 +245,10 @@ void UTargetMissileReplicateComponent::SimulatedProxy_OnRep_ServerState()
 	//	ClientTimeBetweenLastUpdates = ClientTimeSinceUpdate;//여태 움직인 시간 넣음
 	//	ClientTimeSinceUpdate = 0;
 	//}
-	//ClientStartTransform = GetOwner()->GetActorTransform();
-	//if (MeshOffsetRoot != nullptr)//현재 Mesh 위치가 내 위치
-	//{
-
-
-	//	ClientStartTransform.SetLocation(MeshOffsetRoot->GetComponentLocation());
-	//	//UE_LOG(LogTemp, Warning, TEXT("Start Location %f, %f, %f"), ClientStartTransform.GetLocation().X, ClientStartTransform.GetLocation().Y, ClientStartTransform.GetLocation().Z);
-	//	ClientStartTransform.SetRotation(MeshOffsetRoot->GetComponentQuat());
-	//}
-	//else
-	//{
-	//	UE_LOG(LogTemp, Warning, TEXT("WTF"));
-	//}
-	//auto tmp = MeshOffsetRoot->GetComponentLocation();
-	//auto tmp2 = ServerState.Transform.GetLocation();
-	//UE_LOG(LogTemp, Warning, TEXT("ClientStartLocation : %f, %f, %f"), tmp.X, tmp.Y, tmp.Z);
-	//UE_LOG(LogTemp, Warning, TEXT("ClientEndLocation : %f, %f, %f"), tmp2.X, tmp2.Y, tmp2.Z);
-	
 	//ClientStartVelocity = OurMovementComponent->GetVelocity();
 	//GetOwner()->SetActorTransform(ServerState.Transform);//서버 위치가 내 위치 일단 Collision을 위한거 먼저 보내고 Mesh는 냅둠
 
-	//UE_LOG(LogTemp, Warning, TEXT("End Location %f, %f, %f"), ServerState.Transform.GetLocation().X, ServerState.Transform.GetLocation().Y, ServerState.Transform.GetLocation().Z);
+
 
 }
 
