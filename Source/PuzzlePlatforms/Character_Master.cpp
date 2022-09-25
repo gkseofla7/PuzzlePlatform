@@ -90,7 +90,6 @@ ACharacter_Master::ACharacter_Master()
 	
 #pragma endregion Region_1
 	//Component 초기화
-	CharacterStat = CreateDefaultSubobject<UMyCharacterStatComponent>(TEXT("CHARACTERSTAT"));
 	ActorAbilitiesComponent = CreateDefaultSubobject<UActorAbilities>(TEXT("ActorAbilities"));
 
 	DecalComponent = CreateDefaultSubobject<UDecalComponent>(TEXT("DecalComponent"));
@@ -199,38 +198,22 @@ void ACharacter_Master::BeginPlay()
 
 void ACharacter_Master::SetPlayerStat()
 {
-	auto CharacterWidget = Cast< UPlayerHPBarWidget>(HPBarWidget->GetUserWidgetObject());
-	auto tmpPlayerState = GetPlayerState();
-	if (tmpPlayerState == nullptr)
+	auto MyPlayerState = Cast<AMyPlayerState>(GetPlayerState());
+	if (MyPlayerState == nullptr)
 		return;
-	auto MyPlayerState = Cast<AMyPlayerState>(tmpPlayerState);
-	if (MyPlayerState != nullptr)
+	CharacterStatRef = MyPlayerState->CharacterStat;
+	if (IsLocallyControlled() && IsPlayerControlled())//새로입장 or 리스폰 모두에게 내 정보 뿌려줌	
 	{
-		//여기서 모두(중간에 들어오는 경우는 없으니)
-		CharacterWidget->SetNameText(FText::FromString(MyPlayerState->GetPlayerName()));
 		auto MyController = Cast<AMyPlayerController>(GetController());
-
-		if (IsLocallyControlled() && IsPlayerControlled())//새로입장 or 리스폰
-		{
-			//PlayerStat 초기화(다른애들 모두) 시키고 Widget에 바인딩
-			MyPlayerState->Server_InitializeCharacterStat();//Stat을 플레이어의 레벨에 맞게 초기화 시킴
-			
-			Server_BindCharacterStat();//다른 플레이어들에게 내 플레이어의 Stat을 바인딩 해줌
-			//나만 바인딩하는애
-
-			MyController->SetWidget(CharacterStat);//입장할때는 위젯 열어줌, Respawn하는 경우에는 이미 열려잇음, 얘는 내 HP, MP 위젯
-			//MyController->PlayerInfoHUDWidget->BindCharacterName(FText::FromString(MyPlayerState->GetPlayerName()));//내 HP MP 위젯에 이름 등록
-			//
-			PlayerInfoHUDWidget = MyController->PlayerInfoHUDWidget;
-		
-		}
-		if (!IsLocallyControlled())//클라이언트가 순차적으로 들어오니 문제발생해서
-		{
-			CharacterStat->SetLevel(MyPlayerState->PlayerLevel);
-			CharacterWidget->BindCharacterStat(CharacterStat);
-		}
-
+		MyController->SetWidget(MyPlayerState->CharacterStat);//나만 봄
+		PlayerInfoHUDWidget = MyController->PlayerInfoHUDWidget;
+		Server_BindCharacterStat();
 	}
+	else// 나 외 다른 플레이어들은
+	{
+		BindCharacterStatToWidget();
+	}
+
 	
 }
 
@@ -246,8 +229,7 @@ bool ACharacter_Master::Server_BindCharacterStat_Validate()
 }
 void  ACharacter_Master::NetMulticast_BindCharacterStat_Implementation()
 {
-	auto CharacterWidget = Cast< UPlayerHPBarWidget>(HPBarWidget->GetUserWidgetObject());
-	CharacterWidget->BindCharacterStat(CharacterStat);
+	BindCharacterStatToWidget();
 }
 
 bool  ACharacter_Master::NetMulticast_BindCharacterStat_Validate()
@@ -255,7 +237,13 @@ bool  ACharacter_Master::NetMulticast_BindCharacterStat_Validate()
 	return true;
 }
 
-
+void ACharacter_Master::BindCharacterStatToWidget()
+{
+	auto MyPlayerState = Cast<AMyPlayerState>(GetPlayerState());
+	auto CharacterWidget = Cast< UPlayerHPBarWidget>(HPBarWidget->GetUserWidgetObject());
+	CharacterWidget->BindCharacterStat(MyPlayerState->CharacterStat);
+	CharacterWidget->SetNameText(FText::FromString(MyPlayerState->GetPlayerName()));
+}
 
 
 void ACharacter_Master::Tick(float DeltaTime)
@@ -302,10 +290,10 @@ void ACharacter_Master::AddControllerYawInput(float Val)
 }
 void ACharacter_Master::UpdateStat()
 {
-	if (CharacterStat == nullptr)
+	if (CharacterStatRef == nullptr)
 		return;
-	CharacterStat->Server_SetHP(CharacterStat->CurrentHP+.5);
-	CharacterStat->Server_SetMP(CharacterStat->CurrentMP+.5);
+	CharacterStatRef->Server_SetHP(CharacterStatRef->CurrentHP+.5);
+	CharacterStatRef->Server_SetMP(CharacterStatRef->CurrentMP+.5);
 }
 
 void ACharacter_Master::SetTargetPlayerWithLineTrace()
@@ -414,9 +402,9 @@ float ACharacter_Master::TakeDamage(float DamageAmount, FDamageEvent const& Dama
 	float FinalDamage = Super::TakeDamage(DamageAmount, DamageEvent, EventInstigator, DamageCauser);
 
 
-	float HP =  CharacterStat->GetHP();
+	float HP = CharacterStatRef->GetHP();
 
-	CharacterStat->Server_SetHP(HP - FinalDamage);
+	CharacterStatRef->Server_SetHP(HP - FinalDamage);
 
 	return FinalDamage;
 
@@ -462,7 +450,7 @@ void ACharacter_Master::Skill1Clicked()
 	auto SlotClass = PlayerInfoHUDWidget->ActionBar_UI->ActionBarSlot_UI->AbilityClass;
 	if (SlotClass == nullptr)
 		return;
-	CharacterStat->Server_SetMP(CharacterStat->CurrentMP-SlotClass.GetDefaultObject()->AbilityDetails.Cost);
+	CharacterStatRef->Server_SetMP(CharacterStatRef->CurrentMP-SlotClass.GetDefaultObject()->AbilityDetails.Cost);
 	PlayerInfoHUDWidget->ActionBar_UI->ActionBarSlot_UI->StartCooldown();
 	ReplicateComponent->Server_Skill1Clicked(SlotClass);
 }
@@ -479,7 +467,7 @@ void ACharacter_Master::Skill2Clicked()
 	auto SlotClass = PlayerInfoHUDWidget->ActionBar_UI->ActionBarSlot_UI_1->AbilityClass;
 	if (SlotClass == nullptr)
 		return;
-	CharacterStat->Server_SetMP(CharacterStat->CurrentMP - SlotClass.GetDefaultObject()->AbilityDetails.Cost);
+	CharacterStatRef->Server_SetMP(CharacterStatRef->CurrentMP - SlotClass.GetDefaultObject()->AbilityDetails.Cost);
 	PlayerInfoHUDWidget->ActionBar_UI->ActionBarSlot_UI_1->StartCooldown();
 	ReplicateComponent->Server_Skill2Clicked(SlotClass);
 }
@@ -496,7 +484,7 @@ void ACharacter_Master::Skill3Clicked()
 	auto SlotClass = PlayerInfoHUDWidget->ActionBar_UI->ActionBarSlot_UI_2->AbilityClass;
 	if (SlotClass == nullptr)
 		return;
-	CharacterStat->Server_SetMP(CharacterStat->CurrentMP - SlotClass.GetDefaultObject()->AbilityDetails.Cost);
+	CharacterStatRef->Server_SetMP(CharacterStatRef->CurrentMP - SlotClass.GetDefaultObject()->AbilityDetails.Cost);
 	PlayerInfoHUDWidget->ActionBar_UI->ActionBarSlot_UI_2->StartCooldown();
 	ReplicateComponent->Server_Skill3Clicked(SlotClass);
 }
@@ -513,7 +501,7 @@ void ACharacter_Master::Skill4Clicked()
 	auto SlotClass = PlayerInfoHUDWidget->ActionBar_UI->ActionBarSlot_UI_3->AbilityClass;
 	if (SlotClass == nullptr)
 		return;
-	CharacterStat->Server_SetMP(CharacterStat->CurrentMP - SlotClass.GetDefaultObject()->AbilityDetails.Cost);
+	CharacterStatRef->Server_SetMP(CharacterStatRef->CurrentMP - SlotClass.GetDefaultObject()->AbilityDetails.Cost);
 
 	PlayerInfoHUDWidget->ActionBar_UI->ActionBarSlot_UI_3->StartCooldown();
 	ReplicateComponent->Server_Skill4Clicked(SlotClass);
@@ -531,7 +519,7 @@ void ACharacter_Master::Skill5Clicked()
 	auto SlotClass = PlayerInfoHUDWidget->ActionBar_UI->ActionBarSlot_UI_4->AbilityClass;
 	if (SlotClass == nullptr)
 		return;
-	CharacterStat->Server_SetMP(CharacterStat->CurrentMP - SlotClass.GetDefaultObject()->AbilityDetails.Cost);
+	CharacterStatRef->Server_SetMP(CharacterStatRef->CurrentMP - SlotClass.GetDefaultObject()->AbilityDetails.Cost);
 	PlayerInfoHUDWidget->ActionBar_UI->ActionBarSlot_UI_4->StartCooldown();
 	ReplicateComponent->Server_Skill5Clicked(SlotClass);
 }

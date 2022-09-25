@@ -23,6 +23,7 @@ AMyPlayerController::AMyPlayerController()
 	{
 		PlayerInfoHUDWidgetClass = UI_HUD_C.Class;
 	}
+
 }
 
 void AMyPlayerController::PostInitializeComponents()
@@ -96,7 +97,17 @@ void AMyPlayerController::SetInputModeGame()
 void AMyPlayerController::SetWidget(class UMyCharacterStatComponent* NewCharacterStat)
 {
 
-	PlayerInfoHUDWidget = Cast<UPuzzlePlatformsGameInstance>(GetGameInstance())->PlayerInfoWidget;
+	if (PlayerInfoHUDWidget==nullptr)
+	{
+
+		PlayerInfoHUDWidget = Cast< UPlayerInfoWidget>(CreateWidget<UUserWidget>(this, PlayerInfoHUDWidgetClass));
+		if (PlayerInfoHUDWidget == nullptr)
+		{
+			UE_LOG(LogTemp, Warning, TEXT("In GameInstance Init nullptr"));
+		}
+	}
+	//PlayerInfoHUDWidget = Cast<UPuzzlePlatformsGameInstance>(GetGameInstance())->PlayerInfoWidget;
+	//PlayerInfoHUDWidget->AddToViewport();
 	if (PlayerInfoHUDWidget != nullptr&&PlayerInfoHUDWidget->IsInViewport() ==false)
 	{
 		PlayerInfoHUDWidget->AddToViewport();

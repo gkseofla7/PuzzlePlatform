@@ -23,6 +23,7 @@ public:
 	void ToggleSpellBook();
 	void BindCharacterStat(class UMyCharacterStatComponent* NewCharacterStat);
 	void BindCharacterName(FText NewName);
+	void SetLevel();
 	void ToggleMap();
 
 private:
@@ -35,7 +36,12 @@ public:
 	UPROPERTY(meta = (BindWidget))
 		class UProgressBar* MpBar;
 	UPROPERTY(meta = (BindWidget))
+		class UProgressBar* ExpBar;
+	
+	UPROPERTY(meta = (BindWidget))
 		class UTextBlock* PlayerName;
+	UPROPERTY(meta = (BindWidget))
+		class UTextBlock* T_Level;
 
 	UPROPERTY(meta = (BindWidget))
 		class UTextBlock* HpNum;

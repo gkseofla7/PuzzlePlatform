@@ -69,6 +69,7 @@ public:
 	UFUNCTION(NetMulticast, Reliable, WithValidation)
 	void  NetMulticast_BindCharacterStat();
 
+	void BindCharacterStatToWidget();
 
 protected:
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
@@ -92,7 +93,7 @@ public:
 public:
 
 	UPROPERTY(EditAnywhere,BlueprintReadWrite, Category = Stat)
-		class UMyCharacterStatComponent* CharacterStat;
+		class UMyCharacterStatComponent* CharacterStatRef;
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Replicator)
 		UMotionInterfaceComponent* ReplicateComponent;
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)

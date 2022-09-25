@@ -41,6 +41,7 @@ public:
 		class UPlayerInfoWidget* PlayerInfoHUDWidget;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = UI)
 		TSubclassOf<class UPlayerInfoWidget> PlayerInfoHUDWidgetClass;
+
 	bool HasWidget = false;
 
 	//UPROPERTY()

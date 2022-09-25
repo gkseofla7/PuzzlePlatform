@@ -63,7 +63,10 @@ void UPlayerInfoWidget::BindCharacterStat(class UMyCharacterStatComponent* NewCh
 		}
 		});
 
+	NewCharacterStat->OnLevelChanged.AddUObject(this, &UPlayerInfoWidget::SetLevel);
+
 	ActionBar_UI->BindCharacterStat(NewCharacterStat);
+	SetLevel();
 
 
 }
@@ -71,6 +74,13 @@ void UPlayerInfoWidget::BindCharacterStat(class UMyCharacterStatComponent* NewCh
 void UPlayerInfoWidget::BindCharacterName(FText NewName)
 {
 	PlayerName->SetText(NewName);
+}
+
+void UPlayerInfoWidget::SetLevel()
+{
+	int NewLevel = CurrentCharacterStat->Level;
+	FString S_Level = FString::Printf(TEXT("%d"), NewLevel);
+	T_Level->SetText(FText::FromString(S_Level));
 }
 
 void UPlayerInfoWidget::ToggleMap()

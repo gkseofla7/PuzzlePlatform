@@ -4,14 +4,37 @@
 #include "MyPlayerState.h"
 #include "Character_Master.h"
 #include "PlayersComponent/MyCharacterStatComponent.h"
+#include "DataTable/MyPlayerData.h"
+#include "MyPlayerController.h"
 
 AMyPlayerState::AMyPlayerState()
 {
-//	CharacterLevel = 1;
 	GameScore = 0;
 	SpellsUpgrade.SetNum(10);
+	CharacterStat = CreateDefaultSubobject<UMyCharacterStatComponent>(TEXT("CHARACTERSTAT"));
 }
 
+void AMyPlayerState::BeginPlay()//어차피 각각 자기꺼 시킴
+{
+	Super::BeginPlay();
+	//여기서 그냥 초기화 시키면 됨
+	if (HasAuthority())
+	{
+		UE_LOG(LogTemp, Warning, TEXT("Server PlayerState Beginplay"));
+	}
+	else
+	{
+		UE_LOG(LogTemp, Warning, TEXT("Client PlayerState Beginplay"));
+	}
+	PlayerLevel = 1;
+	CharacterStat->SetLevel(PlayerLevel);
+	auto MyPawn = GetPawn();
+	if (MyPawn == nullptr) return;
+	auto MyPlayer = Cast<ACharacter_Master>(MyPawn);
+	if (MyPlayer == nullptr) return;
+
+
+}
 
 int32 AMyPlayerState::GetGameScore() const
 {
@@ -70,15 +93,7 @@ bool AMyPlayerState::Server_InitializeCharacterStat_Validate()
 
 void AMyPlayerState::NetMulticast_InitializeCharacterStat_Implementation()
 {
-	auto MyPawn = GetPawn();
-	if (MyPawn != nullptr)
-	{
-		auto MyCharacter = Cast<ACharacter_Master>(MyPawn);
-		if (MyCharacter != nullptr)
-		{
-			MyCharacter->CharacterStat->SetLevel(PlayerLevel);
-		}
-	}
+	CharacterStat->SetLevel(PlayerLevel);
 }
 
 bool AMyPlayerState::NetMulticast_InitializeCharacterStat_Validate ()
@@ -121,6 +136,36 @@ void AMyPlayerState::NetMulticast_SetSkillPoints_Implementation(int NewSkillPoin
 }
 
 bool AMyPlayerState::NetMulticast_SetSkillPoints_Validate(int NewSkillPoint)
+{
+	return true;
+}
+
+
+void AMyPlayerState::Server_SetExp_Implementation(int NewExp)
+{
+	NetMulticast_SetExp(NewExp);
+}
+
+bool AMyPlayerState::Server_SetExp_Validate(int NewExp)
+{
+	return true;
+}
+
+void AMyPlayerState::NetMulticast_SetExp_Implementation(int NewExp)
+{
+	//음,, 더좋은 방법 없으려나;;
+	ABCHECK(CharacterStat != nullptr);
+	ABCHECK(CharacterStat->CurrentStatData != nullptr);
+	if (NewExp >= CharacterStat->CurrentStatData->NextExp)
+	{
+		NewExp = NewExp - CharacterStat->CurrentStatData->NextExp;
+		PlayerLevel++;
+		CharacterStat->SetLevel(PlayerLevel);
+	}
+	Exp = NewExp;
+}
+
+bool AMyPlayerState::NetMulticast_SetExp_Validate(int NewExp)
 {
 	return true;
 }

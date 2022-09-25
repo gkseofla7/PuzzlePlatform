@@ -2,7 +2,7 @@
 
 #pragma once
 
-#include "CoreMinimal.h"
+#include "PuzzlePlatforms.h"
 #include "GameFramework/PlayerState.h"
 #include "MyPlayerState.generated.h"
 
@@ -18,7 +18,7 @@ public:
 	AMyPlayerState();
 
 	int32 GetGameScore() const;
-
+	void BeginPlay() override;
 	void InitPlayerData();
 	UFUNCTION(Server, Reliable, WithValidation)
 		void Server_SetPlayerName(const FText& NewPlayerName);
@@ -38,15 +38,23 @@ public:
 		void Server_SetSkillPoints(int NewSkillPoint);
 	UFUNCTION(NetMulticast, Reliable, WithValidation)
 		void NetMulticast_SetSkillPoints(int NewSkillPoint);
+	UFUNCTION(Server, Reliable, WithValidation)
+		void Server_SetExp(int NewExp);
+	UFUNCTION(NetMulticast, Reliable, WithValidation)
+		void NetMulticast_SetExp(int NewExp);
 
 public:
+	class UMyCharacterStatComponent* CharacterStat;
 	UPROPERTY(Transient)
 		int32 GameScore;
 	UPROPERTY()
-		int32 PlayerLevel = 1;
+		int32 PlayerLevel = 0;
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
 		TArray<int> SpellsUpgrade;
 	int SkillPoints = 3;
+	int Exp = 0;
+
+	//class UMyCharacterStatComponent* CharacterStat;
 	
 	//FText PlayerName;
 

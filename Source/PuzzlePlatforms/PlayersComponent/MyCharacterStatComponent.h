@@ -27,7 +27,7 @@ public:
 	void SetMP(float NewMP);
 	void SetLevel(float NewLevel);
 	//void SetName(FText NewName);
-	void LevelUp(int32 NewLevel);
+
 	void IncreaseHP(float NewHP) {
 		if (CurrentStatData == nullptr)
 			return;
