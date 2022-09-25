@@ -113,7 +113,7 @@ void AAbility_Projectile_DragonBlast::OnOverlapBegin(class UPrimitiveComponent* 
 				UGameplayStatics::ApplyDamage(OtherActor, DamageAmount, PlayerRef->GetController(), this, UDamageType::StaticClass());
 				//고블린도 진행해야됨
 				if(PuzzleCharacter!=nullptr)
-					PuzzleCharacter->DaerimMotionReplicator->AbilitySpawn(Ability_Buff_Fortitude_Class);
+					PuzzleCharacter->ReplicateComponent->AbilitySpawn(Ability_Buff_Fortitude_Class);
 				SweepArray.Add(OtherActor);
 			}
 			

@@ -6,10 +6,12 @@
 #include "../../Character_Master.h"
 #include "../ActorAbilities.h"
 #include "SpellbookSlot_UI.h"
+#include "../../MyPlayerState.h"
 
 #include "Kismet/GameplayStatics.h"
 #include "Components/ScrollBox.h"
 #include "Components/WrapBox.h"
+#include "Components/TextBlock.h"
 
 
 USpellbook_UI::USpellbook_UI(const FObjectInitializer& ObjectInitializer)
@@ -26,15 +28,8 @@ void 	USpellbook_UI::NativeConstruct()
 	if (PlayerRef == nullptr)
 		return;
 	auto SpellsRef = PlayerRef->ActorAbilitiesComponent->PlayerSpells;
-	//UE_LOG(LogTemp, Warning, TEXT("Spellbook Num : %d "), SpellsRef.Num());
-	//for (auto Spell : SpellsRef)
-	//{
-	//	USpellbookSlot_UI* Slot_UI = CreateWidget<USpellbookSlot_UI>(GetWorld(), SpellbookSlotClass);
-	//	Slot_UI->CustomInitialize(Spell);
-	//	Container->AddChildToWrapBox(Slot_UI);
-
-	//}
-
+	auto MyPlayerState = Cast<AMyPlayerState>(PlayerRef->GetPlayerState());
+	SetSkillPoints(MyPlayerState->SkillPoints);
 
 	for (int i = 0; i < SpellsRef.Num(); i++)
 	{
@@ -42,7 +37,14 @@ void 	USpellbook_UI::NativeConstruct()
 		USpellbookSlot_UI* Slot_UI = CreateWidget<USpellbookSlot_UI>(GetWorld(), SpellbookSlotClass);
 		Slot_UI->CustomInitialize(SpellsRef[i]);
 		Slot_UI->SlotNum = i;
+		Slot_UI->SpellbookRef = this;
 		Container->AddChildToWrapBox(Slot_UI);
 
 	}
+}
+
+void USpellbook_UI::SetSkillPoints(int NewSkillPoint)
+{
+	FString S_SkillPoint = FString::Printf(TEXT("%d"), NewSkillPoint);
+	T_SkillPoints->SetText(FText::FromString(S_SkillPoint));
 }

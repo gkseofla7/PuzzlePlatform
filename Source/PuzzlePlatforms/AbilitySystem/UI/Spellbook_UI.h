@@ -16,12 +16,14 @@ class PUZZLEPLATFORMS_API USpellbook_UI : public UUserWidget
 public:
 	USpellbook_UI(const FObjectInitializer& ObjectInitializer);
 	void 	NativeConstruct() override;
-
+	void SetSkillPoints(int NewSkillPoint);
 public:
 	UPROPERTY(meta = (BindWidget), BlueprintReadWrite)
 	class UScrollBox* SpellbookContainer;
 	TSubclassOf<class USpellbookSlot_UI>SpellbookSlotClass;
 	UPROPERTY(meta = (BindWidget), BlueprintReadWrite)
 	class UWrapBox* Container;
+	UPROPERTY(meta = (BindWidget), BlueprintReadWrite)
+		class UTextBlock* T_SkillPoints;
 	
 };

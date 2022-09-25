@@ -34,6 +34,10 @@ public:
 		void Server_SpellsUpgrade(int index);
 	UFUNCTION(NetMulticast, Reliable, WithValidation)
 		void NetMulticast_SpellsUpgrade(int index);
+	UFUNCTION(Server, Reliable, WithValidation)
+		void Server_SetSkillPoints(int NewSkillPoint);
+	UFUNCTION(NetMulticast, Reliable, WithValidation)
+		void NetMulticast_SetSkillPoints(int NewSkillPoint);
 
 public:
 	UPROPERTY(Transient)
@@ -42,6 +46,8 @@ public:
 		int32 PlayerLevel = 1;
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
 		TArray<int> SpellsUpgrade;
+	int SkillPoints = 3;
+	
 	//FText PlayerName;
 
 };

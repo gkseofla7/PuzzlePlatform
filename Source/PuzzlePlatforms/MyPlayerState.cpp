@@ -104,3 +104,23 @@ bool AMyPlayerState::NetMulticast_SpellsUpgrade_Validate(int index)
 {
 	return true;
 }
+
+void AMyPlayerState::Server_SetSkillPoints_Implementation(int NewSkillPoint)
+{
+	NetMulticast_SetSkillPoints(NewSkillPoint);
+}
+
+bool AMyPlayerState::Server_SetSkillPoints_Validate(int NewSkillPoint)
+{
+	return true;
+}
+
+void AMyPlayerState::NetMulticast_SetSkillPoints_Implementation(int NewSkillPoint)
+{
+	SkillPoints = NewSkillPoint;
+}
+
+bool AMyPlayerState::NetMulticast_SetSkillPoints_Validate(int NewSkillPoint)
+{
+	return true;
+}

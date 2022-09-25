@@ -21,15 +21,18 @@ UActionBarSlotWidget::UActionBarSlotWidget(const FObjectInitializer& ObjectIniti
 	:Super(ObjectInitializer)
 {
 
-	//ConstructorHelpers::FClassFinder<AAbility> AbilityBPClass(TEXT("/Game/AbilitySystem/BP_Ability"));
-	//if (!ensure(AbilityBPClass.Class != nullptr)) return;
-	//AbilityClass = AbilityBPClass.Class;
 }
 void UActionBarSlotWidget::NativePreConstruct()
 {
 
 	Super::NativePreConstruct();
+	IconInitialize();
 
+	UpdateAppearance();
+}
+
+void UActionBarSlotWidget::IconInitialize()
+{
 	if (AbilityClass != nullptr)
 	{
 		IconImage->SetVisibility(ESlateVisibility::Visible);
@@ -40,22 +43,10 @@ void UActionBarSlotWidget::NativePreConstruct()
 	else
 	{
 		IconImage->SetVisibility(ESlateVisibility::Hidden);
-		
+
 	}
-	UpdateAppearance();
 }
-bool UActionBarSlotWidget::Initialize()
-{
-	bool Success = Super::Initialize();
-	if (!Success) return false;
 
-	if (!ensure(CastButton != nullptr)) return false;
-	CastButton->OnClicked.AddDynamic(this, &UActionBarSlotWidget::CastButtonClicked);
-
-
-
-	return true;
-}
 
 void UActionBarSlotWidget::NativeTick(const FGeometry& MyGeometry, float InDeltaTime)
 {
@@ -75,35 +66,6 @@ void UActionBarSlotWidget::NativeTick(const FGeometry& MyGeometry, float InDelta
 	}
 }
 
-void UActionBarSlotWidget::CastButtonClicked()
-{
-	FTransform PlayerTransform = UGameplayStatics::GetPlayerCharacter(GetWorld(), 0)->GetActorTransform();
-	FActorSpawnParameters Params;
-	auto ability = GetWorld()->SpawnActor<AAbility>(AbilityClass, PlayerTransform);
-
-	ability->PlayerRef = Cast<ACharacter_Master>(UGameplayStatics::GetPlayerCharacter(GetWorld(), 0));
-	//UWorld::SpawnActor(AbilityClass, PlayerTransform);
-	//GetWorld()->SpawnActor();
-}
-
-//void UActionBarSlotWidget::AbilitySpawn(ACharacter_Master* NewPlayer)
-//{
-//	if (!NewPlayer->HasAuthority())
-//		return;
-//	FTransform PlayerTransform = NewPlayer->GetActorTransform();
-//	FActorSpawnParameters Params;
-//	FActorSpawnParameters SpawnInfo;
-//	Owner = NewPlayer;
-//	SpawnInfo.Owner = NewPlayer;
-//	SpawnInfo.Instigator = NewPlayer;
-//	//auto ability = GetWorld()->SpawnActorDeferred<AAbility>(AbilityClass, PlayerTransform,NewPlayer,NewPlayer);
-//	auto ability = GetWorld()->SpawnActor<AAbility>(AbilityClass, PlayerTransform, SpawnInfo);
-//
-//		//ability->PlayerRef = NewPlayer;//컨트롤러가 있는 플레이어
-//	//UWorld::SpawnActor(AbilityClass, PlayerTransform);
-//	//GetWorld()->SpawnActor();
-//}
-//애초에 ability에 하는데..ㅋㅋ
 void UActionBarSlotWidget::StartCooldown()
 {
 	IsAvailable = false;
@@ -141,13 +103,39 @@ bool UActionBarSlotWidget::NativeOnDrop(const FGeometry& InGeometry, const FDrag
 	auto DragDrop = Cast<UDragDrop>(InOperation);
 	if (DragDrop == nullptr)
 		return false;
+	if (IsAvailable == false)//쿨타임중일때는 변경 못하게
+		return false;
+	if (AbilityClass == DragDrop->AbilityClass)//같은 클래스면 변경X
+		return false;
 	AbilityClass = DragDrop->AbilityClass;
+	for (auto ActionBarSlot : ParentsWidget->ActionBarSlotArray)
+	{
+		if (ActionBarSlot->AbilityClass == nullptr)
+			continue;
+		if (ActionBarSlot == this)//나 자신이면 패스
+			continue;
+		if (ActionBarSlot->AbilityClass == AbilityClass)//내꺼랑 같으면
+		{
+			if (ActionBarSlot->IsAvailable == false)
+			{
+				AbilityClass = nullptr;
+				return false;
+			}
+			ActionBarSlot->AbilityClass = nullptr;
+			ActionBarSlot->IconInitialize();
+		}
+	}
+
+
+
 	IconImage->SetVisibility(ESlateVisibility::Visible);
 	AAbility* ability = Cast<AAbility>(AbilityClass->GetDefaultObject());
 	IconImage->SetBrushFromTexture(ability->AbilityDetails.Icon);
 	IsAvailable = true;
 	if(ParentsWidget->CurrentCharacterStat!=nullptr)
 		ParentsWidget->BindCharacterStat(ParentsWidget->CurrentCharacterStat);
+
+	//ParentsWidget; 여기서는 이미 스킬이 들어가 있으면 거기꺼 제거
 
 	return true;
 }

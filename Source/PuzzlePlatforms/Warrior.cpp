@@ -16,7 +16,7 @@
 AWarrior::AWarrior()
 {
 	bReplicates = true;
-	DaerimMotionReplicator = CreateDefaultSubobject<UPlayersMotionReplicator>(TEXT("MOTIOREPLICATOR"));
+	ReplicateComponent = CreateDefaultSubobject<UPlayersMotionReplicator>(TEXT("MOTIOREPLICATOR"));
 
 	static ConstructorHelpers::FClassFinder<ASword_Master> FinderSword(TEXT("/Game/Weapons/BP_Sword_Master"));
 	if (FinderSword.Succeeded())
@@ -328,7 +328,7 @@ void AWarrior::PlayHangToCrouchMontage()
 void AWarrior::ClimbUp()
 {
 	if (IsClimbing == true)
-		Cast<UPlayersMotionReplicator>(DaerimMotionReplicator)->Server_SendClimbUp();
+		Cast<UPlayersMotionReplicator>(ReplicateComponent)->Server_SendClimbUp();
 	//if (IsClimbing == true)
 	//{
 	//	PlayHangToCrouchMontage();
@@ -361,7 +361,7 @@ void AWarrior::DropDown()
 
 void AWarrior::Dash()
 {
-	Cast<UPlayersMotionReplicator>(DaerimMotionReplicator)->Server_SendDash();
+	Cast<UPlayersMotionReplicator>(ReplicateComponent)->Server_SendDash();
 }
 
 void AWarrior::EndAnimation(UAnimMontage* Montage, bool bInterrupted)

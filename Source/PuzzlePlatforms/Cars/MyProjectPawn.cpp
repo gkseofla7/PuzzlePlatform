@@ -308,8 +308,8 @@ void AMyProjectPawn::Server_SendGetOutTheCar_Implementation()
 	{
 
 		//+ GetActorUpVector()*50
-		Cast<UMotionInterfaceComponent>(Cast<ACharacter_Master>(Rider)->DaerimMotionReplicator)->DisableActor(false);
-		//Cast<UPlayersMotionReplicator>(Cast<ACharacter_Master>(Rider)->DaerimMotionReplicator.GetObjectRef())->DisableActor(false);
+		Cast<UMotionInterfaceComponent>(Cast<ACharacter_Master>(Rider)->ReplicateComponent)->DisableActor(false);
+		//Cast<UPlayersMotionReplicator>(Cast<ACharacter_Master>(Rider)->ReplicateComponent.GetObjectRef())->DisableActor(false);
 		FVector Place = GetTransform().GetLocation() + 200 * (GetActorForwardVector().RotateAngleAxis(270.0, GetActorUpVector()));
 		Rider->SetActorLocation(Place);
 

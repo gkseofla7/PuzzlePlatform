@@ -94,7 +94,7 @@ public:
 	UPROPERTY(EditAnywhere,BlueprintReadWrite, Category = Stat)
 		class UMyCharacterStatComponent* CharacterStat;
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Replicator)
-		UMotionInterfaceComponent* DaerimMotionReplicator;
+		UMotionInterfaceComponent* ReplicateComponent;
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 		class UActorAbilities* ActorAbilitiesComponent;//받은 능력?
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Replicator)

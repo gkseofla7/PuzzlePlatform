@@ -14,14 +14,12 @@ class PUZZLEPLATFORMS_API UActionBarSlotWidget : public UUserWidget
 {
 	GENERATED_BODY()
 public:
-	UFUNCTION()
-	void CastButtonClicked();
 	//void AbilitySpawn(class ACharacter_Master* NewPlayer);
 	UActionBarSlotWidget(const FObjectInitializer& ObjectInitializer);
 	//virtual void PreConstruct(bool IsDesignTime) override;
 	virtual void NativePreConstruct();
 	void NativeTick(const FGeometry& MyGeometry,	float InDeltaTime	) override;
-	bool Initialize();
+	void IconInitialize();
 	void StartCooldown();
 	void EndCooldown();
 	void UpdateAppearance();
@@ -33,6 +31,7 @@ public:
 	class UButton* CastButton;
 	UPROPERTY(meta = (BindWidget), BlueprintReadWrite)
 	class UProgressBar* CooldownBar;
+
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	TSubclassOf<class AAbility>AbilityClass;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)

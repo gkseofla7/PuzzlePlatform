@@ -50,7 +50,7 @@ ASoldier::ASoldier()
 #pragma endregion AssetSettings
 	//ComponentSetting
 #pragma region ComponentSetting
-	DaerimMotionReplicator = CreateDefaultSubobject<USoldierMotionReplicator>(TEXT("SoldierMotionReplicator"));
+	ReplicateComponent = CreateDefaultSubobject<USoldierMotionReplicator>(TEXT("SoldierMotionReplicator"));
 	RocketHolderComponent = CreateDefaultSubobject< UStaticMeshComponent>(TEXT("RocketHolderComponent"));
 	RocketHolderComponent->SetupAttachment(GetMesh(), "clavicle_rSocket");
 	MissileComponent = CreateDefaultSubobject< UStaticMeshComponent>(TEXT("MissileComponent"));
@@ -408,7 +408,7 @@ void ASoldier::WeaponPrimaryReleased()
 
 	if (EquippedItem == nullptr)
 		return;
-	Cast<USoldierMotionReplicator>(DaerimMotionReplicator)->Server_SendAttackStop();
+	Cast<USoldierMotionReplicator>(ReplicateComponent)->Server_SendAttackStop();
 
 }
 
@@ -433,7 +433,7 @@ void ASoldier::WeaponReload()
 		return;
 	}
 
-	bool IsFiring__ = Cast<USoldierMotionReplicator>(DaerimMotionReplicator)->IsFiring;
+	bool IsFiring__ = Cast<USoldierMotionReplicator>(ReplicateComponent)->IsFiring;
 
 	if (EquippedItem->CanReload == true && IsFiring__ == false && IsReloading == false && IsItemEquipped == true)
 	{
@@ -549,11 +549,11 @@ void ASoldier::InteractPressed()
 {
 	if (IsItemEquipped == false)
 	{
-		Cast<USoldierMotionReplicator>(DaerimMotionReplicator)->Server_SendGetItem(PickupItem);
+		Cast<USoldierMotionReplicator>(ReplicateComponent)->Server_SendGetItem(PickupItem);
 		//SetFPSHudWidget();
 	}
 	//else
-	//	Cast<USoldierMotionReplicator>(DaerimMotionReplicator)->Server_SendGetItem(PickupItem);
+	//	Cast<USoldierMotionReplicator>(ReplicateComponent)->Server_SendGetItem(PickupItem);
 
 }
 

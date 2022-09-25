@@ -32,6 +32,7 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	TSubclassOf<class AAbility> AbilityClass;
+	TWeakObjectPtr<class USpellbook_UI> SpellbookRef;
 
 	int32 SlotNum;
 };

@@ -330,7 +330,7 @@ void ACharacter_Master::SetTargetPlayerWithLineTrace()
 		if (tmp != nullptr)
 		{
 			TargetPlayer = tmp;
-			DaerimMotionReplicator->Server_SetTargetPlayer(tmp);
+			ReplicateComponent->Server_SetTargetPlayer(tmp);
 		}
 			if (TargetPlayer != nullptr)
 		{
@@ -397,8 +397,8 @@ void ACharacter_Master::Attack()
 
 	if (IsAttacking == true || UsingSkill == true)
 		return;
-	if(DaerimMotionReplicator != nullptr)
-		DaerimMotionReplicator->Server_SendAttack();
+	if(ReplicateComponent != nullptr)
+		ReplicateComponent->Server_SendAttack();
 
 }
 
@@ -464,7 +464,7 @@ void ACharacter_Master::Skill1Clicked()
 		return;
 	CharacterStat->Server_SetMP(CharacterStat->CurrentMP-SlotClass.GetDefaultObject()->AbilityDetails.Cost);
 	PlayerInfoHUDWidget->ActionBar_UI->ActionBarSlot_UI->StartCooldown();
-	DaerimMotionReplicator->Server_Skill1Clicked(SlotClass);
+	ReplicateComponent->Server_Skill1Clicked(SlotClass);
 }
 void ACharacter_Master::Skill2Clicked()
 {
@@ -481,7 +481,7 @@ void ACharacter_Master::Skill2Clicked()
 		return;
 	CharacterStat->Server_SetMP(CharacterStat->CurrentMP - SlotClass.GetDefaultObject()->AbilityDetails.Cost);
 	PlayerInfoHUDWidget->ActionBar_UI->ActionBarSlot_UI_1->StartCooldown();
-	DaerimMotionReplicator->Server_Skill2Clicked(SlotClass);
+	ReplicateComponent->Server_Skill2Clicked(SlotClass);
 }
 void ACharacter_Master::Skill3Clicked()
 {
@@ -498,7 +498,7 @@ void ACharacter_Master::Skill3Clicked()
 		return;
 	CharacterStat->Server_SetMP(CharacterStat->CurrentMP - SlotClass.GetDefaultObject()->AbilityDetails.Cost);
 	PlayerInfoHUDWidget->ActionBar_UI->ActionBarSlot_UI_2->StartCooldown();
-	DaerimMotionReplicator->Server_Skill3Clicked(SlotClass);
+	ReplicateComponent->Server_Skill3Clicked(SlotClass);
 }
 void ACharacter_Master::Skill4Clicked()
 {
@@ -516,7 +516,7 @@ void ACharacter_Master::Skill4Clicked()
 	CharacterStat->Server_SetMP(CharacterStat->CurrentMP - SlotClass.GetDefaultObject()->AbilityDetails.Cost);
 
 	PlayerInfoHUDWidget->ActionBar_UI->ActionBarSlot_UI_3->StartCooldown();
-	DaerimMotionReplicator->Server_Skill4Clicked(SlotClass);
+	ReplicateComponent->Server_Skill4Clicked(SlotClass);
 }
 void ACharacter_Master::Skill5Clicked()
 {
@@ -533,7 +533,7 @@ void ACharacter_Master::Skill5Clicked()
 		return;
 	CharacterStat->Server_SetMP(CharacterStat->CurrentMP - SlotClass.GetDefaultObject()->AbilityDetails.Cost);
 	PlayerInfoHUDWidget->ActionBar_UI->ActionBarSlot_UI_4->StartCooldown();
-	DaerimMotionReplicator->Server_Skill5Clicked(SlotClass);
+	ReplicateComponent->Server_Skill5Clicked(SlotClass);
 }
 
 void ACharacter_Master::SkillReleased()
@@ -543,13 +543,13 @@ void ACharacter_Master::SkillReleased()
 
 void ACharacter_Master::SetIsAttacking(bool NewIsAttacking)
 {
-	DaerimMotionReplicator->Server_SetIsAttacking(NewIsAttacking);
+	ReplicateComponent->Server_SetIsAttacking(NewIsAttacking);
 }
 
 void ACharacter_Master::SetUsingSkill(bool NewUsingSkill)
 {
 
-	DaerimMotionReplicator->Server_SetUsingSkill(NewUsingSkill);
+	ReplicateComponent->Server_SetUsingSkill(NewUsingSkill);
 }
 
 
@@ -596,7 +596,7 @@ void ACharacter_Master::OpenMap()
 
 void ACharacter_Master::GetInTheCar()
 {
-	ABCHECK(DaerimMotionReplicator != nullptr)
+	ABCHECK(ReplicateComponent != nullptr)
 		FHitResult HitResult;
 	FCollisionQueryParams Params(NAME_None, false, this);
 
@@ -632,7 +632,7 @@ void ACharacter_Master::GetInTheCar()
 
 		if (Car != nullptr)
 		{
-			DaerimMotionReplicator->Server_SendRide(Car, this);
+			ReplicateComponent->Server_SendRide(Car, this);
 		}
 	}
 }
