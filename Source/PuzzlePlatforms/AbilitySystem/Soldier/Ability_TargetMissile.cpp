@@ -95,7 +95,7 @@ void AAbility_TargetMissile::OnOverlapBegin(class UPrimitiveComponent* Overlappe
 	{
 
 		NetMulticast_Spark(GetActorLocation());
-		//auto Player = Cast<APuzzlePlatformsCharacter>(OtherActor);
+		//auto Player = Cast<ACharacter_Master>(OtherActor);
 		//if (Player != nullptr)
 		//{
 		//	UGameplayStatics::ApplyDamage(Player, DamageAmount, PlayerRef->GetController(), PlayerRef, UDamageType::StaticClass());

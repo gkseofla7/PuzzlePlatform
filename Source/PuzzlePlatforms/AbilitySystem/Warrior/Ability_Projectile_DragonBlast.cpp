@@ -105,7 +105,7 @@ void AAbility_Projectile_DragonBlast::OnOverlapBegin(class UPrimitiveComponent* 
 		{
 
 			auto Player = Cast<ACharacter>(OtherActor);
-			auto PuzzleCharacter = Cast<APuzzlePlatformsCharacter>(OtherActor);
+			auto PuzzleCharacter = Cast<ACharacter_Master>(OtherActor);
 			if (PuzzleCharacter != nullptr && PuzzleCharacter->TeamNum == PlayerRef->TeamNum)
 				return;
 			if ((Player != nullptr && Player != PlayerRef) )

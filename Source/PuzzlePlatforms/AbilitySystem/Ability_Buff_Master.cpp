@@ -34,20 +34,11 @@ void AAbility_Buff_Master::Tick(float DeltaTime)
 void AAbility_Buff_Master::CastAbility_Implementation()
 {
 	Super::CastAbility_Implementation();
-	auto tmp = Cast<AAbility_Debuff>(this);
+	auto tmp = Cast<AAbility_Debuff>(this);//debuff를 없앤다면
 	if (tmp != nullptr)
 	{
 		PlayerRef = PlayerRef->TargetPlayer;
 	}
-	//if (HasAuthority())
-	//{
-	//	
-	//	SetLifeSpan(BuffLifeSpan);
-	//}
-	//else
-	//{
-	//}
-
 	if (PlayerRef->IsLocallyControlled() == true)//어차피 나 자신
 	{
 		HudUI->BuffPanel_UI->AddBufftoUI(this);

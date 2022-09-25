@@ -4,7 +4,7 @@
 #include "MyCharacterStatComponent.h"
 #include "../PuzzlePlatformsGameInstance.h"
 #include "../DataTable/MyPlayerData.h"
-#include "../PuzzlePlatformsCharacter.h"
+#include "../Character_Master.h"
 #include "Net/UnrealNetwork.h"
 
 // Sets default values for this component's properties
@@ -38,8 +38,8 @@ void UMyCharacterStatComponent::SetHP(float NewHP)
 	if (CurrentHP < KINDA_SMALL_NUMBER)
 	{
 		CurrentHP = 0.0f;
-		Cast<APuzzlePlatformsCharacter>(GetOwner())->bDead = true;
-		Cast<APuzzlePlatformsCharacter>(GetOwner())->Die();
+		Cast<ACharacter_Master>(GetOwner())->bDead = true;
+		Cast<ACharacter_Master>(GetOwner())->Die();
 	}
 
 }

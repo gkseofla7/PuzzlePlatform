@@ -1,7 +1,7 @@
 // Copyright Epic Games, Inc. All Rights Reserved.
 
 #include "PuzzlePlatformsGameMode.h"
-#include "PuzzlePlatformsCharacter.h"
+#include "Character_Master.h"
 #include "UObject/ConstructorHelpers.h"
 #include "TimerManager.h"
 #include "Blueprint/UserWidget.h"
@@ -64,11 +64,11 @@ void APuzzlePlatformsGameMode::RespawnRequested(APlayerController* PlayerControl
 	ABCHECK(PlayerController != nullptr);
 	if (HasAuthority())
 	{
-		APuzzlePlatformsCharacter* Player = nullptr;
+		ACharacter_Master* Player = nullptr;
 		if(TeamNum==1)
-			Player = GetWorld()->SpawnActor<APuzzlePlatformsCharacter>(BPSoldierClass, SpawnTransform);
+			Player = GetWorld()->SpawnActor<ACharacter_Master>(BPSoldierClass, SpawnTransform);
 		else if(TeamNum ==2)
-			Player = GetWorld()->SpawnActor<APuzzlePlatformsCharacter>(BPWarriorClass, SpawnTransform);
+			Player = GetWorld()->SpawnActor<ACharacter_Master>(BPWarriorClass, SpawnTransform);
 		
 		//Delay ÇØÁÜ 0.2ÃÊ
 		if (Player == nullptr)
@@ -81,7 +81,7 @@ void APuzzlePlatformsGameMode::RespawnRequested(APlayerController* PlayerControl
 
 }
 
-void APuzzlePlatformsGameMode::PossessPlayer(APlayerController* PlayerController, class APuzzlePlatformsCharacter* NewPlayer)
+void APuzzlePlatformsGameMode::PossessPlayer(APlayerController* PlayerController, class ACharacter_Master* NewPlayer)
 {
 	PlayerController->Possess(NewPlayer);
 	auto Controller = Cast< AMyPlayerController>(PlayerController);

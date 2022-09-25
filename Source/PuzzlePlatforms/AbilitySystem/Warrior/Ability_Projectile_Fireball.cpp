@@ -142,7 +142,7 @@ void AAbility_Projectile_Fireball::OnOverlapBegin(class UPrimitiveComponent* Ove
 	{
 		NetMulticast_Spark(OtherActor->GetActorLocation());
 		auto Player = Cast<ACharacter>(OtherActor);
-		auto PuzzleCharacter = Cast<APuzzlePlatformsCharacter>(OtherActor);
+		auto PuzzleCharacter = Cast<ACharacter_Master>(OtherActor);
 		bool Check = false;
 		if (PuzzleCharacter != nullptr)
 		{

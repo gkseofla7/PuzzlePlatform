@@ -4,7 +4,7 @@
 #include "MapWidget.h"
 #include "PointOfInterestWidget.h"
 #include "../PlayersComponent/PointOfInterestComponent.h"
-#include "../PuzzlePlatformsCharacter.h"
+#include "../Character_Master.h"
 
 #include "Components/Overlay.h"
 #include "Components/OverlaySlot.h"
@@ -24,11 +24,11 @@ void UMapWidget::AddsPOI(AActor* Owner)
 	
 	if (MyPawn != nullptr)
 	{
-		auto PuzzleCharacter = Cast < APuzzlePlatformsCharacter>(Owner);
+		auto PuzzleCharacter = Cast < ACharacter_Master>(Owner);
 		if (PuzzleCharacter != nullptr)
 		{
 
-			if (PuzzleCharacter->TeamNum != Cast<APuzzlePlatformsCharacter>(MyPawn)->TeamNum)
+			if (PuzzleCharacter->TeamNum != Cast<ACharacter_Master>(MyPawn)->TeamNum)
 			{//다른team이면 맵에 안그림
 				return;
 			}

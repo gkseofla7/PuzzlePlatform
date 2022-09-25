@@ -4,7 +4,7 @@
 #include "NPCAIController.h"
 #include "NPC_Master.h"
 #include "PatrolPath.h"
-#include "../PuzzlePlatformsCharacter.h"
+#include "../Character_Master.h"
 
 #include "BehaviorTree/BehaviorTree.h"
 #include "BehaviorTree/BlackboardData.h"
@@ -74,7 +74,7 @@ void ANPCAIController::SetHomePosKey(FVector NewPos)
 	GetBlackboardComponent()->SetValueAsVector(ANPCAIController::HomePosKey, NewPos);
 }
 
-void ANPCAIController::SetTargetKey(APuzzlePlatformsCharacter* PlayerTarget)
+void ANPCAIController::SetTargetKey(ACharacter_Master* PlayerTarget)
 {
 	GetBlackboardComponent()->SetValueAsObject(ANPCAIController::TargetKey, PlayerTarget);
 }

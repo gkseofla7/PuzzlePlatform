@@ -3,7 +3,7 @@
 
 #include "BTService_StopMovement.h"
 #include "../NPCAIController.h"
-#include "../../PuzzlePlatformsCharacter.h"
+#include "../../Character_Master.h"
 
 #include"BehaviorTree/BlackboardComponent.h"
 #include "DrawDebugHelpers.h"
@@ -23,7 +23,7 @@ void UBTService_StopMovement::TickNode(UBehaviorTreeComponent& OwnerComp, uint8*
 	//	return;
 	APawn* ControllingPawn = OwnerComp.GetAIOwner()->GetPawn();
 	bool bResult;
-	auto Target = Cast<APuzzlePlatformsCharacter>(OwnerComp.GetBlackboardComponent()->GetValueAsObject(ANPCAIController::TargetKey));
+	auto Target = Cast<ACharacter_Master>(OwnerComp.GetBlackboardComponent()->GetValueAsObject(ANPCAIController::TargetKey));
 	if (Target == nullptr)
 		return;
 	if (ControllingPawn == nullptr)

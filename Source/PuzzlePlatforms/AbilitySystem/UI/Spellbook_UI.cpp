@@ -3,7 +3,7 @@
 
 #include "Spellbook_UI.h"
 
-#include "../../PuzzlePlatformsCharacter.h"
+#include "../../Character_Master.h"
 #include "../ActorAbilities.h"
 #include "SpellbookSlot_UI.h"
 
@@ -22,7 +22,7 @@ USpellbook_UI::USpellbook_UI(const FObjectInitializer& ObjectInitializer)
 
 void 	USpellbook_UI::NativeConstruct()
 {
-	auto PlayerRef = Cast<APuzzlePlatformsCharacter>(UGameplayStatics::GetPlayerCharacter(GetWorld(), 0));
+	auto PlayerRef = Cast<ACharacter_Master>(UGameplayStatics::GetPlayerCharacter(GetWorld(), 0));
 	if (PlayerRef == nullptr)
 		return;
 	auto SpellsRef = PlayerRef->ActorAbilitiesComponent->PlayerSpells;

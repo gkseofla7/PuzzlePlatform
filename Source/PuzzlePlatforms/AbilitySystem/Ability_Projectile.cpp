@@ -3,7 +3,7 @@
 
 #include "Ability_Projectile.h"
 
-#include "../PuzzlePlatformsCharacter.h"
+#include "../Character_Master.h"
 
 #include "GameFramework/ProjectileMovementComponent.h"
 #include "Particles/ParticleSystemComponent.h"

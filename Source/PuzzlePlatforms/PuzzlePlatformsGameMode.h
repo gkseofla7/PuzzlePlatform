@@ -17,14 +17,14 @@ public:
 
 	virtual void PostLogin(APlayerController* NewPlayer) override;
 	void RespawnRequested(APlayerController* PlayerController, FTransform SpawnTransform, int TeamNum);
-	void PossessPlayer(APlayerController* PlayerController, class APuzzlePlatformsCharacter* NewPlayer);
+	void PossessPlayer(APlayerController* PlayerController, class ACharacter_Master* NewPlayer);
 
 
 
 
 public:
-	TSubclassOf<class APuzzlePlatformsCharacter> BPSoldierClass;
-	TSubclassOf<class APuzzlePlatformsCharacter> BPWarriorClass;
+	TSubclassOf<class ACharacter_Master> BPSoldierClass;
+	TSubclassOf<class ACharacter_Master> BPWarriorClass;
 };
 
 

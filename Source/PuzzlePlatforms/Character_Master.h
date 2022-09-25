@@ -7,14 +7,16 @@
 //#include "PlayersComponent/MotionReplicatorInterface.h"
 #include "PlayersComponent/SoldierMotionReplicator.h"
 #include "PlayersComponent/MotionInterfaceComponent.h"
-#include "PuzzlePlatformsCharacter.generated.h"
+
+
+#include "Character_Master.generated.h"
 
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FInterruptCastingDeleagate);
 DECLARE_MULTICAST_DELEGATE(FOnSkillReleased);
 
 UCLASS(config=Game, BlueprintType)
-class APuzzlePlatformsCharacter : public ACharacter
+class ACharacter_Master : public ACharacter
 {
 protected:
 	GENERATED_BODY()
@@ -25,7 +27,7 @@ protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
 	class UCameraComponent* FollowCamera;
 public:
-	APuzzlePlatformsCharacter();
+	ACharacter_Master();
 	/** Base turn rate, in deg/sec. Other scaling may affect final turn rate. */
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category=Camera)
 	float BaseTurnRate;
@@ -104,7 +106,7 @@ public:
 
 
 	class UPlayerInfoWidget* PlayerInfoHUDWidget;
-	APuzzlePlatformsCharacter* TargetPlayer;
+	ACharacter_Master* TargetPlayer;
 	UPROPERTY(BlueprintAssignable, BlueprintCallable)
 	FInterruptCastingDeleagate InterruptCasting;
 	FOnSkillReleased OnSkillReleased;

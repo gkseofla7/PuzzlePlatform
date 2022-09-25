@@ -3,7 +3,7 @@
 
 #include "GoKart.h"
 #include "GameFramework/GameStateBase.h"
-#include "../PuzzlePlatformsCharacter.h"
+#include "../Character_Master.h"
 #include "../PlayersComponent/PlayersMotionReplicator.h"
 #include "../PlayersComponent/MotionInterfaceComponent.h"
 
@@ -124,12 +124,12 @@ void AGoKart::GetOutTheCar()
 
 void AGoKart::Server_SendGetOutTheCar_Implementation()
 {
-	if (Rider != nullptr && Cast<APuzzlePlatformsCharacter>(Rider) != nullptr)
+	if (Rider != nullptr && Cast<ACharacter_Master>(Rider) != nullptr)
 	{
 
 		//+ GetActorUpVector()*50
-		Cast<UMotionInterfaceComponent>(Cast<APuzzlePlatformsCharacter>(Rider)->DaerimMotionReplicator)->DisableActor(false);
-		//Cast<UPlayersMotionReplicator>(Cast<APuzzlePlatformsCharacter>(Rider)->DaerimMotionReplicator.GetObjectRef())->DisableActor(false);
+		Cast<UMotionInterfaceComponent>(Cast<ACharacter_Master>(Rider)->DaerimMotionReplicator)->DisableActor(false);
+		//Cast<UPlayersMotionReplicator>(Cast<ACharacter_Master>(Rider)->DaerimMotionReplicator.GetObjectRef())->DisableActor(false);
 		FVector Place = GetTransform().GetLocation() + 200 * (GetActorForwardVector().RotateAngleAxis(270.0, GetActorUpVector()));
 		Rider->SetActorLocation(Place);
 

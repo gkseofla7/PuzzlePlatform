@@ -2,7 +2,7 @@
 
 
 #include "MyPlayerState.h"
-#include "PuzzlePlatformsCharacter.h"
+#include "Character_Master.h"
 #include "PlayersComponent/MyCharacterStatComponent.h"
 
 AMyPlayerState::AMyPlayerState()
@@ -73,7 +73,7 @@ void AMyPlayerState::NetMulticast_InitializeCharacterStat_Implementation()
 	auto MyPawn = GetPawn();
 	if (MyPawn != nullptr)
 	{
-		auto MyCharacter = Cast<APuzzlePlatformsCharacter>(MyPawn);
+		auto MyCharacter = Cast<ACharacter_Master>(MyPawn);
 		if (MyCharacter != nullptr)
 		{
 			MyCharacter->CharacterStat->SetLevel(PlayerLevel);

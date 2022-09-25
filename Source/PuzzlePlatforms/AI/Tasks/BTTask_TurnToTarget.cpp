@@ -5,7 +5,7 @@
 
 #include "../NPC_Master.h"
 #include "../NPCAIController.h"
-#include "../../PuzzlePlatformsCharacter.h"
+#include "../../Character_Master.h"
 
 #include "BehaviorTree/BlackboardComponent.h"
 UBTTask_TurnToTarget::UBTTask_TurnToTarget()
@@ -22,7 +22,7 @@ EBTNodeResult::Type UBTTask_TurnToTarget::ExecuteTask(UBehaviorTreeComponent& Ow
 	if (Monster == nullptr)
 		return EBTNodeResult::Failed;
 
-	auto Target = Cast<APuzzlePlatformsCharacter>(
+	auto Target = Cast<ACharacter_Master>(
 		OwnerComp.GetBlackboardComponent()->GetValueAsObject(ANPCAIController::TargetKey));
 	if (nullptr == Target)
 		return EBTNodeResult::Failed;

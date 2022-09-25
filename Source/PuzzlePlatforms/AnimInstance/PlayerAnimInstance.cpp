@@ -2,7 +2,7 @@
 
 
 #include "PlayerAnimInstance.h"
-#include "../PuzzlePlatformsCharacter.h"
+#include "../Character_Master.h"
 #include "../PlayersComponent/PlayersMotionReplicator.h"
 #include "../Warrior.h"
 UPlayerAnimInstance::UPlayerAnimInstance()

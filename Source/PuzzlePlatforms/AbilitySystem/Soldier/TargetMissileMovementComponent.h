@@ -59,7 +59,7 @@ public:
 		float MaxDrivingForce = 10000;
 	// Minimum radius of the car turning circle at full lock (m).
 	UPROPERTY(EditAnywhere)
-		float MinTurningRadius = 10;
+		float MinTurningRadius = 5;
 	// Higher means more drag.
 	UPROPERTY(EditAnywhere)
 		float DragCoefficient = 30;

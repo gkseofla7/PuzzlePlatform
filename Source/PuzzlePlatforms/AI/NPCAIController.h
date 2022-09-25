@@ -20,8 +20,8 @@ public:
 
 
 	//UFUNCTION(NetMulticast, Reliable, WithValidation)
-	//void NetMulticast_SetTargetKey(class APuzzlePlatformsCharacter* PlayerTarget);
-	void SetTargetKey(class APuzzlePlatformsCharacter* PlayerTarget);
+	//void NetMulticast_SetTargetKey(class ACharacter_Master* PlayerTarget);
+	void SetTargetKey(class ACharacter_Master* PlayerTarget);
 	void SetHomePosKey(FVector NewPos);
 	void SetIsHitKey(bool NewIsHit);
 	void SetIsAttackingKey(bool NewIsAttackingKey);

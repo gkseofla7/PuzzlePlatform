@@ -2,11 +2,11 @@
 
 
 #include "Ability.h"
-#include "../PuzzlePlatformsCharacter.h"
+
 #include "../PuzzlePlatformsGameInstance.h"
-#include "UI/HudUpDisplayWidget.h"
 #include "../AnimInstance/AnimInstance_Master.h"
 #include "Ability_Buff_Master.h"
+#include "../Character_Master.h"
 
 
 #include "GameFramework/Character.h"
@@ -34,7 +34,7 @@ void AAbility::BeginPlay()
 {
 	Super::BeginPlay();
 	
-	PlayerRef = Cast<APuzzlePlatformsCharacter>(GetOwner());
+	PlayerRef = Cast<ACharacter_Master>(GetOwner());
 	AnimRef = Cast<UAnimInstance_Master>(PlayerRef->GetMesh()->GetAnimInstance());
 	auto IsBuff = Cast<AAbility_Buff_Master>(this);
 	SetAbilityLevel();
@@ -45,7 +45,7 @@ void AAbility::BeginPlay()
 	if (PlayerRef->IsLocallyControlled() == true)
 	{
 		AnimRef->OnMontageEnded.AddDynamic(this, &AAbility::EndAnimation);
-		HudUI = Cast< UPuzzlePlatformsGameInstance>(UGameplayStatics::GetGameInstance(GetWorld()))->HeadsUpDisplay;
+		HudUI = PlayerRef->PlayerInfoHUDWidget;
 	}
 	//이건 Local에서만 진행해도 되는거아님?
 		if(PlayerRef->IsLocallyControlled())//애초에 서버에서만 실행하고 마지막 모두한테 해야될건 그냥 서버가 알려줌

@@ -2,7 +2,7 @@
 
 
 #include "Turret.h"
-#include"../PuzzlePlatformsCharacter.h"
+#include"../Character_Master.h"
 
 #include "Components/StaticMeshComponent.h"
 
@@ -59,7 +59,7 @@ void ATurret::FindBestTarget()
 			
 				
 			CurrentTarget = OutActors[i];
-			auto PuzzleCharacter = Cast<APuzzlePlatformsCharacter>(CurrentTarget);
+			auto PuzzleCharacter = Cast<ACharacter_Master>(CurrentTarget);
 			if (PuzzleCharacter != nullptr)
 			{
 				if (PuzzleCharacter->TeamNum == TeamNum)

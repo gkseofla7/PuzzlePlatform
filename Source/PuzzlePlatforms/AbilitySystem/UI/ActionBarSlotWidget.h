@@ -16,7 +16,7 @@ class PUZZLEPLATFORMS_API UActionBarSlotWidget : public UUserWidget
 public:
 	UFUNCTION()
 	void CastButtonClicked();
-	//void AbilitySpawn(class APuzzlePlatformsCharacter* NewPlayer);
+	//void AbilitySpawn(class ACharacter_Master* NewPlayer);
 	UActionBarSlotWidget(const FObjectInitializer& ObjectInitializer);
 	//virtual void PreConstruct(bool IsDesignTime) override;
 	virtual void NativePreConstruct();
@@ -38,7 +38,7 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	bool IsAvailable = true;
 	bool IsManaAvailable = true;
-	class APuzzlePlatformsCharacter* Owner;
+	class ACharacter_Master* Owner;
 	FTimerHandle CooldownTimerHandler;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	class UActionBarWidget* ParentsWidget;

@@ -4,7 +4,7 @@
 #include "MyProjectWheelFront.h"
 #include "MyProjectWheelRear.h"
 #include "MyProjectHud.h"
-#include "../PuzzlePlatformsCharacter.h"
+#include "../Character_Master.h"
 
 #include "Components/SkeletalMeshComponent.h"
 #include "GameFramework/SpringArmComponent.h"
@@ -304,12 +304,12 @@ void AMyProjectPawn::GetOutTheCar()
 }
 void AMyProjectPawn::Server_SendGetOutTheCar_Implementation()
 {
-	if (Rider != nullptr && Cast<APuzzlePlatformsCharacter>(Rider) != nullptr)
+	if (Rider != nullptr && Cast<ACharacter_Master>(Rider) != nullptr)
 	{
 
 		//+ GetActorUpVector()*50
-		Cast<UMotionInterfaceComponent>(Cast<APuzzlePlatformsCharacter>(Rider)->DaerimMotionReplicator)->DisableActor(false);
-		//Cast<UPlayersMotionReplicator>(Cast<APuzzlePlatformsCharacter>(Rider)->DaerimMotionReplicator.GetObjectRef())->DisableActor(false);
+		Cast<UMotionInterfaceComponent>(Cast<ACharacter_Master>(Rider)->DaerimMotionReplicator)->DisableActor(false);
+		//Cast<UPlayersMotionReplicator>(Cast<ACharacter_Master>(Rider)->DaerimMotionReplicator.GetObjectRef())->DisableActor(false);
 		FVector Place = GetTransform().GetLocation() + 200 * (GetActorForwardVector().RotateAngleAxis(270.0, GetActorUpVector()));
 		Rider->SetActorLocation(Place);
 

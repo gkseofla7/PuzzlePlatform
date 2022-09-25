@@ -3,7 +3,7 @@
 
 #include "SpellbookSlot_UI.h"
 #include "../Ability.h"
-#include "../../PuzzlePlatformsCharacter.h"
+#include "../../Character_Master.h"
 #include "../../MyPlayerState.h"
 
 #include "Components/Image.h"
@@ -36,7 +36,7 @@ bool USpellbookSlot_UI::Initialize()
 void USpellbookSlot_UI::UpgradeSkill()
 {
 
-	auto PlayerRef = Cast<APuzzlePlatformsCharacter>(UGameplayStatics::GetPlayerCharacter(GetWorld(), 0));
+	auto PlayerRef = Cast<ACharacter_Master>(UGameplayStatics::GetPlayerCharacter(GetWorld(), 0));
 	if (PlayerRef == nullptr)//자기자신 가져옴
 		return;
 	auto MyPlayerState = Cast<AMyPlayerState>(PlayerRef->GetPlayerState());

@@ -3,7 +3,7 @@
 
 #include "BTDecorator_IsInAttackRange.h"
 #include "../NPCAIController.h"
-#include "../../PuzzlePlatformsCharacter.h"
+#include "../../Character_Master.h"
 
 #include "BehaviorTree/BlackboardComponent.h"
 
@@ -22,7 +22,7 @@ bool UBTDecorator_IsInAttackRange::CalculateRawConditionValue(UBehaviorTreeCompo
 	//if (ControllingPawn == nullptr)
 	//	return false;
 
-	auto Target = Cast<APuzzlePlatformsCharacter>(OwnerComp.GetBlackboardComponent()->GetValueAsObject(ANPCAIController::TargetKey));
+	auto Target = Cast<ACharacter_Master>(OwnerComp.GetBlackboardComponent()->GetValueAsObject(ANPCAIController::TargetKey));
 	//if (Target == nullptr)
 	//	return false;
 	bResult = (Target->GetDistanceTo(ControllingPawn) <= OwnerComp.GetBlackboardComponent()->GetValueAsFloat(ANPCAIController::AttackRangeKey));

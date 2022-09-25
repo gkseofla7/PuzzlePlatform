@@ -4,7 +4,7 @@
 #include "SoldierAnimInstance.h"
 #include "../Soldier.h"
 
-#include "../PuzzlePlatformsCharacter.h"
+#include "../Character_Master.h"
 USoldierAnimInstance::USoldierAnimInstance()
 {
 	CurrenPawnSpeed = 0.0f;

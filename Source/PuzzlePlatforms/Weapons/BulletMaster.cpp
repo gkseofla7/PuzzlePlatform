@@ -7,7 +7,7 @@
 
 #include "Engine/StaticMesh.h"
 #include "Components/CapsuleComponent.h"
-#include "../PuzzlePlatformsCharacter.h"
+#include "../Character_Master.h"
 // Sets default values
 ABulletMaster::ABulletMaster()
 {
@@ -46,7 +46,7 @@ void ABulletMaster::OnHit(UPrimitiveComponent* HitComponent, AActor* OtherActor,
 	if (HasAuthority())
 	{
 
-		auto MyCharacter = Cast<APuzzlePlatformsCharacter>(OtherActor);
+		auto MyCharacter = Cast<ACharacter_Master>(OtherActor);
 		if (MyCharacter != nullptr)
 		{
 			FDamageEvent DamageEvent;
@@ -76,7 +76,7 @@ void ABulletMaster::OnOverlapBegin(class UPrimitiveComponent* OverlappedComp, cl
 			auto MyCharacter = Cast<ACharacter>(OtherActor);
 			if (MyCharacter != nullptr)
 			{
-				auto Player = Cast<APuzzlePlatformsCharacter>(MyCharacter);
+				auto Player = Cast<ACharacter_Master>(MyCharacter);
 				if (Player != nullptr)
 				{//°Á °°Àº ÆÀÀÌ¸é ¾È¸Â°ÔÇÔ
 					if (Shooter!=nullptr&&Player->TeamNum == Shooter->TeamNum)

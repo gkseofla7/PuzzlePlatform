@@ -3,7 +3,7 @@
 
 #include "Ability_AoE_HolyGround.h"
 
-#include "../../PuzzlePlatformsCharacter.h"
+#include "../../Character_Master.h"
 
 #include "Components/DecalComponent.h"
 #include "Kismet/KismetSystemLibrary.h"
@@ -33,7 +33,7 @@ void AAbility_AoE_HolyGround::ActivateEffect_Implementation()
 			auto Player = Cast < ACharacter>(Actors);
 			if (Player == nullptr)
 				continue;
-			auto PuzzleCharacter = Cast<APuzzlePlatformsCharacter>(Actors);
+			auto PuzzleCharacter = Cast<ACharacter_Master>(Actors);
 			if (PuzzleCharacter != nullptr)
 			{
 				if (PuzzleCharacter == PlayerRef||PuzzleCharacter->TeamNum==PlayerRef->TeamNum)//자기 자신이던가 같은팀이면
@@ -60,7 +60,7 @@ void AAbility_AoE_HolyGround::TickEffect()
 	//여기서 힐
 	TArray<AActor*>OverlappingActors;
 
-	AbilityRoot->GetOverlappingActors(OverlappingActors, APuzzlePlatformsCharacter::StaticClass());
+	AbilityRoot->GetOverlappingActors(OverlappingActors, ACharacter_Master::StaticClass());
 
 	//if (HasAuthority())
 	//{

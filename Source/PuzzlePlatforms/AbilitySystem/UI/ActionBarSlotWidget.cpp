@@ -5,7 +5,7 @@
 
 
 #include "../Ability.h"
-#include"../../PuzzlePlatformsCharacter.h"
+#include"../../Character_Master.h"
 #include "DragDrop.h"
 #include "ActionBarWidget.h"
 
@@ -81,12 +81,12 @@ void UActionBarSlotWidget::CastButtonClicked()
 	FActorSpawnParameters Params;
 	auto ability = GetWorld()->SpawnActor<AAbility>(AbilityClass, PlayerTransform);
 
-	ability->PlayerRef = Cast<APuzzlePlatformsCharacter>(UGameplayStatics::GetPlayerCharacter(GetWorld(), 0));
+	ability->PlayerRef = Cast<ACharacter_Master>(UGameplayStatics::GetPlayerCharacter(GetWorld(), 0));
 	//UWorld::SpawnActor(AbilityClass, PlayerTransform);
 	//GetWorld()->SpawnActor();
 }
 
-//void UActionBarSlotWidget::AbilitySpawn(APuzzlePlatformsCharacter* NewPlayer)
+//void UActionBarSlotWidget::AbilitySpawn(ACharacter_Master* NewPlayer)
 //{
 //	if (!NewPlayer->HasAuthority())
 //		return;

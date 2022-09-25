@@ -3,7 +3,7 @@
 
 #include "Object_Master.h"
 
-#include "../PuzzlePlatformsCharacter.h"
+#include "../Character_Master.h"
 
 #include "Components/SkeletalMeshComponent.h"
 
@@ -30,7 +30,7 @@ void AObject_Master::Tick(float DeltaTime)
 
 }
 
-void AObject_Master::AttachToPlayer(APuzzlePlatformsCharacter* NewPlayer, FName SocketName)
+void AObject_Master::AttachToPlayer(ACharacter_Master* NewPlayer, FName SocketName)
 {
 	Player = NewPlayer;
 	SkeletalMeshComponent->SetCollisionEnabled(ECollisionEnabled::NoCollision);

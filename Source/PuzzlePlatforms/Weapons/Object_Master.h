@@ -16,7 +16,7 @@ class PUZZLEPLATFORMS_API AObject_Master : public AActor
 public:	
 	// Sets default values for this actor's properties
 	AObject_Master();
-	void AttachToPlayer(class APuzzlePlatformsCharacter* NewSoldier, FName SocketName);
+	void AttachToPlayer(class ACharacter_Master* NewSoldier, FName SocketName);
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
@@ -29,7 +29,7 @@ public:
 	class USkeletalMeshComponent* GetSkeletalMesh() {	return SkeletalMeshComponent;}
 
 	UPROPERTY()
-		class APuzzlePlatformsCharacter* Player;
+		class ACharacter_Master* Player;
 
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)

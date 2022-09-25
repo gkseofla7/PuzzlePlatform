@@ -3,7 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "PuzzlePlatformsCharacter.h"
+#include "Character_Master.h"
 #include "Soldier.generated.h"
 
 /**
@@ -28,7 +28,7 @@ enum class EWeaponSlot : uint8
 };
 
 UCLASS()
-class PUZZLEPLATFORMS_API ASoldier : public APuzzlePlatformsCharacter
+class PUZZLEPLATFORMS_API ASoldier : public ACharacter_Master
 {
 	GENERATED_BODY()
 public:

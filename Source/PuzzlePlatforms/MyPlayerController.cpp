@@ -3,7 +3,7 @@
 
 #include "MyPlayerController.h"
 #include "UI/PlayerInfoWidget.h"
-#include "PuzzlePlatformsCharacter.h"
+#include "Character_Master.h"
 #include "PuzzlePlatformsGameInstance.h"
 #include "AbilitySystem/UI/HudUpDisplayWidget.h"
 #include"PlayersComponent/MyCharacterStatComponent.h"

@@ -1,6 +1,6 @@
 // Copyright Epic Games, Inc. All Rights Reserved.
 
-#include "PuzzlePlatformsCharacter.h"
+#include "Character_Master.h"
 
 #include"PlayersComponent/MyCharacterStatComponent.h"
 #include "AnimInstance/PlayerAnimInstance.h"
@@ -43,7 +43,7 @@
 
 
 //////////////////////////////////////////////////////////////////////////
-// APuzzlePlatformsCharacter
+// ACharacter_Master
 
 
 FString GetEnumText(ENetRole Role)
@@ -62,7 +62,7 @@ FString GetEnumText(ENetRole Role)
 		return "Error";
 	}
 }
-APuzzlePlatformsCharacter::APuzzlePlatformsCharacter()
+ACharacter_Master::ACharacter_Master()
 {
 #pragma region GeneralInitialize
 	bReplicates = true;
@@ -118,40 +118,40 @@ APuzzlePlatformsCharacter::APuzzlePlatformsCharacter()
 
 }
 
-void APuzzlePlatformsCharacter::GetLifetimeReplicatedProps(TArray< FLifetimeProperty >& OutLifetimeProps) const
+void ACharacter_Master::GetLifetimeReplicatedProps(TArray< FLifetimeProperty >& OutLifetimeProps) const
 {
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
-	DOREPLIFETIME(APuzzlePlatformsCharacter, Level);
+	DOREPLIFETIME(ACharacter_Master, Level);
 }
 
 
-void APuzzlePlatformsCharacter::SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent)
+void ACharacter_Master::SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent)
 {
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
 	// Set up gameplay key bindings
 	check(PlayerInputComponent);
 	PlayerInputComponent->BindAction("Jump", IE_Pressed, this, &ACharacter::Jump);
 	PlayerInputComponent->BindAction("Jump", IE_Released, this, &ACharacter::StopJumping);
-	PlayerInputComponent->BindAction("GetInTheCar", IE_Pressed, this, &APuzzlePlatformsCharacter::GetInTheCar);
-	PlayerInputComponent->BindAction("Attack", IE_Pressed, this, &APuzzlePlatformsCharacter::Attack);
-	PlayerInputComponent->BindAction("Skill1", IE_Pressed, this, &APuzzlePlatformsCharacter::Skill1Clicked);
-	PlayerInputComponent->BindAction("Skill2", IE_Pressed, this, &APuzzlePlatformsCharacter::Skill2Clicked);
-	PlayerInputComponent->BindAction("Skill3", IE_Pressed, this, &APuzzlePlatformsCharacter::Skill3Clicked);
-	PlayerInputComponent->BindAction("Skill4", IE_Pressed, this, &APuzzlePlatformsCharacter::Skill4Clicked);
-	PlayerInputComponent->BindAction("Skill5", IE_Pressed, this, &APuzzlePlatformsCharacter::Skill5Clicked);
-	PlayerInputComponent->BindAction("Skill1", IE_Released, this, &APuzzlePlatformsCharacter::SkillReleased);
-	PlayerInputComponent->BindAction("Skill2", IE_Released, this, &APuzzlePlatformsCharacter::SkillReleased);
-	PlayerInputComponent->BindAction("Skill3", IE_Released, this, &APuzzlePlatformsCharacter::SkillReleased);
-	PlayerInputComponent->BindAction("Skill4", IE_Released, this, &APuzzlePlatformsCharacter::SkillReleased);
-	PlayerInputComponent->BindAction("Skill5", IE_Released, this, &APuzzlePlatformsCharacter::SkillReleased);
-	PlayerInputComponent->BindAction("SkillTree", IE_Pressed, this, &APuzzlePlatformsCharacter::OpenSkillTree);
-	PlayerInputComponent->BindAction("OpenMap", IE_Pressed, this, &APuzzlePlatformsCharacter::OpenMap);
-	PlayerInputComponent->BindAxis("MoveForward", this, &APuzzlePlatformsCharacter::MoveForward);
-	PlayerInputComponent->BindAxis("MoveRight", this, &APuzzlePlatformsCharacter::MoveRight);
-	PlayerInputComponent->BindAxis("Turn", this, &APuzzlePlatformsCharacter::AddControllerYawInput);
-	PlayerInputComponent->BindAxis("TurnRate", this, &APuzzlePlatformsCharacter::TurnAtRate);
-	PlayerInputComponent->BindAxis("LookUp", this, &APuzzlePlatformsCharacter::AddControllerPitchInput);
-	PlayerInputComponent->BindAxis("LookUpRate", this, &APuzzlePlatformsCharacter::LookUpAtRate);
+	PlayerInputComponent->BindAction("GetInTheCar", IE_Pressed, this, &ACharacter_Master::GetInTheCar);
+	PlayerInputComponent->BindAction("Attack", IE_Pressed, this, &ACharacter_Master::Attack);
+	PlayerInputComponent->BindAction("Skill1", IE_Pressed, this, &ACharacter_Master::Skill1Clicked);
+	PlayerInputComponent->BindAction("Skill2", IE_Pressed, this, &ACharacter_Master::Skill2Clicked);
+	PlayerInputComponent->BindAction("Skill3", IE_Pressed, this, &ACharacter_Master::Skill3Clicked);
+	PlayerInputComponent->BindAction("Skill4", IE_Pressed, this, &ACharacter_Master::Skill4Clicked);
+	PlayerInputComponent->BindAction("Skill5", IE_Pressed, this, &ACharacter_Master::Skill5Clicked);
+	PlayerInputComponent->BindAction("Skill1", IE_Released, this, &ACharacter_Master::SkillReleased);
+	PlayerInputComponent->BindAction("Skill2", IE_Released, this, &ACharacter_Master::SkillReleased);
+	PlayerInputComponent->BindAction("Skill3", IE_Released, this, &ACharacter_Master::SkillReleased);
+	PlayerInputComponent->BindAction("Skill4", IE_Released, this, &ACharacter_Master::SkillReleased);
+	PlayerInputComponent->BindAction("Skill5", IE_Released, this, &ACharacter_Master::SkillReleased);
+	PlayerInputComponent->BindAction("SkillTree", IE_Pressed, this, &ACharacter_Master::OpenSkillTree);
+	PlayerInputComponent->BindAction("OpenMap", IE_Pressed, this, &ACharacter_Master::OpenMap);
+	PlayerInputComponent->BindAxis("MoveForward", this, &ACharacter_Master::MoveForward);
+	PlayerInputComponent->BindAxis("MoveRight", this, &ACharacter_Master::MoveRight);
+	PlayerInputComponent->BindAxis("Turn", this, &ACharacter_Master::AddControllerYawInput);
+	PlayerInputComponent->BindAxis("TurnRate", this, &ACharacter_Master::TurnAtRate);
+	PlayerInputComponent->BindAxis("LookUp", this, &ACharacter_Master::AddControllerPitchInput);
+	PlayerInputComponent->BindAxis("LookUpRate", this, &ACharacter_Master::LookUpAtRate);
 
 
 }
@@ -161,27 +161,27 @@ void APuzzlePlatformsCharacter::SetupPlayerInputComponent(class UInputComponent*
 
 
 
-void APuzzlePlatformsCharacter::PostInitializeComponents()
+void ACharacter_Master::PostInitializeComponents()
 {
 	Super::PostInitializeComponents();
 
 }
 
-void APuzzlePlatformsCharacter::PossessedBy(AController* NewController)//이것도 결국 서버에서 실행함
+void ACharacter_Master::PossessedBy(AController* NewController)//이것도 결국 서버에서 실행함
 {//입장하면 자기 자신의 Level을 다른애들한테도 뿌림
 	Super::PossessedBy(NewController);
 	auto MyController = Cast<AMyPlayerController>(NewController);
 
 }
 
-void APuzzlePlatformsCharacter::BeginPlay()
+void ACharacter_Master::BeginPlay()
 {
 	Super::BeginPlay();
 
 	if (IsLocallyControlled())//체력 주기적으로 회복 아 애초에 이것도 실행을 안하는구나.. 누가 들어와도
 	{
 		FTimerHandle TimerHandler;
-		GetWorld()->GetTimerManager().SetTimer(TimerHandler, this, &APuzzlePlatformsCharacter::UpdateStat, 7, true);
+		GetWorld()->GetTimerManager().SetTimer(TimerHandler, this, &ACharacter_Master::UpdateStat, 7, true);
 	}
 
 	auto LobbyGameMode = Cast< AMyLobbyGameMode>(UGameplayStatics::GetGameMode(GetWorld()));
@@ -191,13 +191,13 @@ void APuzzlePlatformsCharacter::BeginPlay()
 		CharacterWidget->SetVisibility(ESlateVisibility::Hidden);
 	}
 	//여기서 애들 Stat 초기화 시킴
-	FTimerDelegate RespawnDelegate = FTimerDelegate::CreateUObject(this, &APuzzlePlatformsCharacter::SetPlayerStat);//어차피 자기 자신만 실행함
+	FTimerDelegate RespawnDelegate = FTimerDelegate::CreateUObject(this, &ACharacter_Master::SetPlayerStat);//어차피 자기 자신만 실행함
 	GetWorldTimerManager().SetTimer(StatResetHandle, RespawnDelegate, .6f, false);
 
 
 }
 
-void APuzzlePlatformsCharacter::SetPlayerStat()
+void ACharacter_Master::SetPlayerStat()
 {
 	auto CharacterWidget = Cast< UPlayerHPBarWidget>(HPBarWidget->GetUserWidgetObject());
 	auto tmpPlayerState = GetPlayerState();
@@ -235,22 +235,22 @@ void APuzzlePlatformsCharacter::SetPlayerStat()
 }
 
 
-void APuzzlePlatformsCharacter::Server_BindCharacterStat_Implementation()
+void ACharacter_Master::Server_BindCharacterStat_Implementation()
 {
 	NetMulticast_BindCharacterStat();
 }
 
-bool APuzzlePlatformsCharacter::Server_BindCharacterStat_Validate()
+bool ACharacter_Master::Server_BindCharacterStat_Validate()
 {
 	return true;
 }
-void  APuzzlePlatformsCharacter::NetMulticast_BindCharacterStat_Implementation()
+void  ACharacter_Master::NetMulticast_BindCharacterStat_Implementation()
 {
 	auto CharacterWidget = Cast< UPlayerHPBarWidget>(HPBarWidget->GetUserWidgetObject());
 	CharacterWidget->BindCharacterStat(CharacterStat);
 }
 
-bool  APuzzlePlatformsCharacter::NetMulticast_BindCharacterStat_Validate()
+bool  ACharacter_Master::NetMulticast_BindCharacterStat_Validate()
 {
 	return true;
 }
@@ -258,7 +258,7 @@ bool  APuzzlePlatformsCharacter::NetMulticast_BindCharacterStat_Validate()
 
 
 
-void APuzzlePlatformsCharacter::Tick(float DeltaTime)
+void ACharacter_Master::Tick(float DeltaTime)
 {//시작하자마자 로그인되는거임;;ㅋㅋ
 	Super::Tick(DeltaTime);
 	if(PlayerInfoHUDWidget !=nullptr)
@@ -271,7 +271,7 @@ void APuzzlePlatformsCharacter::Tick(float DeltaTime)
 	{
 		auto MyController = UGameplayStatics::GetPlayerController(GetWorld(), 0);
 		ABCHECK(MyController != nullptr);
-		auto MyPawn = Cast< APuzzlePlatformsCharacter>(MyController->GetPawn());
+		auto MyPawn = Cast< ACharacter_Master>(MyController->GetPawn());
 		if (MyPawn == nullptr)
 			return;
 		//ABCHECK(MyPawn != nullptr);
@@ -286,21 +286,21 @@ void APuzzlePlatformsCharacter::Tick(float DeltaTime)
 	//HPBarWidget->SetWorldRotation(FVector(0.f, 0.f, 180.f));
 }
 
-void APuzzlePlatformsCharacter::AddControllerPitchInput(float Val)
+void ACharacter_Master::AddControllerPitchInput(float Val)
 {
 	if (IsDashing == false)
 	{
 		Super::AddControllerPitchInput(Val);
 	}
 }
-void APuzzlePlatformsCharacter::AddControllerYawInput(float Val)
+void ACharacter_Master::AddControllerYawInput(float Val)
 {
 	if (IsDashing == false)
 	{
 		Super::AddControllerYawInput(Val);
 	}
 }
-void APuzzlePlatformsCharacter::UpdateStat()
+void ACharacter_Master::UpdateStat()
 {
 	if (CharacterStat == nullptr)
 		return;
@@ -308,7 +308,7 @@ void APuzzlePlatformsCharacter::UpdateStat()
 	CharacterStat->Server_SetMP(CharacterStat->CurrentMP+.5);
 }
 
-void APuzzlePlatformsCharacter::SetTargetPlayerWithLineTrace()
+void ACharacter_Master::SetTargetPlayerWithLineTrace()
 {
 	UCameraComponent* CurrentCam = FollowCamera;
 
@@ -321,7 +321,7 @@ void APuzzlePlatformsCharacter::SetTargetPlayerWithLineTrace()
 	if (GetWorld()->LineTraceSingleByChannel(Hit, StartTrace, EndTrace, ECC_Visibility, QueryParams))
 	{
 		//이전꺼
-		auto tmp = Cast< APuzzlePlatformsCharacter>(Hit.Actor);
+		auto tmp = Cast< ACharacter_Master>(Hit.Actor);
 		if (TargetPlayer != nullptr && tmp!= nullptr)
 		{
 			TargetPlayer->DecalComponent->SetVisibility(false);
@@ -341,21 +341,21 @@ void APuzzlePlatformsCharacter::SetTargetPlayerWithLineTrace()
 	//FRotator temp = UKismetMathLibrary::FindLookAtRotation(Start, EndTrace);
 }
 
-void APuzzlePlatformsCharacter::TurnAtRate(float Rate)
+void ACharacter_Master::TurnAtRate(float Rate)
 {
 	if (IsDashing == true)
 		return;
 	AddControllerYawInput(Rate * BaseTurnRate * GetWorld()->GetDeltaSeconds());
 }
 
-void APuzzlePlatformsCharacter::LookUpAtRate(float Rate)
+void ACharacter_Master::LookUpAtRate(float Rate)
 {
 	if (IsDashing == true)
 		return;
 	AddControllerPitchInput(Rate * BaseLookUpRate * GetWorld()->GetDeltaSeconds());
 }
 
-void APuzzlePlatformsCharacter::MoveForward(float Value)
+void ACharacter_Master::MoveForward(float Value)
 {
 	if (UsingSkill == true)
 	{
@@ -374,7 +374,7 @@ void APuzzlePlatformsCharacter::MoveForward(float Value)
 	}
 }
 
-void APuzzlePlatformsCharacter::MoveRight(float Value)
+void ACharacter_Master::MoveRight(float Value)
 {
 	if (UsingSkill == true)
 		return;
@@ -391,7 +391,7 @@ void APuzzlePlatformsCharacter::MoveRight(float Value)
 	}
 }
 
-void APuzzlePlatformsCharacter::Attack()
+void ACharacter_Master::Attack()
 {
 	//만약 종족이 두개있다면..?
 
@@ -402,7 +402,7 @@ void APuzzlePlatformsCharacter::Attack()
 
 }
 
-float APuzzlePlatformsCharacter::TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent,
+float ACharacter_Master::TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent,
 	AController* EventInstigator, AActor* DamageCauser)
 {
 	if (!HasAuthority())
@@ -423,7 +423,7 @@ float APuzzlePlatformsCharacter::TakeDamage(float DamageAmount, FDamageEvent con
 }
 
 
-FRotator APuzzlePlatformsCharacter::GetMuzzleRotation()
+FRotator ACharacter_Master::GetMuzzleRotation()
 {
 
 	UCameraComponent* CurrentCam = FollowCamera;
@@ -448,7 +448,7 @@ FRotator APuzzlePlatformsCharacter::GetMuzzleRotation()
 	return temp;
 }
 
-void APuzzlePlatformsCharacter::Skill1Clicked()
+void ACharacter_Master::Skill1Clicked()
 {
 	if (SkillAvailable == false)
 		return;
@@ -466,7 +466,7 @@ void APuzzlePlatformsCharacter::Skill1Clicked()
 	PlayerInfoHUDWidget->ActionBar_UI->ActionBarSlot_UI->StartCooldown();
 	DaerimMotionReplicator->Server_Skill1Clicked(SlotClass);
 }
-void APuzzlePlatformsCharacter::Skill2Clicked()
+void ACharacter_Master::Skill2Clicked()
 {
 	if (SkillAvailable == false)
 		return;
@@ -483,7 +483,7 @@ void APuzzlePlatformsCharacter::Skill2Clicked()
 	PlayerInfoHUDWidget->ActionBar_UI->ActionBarSlot_UI_1->StartCooldown();
 	DaerimMotionReplicator->Server_Skill2Clicked(SlotClass);
 }
-void APuzzlePlatformsCharacter::Skill3Clicked()
+void ACharacter_Master::Skill3Clicked()
 {
 	if (SkillAvailable == false)
 		return;
@@ -500,7 +500,7 @@ void APuzzlePlatformsCharacter::Skill3Clicked()
 	PlayerInfoHUDWidget->ActionBar_UI->ActionBarSlot_UI_2->StartCooldown();
 	DaerimMotionReplicator->Server_Skill3Clicked(SlotClass);
 }
-void APuzzlePlatformsCharacter::Skill4Clicked()
+void ACharacter_Master::Skill4Clicked()
 {
 	if (SkillAvailable == false)
 		return;
@@ -518,7 +518,7 @@ void APuzzlePlatformsCharacter::Skill4Clicked()
 	PlayerInfoHUDWidget->ActionBar_UI->ActionBarSlot_UI_3->StartCooldown();
 	DaerimMotionReplicator->Server_Skill4Clicked(SlotClass);
 }
-void APuzzlePlatformsCharacter::Skill5Clicked()
+void ACharacter_Master::Skill5Clicked()
 {
 	if (SkillAvailable == false)
 		return;
@@ -536,34 +536,34 @@ void APuzzlePlatformsCharacter::Skill5Clicked()
 	DaerimMotionReplicator->Server_Skill5Clicked(SlotClass);
 }
 
-void APuzzlePlatformsCharacter::SkillReleased()
+void ACharacter_Master::SkillReleased()
 {
 	OnSkillReleased.Broadcast();
 }
 
-void APuzzlePlatformsCharacter::SetIsAttacking(bool NewIsAttacking)
+void ACharacter_Master::SetIsAttacking(bool NewIsAttacking)
 {
 	DaerimMotionReplicator->Server_SetIsAttacking(NewIsAttacking);
 }
 
-void APuzzlePlatformsCharacter::SetUsingSkill(bool NewUsingSkill)
+void ACharacter_Master::SetUsingSkill(bool NewUsingSkill)
 {
 
 	DaerimMotionReplicator->Server_SetUsingSkill(NewUsingSkill);
 }
 
 
-void APuzzlePlatformsCharacter::Die()
+void ACharacter_Master::Die()
 {
 
 }
 
-void APuzzlePlatformsCharacter::DestroyPlayer()
+void ACharacter_Master::DestroyPlayer()
 {
 	Destroy();
 }
 
-void APuzzlePlatformsCharacter::OpenSkillTree()
+void ACharacter_Master::OpenSkillTree()
 {
 	auto controller = Cast<AMyPlayerController>(GetController());
 	ABCHECK(controller != nullptr);
@@ -582,7 +582,7 @@ void APuzzlePlatformsCharacter::OpenSkillTree()
 	}
 }
 
-void APuzzlePlatformsCharacter::OpenMap()
+void ACharacter_Master::OpenMap()
 {
 	auto controller = Cast<AMyPlayerController>(GetController());
 	auto PlayerWidget = controller->PlayerInfoHUDWidget;
@@ -594,7 +594,7 @@ void APuzzlePlatformsCharacter::OpenMap()
 }
 
 
-void APuzzlePlatformsCharacter::GetInTheCar()
+void ACharacter_Master::GetInTheCar()
 {
 	ABCHECK(DaerimMotionReplicator != nullptr)
 		FHitResult HitResult;
@@ -639,7 +639,7 @@ void APuzzlePlatformsCharacter::GetInTheCar()
 
 
 
-//void APuzzlePlatformsCharacter::SeeMouseCursur()
+//void ACharacter_Master::SeeMouseCursur()
 //{
 //	auto controller = Cast<AMyPlayerController>(GetController());
 //	if (MouseCursorToggle == false)

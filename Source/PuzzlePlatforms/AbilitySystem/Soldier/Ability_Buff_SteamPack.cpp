@@ -2,7 +2,7 @@
 
 
 #include "Ability_Buff_SteamPack.h"
-#include "../../PuzzlePlatformsCharacter.h"
+#include "../../Character_Master.h"
 #include"../../Soldier.h"
 AAbility_Buff_SteamPack::AAbility_Buff_SteamPack()
 	:Super()

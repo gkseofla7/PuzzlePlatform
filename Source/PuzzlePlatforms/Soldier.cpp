@@ -103,7 +103,7 @@ void ASoldier::SetupPlayerInputComponent(class UInputComponent* PlayerInputCompo
 {
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
 	// Set up gameplay key bindings
-	PlayerInputComponent->BindAxis("MoveForward", this, &APuzzlePlatformsCharacter::MoveForward);
+	PlayerInputComponent->BindAxis("MoveForward", this, &ACharacter_Master::MoveForward);
 	PlayerInputComponent->BindAction("WeaponPrimary", IE_Released, this, &ASoldier::WeaponPrimaryReleased);
 	PlayerInputComponent->BindAction("WeaponSecondary", IE_Pressed, this, &ASoldier::WeaponSecondaryPressed);
 	PlayerInputComponent->BindAction("WeaponSecondary", IE_Released, this, &ASoldier::WeaponSecondaryReleased);
@@ -615,7 +615,7 @@ void ASoldier::PlayersDied()
 	if (HasAuthority())
 	{
 		FTimerHandle DestroyTimerHandler;
-		GetWorld()->GetTimerManager().SetTimer(DestroyTimerHandler, this, &APuzzlePlatformsCharacter::DestroyPlayer, 10, false);
+		GetWorld()->GetTimerManager().SetTimer(DestroyTimerHandler, this, &ACharacter_Master::DestroyPlayer, 10, false);
 	}
 	if (IsLocallyControlled())
 	{

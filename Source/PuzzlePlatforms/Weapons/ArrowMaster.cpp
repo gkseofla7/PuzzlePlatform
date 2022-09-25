@@ -6,7 +6,7 @@
 
 #include "Engine/StaticMesh.h"
 #include "Components/CapsuleComponent.h"
-#include "../PuzzlePlatformsCharacter.h"
+#include "../Character_Master.h"
 // Sets default values
 AArrowMaster::AArrowMaster()
 {
@@ -48,7 +48,7 @@ void AArrowMaster::OnOverlapBegin(class UPrimitiveComponent* OverlappedComp, cla
 		if (HasAuthority())
 		{
 
-			auto MyCharacter = Cast<APuzzlePlatformsCharacter>(OtherActor);
+			auto MyCharacter = Cast<ACharacter_Master>(OtherActor);
 			if (MyCharacter != nullptr)
 			{
 				FDamageEvent DamageEvent;

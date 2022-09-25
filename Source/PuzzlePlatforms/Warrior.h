@@ -3,14 +3,14 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "PuzzlePlatformsCharacter.h"
+#include "Character_Master.h"
 #include "Warrior.generated.h"
 
 /**
  * 
  */
 UCLASS()
-class PUZZLEPLATFORMS_API AWarrior : public APuzzlePlatformsCharacter
+class PUZZLEPLATFORMS_API AWarrior : public ACharacter_Master
 {
 	GENERATED_BODY()
 

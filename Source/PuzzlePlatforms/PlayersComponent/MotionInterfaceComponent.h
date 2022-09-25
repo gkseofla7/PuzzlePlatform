@@ -42,9 +42,9 @@ public:
 		void Server_Skill5Clicked(TSubclassOf<AAbility>AbilityClass);
 
 	UFUNCTION(Server, Reliable, WithValidation)
-		void Server_SetTargetPlayer(class APuzzlePlatformsCharacter* NewTarget);
+		void Server_SetTargetPlayer(class ACharacter_Master* NewTarget);
 	UFUNCTION(NetMulticast, Reliable, WithValidation)
-		void NetMulticast_SetTargetPlayer(class APuzzlePlatformsCharacter* NewTarget);
+		void NetMulticast_SetTargetPlayer(class ACharacter_Master* NewTarget);
 	UFUNCTION(Server, Reliable, WithValidation)
 	void Server_SetIsAttacking(bool NewIsAttacking);
 	UFUNCTION(NetMulticast, Reliable, WithValidation)
@@ -56,5 +56,5 @@ public:
 		void NetMulticast_SetUsingSkill(bool NewUsingSkill);
 
 public:
-	class APuzzlePlatformsCharacter* PlayerRef;
+	class ACharacter_Master* PlayerRef;
 };

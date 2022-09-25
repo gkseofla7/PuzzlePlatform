@@ -6,7 +6,7 @@
 #include "GoblinAnimInstance.h"
 #include "MonsterStatComponent.h"
 #include "../UI/HPBarWidget.h"
-#include "../PuzzlePlatformsCharacter.h"
+#include "../Character_Master.h"
 #include "NPC_Archer.h"
 
 #include "DrawDebugHelpers.h"
@@ -107,7 +107,7 @@ float ANPC_Master::TakeDamage(float DamageAmount, FDamageEvent const& DamageEven
 	float FinalDamage = Super::TakeDamage(DamageAmount, DamageEvent, EventInstigator, DamageCauser);
 	if (HasAuthority())//아마 원래 그냥 서버에서 실행될걸
 	{
-		auto Player = Cast< APuzzlePlatformsCharacter>(DamageCauser);
+		auto Player = Cast< ACharacter_Master>(DamageCauser);
 		Cast<ANPCAIController>(GetController())->SetTargetKey(Player);
 		Cast<ANPCAIController>(GetController())->SetIsHitKey(true);
 		auto Archer = Cast<ANPC_Archer>(this);

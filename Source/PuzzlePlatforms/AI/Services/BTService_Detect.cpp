@@ -3,7 +3,7 @@
 
 #include "BTService_Detect.h"
 #include "../NPCAIController.h"
-#include "../../PuzzlePlatformsCharacter.h"
+#include "../../Character_Master.h"
 #include "../NPC_Archer.h"
 
 #include"BehaviorTree/BlackboardComponent.h"
@@ -51,12 +51,12 @@ void UBTService_Detect::TickNode(UBehaviorTreeComponent& OwnerComp, uint8* NodeM
 		//	UE_LOG(LogTemp, Warning, TEXT("Nullptr"));
 		//	return;
 		//}
-		APuzzlePlatformsCharacter* Target = nullptr;
+		ACharacter_Master* Target = nullptr;
 		for (auto const& OverlapResult : OverlapResults)//이미 존재하면 걔로 계속감
 		{
 			auto Current = OwnerComp.GetBlackboardComponent()->GetValueAsObject(ANPCAIController::TargetKey);
 			//bool same = false;
-			APuzzlePlatformsCharacter* Player = Cast< APuzzlePlatformsCharacter>(OverlapResult.GetActor());
+			ACharacter_Master* Player = Cast< ACharacter_Master>(OverlapResult.GetActor());
 			AController* Controller =nullptr;
 			if(Player)
 				Controller=Player->GetController();

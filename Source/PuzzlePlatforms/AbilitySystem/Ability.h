@@ -7,6 +7,7 @@
 #include "Engine/Texture2D.h"
 #include "AbilityDetailStruct.h"
 #include "../MyPlayerState.h"
+#include "../UI/PlayerInfoWidget.h"
 #include "Ability.generated.h"
 
 DECLARE_MULTICAST_DELEGATE(FCastSuccessDeleagate);
@@ -50,9 +51,9 @@ public:
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
 		class UParticleSystemComponent* ParticleSystemComponent;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-		class APuzzlePlatformsCharacter* PlayerRef;
+		class ACharacter_Master* PlayerRef;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-		class UHudUpDisplayWidget* HudUI;
+		class UPlayerInfoWidget* HudUI;
 
 	class UAnimInstance_Master* AnimRef;
 

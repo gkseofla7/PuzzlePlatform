@@ -121,7 +121,7 @@ void AWarrior::AttackCheck()
 			Rotation, DrawColor, false, 5.f);
 		if (bResult && HitResult.Actor.IsValid())
 		{
-			auto Player = Cast<APuzzlePlatformsCharacter>(HitResult.Actor);
+			auto Player = Cast<ACharacter_Master>(HitResult.Actor);
 			if (Player != nullptr)
 			{
 				if (Player->TeamNum == TeamNum)
@@ -387,13 +387,13 @@ void AWarrior::EndAnimation(UAnimMontage* Montage, bool bInterrupted)
 //		if (HasAuthority() == true)
 //		{
 //			FTimerHandle TimerHandler;
-//			GetWorld()->GetTimerManager().SetTimer(TimerHandler, this, &APuzzlePlatformsCharacter::DestroyPlayer, 10, false);
+//			GetWorld()->GetTimerManager().SetTimer(TimerHandler, this, &ACharacter_Master::DestroyPlayer, 10, false);
 //			
 //		}
 //		if (HasAuthority())
 //		{
 //			FTimerHandle DestroyTimerHandler;
-//			GetWorld()->GetTimerManager().SetTimer(DestroyTimerHandler, this, &APuzzlePlatformsCharacter::DestroyPlayer, 10, false);
+//			GetWorld()->GetTimerManager().SetTimer(DestroyTimerHandler, this, &ACharacter_Master::DestroyPlayer, 10, false);
 //		}
 //	}
 //}
@@ -426,7 +426,7 @@ void AWarrior::PlayersDied()
 	{
 		FTimerHandle DestroyTimerHandler;
 		EquippedItem->Destroy();
-		GetWorld()->GetTimerManager().SetTimer(DestroyTimerHandler, this, &APuzzlePlatformsCharacter::DestroyPlayer, 10, false);
+		GetWorld()->GetTimerManager().SetTimer(DestroyTimerHandler, this, &ACharacter_Master::DestroyPlayer, 10, false);
 	}
 	if (IsLocallyControlled())
 	{

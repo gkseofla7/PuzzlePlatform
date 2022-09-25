@@ -32,7 +32,7 @@ public:
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
 	TArray<class UActionBarSlotWidget*> ActionBarSlotArray;
 
-	class APuzzlePlatformsCharacter*  PlayerRef;
+	class ACharacter_Master*  PlayerRef;
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
 	class UMyCharacterStatComponent* CurrentCharacterStat;
 };

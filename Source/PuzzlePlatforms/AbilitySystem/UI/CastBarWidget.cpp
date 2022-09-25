@@ -2,7 +2,7 @@
 
 
 #include "CastBarWidget.h"
-#include "../../PuzzlePlatformsCharacter.h"
+#include "../../Character_Master.h"
 
 #include "Kismet/GameplayStatics.h"
 #include "Kismet/KismetMathLibrary.h"
@@ -10,7 +10,7 @@
 void UCastBarWidget::NativeConstruct()
 {
 	Super::NativeConstruct();
-	PlayerCharacter = Cast<APuzzlePlatformsCharacter>(UGameplayStatics::GetPlayerCharacter(GetWorld(),0));
+	PlayerCharacter = Cast<ACharacter_Master>(UGameplayStatics::GetPlayerCharacter(GetWorld(),0));
 	if(PlayerCharacter!= nullptr)
 		PlayerCharacter->InterruptCasting.AddDynamic(this, &UCastBarWidget::InterruptedCast);
 }

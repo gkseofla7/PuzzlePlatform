@@ -6,7 +6,7 @@
 #include "EnumMonsterType.h"
 #include "NPCAIController.h"
 #include "ArcherAnimInstance.h"
-#include "../PuzzlePlatformsCharacter.h"
+#include "../Character_Master.h"
 #include "../Weapons/ArrowMaster.h"
 
 #include "BehaviorTree/BlackboardComponent.h"
@@ -85,12 +85,12 @@ bool ANPC_Archer::NetMulticast_Attack_Validate()
 	return true;
 }
 
-void ANPC_Archer::NetMulticast_SetTarget_Implementation(class APuzzlePlatformsCharacter* NewTarget)
+void ANPC_Archer::NetMulticast_SetTarget_Implementation(class ACharacter_Master* NewTarget)
 {
 	Target = NewTarget;
 }
 
-bool ANPC_Archer::NetMulticast_SetTarget_Validate(class APuzzlePlatformsCharacter* NewTarget)
+bool ANPC_Archer::NetMulticast_SetTarget_Validate(class ACharacter_Master* NewTarget)
 {
 	return true;
 }

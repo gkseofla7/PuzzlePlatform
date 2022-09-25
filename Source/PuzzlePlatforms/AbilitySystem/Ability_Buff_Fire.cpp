@@ -2,7 +2,7 @@
 
 
 #include "Ability_Buff_Fire.h"
-#include "../PuzzlePlatformsCharacter.h"
+#include "../Character_Master.h"
 
 AAbility_Buff_Fire::AAbility_Buff_Fire()
 	:Super()

@@ -21,7 +21,7 @@ public:
 	UFUNCTION(NetMulticast, Reliable, WithValidation)
 		void NetMulticast_Attack();
 	UFUNCTION(NetMulticast, Reliable, WithValidation)
-		void NetMulticast_SetTarget(class APuzzlePlatformsCharacter* NewTarget);
+		void NetMulticast_SetTarget(class ACharacter_Master* NewTarget);
 	void ArrowShot();
 	UFUNCTION()
 		virtual void EndAnimation(UAnimMontage* Montage, bool bInterrupted);
@@ -30,6 +30,6 @@ public:
 	UPROPERTY()
 		class UArcherAnimInstance* MyAnim;
 	float AttackRange = 500;
-	class APuzzlePlatformsCharacter* Target;
+	class ACharacter_Master* Target;
 	TSubclassOf<class AArrowMaster> ArrowMasterClass;
 };

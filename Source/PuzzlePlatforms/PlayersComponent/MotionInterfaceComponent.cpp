@@ -4,7 +4,7 @@
 #include "MotionInterfaceComponent.h"
 
 #include "../AbilitySystem/Ability.h"
-#include "../PuzzlePlatformsCharacter.h"
+#include "../Character_Master.h"
 #include "../AnimInstance/AnimInstance_Master.h"
 // Sets default values for this component's properties
 UMotionInterfaceComponent::UMotionInterfaceComponent()
@@ -22,7 +22,7 @@ void UMotionInterfaceComponent::BeginPlay()
 {
 	Super::BeginPlay();
 	SetIsReplicated(true);
-	PlayerRef = Cast<APuzzlePlatformsCharacter>(GetOwner());
+	PlayerRef = Cast<ACharacter_Master>(GetOwner());
 	// ...
 	
 }
@@ -124,23 +124,23 @@ void UMotionInterfaceComponent::AbilitySpawn(TSubclassOf<AAbility>AbilityClass)
 
 
 
-void UMotionInterfaceComponent::Server_SetTargetPlayer_Implementation(APuzzlePlatformsCharacter* NewTarget)
+void UMotionInterfaceComponent::Server_SetTargetPlayer_Implementation(ACharacter_Master* NewTarget)
 {
 	NetMulticast_SetTargetPlayer(NewTarget);
 }
 
-void UMotionInterfaceComponent::NetMulticast_SetTargetPlayer_Implementation(APuzzlePlatformsCharacter* NewTarget)
+void UMotionInterfaceComponent::NetMulticast_SetTargetPlayer_Implementation(ACharacter_Master* NewTarget)
 {
 
 	PlayerRef->TargetPlayer = NewTarget;
 }
 
-bool UMotionInterfaceComponent::Server_SetTargetPlayer_Validate(APuzzlePlatformsCharacter* NewTarget)
+bool UMotionInterfaceComponent::Server_SetTargetPlayer_Validate(ACharacter_Master* NewTarget)
 {
 	return true;
 }
 
-bool UMotionInterfaceComponent::NetMulticast_SetTargetPlayer_Validate(APuzzlePlatformsCharacter* NewTarget)
+bool UMotionInterfaceComponent::NetMulticast_SetTargetPlayer_Validate(ACharacter_Master* NewTarget)
 {
 	return true;
 }

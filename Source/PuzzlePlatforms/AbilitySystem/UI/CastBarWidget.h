@@ -31,7 +31,7 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 		class AAbility* Ability;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-		class APuzzlePlatformsCharacter* PlayerCharacter;
+		class ACharacter_Master* PlayerCharacter;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	FTimerHandle CastTimer;
 	UPROPERTY(BlueprintAssignable, BlueprintCallable)

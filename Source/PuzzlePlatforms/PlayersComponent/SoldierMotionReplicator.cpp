@@ -57,7 +57,7 @@ void USoldierMotionReplicator::Server_SendRide_Implementation(AActor* _Car, APaw
 {
 	auto Car = Cast<AMyProjectPawn>(_Car);
 
-	//auto Rider = Cast<APuzzlePlatformsCharacter>(this);
+	//auto Rider = Cast<ACharacter_Master>(this);
 
 	UE_LOG(LogTemp, Warning, TEXT("Ride"));
 	auto Rider = Cast<APawn>(GetOwner());
