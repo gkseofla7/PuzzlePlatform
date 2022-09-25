@@ -2,7 +2,7 @@
 
 
 #include "Ability_AoE_HolyGround.h"
-
+#include "../ActorAbilities.h"
 #include "../../Character_Master.h"
 
 #include "Components/DecalComponent.h"
@@ -70,4 +70,18 @@ void AAbility_AoE_HolyGround::TickEffect()
 
 	//	}
 	//}
+}
+
+void AAbility_AoE_HolyGround::SetAbilityLevel()
+{
+	//쓸때마다 불러옴
+	auto Spells = PlayerRef->ActorAbilitiesComponent->PlayerSpells;
+	//UE_LOG(LogTemp, Warning, TEXT("Spellbook Num : %d "), Spells.Num());
+	for (int i = 0; i < Spells.Num(); i++)
+	{
+		if (Spells[i]->IsChildOf(AAbility_AoE_HolyGround::StaticClass()) == true)
+		{
+			AbilityLevel = Cast< AMyPlayerState>(PlayerRef->GetPlayerState())->SpellsUpgrade[i];
+		}
+	}
 }

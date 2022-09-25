@@ -51,8 +51,7 @@ public:
 	FMyCharacterrData* GetMyCharacterData(int32 Level);
 	FMonsterData* GetMonsterData(int32 Level, EMonsterEnum MonsterEnuml);
 	//FMyCharacterrData* GetMyCharacterData(int32 Level);
-	UFUNCTION(BlueprintCallable)
-	class UHudUpDisplayWidget* GetHeadsUpDisplay() { return HeadsUpDisplay; }
+
 
 
 private:
@@ -83,8 +82,7 @@ private:
 
 	void CreateSession();
 public:
-	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = UI)
-		class UHudUpDisplayWidget* HeadsUpDisplay;
+
 	class UPlayerInfoWidget* PlayerInfoWidget;
 	FText PlayerName;
 

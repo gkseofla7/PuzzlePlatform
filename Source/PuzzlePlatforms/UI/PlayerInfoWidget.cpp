@@ -7,10 +7,11 @@
 #include "../UI/MapWidget.h"
 #include "../AbilitySystem/UI/CastBarWidget.h"
 #include "../AbilitySystem/UI/Spellbook_UI.h"
-
+#include "../AbilitySystem//UI/ActionBarWidget.h"
 
 #include "Components/TextBlock.h"
 #include "Components/ProgressBar.h"
+
 bool UPlayerInfoWidget::Initialize()
 {
 	bool Success = Super::Initialize();
@@ -61,6 +62,9 @@ void UPlayerInfoWidget::BindCharacterStat(class UMyCharacterStatComponent* NewCh
 			HpNum->SetText(hpText);
 		}
 		});
+
+	ActionBar_UI->BindCharacterStat(NewCharacterStat);
+
 
 }
 

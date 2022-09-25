@@ -22,6 +22,7 @@ protected:
 	virtual void Tick(float DeltaTime) override;
 
 public:
+	void SetAbilityLevel() override;
 	UFUNCTION(Server, Reliable, WithValidation)
 		void Server_PlayNextAnimation();
 	UFUNCTION(NetMulticast, Reliable, WithValidation)

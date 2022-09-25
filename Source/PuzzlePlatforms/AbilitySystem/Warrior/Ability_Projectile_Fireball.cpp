@@ -5,6 +5,7 @@
 
 #include "../../Warrior.h"
 #include "../../AnimInstance/PlayerAnimInstance.h"
+#include "../ActorAbilities.h"
 
 #include "GameFramework/ProjectileMovementComponent.h"
 #include "Particles/ParticleSystemComponent.h"
@@ -158,7 +159,6 @@ void AAbility_Projectile_Fireball::OnOverlapBegin(class UPrimitiveComponent* Ove
 		}
 	}
 
-	
 	if (AnimationEnd == true)
 	{
 		Destroy();
@@ -170,3 +170,18 @@ void AAbility_Projectile_Fireball::OnOverlapBegin(class UPrimitiveComponent* Ove
 	}
 }
 
+void AAbility_Projectile_Fireball::SetAbilityLevel()
+{
+	//쓸때마다 불러옴
+	auto Spells = PlayerRef->ActorAbilitiesComponent->PlayerSpells;
+	//UE_LOG(LogTemp, Warning, TEXT("Spellbook Num : %d "), Spells.Num());
+	for (int i = 0; i < Spells.Num(); i++)
+	{
+		if (Spells[i]->IsChildOf(AAbility_Projectile_Fireball::StaticClass()) == true)
+		{
+			AbilityLevel = Cast< AMyPlayerState>(PlayerRef->GetPlayerState())->SpellsUpgrade[i];
+		}
+	}
+
+
+}

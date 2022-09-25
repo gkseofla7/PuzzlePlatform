@@ -92,11 +92,6 @@ void UPuzzlePlatformsGameInstance::Init()
 		GEngine->OnNetworkFailure().AddUObject(this, &UPuzzlePlatformsGameInstance::OnNetworkFailure);
 	}
 
-	HeadsUpDisplay = Cast< UHudUpDisplayWidget>(CreateWidget<UUserWidget>(this, NewHUDWidgetClass));
-	if (HeadsUpDisplay == nullptr)
-	{
-		UE_LOG(LogTemp, Warning, TEXT("In GameInstance Init nullptr"));
-	}
 
 
 	PlayerInfoWidget = Cast< UPlayerInfoWidget>(CreateWidget<UUserWidget>(this, PlayerInfoHUDWidgetClass));

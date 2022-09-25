@@ -4,6 +4,7 @@
 #include "Ability_Buff_SteamPack.h"
 #include "../../Character_Master.h"
 #include"../../Soldier.h"
+#include "../ActorAbilities.h"
 AAbility_Buff_SteamPack::AAbility_Buff_SteamPack()
 	:Super()
 {
@@ -41,4 +42,19 @@ void AAbility_Buff_SteamPack::NetMulticast_UnSteamPack_Implementation()
 bool AAbility_Buff_SteamPack::NetMulticast_UnSteamPack_Validate()
 {
 	return true;
+}
+
+
+void AAbility_Buff_SteamPack::SetAbilityLevel()
+{
+	//쓸때마다 불러옴
+	auto Spells = PlayerRef->ActorAbilitiesComponent->PlayerSpells;
+	//UE_LOG(LogTemp, Warning, TEXT("Spellbook Num : %d "), Spells.Num());
+	for (int i = 0; i < Spells.Num(); i++)
+	{
+		if (Spells[i]->IsChildOf(AAbility_Buff_SteamPack::StaticClass()) == true)
+		{
+			AbilityLevel = Cast< AMyPlayerState>(PlayerRef->GetPlayerState())->SpellsUpgrade[i];
+		}
+	}
 }

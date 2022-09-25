@@ -18,7 +18,7 @@ public:
 	//virtual void CastAbility_Implementation() override;
 	virtual void ActivateEffect_Implementation() override;
 	void TickEffect();
-
+	virtual void SetAbilityLevel() override;
 public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	class UDecalComponent* DecalComponent;

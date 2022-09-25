@@ -29,6 +29,7 @@ public:
 		void Server_PlayNextAnimation();
 	UFUNCTION(NetMulticast, Reliable, WithValidation)
 		void NetMulticast_PlayNextAnimation();
+	void SetAbilityLevel() override;
 
 	UFUNCTION()
 		void OnOverlapBegin(class UPrimitiveComponent* OverlappedComp, class AActor* OtherActor, class UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);

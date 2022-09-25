@@ -31,6 +31,8 @@ public:
 		void NetMulticast_SetActive();
 	UFUNCTION(Server, Reliable, WithValidation)
 		void Server_SetTarget(AActor* NewTarget);
+
+	virtual void SetAbilityLevel() override;
 public:
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
 		UStaticMeshComponent* MissileComponent;

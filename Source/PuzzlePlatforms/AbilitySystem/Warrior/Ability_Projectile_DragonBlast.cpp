@@ -2,7 +2,7 @@
 
 
 #include "Ability_Projectile_DragonBlast.h"
-
+#include "../ActorAbilities.h"
 #include "../../Warrior.h"
 #include "../../AnimInstance/PlayerAnimInstance.h"
 
@@ -144,4 +144,18 @@ void AAbility_Projectile_DragonBlast::NetMulticast_PlayNextAnimation_Implementat
 bool AAbility_Projectile_DragonBlast::NetMulticast_PlayNextAnimation_Validate()
 {
 	return true;
+}
+
+void AAbility_Projectile_DragonBlast::SetAbilityLevel()
+{
+	//쓸때마다 불러옴
+	auto Spells = PlayerRef->ActorAbilitiesComponent->PlayerSpells;
+	//UE_LOG(LogTemp, Warning, TEXT("Spellbook Num : %d "), Spells.Num());
+	for (int i = 0; i < Spells.Num(); i++)
+	{
+		if (Spells[i]->IsChildOf(AAbility_Projectile_DragonBlast::StaticClass()) == true)
+		{
+			AbilityLevel = Cast< AMyPlayerState>(PlayerRef->GetPlayerState())->SpellsUpgrade[i];
+		}
+	}
 }

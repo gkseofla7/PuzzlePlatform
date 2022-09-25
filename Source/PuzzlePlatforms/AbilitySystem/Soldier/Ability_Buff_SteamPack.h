@@ -19,4 +19,5 @@ public:
 	virtual void TickBuff();
 	UFUNCTION(NetMulticast, Reliable, WithValidation)
 		void NetMulticast_UnSteamPack();
+	void SetAbilityLevel() override;
 };

@@ -6,6 +6,7 @@
 #include "TargetMissileMovementComponent.h"
 #include "TargetMissileReplicateComponent.h"
 #include "../../Weapons/Weapon_Master.h"
+#include "../ActorAbilities.h"
 
 AAbility_TargetMissile::AAbility_TargetMissile()
 	:Super()
@@ -52,8 +53,6 @@ void AAbility_TargetMissile::ActivateEffect_Implementation()
 		SoldierRef->SetUsingSkill(false);
 		SoldierRef->GetMesh()->bPauseAnims = false;
 		SoldierRef->ShowTarget = false;
-	
-
 	//SoldierRef->SetUsingSkill(false);
 
 	Server_SetTransform(SoldierRef->RocketHolderComponent->GetSocketTransform("Mouth"));
@@ -90,10 +89,9 @@ void AAbility_TargetMissile::OnOverlapBegin(class UPrimitiveComponent* Overlappe
 
 	if (OtherActor == PlayerRef)
 		return;
-	UE_LOG(LogTemp, Warning, TEXT("Hit %s, %s, %s %s"), *OtherActor->GetName(), *OverlappedComp->GetName(), *OtherActor->GetName(), *OtherComp->GetName());
+	//UE_LOG(LogTemp, Warning, TEXT("Hit %s, %s, %s %s"), *OtherActor->GetName(), *OverlappedComp->GetName(), *OtherActor->GetName(), *OtherComp->GetName());
 	if (HasAuthority() == true)
 	{
-
 		NetMulticast_Spark(GetActorLocation());
 		//auto Player = Cast<ACharacter_Master>(OtherActor);
 		//if (Player != nullptr)
@@ -103,7 +101,6 @@ void AAbility_TargetMissile::OnOverlapBegin(class UPrimitiveComponent* Overlappe
 		//}
 		Destroy();
 	}
-
 }
 
 
@@ -116,8 +113,6 @@ bool AAbility_TargetMissile::NetMulticast_Spark_Validate(FVector Location)
 {
 	return true;
 }
-
-
 
 void AAbility_TargetMissile::Server_SetActive_Implementation()
 {
@@ -149,3 +144,16 @@ bool AAbility_TargetMissile::Server_SetTarget_Validate(AActor* NewTarget)
 	return true;
 }
 
+void AAbility_TargetMissile::SetAbilityLevel()
+{
+	//쓸때마다 불러옴
+	auto Spells = PlayerRef->ActorAbilitiesComponent->PlayerSpells;
+	//UE_LOG(LogTemp, Warning, TEXT("Spellbook Num : %d "), Spells.Num());
+	for (int i = 0; i < Spells.Num(); i++)
+	{
+		if (Spells[i]->IsChildOf(AAbility_TargetMissile::StaticClass()) == true)
+		{
+			AbilityLevel = Cast< AMyPlayerState>(PlayerRef->GetPlayerState())->SpellsUpgrade[i];
+		}
+	}
+}
