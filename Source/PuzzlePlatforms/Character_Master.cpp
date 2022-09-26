@@ -205,9 +205,9 @@ void ACharacter_Master::SetPlayerStat()
 	if (IsLocallyControlled() && IsPlayerControlled())//새로입장 or 리스폰 모두에게 내 정보 뿌려줌	
 	{
 		auto MyController = Cast<AMyPlayerController>(GetController());
-		MyController->SetWidget(MyPlayerState->CharacterStat);//나만 봄
+		MyController->SetWidget(MyPlayerState->CharacterStat);//내 mainwidget
 		PlayerInfoHUDWidget = MyController->PlayerInfoHUDWidget;
-		Server_BindCharacterStat();
+		Server_BindCharacterStat();//각 플레이어 머리 위 widget
 	}
 	else// 나 외 다른 플레이어들은
 	{

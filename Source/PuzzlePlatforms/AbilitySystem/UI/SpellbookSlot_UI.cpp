@@ -30,6 +30,13 @@ bool USpellbookSlot_UI::Initialize()
 
 	if (!ensure(UpgradeButton != nullptr)) return false;
 	UpgradeButton->OnClicked.AddDynamic(this, &USpellbookSlot_UI::UpgradeSkill);
+	auto PlayerRef = Cast<ACharacter_Master>(UGameplayStatics::GetPlayerCharacter(GetWorld(), 0));
+	if (PlayerRef == nullptr)//자기자신 가져옴
+		return false;
+	auto MyPlayerState = Cast<AMyPlayerState>(PlayerRef->GetPlayerState());
+	if (MyPlayerState == nullptr) return false;
+
+	MyPlayerState->OnSkillPointChangedDelegate.AddUObject(this, &USpellbookSlot_UI::SetSkillPoint);
 	return true;
 
 }
@@ -44,11 +51,25 @@ void USpellbookSlot_UI::UpgradeSkill()
 	if (MyPlayerState->SkillPoints <= 0)//SkillPoint가 1이상일때만
 		return;
 
-	MyPlayerState->Server_SpellsUpgrade(SlotNum);
-	FString FS_Level = FString::Printf(TEXT("%d"), MyPlayerState->SpellsUpgrade[SlotNum]);
-	//MyPlayerState->SpellsUpgrade[SlotNum]++;
-	T_UpgradeNum->SetText(FText::FromString(FS_Level));
+	MyPlayerState->Server_SpellsUpgrade(SlotNum);//아 한발짝 느리구나..ㅋㅋ
+	//MyPlayerState->Server_SetSkillPoints(MyPlayerState->SkillPoints - 1);
 	DisableBar->SetPercent(0.);
-	MyPlayerState->Server_SetSkillPoints(MyPlayerState->SkillPoints - 1);
+	UE_LOG(LogTemp, Warning, TEXT("Client :GetSpellsUpgrade %d"), MyPlayerState->SpellsUpgrade[SlotNum]);
+	
+
+}
+
+void USpellbookSlot_UI::SetSkillPoint()//모든 UI가 실행됨
+{
+	auto PlayerRef = Cast<ACharacter_Master>(UGameplayStatics::GetPlayerCharacter(GetWorld(), 0));
+	if (PlayerRef == nullptr)//자기자신 가져옴
+		return;
+	auto MyPlayerState = Cast<AMyPlayerState>(PlayerRef->GetPlayerState());
+	if (MyPlayerState == nullptr) return;
+
+	FString FS_Level = FString::Printf(TEXT("%d"), MyPlayerState->SpellsUpgrade[SlotNum]);
+	T_UpgradeNum->SetText(FText::FromString(FS_Level));
+
 	SpellbookRef->SetSkillPoints(MyPlayerState->SkillPoints);
+
 }

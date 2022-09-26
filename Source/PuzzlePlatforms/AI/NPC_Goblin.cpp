@@ -127,6 +127,7 @@ void ANPC_Goblin::EndAnimation(UAnimMontage* Montage, bool bInterrupted)
 
 void ANPC_Goblin::Die()
 {
+	Super::Die();
 	MyAnim->PlayDeathMontage();
 	//SetActorEnableCollision(false);
 	if (HasAuthority()==true)

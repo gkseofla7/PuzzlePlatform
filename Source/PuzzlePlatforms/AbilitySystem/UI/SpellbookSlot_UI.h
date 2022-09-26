@@ -20,6 +20,8 @@ public:
 	void CustomInitialize(TSubclassOf<class AAbility> NewAbilityClass);
 	UFUNCTION()
 		void UpgradeSkill();
+
+	void SetSkillPoint();
 public:
 	UPROPERTY(meta = (BindWidget), BlueprintReadWrite)
 		class UImage* SpellImage;

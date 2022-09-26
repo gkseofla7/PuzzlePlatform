@@ -63,6 +63,7 @@ void UMonsterStatComponent::LevelUp(int32 NewLevel)
 		Level = NewLevel;
 		SetHP(CurrentStatData->MaxHP);
 		AttackDamage = CurrentStatData->Attack;
+		DropExp = CurrentStatData->DropExp;
 	}
 	else
 	{
@@ -99,11 +100,15 @@ void UMonsterStatComponent::NetMulticast_SetHP_Implementation(float NewHp)
 {
 
 	CurrentHP = NewHp;
+	
 	OnHPChanged.Broadcast();
 	if (CurrentHP < KINDA_SMALL_NUMBER)
 	{
+		auto Monster = Cast<ANPC_Master>(GetOwner());
 		CurrentHP = 0.0f;
-		Cast<ANPC_Master>(GetOwner())->Die();
+		Monster->bDead = true;
+		Monster->Die();
+
 		//OnHPIsZero.Broadcast();
 	}
 }

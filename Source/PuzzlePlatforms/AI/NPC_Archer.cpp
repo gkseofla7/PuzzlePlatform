@@ -105,6 +105,7 @@ void ANPC_Archer::EndAnimation(UAnimMontage* Montage, bool bInterrupted)
 
 void ANPC_Archer::Die()
 {
+	Super::Die();
 	MyAnim->PlayDeathMontage();
 	//SetActorEnableCollision(false);
 	if (HasAuthority() == true)

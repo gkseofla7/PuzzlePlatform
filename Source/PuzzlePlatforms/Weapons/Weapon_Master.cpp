@@ -171,6 +171,8 @@ bool AWeapon_Master::Multicast_SetClipAmmo_Validate(float NewClipAmmo)
 void AWeapon_Master::Multicast_SetMuzzleRotation_Implementation()
 {
     auto Soldier = Cast<ASoldier>(Player);
+    if (Soldier == nullptr)
+        return;
     if (Soldier->IsLocallyControlled() == false)
         return;
     Soldier->SetMuzzleRotation();

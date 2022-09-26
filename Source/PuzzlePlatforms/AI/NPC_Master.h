@@ -52,6 +52,8 @@ public:
 
 	UPROPERTY(VisibleAnywhere, Category = UI)
 		class UWidgetComponent* HPBarWidget;
+	bool bDead = false;
+	AActor * AttackedPlayer;
 
 	
 

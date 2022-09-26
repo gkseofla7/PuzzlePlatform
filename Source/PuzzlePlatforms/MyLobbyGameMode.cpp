@@ -4,6 +4,7 @@
 #include "MyLobbyGameMode.h"
 #include "GameMapsSettings.h"
 #include "PuzzlePlatformsGameInstance.h"
+#include "GameFramework/PlayerState.h"
 
 #include "TimerManager.h"
 
@@ -14,6 +15,7 @@ AMyLobbyGameMode::AMyLobbyGameMode()
 	{
 		DefaultPawnClass = LobbyBPCharacter.Class;
 	}
+	PlayerStateClass = APlayerState::StaticClass();
 }
 void AMyLobbyGameMode::Logout(AController* Exiting)
 {

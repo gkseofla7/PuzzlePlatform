@@ -8,6 +8,8 @@
 #include "../UI/HPBarWidget.h"
 #include "../Character_Master.h"
 #include "NPC_Archer.h"
+#include "../MyPlayerState.h"
+#include "../PlayersComponent/MyCharacterStatComponent.h"
 
 #include "DrawDebugHelpers.h"
 #include "Components/WidgetComponent.h"
@@ -99,31 +101,48 @@ void ANPC_Master::Attack()
 float ANPC_Master::TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent,
 	AController* EventInstigator, AActor* DamageCauser)
 {
+	if (bDead == true)
+		return 0;
 	if (!HasAuthority())
 		return 0;
 
 	//ABCHECK(MotionReplicator != nullptr)
 
 	float FinalDamage = Super::TakeDamage(DamageAmount, DamageEvent, EventInstigator, DamageCauser);
-	if (HasAuthority())//아마 원래 그냥 서버에서 실행될걸
+
+	AttackedPlayer = DamageCauser;
+	auto Player = Cast< ACharacter_Master>(DamageCauser);
+	Cast<ANPCAIController>(GetController())->SetTargetKey(Player);
+	Cast<ANPCAIController>(GetController())->SetIsHitKey(true);
+	auto Archer = Cast<ANPC_Archer>(this);
+	if (Archer != nullptr)
 	{
-		auto Player = Cast< ACharacter_Master>(DamageCauser);
-		Cast<ANPCAIController>(GetController())->SetTargetKey(Player);
-		Cast<ANPCAIController>(GetController())->SetIsHitKey(true);
-		auto Archer = Cast<ANPC_Archer>(this);
-		if (Archer != nullptr)
-		{
-			Archer->NetMulticast_SetTarget(Player);
-		}
+		Archer->NetMulticast_SetTarget(Player);
 	}
+	
 
 	MonsterStat->IncreaseHP(-FinalDamage);
+
+	
+
 	return FinalDamage;
 }
 
 
 void ANPC_Master::Die()
 {
+
+	if (HasAuthority() == true)//서버에서만 실행
+	{
+		//죽인 Player exp 줌
+		auto MyPlayer = Cast<ACharacter_Master>(AttackedPlayer);
+		if (MyPlayer != nullptr)
+		{
+
+			auto MyPlayerState = Cast<AMyPlayerState>(MyPlayer->GetPlayerState());
+			MyPlayerState->CharacterStat->Server_SetExp(MyPlayerState->CharacterStat->CurrentExp + MonsterStat->DropExp);
+		}
+	}
 
 }
 

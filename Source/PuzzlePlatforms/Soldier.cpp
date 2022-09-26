@@ -95,7 +95,8 @@ void ASoldier::UnSteamPack()
 	auto Movement = GetCharacterMovement();
 	Movement->MaxWalkSpeed = SteamPackWalkSpeed;
 	Movement->MaxAcceleration = SteamPackAcceleration;
-	EquippedItem->SteamPack = false;
+	if(EquippedItem!=nullptr)
+		EquippedItem->SteamPack = false;
 
 }
 

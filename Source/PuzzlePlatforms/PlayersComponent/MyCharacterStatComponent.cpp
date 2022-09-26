@@ -5,6 +5,8 @@
 #include "../PuzzlePlatformsGameInstance.h"
 #include "../DataTable/MyPlayerData.h"
 #include "../Character_Master.h"
+#include "../MyPlayerState.h"
+
 #include "Net/UnrealNetwork.h"
 
 // Sets default values for this component's properties
@@ -54,6 +56,23 @@ void UMyCharacterStatComponent::SetMP(float NewMP)
 		CurrentMP = 0.0f;
 	}
 }
+void UMyCharacterStatComponent::SetExp(int NewExp)
+{
+
+	ABCHECK(CurrentStatData != nullptr);
+
+	if (NewExp >= CurrentStatData->NextExp)
+	{
+
+		NewExp = NewExp - CurrentStatData->NextExp;
+		Level++;
+		SetLevel(Level);
+	}
+	UE_LOG(LogTemp, Warning, TEXT("SetEXP : %d"), NewExp);
+
+	CurrentExp = NewExp;
+	OnExpChanged.Broadcast();
+}
 
 void UMyCharacterStatComponent::SetLevel(float NewLevel)
 {
@@ -61,15 +80,24 @@ void UMyCharacterStatComponent::SetLevel(float NewLevel)
 	auto MyGameInstance = Cast<UPuzzlePlatformsGameInstance>(UGameplayStatics::GetGameInstance(GetWorld()));
 	ABCHECK(MyGameInstance != nullptr);
 	CurrentStatData = MyGameInstance->GetMyCharacterData(NewLevel);//모든애들 가져옴, 꼭 이래야될까..?ㅋㅋ
-
+	if (NewLevel == 1)
+	{
+		CurrentExp = 0;//0으로 초기화
+	}
 	if (nullptr != CurrentStatData)
 	{
-		{
-			Level = NewLevel;//BroadCast도 해줘야됨
-		}
+		
+		Level = NewLevel;//BroadCast도 해줘야됨
 		OnLevelChanged.Broadcast();
 		SetHP(CurrentStatData->MaxHP);
 		SetMP(CurrentStatData->MaxMP);
+		if (GetOwner()->HasAuthority())
+		{
+
+			auto MyPlayerState = Cast< AMyPlayerState>(GetOwner());
+			MyPlayerState->Server_SetSkillPoints(MyPlayerState->SkillPoints + 1);
+		}
+
 		//Attack도 해줌
 	}
 	else
@@ -91,7 +119,12 @@ float UMyCharacterStatComponent::GetMPRatio()
 	return (CurrentStatData->MaxMP < KINDA_SMALL_NUMBER) ? 0.0f : (CurrentMP / CurrentStatData->MaxMP);
 }
 
+float UMyCharacterStatComponent::GetExpRatio()
+{
+	ABCHECK(nullptr != CurrentStatData, 0.0f);
 
+	return float(CurrentExp) / float(CurrentStatData->NextExp);
+}
 
 
 void UMyCharacterStatComponent::Server_SetHP_Implementation(float NewHp)
@@ -130,15 +163,31 @@ void UMyCharacterStatComponent::NetMulticast_SetLevel_Implementation(float NewLe
 	SetLevel(NewLevel);
 }
 
-void UMyCharacterStatComponent::Server_SetName_Implementation(const FText& NewName)
+
+
+
+
+void UMyCharacterStatComponent::Server_SetExp_Implementation(int NewExp)
 {
-	NetMulticast_SetName(NewName);
+	NetMulticast_SetExp(NewExp);
 }
 
-void UMyCharacterStatComponent::NetMulticast_SetName_Implementation(const FText& NewName)
+bool UMyCharacterStatComponent::Server_SetExp_Validate(int NewExp)
 {
-	Name = NewName;
-	OnNameChanged.Broadcast();
+	return true;
+}
+
+void UMyCharacterStatComponent::NetMulticast_SetExp_Implementation(int NewExp)
+{
+	//음,, 더좋은 방법 없으려나;;
+	SetExp(NewExp);
+}
+
+
+
+bool UMyCharacterStatComponent::NetMulticast_SetExp_Validate(int NewExp)
+{
+	return true;
 }
 
 bool UMyCharacterStatComponent::Server_SetHP_Validate(float NewHp)
@@ -171,14 +220,4 @@ bool UMyCharacterStatComponent::NetMulticast_SetLevel_Validate(float NewLevel)
 	return true;
 }
 
-
-bool UMyCharacterStatComponent::Server_SetName_Validate(const FText& NewName)
-{
-	return true;
-}
-
-bool UMyCharacterStatComponent::NetMulticast_SetName_Validate(const FText& NewName)
-{
-	return true;
-}
 

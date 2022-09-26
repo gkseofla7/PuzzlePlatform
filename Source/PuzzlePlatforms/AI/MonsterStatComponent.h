@@ -45,6 +45,8 @@ public:
 public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Transient, Category = Stat)
 		float CurrentHP;
+	int DropExp;
+
 	float AttackDamage;
 	UPROPERTY(EditInstanceOnly, Category = Stat, Meta = (AllowPrivateAccess = true))
 		int32 Level;

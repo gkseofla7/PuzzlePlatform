@@ -10,6 +10,7 @@
 
 DECLARE_MULTICAST_DELEGATE(FOnHPChangedDelegate);
 DECLARE_MULTICAST_DELEGATE(FOnMPChangedDelegate);
+DECLARE_MULTICAST_DELEGATE(FOnExpChangedDelegate);
 DECLARE_MULTICAST_DELEGATE(FOnLevelChangedDelegate);
 DECLARE_MULTICAST_DELEGATE(FOnNameChangedDelegate);
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
@@ -25,6 +26,7 @@ public:
 
 	void SetHP(float NewHP);
 	void SetMP(float NewMP);
+	void SetExp(int NewExp);
 	void SetLevel(float NewLevel);
 	//void SetName(FText NewName);
 
@@ -44,6 +46,7 @@ public:
 	float GetMP() { return CurrentMP; }
 	float GetHPRatio();
 	float GetMPRatio();
+	float GetExpRatio();
 	
 	//UFUNCTION()
 	//	void OnRep_HP();
@@ -59,10 +62,11 @@ public:
 		void Server_SetLevel(float NewLevel);
 	UFUNCTION(NetMulticast, Reliable, WithValidation)
 		void NetMulticast_SetLevel(float NewLevel);
+
 	UFUNCTION(Server, Reliable, WithValidation)
-		void Server_SetName(const FText& NewName);
+		void Server_SetExp(int NewExp);
 	UFUNCTION(NetMulticast, Reliable, WithValidation)
-		void NetMulticast_SetName(const FText& NewName);
+		void NetMulticast_SetExp(int NewExp);
 	//UFUNCTION(Server, Reliable, WithValidation)
 	//	void Server_SetStatData(FMyCharacterrData* NewStatData);
 	//UFUNCTION(NetMulticast, Reliable, WithValidation)
@@ -76,9 +80,11 @@ public:
 		float CurrentMP;
 	int32 Level;
 	FText Name;
+	int CurrentExp = 0;
 	FMyCharacterrData* CurrentStatData = nullptr;
 	FOnHPChangedDelegate OnHPChanged;//걍 이거 다 리셋하는게..?
 	FOnMPChangedDelegate OnMPChanged;
+	FOnExpChangedDelegate OnExpChanged;
 	FOnLevelChangedDelegate OnLevelChanged;
 	FOnNameChangedDelegate OnNameChanged;
 

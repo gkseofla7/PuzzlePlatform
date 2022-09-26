@@ -29,10 +29,10 @@ void UPlayerInfoWidget::BindCharacterStat(class UMyCharacterStatComponent* NewCh
 
 	CurrentCharacterStat = NewCharacterStat;
 	//CurrentCharacterStat->SetHP(80);
-	
+	//Widget ÃÊ±âÈ­
 	PlayerName->SetText(FText::FromString(TEXT("Not Yet")));
 	HpBar->SetPercent(CurrentCharacterStat->GetHPRatio());
-
+	MpBar->SetPercent(CurrentCharacterStat->GetMPRatio());
 	auto hp = FString::Printf(TEXT("%d"), int(CurrentCharacterStat->CurrentHP));
 	auto	hpText = FText::FromString(hp);
 	HpNum->SetText(hpText);
@@ -40,6 +40,8 @@ void UPlayerInfoWidget::BindCharacterStat(class UMyCharacterStatComponent* NewCh
 	auto mp = FString::Printf(TEXT("%d"), (int)CurrentCharacterStat->CurrentMP);
 	auto	mpText = FText::FromString(mp);
 	MpNum->SetText(mpText);
+	ExpBar->SetPercent(CurrentCharacterStat->GetExpRatio());
+	SetLevel();
 
 	NewCharacterStat->OnMPChanged.AddLambda([this]() -> void {
 		if (CurrentCharacterStat.IsValid())
@@ -60,6 +62,16 @@ void UPlayerInfoWidget::BindCharacterStat(class UMyCharacterStatComponent* NewCh
 
 			auto	hpText = FText::FromString(hp);
 			HpNum->SetText(hpText);
+		}
+		});
+
+	NewCharacterStat->OnExpChanged.AddLambda([this]() -> void {
+		if (CurrentCharacterStat.IsValid())
+		{
+			UE_LOG(LogTemp, Warning, TEXT("ExpRatio %f"), CurrentCharacterStat->GetExpRatio());
+			UE_LOG(LogTemp, Warning, TEXT("CurrentExp %d"), CurrentCharacterStat->CurrentExp);
+			UE_LOG(LogTemp, Warning, TEXT("NextExp %d"), CurrentCharacterStat->CurrentStatData->NextExp);
+			ExpBar->SetPercent(CurrentCharacterStat->GetExpRatio());
 		}
 		});
 
