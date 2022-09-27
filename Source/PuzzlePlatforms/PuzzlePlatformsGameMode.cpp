@@ -15,17 +15,11 @@
 
 APuzzlePlatformsGameMode::APuzzlePlatformsGameMode()
 {
-	// set default pawn class to our Blueprinted character
-	//static ConstructorHelpers::FClassFinder<APawn> PlayerPawnBPClass(TEXT("/Game/ThirdPersonCPP/Blueprints/ThirdPersonCharacter"));
+	DefaultPawnClass = AMyDefaultPawn::StaticClass();
 	static ConstructorHelpers::FClassFinder<APawn> PlayerPawnBPClass(TEXT("/Game/Karts/BP_GoKart"));
 	static ConstructorHelpers::FClassFinder<APawn> SoldierBPClass(TEXT("/Game/ThirdPersonCPP/Blueprints/BP_Soldier_2"));
 	static ConstructorHelpers::FClassFinder<APawn> WarriorBPClass(TEXT("/Game/ThirdPersonCPP/Blueprints/BP_Warrior"));
-	//static ConstructorHelpers::FClassFinder<APawn> LobbyBPCharacter(TEXT("/Game/ThirdPersonCPP/Blueprints/BP_LobbyCharacter"));
 
-	DefaultPawnClass = AMyDefaultPawn::StaticClass();
-	//DefaultPawnClass = PlayerPawnBPClass.Class;
-	
-	//DefaultPawnClass = ADefaultPawn::StaticClass();
 	if (SoldierBPClass.Class != NULL)
 	{
 
@@ -51,10 +45,8 @@ void APuzzlePlatformsGameMode::PostLogin(APlayerController* NewPlayer)
 {
 	Super::PostLogin(NewPlayer);
 	UE_LOG(LogTemp, Warning, TEXT("PostLogin"));
-	auto MyPlaerState = Cast<AMyPlayerState>(NewPlayer->PlayerState);
 
-	//ABCHECK(nullptr != MyPlaerState)
-	MyPlaerState->InitPlayerData();
+
 
 }
 

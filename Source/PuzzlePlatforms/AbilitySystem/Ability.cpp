@@ -33,7 +33,6 @@ AAbility::AAbility()
 void AAbility::BeginPlay()
 {
 	Super::BeginPlay();
-	
 	PlayerRef = Cast<ACharacter_Master>(GetOwner());
 	AnimRef = Cast<UAnimInstance_Master>(PlayerRef->GetMesh()->GetAnimInstance());
 	auto IsBuff = Cast<AAbility_Buff_Master>(this);
@@ -87,7 +86,7 @@ void AAbility::CastAbility_Implementation()
 	{
 		CastBar->CastSuccessful.Clear();
 	}
-	CastSuccessDeleagate.Broadcast();
+	//CastSuccessDeleagate.Broadcast();
 }
 
 void AAbility::ActivateEffect()

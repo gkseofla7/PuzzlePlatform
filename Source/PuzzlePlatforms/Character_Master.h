@@ -4,7 +4,7 @@
 
 #include"PuzzlePlatforms.h"
 #include "GameFramework/Character.h"
-//#include "PlayersComponent/MotionReplicatorInterface.h"
+
 #include "PlayersComponent/SoldierMotionReplicator.h"
 #include "PlayersComponent/MotionInterfaceComponent.h"
 
@@ -65,9 +65,9 @@ public:
 	//void Test();
 	void SetPlayerStat();
 	UFUNCTION(Server, Reliable, WithValidation)
-	void Server_BindCharacterStat();
+	void Server_BindCharacterStatToWidget();
 	UFUNCTION(NetMulticast, Reliable, WithValidation)
-	void  NetMulticast_BindCharacterStat();
+	void  NetMulticast_BindCharacterStatToWidget();
 
 	void BindCharacterStatToWidget();
 

@@ -6,6 +6,7 @@
 #include "PlayersComponent/MyCharacterStatComponent.h"
 #include "DataTable/MyPlayerData.h"
 #include "MyPlayerController.h"
+#include "MyLobbyGameMode.h"
 
 AMyPlayerState::AMyPlayerState()
 {
@@ -22,15 +23,16 @@ AMyPlayerState::AMyPlayerState()
 void AMyPlayerState::BeginPlay()//어차피 각각 자기꺼 시킴
 {
 	Super::BeginPlay();
-	//여기서 그냥 초기화 시키면 됨
 	if (HasAuthority())
 	{
-		UE_LOG(LogTemp, Warning, TEXT("Server PlayerState Beginplay"));
+		UE_LOG(LogTemp, Warning, TEXT("Server : PlayerState BeginPlay"));
 	}
 	else
 	{
-		UE_LOG(LogTemp, Warning, TEXT("Client PlayerState Beginplay"));
+		UE_LOG(LogTemp, Warning, TEXT("Client : PlayerState BeginPlay"));
 	}
+	if(Cast<AMyLobbyGameMode>(UGameplayStatics::GetGameMode(GetWorld()))!=nullptr)
+		return;
 	CharacterStat->SetLevel(1);
 
 }
@@ -41,12 +43,6 @@ int32 AMyPlayerState::GetGameScore() const
 }
 
 
-void AMyPlayerState::InitPlayerData()
-{
-	//SetPlayerName(TEXT("Destiny"));
-	//CharacterLevel = 5;
-	GameScore = 0;
-}
 
 void AMyPlayerState::Server_SetPlayerName_Implementation(const FText& NewPlayerName)
 {

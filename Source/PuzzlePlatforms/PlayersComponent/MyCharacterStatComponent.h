@@ -79,6 +79,7 @@ public:
 	UPROPERTY(EditAnywhere, Transient)
 		float CurrentMP;
 	int32 Level;
+	int AttackDamage;
 	FText Name;
 	int CurrentExp = 0;
 	FMyCharacterrData* CurrentStatData = nullptr;

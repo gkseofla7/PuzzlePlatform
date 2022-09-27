@@ -50,9 +50,11 @@ void AAbility_TargetMissile::ActivateEffect_Implementation()
 	//if (SoldierRef->IsLocallyControlled() == false)
 	//	return;//애초에 여기에 올일은 없음
 
-		SoldierRef->SetUsingSkill(false);
-		SoldierRef->GetMesh()->bPauseAnims = false;
-		SoldierRef->ShowTarget = false;
+	SoldierRef->SetUsingSkill(false);
+	SoldierRef->GetMesh()->bPauseAnims = false;
+	SoldierRef->ShowTarget = false;
+	if (SoldierRef->CurrentTarget == nullptr)
+		return;
 	//SoldierRef->SetUsingSkill(false);
 
 	Server_SetTransform(SoldierRef->RocketHolderComponent->GetSocketTransform("Mouth"));

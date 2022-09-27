@@ -40,24 +40,22 @@ void ASelectCharacterSection::Tick(float DeltaTime)
 
 void ASelectCharacterSection::OnBoxBeginOverlap(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
-	
+	//팀을 고르면
 	auto MyPlayer = Cast< ALobbyCharacter>(OtherActor);
-	if (MyPlayer != nullptr&&MyPlayer->IsLocallyControlled()&&MyPlayer->IsPlayerControlled())
+	if (MyPlayer != nullptr&&MyPlayer->IsLocallyControlled()&&MyPlayer->IsPlayerControlled())//내 Character면
 	{
 		auto MyGameInstance = Cast< UPuzzlePlatformsGameInstance>(GetGameInstance());
 		ABCHECK(MyGameInstance);
-		MyGameInstance->CharacterIndex = CharacterIndex;
+		MyGameInstance->CharacterIndex = CharacterIndex;//GameInistance에 저장
 	}
-	if (HasAuthority())
+	if (HasAuthority())//모든 플레이어가 캐릭터를 선택했을시 실행(플레이어의 수는 짝수)
 	{
 		auto MyGameMode = Cast< AMyLobbyGameMode>(UGameplayStatics::GetGameMode(GetWorld()));
 		ABCHECK(MyGameMode);
 		MyGameMode->NumberOfReady++;
 		if (MyGameMode->NumberOfPlayers == MyGameMode->NumberOfReady && MyGameMode->NumberOfPlayers % 2 == 0)
 		{
-			//FTimerDelegate RespawnDelegate = FTimerDelegate::CreateUObject(this, &AMyLobbyGameMode::StartPlay,);
 			MyGameMode->StartGame();
-			//GetWorldTimerManager().SetTimer(GameStartTimer, this, &AMyLobbyGameMode::StartGame, 10.0f);
 
 		}
 	}

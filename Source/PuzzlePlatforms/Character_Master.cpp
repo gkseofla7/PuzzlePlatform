@@ -4,7 +4,6 @@
 
 #include"PlayersComponent/MyCharacterStatComponent.h"
 #include "AnimInstance/PlayerAnimInstance.h"
-#include "PlayersComponent/MotionReplicatorInterface.h"
 #include "Cars/MyProjectPawn.h"
 #include "PuzzlePlatformsGameInstance.h"
 #include "MyPlayerController.h"
@@ -129,10 +128,6 @@ void ACharacter_Master::SetupPlayerInputComponent(class UInputComponent* PlayerI
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
 	// Set up gameplay key bindings
 	check(PlayerInputComponent);
-	PlayerInputComponent->BindAction("Jump", IE_Pressed, this, &ACharacter::Jump);
-	PlayerInputComponent->BindAction("Jump", IE_Released, this, &ACharacter::StopJumping);
-	PlayerInputComponent->BindAction("GetInTheCar", IE_Pressed, this, &ACharacter_Master::GetInTheCar);
-	PlayerInputComponent->BindAction("Attack", IE_Pressed, this, &ACharacter_Master::Attack);
 	PlayerInputComponent->BindAction("Skill1", IE_Pressed, this, &ACharacter_Master::Skill1Clicked);
 	PlayerInputComponent->BindAction("Skill2", IE_Pressed, this, &ACharacter_Master::Skill2Clicked);
 	PlayerInputComponent->BindAction("Skill3", IE_Pressed, this, &ACharacter_Master::Skill3Clicked);
@@ -143,6 +138,11 @@ void ACharacter_Master::SetupPlayerInputComponent(class UInputComponent* PlayerI
 	PlayerInputComponent->BindAction("Skill3", IE_Released, this, &ACharacter_Master::SkillReleased);
 	PlayerInputComponent->BindAction("Skill4", IE_Released, this, &ACharacter_Master::SkillReleased);
 	PlayerInputComponent->BindAction("Skill5", IE_Released, this, &ACharacter_Master::SkillReleased);
+	PlayerInputComponent->BindAction("Jump", IE_Pressed, this, &ACharacter::Jump);
+	PlayerInputComponent->BindAction("Jump", IE_Released, this, &ACharacter::StopJumping);
+	PlayerInputComponent->BindAction("GetInTheCar", IE_Pressed, this, &ACharacter_Master::GetInTheCar);
+	PlayerInputComponent->BindAction("Attack", IE_Pressed, this, &ACharacter_Master::Attack);
+
 	PlayerInputComponent->BindAction("SkillTree", IE_Pressed, this, &ACharacter_Master::OpenSkillTree);
 	PlayerInputComponent->BindAction("OpenMap", IE_Pressed, this, &ACharacter_Master::OpenMap);
 	PlayerInputComponent->BindAxis("MoveForward", this, &ACharacter_Master::MoveForward);
@@ -176,13 +176,11 @@ void ACharacter_Master::PossessedBy(AController* NewController)//이것도 결국 서�
 void ACharacter_Master::BeginPlay()
 {
 	Super::BeginPlay();
-
-	if (IsLocallyControlled())//체력 주기적으로 회복 아 애초에 이것도 실행을 안하는구나.. 누가 들어와도
+	if (IsLocallyControlled())//체력 주기적으로 회복
 	{
 		FTimerHandle TimerHandler;
 		GetWorld()->GetTimerManager().SetTimer(TimerHandler, this, &ACharacter_Master::UpdateStat, 7, true);
 	}
-
 	auto LobbyGameMode = Cast< AMyLobbyGameMode>(UGameplayStatics::GetGameMode(GetWorld()));
 	if (LobbyGameMode != nullptr)//Lobby에서 안보이게 하려고
 	{
@@ -192,8 +190,6 @@ void ACharacter_Master::BeginPlay()
 	//여기서 애들 Stat 초기화 시킴
 	FTimerDelegate RespawnDelegate = FTimerDelegate::CreateUObject(this, &ACharacter_Master::SetPlayerStat);//어차피 자기 자신만 실행함
 	GetWorldTimerManager().SetTimer(StatResetHandle, RespawnDelegate, .6f, false);
-
-
 }
 
 void ACharacter_Master::SetPlayerStat()
@@ -207,7 +203,7 @@ void ACharacter_Master::SetPlayerStat()
 		auto MyController = Cast<AMyPlayerController>(GetController());
 		MyController->SetWidget(MyPlayerState->CharacterStat);//내 mainwidget
 		PlayerInfoHUDWidget = MyController->PlayerInfoHUDWidget;
-		Server_BindCharacterStat();//각 플레이어 머리 위 widget
+		Server_BindCharacterStatToWidget();//각 플레이어 머리 위 widget
 	}
 	else// 나 외 다른 플레이어들은
 	{
@@ -218,21 +214,21 @@ void ACharacter_Master::SetPlayerStat()
 }
 
 
-void ACharacter_Master::Server_BindCharacterStat_Implementation()
+void ACharacter_Master::Server_BindCharacterStatToWidget_Implementation()
 {
-	NetMulticast_BindCharacterStat();
+	NetMulticast_BindCharacterStatToWidget();
 }
 
-bool ACharacter_Master::Server_BindCharacterStat_Validate()
+bool ACharacter_Master::Server_BindCharacterStatToWidget_Validate()
 {
 	return true;
 }
-void  ACharacter_Master::NetMulticast_BindCharacterStat_Implementation()
+void  ACharacter_Master::NetMulticast_BindCharacterStatToWidget_Implementation()
 {
 	BindCharacterStatToWidget();
 }
 
-bool  ACharacter_Master::NetMulticast_BindCharacterStat_Validate()
+bool  ACharacter_Master::NetMulticast_BindCharacterStatToWidget_Validate()
 {
 	return true;
 }

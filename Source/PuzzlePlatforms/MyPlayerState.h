@@ -20,7 +20,7 @@ public:
 
 	int32 GetGameScore() const;
 	void BeginPlay() override;
-	void InitPlayerData();
+
 	UFUNCTION(Server, Reliable, WithValidation)
 		void Server_SetPlayerName(const FText& NewPlayerName);
 	//UFUNCTION(Server, Reliable, WithValidation)

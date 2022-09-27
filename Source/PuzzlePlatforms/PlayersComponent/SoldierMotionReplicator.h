@@ -4,13 +4,13 @@
 
 #include "CoreMinimal.h"
 #include "Components/ActorComponent.h"
-#include "MotionReplicatorInterface.h"
+
 #include "MotionInterfaceComponent.h"
 #include "../Weapons/Object_Master.h"
 
 #include "SoldierMotionReplicator.generated.h"
 
-//public UActorComponent, public IMotionReplicatorInterface
+
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
 class PUZZLEPLATFORMS_API USoldierMotionReplicator : public UMotionInterfaceComponent
 {

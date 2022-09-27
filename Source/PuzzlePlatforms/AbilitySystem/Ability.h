@@ -59,7 +59,7 @@ public:
 
 	class UCastBarWidget* CastBar;
 
-	FCastSuccessDeleagate CastSuccessDeleagate;
+	//FCastSuccessDeleagate CastSuccessDeleagate;
 	UPROPERTY(EditAnywhere)
 		float DamageAmount;
 	bool AnimationEnd = false;
