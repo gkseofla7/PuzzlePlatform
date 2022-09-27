@@ -6,7 +6,7 @@
 #include "GameFramework/Character.h"
 
 #include "PlayersComponent/SoldierMotionReplicator.h"
-#include "PlayersComponent/MotionInterfaceComponent.h"
+#include "PlayersComponent/CharacterMotionReplicator.h"
 
 
 #include "Character_Master.generated.h"
@@ -95,7 +95,7 @@ public:
 	UPROPERTY(EditAnywhere,BlueprintReadWrite, Category = Stat)
 		class UMyCharacterStatComponent* CharacterStatRef;
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Replicator)
-		UMotionInterfaceComponent* ReplicateComponent;
+		UCharacterMotionReplicator* ReplicateComponent;
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 		class UActorAbilities* ActorAbilitiesComponent;//받은 능력?
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Replicator)

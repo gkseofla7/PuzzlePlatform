@@ -5,14 +5,14 @@
 #include "CoreMinimal.h"
 #include "Components/ActorComponent.h"
 
-#include "MotionInterfaceComponent.h"
+#include "CharacterMotionReplicator.h"
 #include "../Weapons/Object_Master.h"
 
 #include "SoldierMotionReplicator.generated.h"
 
 
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
-class PUZZLEPLATFORMS_API USoldierMotionReplicator : public UMotionInterfaceComponent
+class PUZZLEPLATFORMS_API USoldierMotionReplicator : public UCharacterMotionReplicator
 {
 	GENERATED_BODY()
 

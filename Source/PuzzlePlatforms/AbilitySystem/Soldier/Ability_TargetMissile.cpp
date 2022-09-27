@@ -44,24 +44,19 @@ void AAbility_TargetMissile::BeginPlay()
 
 void AAbility_TargetMissile::ActivateEffect_Implementation()
 {
-	//Super::ActivateEffect_Implementation();
 
 	PlayerRef->OnSkillReleased.Clear();//Release하는 순간 초기화
-	//if (SoldierRef->IsLocallyControlled() == false)
-	//	return;//애초에 여기에 올일은 없음
 
 	SoldierRef->SetUsingSkill(false);
 	SoldierRef->GetMesh()->bPauseAnims = false;
 	SoldierRef->ShowTarget = false;
 	if (SoldierRef->CurrentTarget == nullptr)
 		return;
-	//SoldierRef->SetUsingSkill(false);
 
 	Server_SetTransform(SoldierRef->RocketHolderComponent->GetSocketTransform("Mouth"));
 	Server_SetVisibility();
 	Server_DetachAbilityFromPlayer();//모두 일단 띄어냄
 	Server_SetTarget(SoldierRef->CurrentTarget);
-	//MissileMovementComponent->Target = SoldierRef->CurrentTarget;
 	Server_SetActive();
 }
 

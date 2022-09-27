@@ -4,8 +4,8 @@
 #include "GoKart.h"
 #include "GameFramework/GameStateBase.h"
 #include "../Character_Master.h"
-#include "../PlayersComponent/PlayersMotionReplicator.h"
-#include "../PlayersComponent/MotionInterfaceComponent.h"
+#include "../PlayersComponent/WarriorMotionReplicator.h"
+#include "../PlayersComponent/CharacterMotionReplicator.h"
 
 #include "DrawDebugHelpers.h"
 #include "Engine/World.h"
@@ -128,8 +128,8 @@ void AGoKart::Server_SendGetOutTheCar_Implementation()
 	{
 
 		//+ GetActorUpVector()*50
-		Cast<UMotionInterfaceComponent>(Cast<ACharacter_Master>(Rider)->ReplicateComponent)->DisableActor(false);
-		//Cast<UPlayersMotionReplicator>(Cast<ACharacter_Master>(Rider)->ReplicateComponent.GetObjectRef())->DisableActor(false);
+		Cast<UCharacterMotionReplicator>(Cast<ACharacter_Master>(Rider)->ReplicateComponent)->DisableActor(false);
+		//Cast<UWarriorMotionReplicator>(Cast<ACharacter_Master>(Rider)->ReplicateComponent.GetObjectRef())->DisableActor(false);
 		FVector Place = GetTransform().GetLocation() + 200 * (GetActorForwardVector().RotateAngleAxis(270.0, GetActorUpVector()));
 		Rider->SetActorLocation(Place);
 

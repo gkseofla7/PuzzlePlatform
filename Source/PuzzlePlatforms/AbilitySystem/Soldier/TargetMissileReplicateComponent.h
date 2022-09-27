@@ -54,13 +54,11 @@ public:
 	// Called every frame
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 	float GetVelocityToDeriavative() { return  ClientTimeBetweenLastUpdates * 100; }
-	void ClearAcknowledgedMoves(FTargetMissileMove LastMove);
 	UFUNCTION(Server, Reliable, WithValidation)
 		void Server_SendMove(FTargetMissileMove Value);
 	UFUNCTION()
 		void OnRep_ServerState();
 	void SimulatedProxy_OnRep_ServerState();
-	void AutonomousProxy_OnRep_ServerState();
 	void AddToUnacknowledgeMoves(FTargetMissileMove Move) { UnacknowledgeMoves.Add(Move); }
 	FHermitCubicSplines CreateSpline();
 	FTargetMissileState GetServerState() { return ServerState; }
@@ -73,7 +71,6 @@ public:
 public:
 	UPROPERTY()
 		USceneComponent* MeshOffsetRoot;
-	float ClientSimulatedTime;
 	UPROPERTY(ReplicatedUsing = OnRep_ServerState)
 	FTargetMissileState ServerState;//현재 서버 상태
 

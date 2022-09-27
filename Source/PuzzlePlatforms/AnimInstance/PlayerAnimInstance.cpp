@@ -3,7 +3,7 @@
 
 #include "PlayerAnimInstance.h"
 #include "../Character_Master.h"
-#include "../PlayersComponent/PlayersMotionReplicator.h"
+#include "../PlayersComponent/WarriorMotionReplicator.h"
 #include "../Warrior.h"
 UPlayerAnimInstance::UPlayerAnimInstance()
 {

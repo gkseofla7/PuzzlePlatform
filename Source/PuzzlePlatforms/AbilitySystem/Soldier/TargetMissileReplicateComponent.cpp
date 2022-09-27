@@ -66,31 +66,6 @@ void UTargetMissileReplicateComponent::TickComponent(float DeltaTime, ELevelTick
 	if (Missile->bActive == false)//쏠때 움직임
 		return;
 
-	//if (GetOwnerRole() == ROLE_AutonomousProxy)//일단 서버 아니고 자기꺼 있을때 자기꺼 움직이고 서버한테 정보보냄
-	//{//즉 IsLocallyControlled() && !HasAuthority()
-	//	AddToUnacknowledgeMoves(LastMove);//
-	//	Server_SendMove(LastMove);//일단 서버한테보냄(서버가 다시 모두에게 보내게)
-	//	//아니 걍 서버에서 바꾸고 하는게 훨 나음
-	//}
-	//We are the server and in control of the pawn
-//	if ((GetOwnerRole() == ROLE_Authority && (Cast<APawn>(GetOwner()))->IsLocallyControlled()))//서버고 자기꺼일때 
-	//{
-		//UpdateServerState(LastMove);
-		//Server_SendMove(LastMove);
-	//}
-	////서버고 아무도 안타고 자기꺼 아닐때는?
-//if ((OurMovementComponent->riden == false && GetOwnerRole() == ROLE_Authority)
-//	&& (Cast<APawn>(GetOwner()))->IsLocallyControlled())//서버고 자기꺼일때 
-//{
-//	UpdateServerState(LastMove);
-//}
-
-	//if (GetOwnerRole() == ROLE_SimulatedProxy)//누구든 자기꺼 아닐때
-	//{
-
-	//	ClientTick(DeltaTime);
-	//}
-
 	if (GetOwnerRole() == ROLE_Authority)
 	{
 		FTargetMissileMove LastMove = OurMovementComponent->GetLastMove();
@@ -108,22 +83,12 @@ void UTargetMissileReplicateComponent::Server_SendMove_Implementation(FTargetMis
 {
 	if (OurMovementComponent == nullptr)
 		return;
-	ClientSimulatedTime += Move.DeltaTime;//다른 Client를 실행시켜줄 시간
-
-	//OurMovementComponent->SimulateMove(Move);//나 실행, 이때 이동 각도 보내줘야되는거아닌지,,ㅋㅋ
 	UpdateServerState(Move);
 
 }
 
 bool UTargetMissileReplicateComponent::Server_SendMove_Validate(FTargetMissileMove Move)
 {
-	//float ProposedTime = ClientSimulatedTime + Move.DeltaTime;
-	//bool ClientNotRunningAhead = ProposedTime < GetWorld()->TimeSeconds;
-	//if (!ClientNotRunningAhead)
-	//{
-	//	//UE_LOG(LogTemp, Warning, TEXT("Client is running too fast"));
-	//	return false;
-	//}
 	return true;
 
 }
@@ -134,8 +99,6 @@ void UTargetMissileReplicateComponent::UpdateServerState(FTargetMissileMove Move
 	ServerState.LastMove = Move;
 	ServerState.Transform = GetOwner()->GetTransform();
 	ServerState.Velocity = OurMovementComponent->GetVelocity();
-	//auto Loc = ServerState.Transform.GetLocation();
-	//UE_LOG(LogTemp, Warning, TEXT("Location %f, %f, %f"), Loc.X, Loc.Y, Loc.Z);
 }
 
 void UTargetMissileReplicateComponent::ClientTick(float DeltaTime)
@@ -210,7 +173,7 @@ void UTargetMissileReplicateComponent::InterpolateRotation(float LerpRatio)
 
 void UTargetMissileReplicateComponent::OnRep_ServerState()//약간 모두한테 실행되는듯?
 {
-	if (!GetOwner()->HasAuthority())
+	if (!GetOwner()->HasAuthority())//서버가 주인, 모든 다른 애들은 다 Simulated
 	{
 
 		SimulatedProxy_OnRep_ServerState();
@@ -220,8 +183,6 @@ void UTargetMissileReplicateComponent::OnRep_ServerState()//약간 모두한테 실행되
 
 void UTargetMissileReplicateComponent::SimulatedProxy_OnRep_ServerState()
 {
-	//아니 바뀌면 실행되는게 아니라 그냥 계속 주기적으로 실행되는거였어..?
-	//UE_LOG(LogTemp, Warning, TEXT("Here is Simulate Update"));
 	if (OurMovementComponent == nullptr) return;
 
 	ClientTimeBetweenLastUpdates = ClientTimeSinceUpdate;
@@ -234,51 +195,40 @@ void UTargetMissileReplicateComponent::SimulatedProxy_OnRep_ServerState()
 	ClientStartVelocity = OurMovementComponent->GetVelocity();
 	GetOwner()->SetActorTransform(ServerState.Transform);
 
-	//if (ClientTimeBetweenLastUpdates > ClientTimeSinceUpdate)//총시간에 도달못하면
-	//{
-	//	float tmp = ClientTimeBetweenLastUpdates - ClientTimeSinceUpdate;
-	//	ClientTimeBetweenLastUpdates = ClientTimeSinceUpdate + tmp;//마무리 못했으니 시간 더 넣어서 시킴
-	//	ClientTimeSinceUpdate = 0;
-	//}
-	//else//다끝냈으면 
-	//{
-	//	ClientTimeBetweenLastUpdates = ClientTimeSinceUpdate;//여태 움직인 시간 넣음
-	//	ClientTimeSinceUpdate = 0;
-	//}
-	//ClientStartVelocity = OurMovementComponent->GetVelocity();
-	//GetOwner()->SetActorTransform(ServerState.Transform);//서버 위치가 내 위치 일단 Collision을 위한거 먼저 보내고 Mesh는 냅둠
-
-
 
 }
 
-void UTargetMissileReplicateComponent::AutonomousProxy_OnRep_ServerState()
-{
-	if (OurMovementComponent == nullptr)
-		return;
-	GetOwner()->SetActorTransform(ServerState.Transform);//다시 돌리는거 아니냐..?
-	OurMovementComponent->SetVelocity(ServerState.Velocity);
-	ClearAcknowledgedMoves(ServerState.LastMove);
 
-	for (const FTargetMissileMove& Move : UnacknowledgeMoves)//결국엔 클라에서 나오는거였냐..ㅋ
-	{
-		//DrawDebugString(GetWorld(), FVector(0, 0, 120), GetEnumText_(GetOwner()->GetLocalRole()), GetOwner(), FColor::White, ServerState.LastMove.DeltaTime);
-		OurMovementComponent->SimulateMove(Move);//서버에서 실행한거 이후에 다시 계산
-	}
-}
 
-void UTargetMissileReplicateComponent::ClearAcknowledgedMoves(FTargetMissileMove LastMove)
-{
-	TArray<FTargetMissileMove> NewMoves;
 
-	for (const FTargetMissileMove& Move : UnacknowledgeMoves)
-	{
-		if (Move.Time > LastMove.Time)
-		{
-			NewMoves.Add(Move);
-		}
-	}
 
-	UnacknowledgeMoves = NewMoves;
+//void UTargetMissileReplicateComponent::AutonomousProxy_OnRep_ServerState()
+//{
+//	if (OurMovementComponent == nullptr)
+//		return;
+//	GetOwner()->SetActorTransform(ServerState.Transform);//다시 돌리는거 아니냐..?
+//	OurMovementComponent->SetVelocity(ServerState.Velocity);
+//	ClearAcknowledgedMoves(ServerState.LastMove);
+//
+//	for (const FTargetMissileMove& Move : UnacknowledgeMoves)//결국엔 클라에서 나오는거였냐..ㅋ
+//	{
+//		//DrawDebugString(GetWorld(), FVector(0, 0, 120), GetEnumText_(GetOwner()->GetLocalRole()), GetOwner(), FColor::White, ServerState.LastMove.DeltaTime);
+//		OurMovementComponent->SimulateMove(Move);//서버에서 실행한거 이후에 다시 계산
+//	}
+//}
 
-}
+//void UTargetMissileReplicateComponent::ClearAcknowledgedMoves(FTargetMissileMove LastMove)
+//{
+//	TArray<FTargetMissileMove> NewMoves;
+//
+//	for (const FTargetMissileMove& Move : UnacknowledgeMoves)
+//	{
+//		if (Move.Time > LastMove.Time)
+//		{
+//			NewMoves.Add(Move);
+//		}
+//	}
+//
+//	UnacknowledgeMoves = NewMoves;
+//
+//}

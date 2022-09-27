@@ -70,23 +70,12 @@ void UGoKartMovementReplicator::TickComponent(float DeltaTime, ELevelTick TickTy
 		Server_SendMove(LastMove);//일단 서버한테보냄(서버가 다시 모두에게 보내게)
 	}
 	//We are the server and in control of the pawn
-	if ((OurMovementComponent->ItsMe == true && GetOwnerRole() == ROLE_Authority)
-		|| (GetOwnerRole() == ROLE_Authority && (Cast<APawn>(GetOwner()))->IsLocallyControlled()))//서버고 자기꺼일때 
+	if ( GetOwnerRole() == ROLE_Authority)//서버고 자기꺼일때 
 	{
 		UpdateServerState(LastMove);
 	}
-
-	//서버고 아무도 안타고 자기꺼 아닐때는?
-	if ((OurMovementComponent->riden == false && GetOwnerRole() == ROLE_Authority)
-		 && (Cast<APawn>(GetOwner()))->IsLocallyControlled())//서버고 자기꺼일때 
+	if (GetOwnerRole() == ROLE_SimulatedProxy)//누구든 자기꺼 아닐때
 	{
-		UpdateServerState(LastMove);
-	}
-
-
-	if (OurMovementComponent->ItsMe == false&&GetOwnerRole() == ROLE_SimulatedProxy)//누구든 자기꺼 아닐때
-	{
-
 		ClientTick(DeltaTime);
 	}
 }

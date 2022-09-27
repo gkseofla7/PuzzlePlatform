@@ -1,7 +1,7 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 #include "Warrior.h"
 #include "AnimInstance/PlayerAnimInstance.h"
-#include "PlayersComponent/PlayersMotionReplicator.h"
+#include "PlayersComponent/WarriorMotionReplicator.h"
 #include "Weapons/Sword_Master.h"
 #include "MyPlayerController.h"
 #include "PuzzlePlatformsGameMode.h"
@@ -16,7 +16,7 @@
 AWarrior::AWarrior()
 {
 	bReplicates = true;
-	ReplicateComponent = CreateDefaultSubobject<UPlayersMotionReplicator>(TEXT("MOTIOREPLICATOR"));
+	ReplicateComponent = CreateDefaultSubobject<UWarriorMotionReplicator>(TEXT("MOTIOREPLICATOR"));
 
 	static ConstructorHelpers::FClassFinder<ASword_Master> FinderSword(TEXT("/Game/Weapons/BP_Sword_Master"));
 	if (FinderSword.Succeeded())
@@ -328,7 +328,7 @@ void AWarrior::PlayHangToCrouchMontage()
 void AWarrior::ClimbUp()
 {
 	if (IsClimbing == true)
-		Cast<UPlayersMotionReplicator>(ReplicateComponent)->Server_SendClimbUp();
+		Cast<UWarriorMotionReplicator>(ReplicateComponent)->Server_SendClimbUp();
 	//if (IsClimbing == true)
 	//{
 	//	PlayHangToCrouchMontage();
@@ -361,7 +361,7 @@ void AWarrior::DropDown()
 
 void AWarrior::Dash()
 {
-	Cast<UPlayersMotionReplicator>(ReplicateComponent)->Server_SendDash();
+	Cast<UWarriorMotionReplicator>(ReplicateComponent)->Server_SendDash();
 }
 
 void AWarrior::EndAnimation(UAnimMontage* Montage, bool bInterrupted)

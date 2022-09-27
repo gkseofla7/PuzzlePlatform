@@ -4,17 +4,17 @@
 
 #include "CoreMinimal.h"
 #include "Components/ActorComponent.h"
-#include "MotionInterfaceComponent.generated.h"
+#include "CharacterMotionReplicator.generated.h"
 
 
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
-class PUZZLEPLATFORMS_API UMotionInterfaceComponent : public UActorComponent
+class PUZZLEPLATFORMS_API UCharacterMotionReplicator : public UActorComponent
 {
 	GENERATED_BODY()
 
 public:	
 	// Sets default values for this component's properties
-	UMotionInterfaceComponent();
+	UCharacterMotionReplicator();
 
 protected:
 	// Called when the game starts

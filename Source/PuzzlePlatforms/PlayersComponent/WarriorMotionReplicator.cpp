@@ -1,7 +1,7 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 
-#include "PlayersMotionReplicator.h"
+#include "WarriorMotionReplicator.h"
 
 #include "../AnimInstance/PlayerAnimInstance.h"
 #include "../Cars/GoKart.h"
@@ -11,7 +11,7 @@
 #include "Net/UnrealNetwork.h"
 
 // Sets default values for this component's properties
-UPlayersMotionReplicator::UPlayersMotionReplicator()
+UWarriorMotionReplicator::UWarriorMotionReplicator()
 {
 	// Set this component to be initialized when the game starts, and to be ticked every frame.  You can turn these features
 	// off to improve performance if you don't need them.
@@ -26,24 +26,24 @@ UPlayersMotionReplicator::UPlayersMotionReplicator()
 	// ...
 }
 
-void UPlayersMotionReplicator::InitializeComponent()
+void UWarriorMotionReplicator::InitializeComponent()
 {
 
  }
 
 
-void UPlayersMotionReplicator::GetLifetimeReplicatedProps(TArray< FLifetimeProperty >& OutLifetimeProps) const
+void UWarriorMotionReplicator::GetLifetimeReplicatedProps(TArray< FLifetimeProperty >& OutLifetimeProps) const
 {
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
-	DOREPLIFETIME(UPlayersMotionReplicator, AttackToggle);
-	DOREPLIFETIME(UPlayersMotionReplicator, CurrentCombo);
+	DOREPLIFETIME(UWarriorMotionReplicator, AttackToggle);
+	DOREPLIFETIME(UWarriorMotionReplicator, CurrentCombo);
 
 
 }
 
 
 // Called when the game starts
-void UPlayersMotionReplicator::BeginPlay()
+void UWarriorMotionReplicator::BeginPlay()
 {
 	Super::BeginPlay();
 	
@@ -63,7 +63,7 @@ void UPlayersMotionReplicator::BeginPlay()
 
 
 // Called every frame
-void UPlayersMotionReplicator::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
+void UWarriorMotionReplicator::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
 {
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
 
@@ -72,7 +72,7 @@ void UPlayersMotionReplicator::TickComponent(float DeltaTime, ELevelTick TickTyp
 
 
 
-void UPlayersMotionReplicator::Server_SendRide_Implementation(AActor* _Car, APawn* _Rider)
+void UWarriorMotionReplicator::Server_SendRide_Implementation(AActor* _Car, APawn* _Rider)
 {
 
 
@@ -92,13 +92,13 @@ void UPlayersMotionReplicator::Server_SendRide_Implementation(AActor* _Car, APaw
 	}
 }
 
-bool UPlayersMotionReplicator::Server_SendRide_Validate(AActor* Car, APawn* Rider)
+bool UWarriorMotionReplicator::Server_SendRide_Validate(AActor* Car, APawn* Rider)
 {
 	return true;
 
 }
 
-void UPlayersMotionReplicator::Server_SendAttack_Implementation()
+void UWarriorMotionReplicator::Server_SendAttack_Implementation()
 {
 
 	if (MyAnim->IsAttacking == false)
@@ -116,12 +116,12 @@ void UPlayersMotionReplicator::Server_SendAttack_Implementation()
 
 }
 
-bool UPlayersMotionReplicator::Server_SendAttack_Validate()
+bool UWarriorMotionReplicator::Server_SendAttack_Validate()
 {
 	return true;
 }
 
-void UPlayersMotionReplicator::Server_SendClimbUp_Implementation()
+void UWarriorMotionReplicator::Server_SendClimbUp_Implementation()
 {
 
 	//auto Warrior = Cast<AWarrior>(GetOwner());
@@ -133,12 +133,12 @@ void UPlayersMotionReplicator::Server_SendClimbUp_Implementation()
 }
 
 
-void UPlayersMotionReplicator::Server_SendDash_Implementation()
+void UWarriorMotionReplicator::Server_SendDash_Implementation()
 {
 	NetMulticast_SendDash();
 }
 
-void UPlayersMotionReplicator::NetMulticast_SendDash_Implementation()
+void UWarriorMotionReplicator::NetMulticast_SendDash_Implementation()
 {
 	auto Warrior = Cast<AWarrior>(GetOwner());
 	Warrior->IsDashing = true;
@@ -151,21 +151,21 @@ void UPlayersMotionReplicator::NetMulticast_SendDash_Implementation()
 
 }
 
-bool UPlayersMotionReplicator::Server_SendDash_Validate()
+bool UWarriorMotionReplicator::Server_SendDash_Validate()
 {
 	return true;
 }
 
-bool UPlayersMotionReplicator::NetMulticast_SendDash_Validate()
+bool UWarriorMotionReplicator::NetMulticast_SendDash_Validate()
 {
 	return true;
 }
 
-bool UPlayersMotionReplicator::Server_SendClimbUp_Validate()
+bool UWarriorMotionReplicator::Server_SendClimbUp_Validate()
 {
 	return true;
 }
-void UPlayersMotionReplicator::NetMulticast_SendClimbUp_Implementation()
+void UWarriorMotionReplicator::NetMulticast_SendClimbUp_Implementation()
 {
 	UE_LOG(LogTemp, Warning, TEXT("Climb"), *GetOwner()->GetName());
 	auto Warrior = Cast<AWarrior>(GetOwner());
@@ -175,12 +175,12 @@ void UPlayersMotionReplicator::NetMulticast_SendClimbUp_Implementation()
 	}
 }
 
-bool UPlayersMotionReplicator::NetMulticast_SendClimbUp_Validate()
+bool UWarriorMotionReplicator::NetMulticast_SendClimbUp_Validate()
 {
 	return true;
 }
 
-void UPlayersMotionReplicator::PlaySwordAttackMontage()
+void UWarriorMotionReplicator::PlaySwordAttackMontage()
 {
 	if (MyAnim == nullptr)
 	{
@@ -189,7 +189,7 @@ void UPlayersMotionReplicator::PlaySwordAttackMontage()
 	MyAnim->PlaySwordAttackMontage();
 }
 
-void UPlayersMotionReplicator::DisableActor(bool toHide)
+void UWarriorMotionReplicator::DisableActor(bool toHide)
 {
 	// Hides visible components
 	GetOwner()->SetActorHiddenInGame(toHide);
@@ -201,7 +201,7 @@ void UPlayersMotionReplicator::DisableActor(bool toHide)
 	GetOwner()->SetActorTickEnabled(!toHide);
 }
 
-void UPlayersMotionReplicator::OnRep_Attack()//서버에서는 안하는구나..?ㅋ
+void UWarriorMotionReplicator::OnRep_Attack()//서버에서는 안하는구나..?ㅋ
 {
 	if (MyAnim == nullptr)
 	{
@@ -215,7 +215,7 @@ void UPlayersMotionReplicator::OnRep_Attack()//서버에서는 안하는구나..?ㅋ
 
 
 
-void UPlayersMotionReplicator::OnAttackMontageEnded()
+void UWarriorMotionReplicator::OnAttackMontageEnded()
 {
 	if (MyAnim == nullptr)
 	{

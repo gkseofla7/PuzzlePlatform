@@ -13,9 +13,6 @@ struct FTargetMissileMove
 	GENERATED_USTRUCT_BODY()
 	UPROPERTY()
 		float DeltaTime;
-	UPROPERTY()
-		float Time;
-
 };
 
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
@@ -38,8 +35,6 @@ public:
 	void SimulateMove(const FTargetMissileMove& Move);
 	FVector GetVelocity() { return Velocity; };
 	void SetVelocity(FVector Val) { Velocity = Val; };
-//	void SetThrottle(float Val) { Throttle = Val; };
-//	void SetSteeringThrow(float Val) { SteeringThrow = Val; };
 	FTargetMissileMove GetLastMove() { return LastMove; };
 
 	void UpdatesLocationFromVelocity(float DeltaTime);
