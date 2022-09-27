@@ -8,7 +8,7 @@
 #include "../AnimInstance/PlayerAnimInstance.h"
 #include "UI/HudUpDisplayWidget.h"
 #include "UI/BuffPanel_UI.h"
-#include "Ability_Debuff.h"
+
 void AAbility_Buff_Master::BeginPlay()
 {
 	Super::BeginPlay();
@@ -34,11 +34,6 @@ void AAbility_Buff_Master::Tick(float DeltaTime)
 void AAbility_Buff_Master::CastAbility_Implementation()
 {
 	Super::CastAbility_Implementation();
-	auto tmp = Cast<AAbility_Debuff>(this);//debuff를 없앤다면
-	if (tmp != nullptr)
-	{
-		PlayerRef = PlayerRef->TargetPlayer;
-	}
 	if (PlayerRef->IsLocallyControlled() == true)//어차피 나 자신
 	{
 		HudUI->BuffPanel_UI->AddBufftoUI(this);

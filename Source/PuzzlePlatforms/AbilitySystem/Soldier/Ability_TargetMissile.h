@@ -35,7 +35,7 @@ public:
 	virtual void SetAbilityLevel() override;
 public:
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
-		UStaticMeshComponent* MissileComponent;
+		UStaticMeshComponent* MissileMeshComponent;
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
 		class UTargetMissileMovementComponent* MissileMovementComponent;
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)

@@ -43,7 +43,6 @@ void UTargetMissileReplicateComponent::GetLifetimeReplicatedProps(TArray< FLifet
 
 }
 
-// Called when the game starts
 void UTargetMissileReplicateComponent::BeginPlay()
 {
 	Super::BeginPlay();
@@ -57,7 +56,6 @@ void UTargetMissileReplicateComponent::BeginPlay()
 }
 
 
-// Called every frame
 void UTargetMissileReplicateComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
 {
 
@@ -68,8 +66,7 @@ void UTargetMissileReplicateComponent::TickComponent(float DeltaTime, ELevelTick
 
 	if (GetOwnerRole() == ROLE_Authority)
 	{
-		FTargetMissileMove LastMove = OurMovementComponent->GetLastMove();
-		Server_SendMove(LastMove);
+		UpdateServerState();
 	}
 	if (!GetOwner()->HasAuthority())
 	{
@@ -79,24 +76,10 @@ void UTargetMissileReplicateComponent::TickComponent(float DeltaTime, ELevelTick
 
 }
 
-void UTargetMissileReplicateComponent::Server_SendMove_Implementation(FTargetMissileMove Move)
+void UTargetMissileReplicateComponent::UpdateServerState()
 {
 	if (OurMovementComponent == nullptr)
 		return;
-	UpdateServerState(Move);
-
-}
-
-bool UTargetMissileReplicateComponent::Server_SendMove_Validate(FTargetMissileMove Move)
-{
-	return true;
-
-}
-
-void UTargetMissileReplicateComponent::UpdateServerState(FTargetMissileMove Move)
-{
-	//지속적으로 바뀜
-	ServerState.LastMove = Move;
 	ServerState.Transform = GetOwner()->GetTransform();
 	ServerState.Velocity = OurMovementComponent->GetVelocity();
 }
@@ -108,9 +91,8 @@ void UTargetMissileReplicateComponent::ClientTick(float DeltaTime)
 	if (ClientTimeBetweenLastUpdates < KINDA_SMALL_NUMBER) return;
 	if (OurMovementComponent == nullptr) return;
 
-	//UE_LOG(LogTemp, Warning, TEXT("Total %f"), ClientTimeBetweenLastUpdates);
 	float LerpRatio = ClientTimeSinceUpdate / ClientTimeBetweenLastUpdates;
-	//UE_LOG(LogTemp, Warning, TEXT("LerpRatio %f"), LerpRatio);
+
 	if (LerpRatio > 1)
 		LerpRatio = 1;
 
@@ -139,14 +121,9 @@ FHermitCubicSplines UTargetMissileReplicateComponent::CreateSpline()
 void UTargetMissileReplicateComponent::InterpolateLocation(FHermitCubicSplines Spline, float LerpRatio)
 {
 	FVector NextLocation = Spline.InterpolateLocation(LerpRatio);
+	
+	MeshOffsetRoot->SetWorldLocation(NextLocation);//Mesh만 움직여서 훼이크
 
-	FVector LocalNextLocation = GetOwner()->GetActorTransform().InverseTransformPosition(NextLocation);
-	MeshOffsetRoot->SetRelativeLocation(LocalNextLocation);//Mesh만 움직여서 훼이크
-	//GetOwner()->SetActorLocation(NextLocation);
-	//if (MeshOffsetRoot != nullptr)
-	//{
-	//	MeshOffsetRoot->SetWorldLocation(NextLocation);
-	//}
 }
 
 void UTargetMissileReplicateComponent::InterpolateVelocity(FHermitCubicSplines Spline, float LerpRatio)
@@ -162,13 +139,10 @@ void UTargetMissileReplicateComponent::InterpolateRotation(float LerpRatio)
 	FQuat StartRotation = ClientStartTransform.GetRotation();
 	FQuat TargetRotation = ServerState.Transform.GetRotation();
 	FQuat NextRotation = FQuat::Slerp(StartRotation, TargetRotation, LerpRatio);
-	FQuat LocalNextRotation = GetOwner()->GetActorTransform().InverseTransformRotation(NextRotation);
-	//GetOwner()->SetActorRotation(NextRotation);
-	MeshOffsetRoot->SetRelativeRotation(LocalNextRotation);//자기 자신만 바꿈
-	//if (MeshOffsetRoot != nullptr)
-	//{
-	//	MeshOffsetRoot->SetWorldRotation(NextRotation);
-	//}
+	if (MeshOffsetRoot != nullptr)
+	{
+		MeshOffsetRoot->SetWorldRotation(NextRotation);
+	}
 }
 
 void UTargetMissileReplicateComponent::OnRep_ServerState()//약간 모두한테 실행되는듯?
@@ -176,27 +150,21 @@ void UTargetMissileReplicateComponent::OnRep_ServerState()//약간 모두한테 실행되
 	if (!GetOwner()->HasAuthority())//서버가 주인, 모든 다른 애들은 다 Simulated
 	{
 
-		SimulatedProxy_OnRep_ServerState();
+		if (OurMovementComponent == nullptr) return;
+
+		ClientTimeBetweenLastUpdates = ClientTimeSinceUpdate;
+		ClientTimeSinceUpdate = 0;
+		if (MeshOffsetRoot != nullptr)
+		{
+			ClientStartTransform.SetLocation(MeshOffsetRoot->GetComponentLocation());
+			ClientStartTransform.SetRotation(MeshOffsetRoot->GetComponentQuat());
+		}
+		ClientStartVelocity = OurMovementComponent->GetVelocity();
+		GetOwner()->SetActorTransform(ServerState.Transform);
 	}
 
 }
 
-void UTargetMissileReplicateComponent::SimulatedProxy_OnRep_ServerState()
-{
-	if (OurMovementComponent == nullptr) return;
-
-	ClientTimeBetweenLastUpdates = ClientTimeSinceUpdate;
-	ClientTimeSinceUpdate = 0;
-	if (MeshOffsetRoot != nullptr)
-	{
-		ClientStartTransform.SetLocation(MeshOffsetRoot->GetComponentLocation());
-		ClientStartTransform.SetRotation(MeshOffsetRoot->GetComponentQuat());
-	}
-	ClientStartVelocity = OurMovementComponent->GetVelocity();
-	GetOwner()->SetActorTransform(ServerState.Transform);
-
-
-}
 
 
 

@@ -27,10 +27,8 @@ void UTargetMissileMovementComponent::TickComponent(float DeltaTime, ELevelTick 
 		return;
 	if (GetOwnerRole() == ROLE_Authority )//서버일때
 	{
-		LastMove = CreateMove(DeltaTime);
-		SimulateMove(LastMove);
+		SimulateMove(DeltaTime);
 	}
-	//그냥 자기 자신일때 보냄
 }
 
 
@@ -41,13 +39,12 @@ FTargetMissileMove UTargetMissileMovementComponent::CreateMove(float DeltaTime)
 	return Move;
 }
 
-void UTargetMissileMovementComponent::SimulateMove(const FTargetMissileMove& Move)//애초에 서버에서만 실행됨
+void UTargetMissileMovementComponent::SimulateMove(float DeltaTime)//애초에 서버에서만 실행됨
 {
 
 	UpdateForce();
 	FVector Acceleration = TotalForce / Mass;
 
-	float DeltaTime = Move.DeltaTime;
 	Velocity += Acceleration * DeltaTime;
 	ApplyRotation(DeltaTime);
 	UpdatesLocationFromVelocity(DeltaTime);

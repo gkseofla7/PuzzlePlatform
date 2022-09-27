@@ -17,8 +17,6 @@ struct FTargetMissileState
 		UPROPERTY()
 		FTransform Transform;
 	UPROPERTY()
-		FTargetMissileMove LastMove;
-	UPROPERTY()
 		FVector Velocity;
 };
 
@@ -54,15 +52,13 @@ public:
 	// Called every frame
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 	float GetVelocityToDeriavative() { return  ClientTimeBetweenLastUpdates * 100; }
-	UFUNCTION(Server, Reliable, WithValidation)
-		void Server_SendMove(FTargetMissileMove Value);
 	UFUNCTION()
 		void OnRep_ServerState();
-	void SimulatedProxy_OnRep_ServerState();
+	//void SimulatedProxy_OnRep_ServerState();
 	void AddToUnacknowledgeMoves(FTargetMissileMove Move) { UnacknowledgeMoves.Add(Move); }
 	FHermitCubicSplines CreateSpline();
 	FTargetMissileState GetServerState() { return ServerState; }
-	void UpdateServerState(FTargetMissileMove Move);
+	void UpdateServerState();
 	void ClientTick(float DeltaTime);
 	void InterpolateLocation(FHermitCubicSplines Input, float LerpRatio);
 	void InterpolateVelocity(FHermitCubicSplines Input, float LerpRatio);

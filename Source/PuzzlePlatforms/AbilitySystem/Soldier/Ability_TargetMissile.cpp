@@ -16,9 +16,9 @@ AAbility_TargetMissile::AAbility_TargetMissile()
 	MissileMovementComponent = CreateDefaultSubobject<UTargetMissileMovementComponent>(TEXT("MissileMovementComponent"));
 	MissileReplicateComponent = CreateDefaultSubobject<UTargetMissileReplicateComponent>(TEXT("MissileReplicateComponent"));
 	AbilityRoot->OnComponentBeginOverlap.AddDynamic(this, &AAbility_TargetMissile::OnOverlapBegin);
-	MissileComponent = CreateDefaultSubobject< UStaticMeshComponent>(TEXT("MissileComponent"));
-	MissileComponent->SetupAttachment(MeshOffsetRoot);
-	MissileComponent->SetVisibility(false);
+	MissileMeshComponent = CreateDefaultSubobject< UStaticMeshComponent>(TEXT("MissileComponent"));
+	MissileMeshComponent->SetupAttachment(MeshOffsetRoot);
+	MissileMeshComponent->SetVisibility(false);
 	static ConstructorHelpers::FObjectFinder<UParticleSystem> ParticleAsset(TEXT("/Game/Etcs/p_Turret_Explosion"));
 	if (ParticleAsset.Succeeded())
 	{
@@ -67,7 +67,7 @@ void AAbility_TargetMissile::Server_SetVisibility_Implementation()
 
 void AAbility_TargetMissile::NetMulticast_SetVisibility_Implementation()
 {
-	MissileComponent->SetVisibility(true);
+	MissileMeshComponent->SetVisibility(true);
 }
 
 

@@ -14,8 +14,7 @@ struct FTargetMissileMove
 	UPROPERTY()
 		float DeltaTime;
 };
-
-UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
+UCLASS(ClassGroup = (Custom), meta = (BlueprintSpawnableComponent))
 class PUZZLEPLATFORMS_API UTargetMissileMovementComponent : public UActorComponent
 {
 	GENERATED_BODY()
@@ -32,10 +31,10 @@ public:
 	// Called every frame
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 
-	void SimulateMove(const FTargetMissileMove& Move);
+	void SimulateMove(float DeltaTime);
 	FVector GetVelocity() { return Velocity; };
 	void SetVelocity(FVector Val) { Velocity = Val; };
-	FTargetMissileMove GetLastMove() { return LastMove; };
+	//FTargetMissileMove GetLastMove() { return LastMove; };
 
 	void UpdatesLocationFromVelocity(float DeltaTime);
 //	FTargetMissileMove GetLastMove() { return LastMove; }
@@ -66,7 +65,7 @@ public:
 	UPROPERTY(EditAnywhere)
 		float RollingCoefficient = 0.15;
 
-	FTargetMissileMove LastMove;
+	//FTargetMissileMove LastMove;
 
 
 	AActor* Target;
