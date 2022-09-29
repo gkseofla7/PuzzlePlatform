@@ -20,7 +20,7 @@ public:
 
 	int32 GetGameScore() const;
 	void BeginPlay() override;
-
+	void Tick(float DeltaTime) override;
 	UFUNCTION(Server, Reliable, WithValidation)
 		void Server_SetPlayerName(const FText& NewPlayerName);
 	UFUNCTION(Server, Reliable, WithValidation)
@@ -31,7 +31,8 @@ public:
 		void Server_SetSkillPoints(int NewSkillPoint);
 	UFUNCTION(NetMulticast, Reliable, WithValidation)
 		void NetMulticast_SetSkillPoints(int NewSkillPoint);
-
+	void SetPlayerStat();
+	void SetResetTimer();
 
 public:
 	class UMyCharacterStatComponent* CharacterStat;
@@ -41,6 +42,7 @@ public:
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
 		TArray<int> SpellsUpgrade;
 	int SkillPoints = 3;
+	FTimerHandle StatResetHandle;
 
 	FOnSkillPointChangedDelegate OnSkillPointChangedDelegate;
 	//class UMyCharacterStatComponent* CharacterStat;

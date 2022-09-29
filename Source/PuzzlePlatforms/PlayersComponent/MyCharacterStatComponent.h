@@ -73,6 +73,7 @@ public:
 	//	void NetMulticast_SetStatData(FMyCharacterrData* NewStatData);
 
 public:
+	class ACharacter_Master* CharacterRef;
 	//ReplicatedUsing = OnRep_HP,
 	UPROPERTY(EditAnywhere, Transient)
 		float CurrentHP;

@@ -98,7 +98,7 @@ void ANPC_Goblin::AttackCheck()
 		if (bResult && HitResult.Actor.IsValid())
 		{
 			FDamageEvent DamageEvent;
-
+			UE_LOG(LogTemp, Warning, TEXT("Damage : %f"), MonsterStat->AttackDamage);
 			HitResult.Actor->TakeDamage(MonsterStat->AttackDamage, DamageEvent, GetController(), this);
 			//UAISense_Damage::ReportDamageEvent(GetWorld(), HitResult.Actor.Get(), this, 10., HitResult.TraceStart, HitResult.Location);
 		}

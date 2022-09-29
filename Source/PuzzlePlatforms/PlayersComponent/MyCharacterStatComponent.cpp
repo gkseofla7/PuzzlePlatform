@@ -39,9 +39,15 @@ void UMyCharacterStatComponent::SetHP(float NewHP)
 	OnHPChanged.Broadcast();
 	if (CurrentHP < KINDA_SMALL_NUMBER)
 	{
+		auto MyPlayerState = Cast< AMyPlayerState>(GetOwner());
 		CurrentHP = 0.0f;
-		Cast<ACharacter_Master>(GetOwner())->bDead = true;
-		Cast<ACharacter_Master>(GetOwner())->Die();
+		if (CharacterRef != nullptr)
+		{
+			CharacterRef->bDead = true;
+			CharacterRef->Die();
+		}
+
+
 	}
 
 }

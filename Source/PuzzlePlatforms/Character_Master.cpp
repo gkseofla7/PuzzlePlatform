@@ -187,17 +187,26 @@ void ACharacter_Master::BeginPlay()
 		auto CharacterWidget = Cast< UPlayerHPBarWidget>(HPBarWidget->GetUserWidgetObject());
 		CharacterWidget->SetVisibility(ESlateVisibility::Hidden);
 	}
-	//여기서 애들 Stat 초기화 시킴
-	FTimerDelegate RespawnDelegate = FTimerDelegate::CreateUObject(this, &ACharacter_Master::SetPlayerStat);//어차피 자기 자신만 실행함
-	GetWorldTimerManager().SetTimer(StatResetHandle, RespawnDelegate, .6f, false);
+
+	//SetPlayerStat();
 }
 
 void ACharacter_Master::SetPlayerStat()
 {
+
 	auto MyPlayerState = Cast<AMyPlayerState>(GetPlayerState());
 	if (MyPlayerState == nullptr)
 		return;
+	if (HasAuthority())
+	{
+		UE_LOG(LogTemp, Warning, TEXT("Server : SetPlayerStat"));
+	}
+	else
+	{
+		UE_LOG(LogTemp, Warning, TEXT("Client : SetPlayerStat"));
+	}
 	CharacterStatRef = MyPlayerState->CharacterStat;
+	CharacterStatRef->CharacterRef = this;
 	if (IsLocallyControlled() && IsPlayerControlled())//새로입장 or 리스폰 모두에게 내 정보 뿌려줌	
 	{
 		auto MyController = Cast<AMyPlayerController>(GetController());
@@ -399,6 +408,7 @@ float ACharacter_Master::TakeDamage(float DamageAmount, FDamageEvent const& Dama
 	//ABCHECK(MotionReplicator != nullptr)
 	
 	float FinalDamage = Super::TakeDamage(DamageAmount, DamageEvent, EventInstigator, DamageCauser);
+
 	ABCHECK(CharacterStatRef != nullptr,0.f);
 
 	float HP = CharacterStatRef->GetHP();
