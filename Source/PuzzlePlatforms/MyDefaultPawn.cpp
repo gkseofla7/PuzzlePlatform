@@ -63,7 +63,7 @@ void AMyDefaultPawn::Server_PossessCharacter_Implementation(APlayerController* N
 			for (auto RespawnActor : Respawns)
 			{
 				auto Respawn = Cast< ARespawnSection>(RespawnActor);
-				if (Respawn->TeamNum == Index-1)//리스폰 지역이 맞다면
+				if (Respawn->TeamNum == Index)//리스폰 지역이 맞다면
 				{
 					RespawnTransform = Cast< ARespawnSection>(Respawn)->GetRandomTransform();
 					break;

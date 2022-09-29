@@ -23,8 +23,7 @@ AMyPlayerState::AMyPlayerState()
 void AMyPlayerState::BeginPlay()//어차피 각각 자기꺼 시킴
 {
 	Super::BeginPlay();
-	PrimaryActorTick.bCanEverTick = true;
-	SetActorTickEnabled(true);
+
 	if (HasAuthority())
 	{
 		UE_LOG(LogTemp, Warning, TEXT("Server : PlayerState BeginPlay"));
@@ -39,34 +38,12 @@ void AMyPlayerState::BeginPlay()//어차피 각각 자기꺼 시킴
 
 	//여기서 애들 Stat 초기화 시킴
 
-	//SetResetTimer();
-	FTimerDelegate RespawnDelegate = FTimerDelegate::CreateUObject(this, &AMyPlayerState::SetPlayerStat);//어차피 자기 자신만 실행함
-	GetWorldTimerManager().SetTimer(StatResetHandle, RespawnDelegate, .1f, true);
-}
-
-void AMyPlayerState::SetResetTimer()
-{
 
 }
 
-void AMyPlayerState::SetPlayerStat()
-{
-	auto MyCharacter = Cast< ACharacter_Master>(GetPawn());
-	if (MyCharacter != nullptr && MyCharacter->CharacterStatRef == nullptr)
-	{
-		MyCharacter->SetPlayerStat();
-		//GetWorldTimerManager().ClearTimer(StatResetHandle);
-		//StatResetHandle.Invalidate();
-	}
-}
-
-void AMyPlayerState::Tick(float DeltaTime)
-{
-	Super::Tick(DeltaTime);
-	UE_LOG(LogTemp, Warning, TEXT("Tick"));
 
 
-}
+
 
 int32 AMyPlayerState::GetGameScore() const
 {

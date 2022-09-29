@@ -28,6 +28,7 @@ protected:
 	class UCameraComponent* FollowCamera;
 public:
 	ACharacter_Master();
+
 	/** Base turn rate, in deg/sec. Other scaling may affect final turn rate. */
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category=Camera)
 	float BaseTurnRate;
@@ -104,7 +105,8 @@ public:
 		class UParticleSystemComponent* ParticleSystemComponent;
 	UPROPERTY(VisibleAnywhere, Category = UI)
 		class UWidgetComponent* HPBarWidget;
-
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+		class UPointOfInterestComponent* PointOfInterestComponent;
 
 	class UPlayerInfoWidget* PlayerInfoHUDWidget;
 	ACharacter_Master* TargetPlayer;
@@ -130,5 +132,9 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	int CharacterNum = 0;
 
+	UFUNCTION(NetMulticast, Reliable, WithValidation)
+		void Server_SetPlayerStat();
+	UFUNCTION(NetMulticast, Reliable, WithValidation)
+		void NetMulticast_SetPlayerStat();
 };
 

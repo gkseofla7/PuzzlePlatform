@@ -67,10 +67,9 @@ public:
 		void Server_SetExp(int NewExp);
 	UFUNCTION(NetMulticast, Reliable, WithValidation)
 		void NetMulticast_SetExp(int NewExp);
-	//UFUNCTION(Server, Reliable, WithValidation)
-	//	void Server_SetStatData(FMyCharacterrData* NewStatData);
-	//UFUNCTION(NetMulticast, Reliable, WithValidation)
-	//	void NetMulticast_SetStatData(FMyCharacterrData* NewStatData);
+
+	void Respawn();
+
 
 public:
 	class ACharacter_Master* CharacterRef;

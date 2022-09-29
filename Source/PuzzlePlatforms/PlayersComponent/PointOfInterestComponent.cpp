@@ -24,7 +24,7 @@ void UPointOfInterestComponent::BeginPlay()
 	Super::BeginPlay();
 	FTimerHandle PossessCharacterHandle;
 	FTimerDelegate PossessCharacterDelegate = FTimerDelegate::CreateUObject(this, &UPointOfInterestComponent::AddPOI);
-	GetOwner()->GetWorldTimerManager().SetTimer(PossessCharacterHandle, PossessCharacterDelegate, 1.f, false);
+	GetOwner()->GetWorldTimerManager().SetTimer(PossessCharacterHandle, PossessCharacterDelegate, 2.5f, false);
 }
 
 

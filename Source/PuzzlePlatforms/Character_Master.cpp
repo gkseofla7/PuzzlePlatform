@@ -18,6 +18,7 @@
 #include "AbilitySystem/ActorAbilities.h"
 #include "UI/PlayerHPBarWidget.h"
 #include "MyPlayerState.h"
+#include "PlayersComponent/PointOfInterestComponent.h"
 
 #include "HeadMountedDisplayFunctionLibrary.h"
 #include "Camera/CameraComponent.h"
@@ -102,7 +103,11 @@ ACharacter_Master::ACharacter_Master()
 	ParticleSystemComponent->SetupAttachment(RootComponent);
 
 	HPBarWidget = CreateDefaultSubobject<UWidgetComponent>(TEXT("HPBarWidget"));
+
 	HPBarWidget->SetupAttachment(GetMesh());
+
+	PointOfInterestComponent = CreateDefaultSubobject<UPointOfInterestComponent>(TEXT("PointOfInterestComponent"));
+	
 
 	HPBarWidget->SetRelativeLocation(FVector(0.f, 0.f, 220.f));
 	HPBarWidget->SetWidgetSpace(EWidgetSpace::World);
@@ -170,7 +175,7 @@ void ACharacter_Master::PossessedBy(AController* NewController)//이것도 결국 서�
 {//입장하면 자기 자신의 Level을 다른애들한테도 뿌림
 	Super::PossessedBy(NewController);
 	auto MyController = Cast<AMyPlayerController>(NewController);
-
+	//Server_SetPlayerStat();
 }
 
 void ACharacter_Master::BeginPlay()
@@ -188,7 +193,30 @@ void ACharacter_Master::BeginPlay()
 		CharacterWidget->SetVisibility(ESlateVisibility::Hidden);
 	}
 
+	FTimerDelegate RespawnDelegate = FTimerDelegate::CreateUObject(this, &ACharacter_Master::SetPlayerStat);//어차피 자기 자신만 실행함
+	GetWorldTimerManager().SetTimer(StatResetHandle, RespawnDelegate, 2.f, false);
+
 	//SetPlayerStat();
+}
+
+void ACharacter_Master::Server_SetPlayerStat_Implementation()
+{
+	NetMulticast_SetPlayerStat();
+}
+
+bool ACharacter_Master::Server_SetPlayerStat_Validate()
+{
+	return true;
+}
+
+void ACharacter_Master::NetMulticast_SetPlayerStat_Implementation()
+{
+	SetPlayerStat();
+}
+
+bool ACharacter_Master::NetMulticast_SetPlayerStat_Validate()
+{
+	return true;
 }
 
 void ACharacter_Master::SetPlayerStat()
@@ -206,6 +234,10 @@ void ACharacter_Master::SetPlayerStat()
 		UE_LOG(LogTemp, Warning, TEXT("Client : SetPlayerStat"));
 	}
 	CharacterStatRef = MyPlayerState->CharacterStat;
+	if (HasAuthority())
+	{
+		CharacterStatRef->Respawn();
+	}
 	CharacterStatRef->CharacterRef = this;
 	if (IsLocallyControlled() && IsPlayerControlled())//새로입장 or 리스폰 모두에게 내 정보 뿌려줌	
 	{
@@ -213,6 +245,7 @@ void ACharacter_Master::SetPlayerStat()
 		MyController->SetWidget(MyPlayerState->CharacterStat);//내 mainwidget
 		PlayerInfoHUDWidget = MyController->PlayerInfoHUDWidget;
 		Server_BindCharacterStatToWidget();//각 플레이어 머리 위 widget
+
 	}
 	else// 나 외 다른 플레이어들은
 	{

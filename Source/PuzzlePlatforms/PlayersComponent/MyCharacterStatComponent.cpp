@@ -112,6 +112,13 @@ void UMyCharacterStatComponent::SetLevel(float NewLevel)
 	}
 }
 
+void UMyCharacterStatComponent::Respawn()
+{
+	Server_SetHP(CurrentStatData->MaxHP);
+	Server_SetMP(CurrentStatData->MaxMP);
+
+}
+
 float UMyCharacterStatComponent::GetHPRatio()
 {
 	ABCHECK(nullptr != CurrentStatData, 0.f);
