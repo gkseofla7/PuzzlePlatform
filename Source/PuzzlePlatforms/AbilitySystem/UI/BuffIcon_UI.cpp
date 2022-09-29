@@ -42,11 +42,6 @@ void UBuffIcon_UI::UpdateProgressBar()
 		}
 
 	}
-	else
-	{
-
-	}
-
 
 }
 

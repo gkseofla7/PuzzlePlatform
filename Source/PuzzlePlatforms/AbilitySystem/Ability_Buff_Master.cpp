@@ -16,9 +16,6 @@ void AAbility_Buff_Master::BeginPlay()
 	bReplicates = true;
 	AbilityRoot->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 	ClearDuplicates();
-	bReplicates = true;
-	//FTimerHandle TimerHandler;
-	//GetWorld()->GetTimerManager().SetTimer(TimerHandler, this, &AAbility_Buff_Master::TickBuff, BuffLifeSpan, false);
 
 }
 
@@ -68,15 +65,12 @@ void AAbility_Buff_Master::TickBuff()
 void AAbility_Buff_Master::ClearDuplicates()
 {
 	TArray<AActor*> OutputActors;
-	TArray<AActor*> DestoryActors;//혹시몰라서
 
 	PlayerRef->GetAttachedActors(OutputActors);
 	for (auto Actor : OutputActors)
 	{
 		if (Actor->GetClass() == GetClass())
 		{
-
-			//DestoryActors.Add(Actor);
 			Actor->Destroy();//아마 상관없을듯?
 		}
 	}

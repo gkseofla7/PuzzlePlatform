@@ -237,6 +237,7 @@ void ACharacter_Master::BindCharacterStatToWidget()
 {
 	auto MyPlayerState = Cast<AMyPlayerState>(GetPlayerState());
 	auto CharacterWidget = Cast< UPlayerHPBarWidget>(HPBarWidget->GetUserWidgetObject());
+
 	CharacterWidget->BindCharacterStat(MyPlayerState->CharacterStat);
 	CharacterWidget->SetNameText(FText::FromString(MyPlayerState->GetPlayerName()));
 }
@@ -288,8 +289,10 @@ void ACharacter_Master::UpdateStat()
 {
 	if (CharacterStatRef == nullptr)
 		return;
-	CharacterStatRef->Server_SetHP(CharacterStatRef->CurrentHP+.5);
-	CharacterStatRef->Server_SetMP(CharacterStatRef->CurrentMP+.5);
+	if (CharacterStatRef->CurrentHP < CharacterStatRef->CurrentStatData->MaxHP)
+		CharacterStatRef->Server_SetHP(CharacterStatRef->CurrentHP + .5);
+	if (CharacterStatRef->CurrentHP < CharacterStatRef->CurrentStatData->MaxMP)
+		CharacterStatRef->Server_SetMP(CharacterStatRef->CurrentMP+.5);
 }
 
 void ACharacter_Master::SetTargetPlayerWithLineTrace()
@@ -396,7 +399,7 @@ float ACharacter_Master::TakeDamage(float DamageAmount, FDamageEvent const& Dama
 	//ABCHECK(MotionReplicator != nullptr)
 	
 	float FinalDamage = Super::TakeDamage(DamageAmount, DamageEvent, EventInstigator, DamageCauser);
-
+	ABCHECK(CharacterStatRef != nullptr,0.f);
 
 	float HP = CharacterStatRef->GetHP();
 

@@ -23,14 +23,6 @@ public:
 
 	UFUNCTION(Server, Reliable, WithValidation)
 		void Server_SetPlayerName(const FText& NewPlayerName);
-	//UFUNCTION(Server, Reliable, WithValidation)
-	//	void Server_SetPlayerLevel(const int32& NewLevel);
-	//UFUNCTION(NetMulticast, Reliable, WithValidation)
-	//	void NetMulticast_SetPlayerLevel(const int32& NewLeve);
-	//UFUNCTION(Server, Reliable, WithValidation)
-	//	void Server_InitializeCharacterStat();
-	//UFUNCTION(NetMulticast, Reliable, WithValidation)
-	//	void NetMulticast_InitializeCharacterStat();
 	UFUNCTION(Server, Reliable, WithValidation)
 		void Server_SpellsUpgrade(int index);
 	UFUNCTION(NetMulticast, Reliable, WithValidation)

@@ -2,7 +2,7 @@
 
 #pragma once
 
-#include "CoreMinimal.h"
+#include "../PuzzlePlatforms.h"
 #include "Blueprint/UserWidget.h"
 #include "HPBarWidget.generated.h"
 
@@ -15,7 +15,7 @@ class PUZZLEPLATFORMS_API UHPBarWidget : public UUserWidget
 	GENERATED_BODY()
 	
 public:
-	void BindCharacterStat(class UMyCharacterStatComponent* NewCharacterStat);
+	void BindTurretStat(class UTurretStatComponent* NewTurretStat);
 	void BindMonsterStat(class UMonsterStatComponent* NewMonsterStat);
 protected:
 	virtual void NativeConstruct() override;
@@ -23,7 +23,7 @@ protected:
 
 
 private:
-	TWeakObjectPtr<class UMyCharacterStatComponent> CurrentCharacterStat;
+	TWeakObjectPtr<class UTurretStatComponent> CurrentTurretStat;
 	TWeakObjectPtr<class UMonsterStatComponent> CurrentMonsterStat;
 	UPROPERTY()
 		class UProgressBar* HPProgressBar;

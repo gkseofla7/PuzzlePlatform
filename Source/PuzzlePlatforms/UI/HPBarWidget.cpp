@@ -2,18 +2,18 @@
 
 
 #include "HPBarWidget.h"
-#include "../PlayersComponent/MyCharacterStatComponent.h"
+#include "../Turret/TurretStatComponent.h"
 #include "../AI/MonsterStatComponent.h"
 
 #include "Components/ProgressBar.h"
 
 
-void UHPBarWidget::BindCharacterStat(UMyCharacterStatComponent* NewCharacterStat)
+void UHPBarWidget::BindTurretStat(UTurretStatComponent* NewTurretStat)
 {
-	ABCHECK(nullptr != NewCharacterStat);
+	ABCHECK(nullptr != NewTurretStat);
 
-	CurrentCharacterStat = NewCharacterStat;
-	NewCharacterStat->OnHPChanged.AddUObject(this, &UHPBarWidget::UpdateHPWidget);
+	CurrentTurretStat = NewTurretStat;
+	CurrentTurretStat->OnHPChanged.AddUObject(this, &UHPBarWidget::UpdateHPWidget);
 }
 
 void UHPBarWidget::BindMonsterStat(UMonsterStatComponent* NewMonsterStat)
@@ -35,19 +35,18 @@ void UHPBarWidget::NativeConstruct()
 
 void UHPBarWidget::UpdateHPWidget()
 {
-	if (CurrentCharacterStat.IsValid())
-	{
-		if (nullptr != HPProgressBar)
-		{
-
-			HPProgressBar->SetPercent(CurrentCharacterStat->GetHPRatio());
-		}
-	}
-	else if (CurrentMonsterStat.IsValid())
+	if (CurrentMonsterStat.IsValid())
 	{
 		if (nullptr != HPProgressBar)
 		{
 			HPProgressBar->SetPercent(CurrentMonsterStat->GetHPRatio());
+		}
+	}
+	else if (CurrentTurretStat.IsValid())
+	{
+		if (nullptr != HPProgressBar)
+		{
+			HPProgressBar->SetPercent(CurrentTurretStat->GetHPRatio());
 		}
 	}
 }

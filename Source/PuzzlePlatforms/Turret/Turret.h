@@ -2,7 +2,7 @@
 
 #pragma once
 
-#include "CoreMinimal.h"
+#include "../PuzzlePlatforms.h"
 #include "GameFramework/Actor.h"
 #include "Turret.generated.h"
 
@@ -41,20 +41,31 @@ public:
 		void Fire();
 	UFUNCTION( BlueprintCallable)
 		void UpdateTurretRotation(float DeltaSeconds);
+	virtual float TakeDamage(float DamageAmount, struct FDamageEvent const& DamageEvent,
+		class AController* EventInstigator, AActor* DamageCauser) override;
+	UFUNCTION(NetMulticast, Reliable, WithValidation)
+		void NetMulticast_DestroyEffect();
 
 public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	float SensingRange;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-		AActor* Target;
+	AActor* Target;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-		float TimeOfLastFire;
-		UPROPERTY(EditAnywhere, BlueprintReadWrite)
-		float RateOfFire;
-		UPROPERTY(EditAnywhere, BlueprintReadWrite)
-			float RotateSpeed;
-		UPROPERTY(EditAnywhere)
-			int TeamNum = 1;
+	float TimeOfLastFire;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	float RateOfFire;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+		float RotateSpeed;
+	UPROPERTY(EditAnywhere)
+		int TeamNum = 1;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Gameplay)
+		class UParticleSystem* DestroyImpactParticles;
+	UPROPERTY(VisibleAnywhere, Category = UI)
+	class UWidgetComponent* HPBarWidget;
+	class UTurretStatComponent* TurretStat;//약간 애들
+
+
 
 };

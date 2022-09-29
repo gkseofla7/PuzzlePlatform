@@ -150,112 +150,7 @@ void AWarrior::SetupPlayerInputComponent(class UInputComponent* PlayerInputCompo
 
 }
 
-//void AWarrior::MoveForward(float Value)
-//{
-//
-//
-//	MoveUpDown = Value;
-//	if ((Value != 0.0f) && IsClimbing == false)
-//	{
-//		// find out which way is forward
-//		const FRotator Rotation = Controller->GetControlRotation();
-//		const FRotator YawRotation(0, Rotation.Yaw, 0);
-//		// get forward vector
-//		const FVector Direction = FRotationMatrix(YawRotation).GetUnitAxis(EAxis::X);
-//		AddMovementInput(Direction, Value);
-//	}
-//	{
-//		//if (Value == 0)
-//		//	return;
-//
-//		//if (IsClimbing == false)
-//		//{
-//		//	// find out which way is forward
-//		//	const FRotator Rotation = Controller->GetControlRotation();
-//		//	const FRotator YawRotation(0, Rotation.Yaw, 0);
-//		//	// get forward vector
-//		//	const FVector Direction = FRotationMatrix(YawRotation).GetUnitAxis(EAxis::X);
-//		//	AddMovementInput(Direction, Value);
-//
-//		//}
-//		//else
-//		//{
-//		//	//if (IsOnEdge == false)
-//		//	//{
-//		//	//	UE_LOG(LogTemp, Warning, TEXT("Wtf"));
-//		//	//	MoveUpDown = 0;
-//		//	//}
-//		//	//else
-//		//	AddMovementInput(GetActorUpVector(), Value);
-//		//}
-//	}
-//}
 
-
-//void AWarrior::MoveRight(float Value)
-//{
-//
-//	MoveRightLeft = Value;
-//	{
-//	//if ((Controller != nullptr) && (Value != 0.0f))
-//	//{
-//	//	if (IsClimbing == false)
-//	//	{
-//	//		// find out which way is right
-//	//		const FRotator Rotation = Controller->GetControlRotation();
-//	//		const FRotator YawRotation(0, Rotation.Yaw, 0);
-//
-//	//		// get right vector 
-//	//		const FVector Direction = FRotationMatrix(YawRotation).GetUnitAxis(EAxis::Y);
-//	//		// add movement in that direction
-//	//		AddMovementInput(Direction, Value);
-//	//	}
-//	//	else
-//	//	{
-//	//		AddMovementInput(GetActorRightVector(), Value);
-//	//	}
-//	//}
-//	}
-//
-//
-//		if ((Controller != nullptr) && (Value != 0.0f)&&IsClimbing==false)
-//		{
-//
-//			AddMovementInput(GetActorRightVector(), Value);
-//		}
-//}
-
-
-//void AWarrior::ClimbTheWall()
-//{
-//	if(ClimbTheWallOn == false)
-//		ClimbTheWallOn = true;
-//	else
-//	{
-//		ClimbTheWallOn = false;
-//	}
-//	if (IsClimbing)
-//	{
-//		FVector tmp = GetActorForwardVector() * -500;
-//		LaunchCharacter(FVector(tmp.X, tmp.Y, 0), false, false);
-//		JumpFromWall();
-//	}
-//
-//}
-
-//void AWarrior::Climb()
-//{
-//	bool CanClimb = ForwardTrace();
-//	if (CanClimb&&IsClimbing ==false)
-//	{
-//		
-//		float YawValue = UKismetMathLibrary::MakeRotFromX(WallNormal).Yaw + 180;
-//		SetActorRotation(FRotator(0, YawValue, 0));
-//		IsClimbing = true;
-//		GetCharacterMovement()->Velocity =(FVector(0, 0, 0));
-//		GetCharacterMovement()->SetMovementMode(EMovementMode::MOVE_Flying);
-//	}
-//}
 
 bool AWarrior::ForwardTrace()
 {
@@ -467,3 +362,106 @@ bool AWarrior::Server_RespawnPawn_Validate(APlayerController* NewController)
 {
 	return true;
 }
+
+
+	//void AWarrior::MoveForward(float Value)
+	//{
+	//
+	//
+	//	MoveUpDown = Value;
+	//	if ((Value != 0.0f) && IsClimbing == false)
+	//	{
+	//		// find out which way is forward
+	//		const FRotator Rotation = Controller->GetControlRotation();
+	//		const FRotator YawRotation(0, Rotation.Yaw, 0);
+	//		// get forward vector
+	//		const FVector Direction = FRotationMatrix(YawRotation).GetUnitAxis(EAxis::X);
+	//		AddMovementInput(Direction, Value);
+	//	}
+	//	{
+	//		//if (Value == 0)
+	//		//	return;
+	//
+	//		//if (IsClimbing == false)
+	//		//{
+	//		//	// find out which way is forward
+	//		//	const FRotator Rotation = Controller->GetControlRotation();
+	//		//	const FRotator YawRotation(0, Rotation.Yaw, 0);
+	//		//	// get forward vector
+	//		//	const FVector Direction = FRotationMatrix(YawRotation).GetUnitAxis(EAxis::X);
+	//		//	AddMovementInput(Direction, Value);
+	//
+	//		//}
+	//		//else
+	//		//{
+	//		//	//if (IsOnEdge == false)
+	//		//	//{
+	//		//	//	UE_LOG(LogTemp, Warning, TEXT("Wtf"));
+	//		//	//	MoveUpDown = 0;
+	//		//	//}
+	//		//	//else
+	//		//	AddMovementInput(GetActorUpVector(), Value);
+	//		//}
+	//	}
+	//}
+	//void AWarrior::MoveRight(float Value)
+	//{
+	//
+	//	MoveRightLeft = Value;
+	//	{
+	//	//if ((Controller != nullptr) && (Value != 0.0f))
+	//	//{
+	//	//	if (IsClimbing == false)
+	//	//	{
+	//	//		// find out which way is right
+	//	//		const FRotator Rotation = Controller->GetControlRotation();
+	//	//		const FRotator YawRotation(0, Rotation.Yaw, 0);
+	//
+	//	//		// get right vector 
+	//	//		const FVector Direction = FRotationMatrix(YawRotation).GetUnitAxis(EAxis::Y);
+	//	//		// add movement in that direction
+	//	//		AddMovementInput(Direction, Value);
+	//	//	}
+	//	//	else
+	//	//	{
+	//	//		AddMovementInput(GetActorRightVector(), Value);
+	//	//	}
+	//	//}
+	//	}
+	//
+	//
+	//		if ((Controller != nullptr) && (Value != 0.0f)&&IsClimbing==false)
+	//		{
+	//
+	//			AddMovementInput(GetActorRightVector(), Value);
+	//		}
+	//}
+	//void AWarrior::ClimbTheWall()
+	//{
+	//	if(ClimbTheWallOn == false)
+	//		ClimbTheWallOn = true;
+	//	else
+	//	{
+	//		ClimbTheWallOn = false;
+	//	}
+	//	if (IsClimbing)
+	//	{
+	//		FVector tmp = GetActorForwardVector() * -500;
+	//		LaunchCharacter(FVector(tmp.X, tmp.Y, 0), false, false);
+	//		JumpFromWall();
+	//	}
+	//
+	//}
+	//void AWarrior::Climb()
+	//{
+	//	bool CanClimb = ForwardTrace();
+	//	if (CanClimb&&IsClimbing ==false)
+	//	{
+	//		
+	//		float YawValue = UKismetMathLibrary::MakeRotFromX(WallNormal).Yaw + 180;
+	//		SetActorRotation(FRotator(0, YawValue, 0));
+	//		IsClimbing = true;
+	//		GetCharacterMovement()->Velocity =(FVector(0, 0, 0));
+	//		GetCharacterMovement()->SetMovementMode(EMovementMode::MOVE_Flying);
+	//	}
+	//}

@@ -207,7 +207,7 @@ void UPuzzlePlatformsGameInstance::OnCreateSessionComplete(FName SessionName, bo
 }
 void UPuzzlePlatformsGameInstance::OnDestroySessionComplete(FName SessionName, bool Success)
 {
-	if (Success)
+	if (Success && JoinClicked == false)
 	{
 		CreateSession();
 	}
@@ -289,9 +289,18 @@ void UPuzzlePlatformsGameInstance::Join(uint32 Index)
 		//RefreshServerList();
 	}
 
+	JoinClicked = true;
+	SessionInterface->DestroySession(SESSION_NAME);
+
 	SessionInterface->JoinSession(0, SESSION_NAME, SessionSearch->SearchResults[Index]);
 
 
+}
+void UPuzzlePlatformsGameInstance::DestroySession()
+{
+	//if (SessionInterface->GetSessionSettings(SESSION_NAME) != nullptr)
+	//SessionInterface->DestroySession(SESSION_NAME);
+	SessionInterface->EndSession(SESSION_NAME);
 }
 
 void UPuzzlePlatformsGameInstance::StartSession()
@@ -323,7 +332,8 @@ void UPuzzlePlatformsGameInstance::LoadMainMenu()
 	APlayerController* PlayerController = GetFirstLocalPlayerController();
 	if (!ensure(PlayerController != nullptr)) return;
 
-	PlayerController->ClientTravel("/Game/PuzzlePlatforms/Maps/MainMenu", ETravelType::TRAVEL_Absolute);
+	PlayerController->ClientTravel("/Game/PuzzlePlatforms/Maps/L_Menu", ETravelType::TRAVEL_Absolute);
+	//PlayerController->ClientTravel("/Game/PuzzlePlatforms/Maps/MainMenu", ETravelType::TRAVEL_Absolute);
 }
 
 

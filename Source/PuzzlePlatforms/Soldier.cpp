@@ -548,7 +548,8 @@ bool ASoldier::Multicast_SetGun_Validate(AWeapon_Master* NewItem)
 
 void ASoldier::InteractPressed()
 {
-	if (IsItemEquipped == false)
+
+	if (IsItemEquipped == false&& DoPickupLinetrace == true)
 	{
 		Cast<USoldierMotionReplicator>(ReplicateComponent)->Server_SendGetItem(PickupItem);
 		//SetFPSHudWidget();

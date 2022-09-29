@@ -72,7 +72,7 @@ void ABulletMaster::OnOverlapBegin(class UPrimitiveComponent* OverlappedComp, cl
 	{
 		if (HasAuthority())
 		{
-
+			
 			auto MyCharacter = Cast<ACharacter>(OtherActor);
 			if (MyCharacter != nullptr)
 			{
@@ -81,20 +81,33 @@ void ABulletMaster::OnOverlapBegin(class UPrimitiveComponent* OverlappedComp, cl
 				{//걍 같은 팀이면 안맞게함
 					if (Shooter!=nullptr&&Player->TeamNum == Shooter->TeamNum)
 					{
+						if (ImpactParticles)
+						{
+							UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), ImpactParticles, GetTransform());
+						}
+						this->Destroy();
 						return;
 					}
 					if (TurretRef != nullptr && Player->TeamNum == TurretRef->TeamNum)
 					{
+						if (ImpactParticles)
+						{
+							UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), ImpactParticles, GetTransform());
+						}
+						this->Destroy();
 						return;
 					}
 				}
-				FDamageEvent DamageEvent;
+
 				//여기서 컨트롤러가..ㅋㅋ 다른 서버쪽 기준 컨트롤러로 돼있을텐데
 
-				MyCharacter->TakeDamage(10.0f, DamageEvent, MyCharacter->GetController(), Shooter);
-				//UGameplayStatics::ApplyDamage(MyCharacter, 10,nullptr, nullptr,UDamageType::);
-				//MyCharacter->ApplyDamage();
+
 			}
+			FDamageEvent DamageEvent;
+			//OtherActor->TakeDamage(10.0f, DamageEvent, MyCharacter->GetController(), Shooter);
+			OtherActor->TakeDamage(10.0f, DamageEvent,nullptr, Shooter);
+			//UGameplayStatics::ApplyDamage(MyCharacter, 10,nullptr, nullptr,UDamageType::);
+			//MyCharacter->ApplyDamage();
 		}
 		if (ImpactParticles)
 		{

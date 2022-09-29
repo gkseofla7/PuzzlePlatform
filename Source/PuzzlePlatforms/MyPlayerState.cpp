@@ -62,14 +62,9 @@ void AMyPlayerState::Server_SpellsUpgrade_Implementation(int index)
 	NetMulticast_SpellsUpgrade(index);
 }
 
-bool AMyPlayerState::Server_SpellsUpgrade_Validate(int index)
-{
-	return true;
-}
+
 void AMyPlayerState::NetMulticast_SpellsUpgrade_Implementation(int index)
 {
-
-	
 	SpellsUpgrade[index]++;
 	SkillPoints = SkillPoints-1;
 	//현재 플레이어의 State와 같으면
@@ -77,15 +72,11 @@ void AMyPlayerState::NetMulticast_SpellsUpgrade_Implementation(int index)
 	{
 		OnSkillPointChangedDelegate.Broadcast();
 	}
+}
 
-	if (HasAuthority())
-	{
-		UE_LOG(LogTemp, Warning, TEXT("Server :SpellsUpgrade %d"), SpellsUpgrade[index]);
-	}
-	else
-	{
-		UE_LOG(LogTemp, Warning, TEXT("Client :SpellsUpgrade %d"), SpellsUpgrade[index]);
-	}
+bool AMyPlayerState::Server_SpellsUpgrade_Validate(int index)
+{
+	return true;
 }
 
 bool AMyPlayerState::NetMulticast_SpellsUpgrade_Validate(int index)
@@ -128,43 +119,3 @@ bool AMyPlayerState::NetMulticast_SetSkillPoints_Validate(int NewSkillPoint)
 }
 
 
-//void AMyPlayerState::Server_SetPlayerLevel_Implementation(const int32& NewLevel)
-//{
-//	NetMulticast_SetPlayerLevel(NewLevel);
-//}
-//bool AMyPlayerState::Server_SetPlayerLevel_Validate(const int32& NewLevel)
-//{
-//	return true;
-//}
-//
-//
-//void AMyPlayerState::NetMulticast_SetPlayerLevel_Implementation(const int32& NewLevel)
-//{
-//	PlayerLevel = NewLevel;
-//}
-//
-//bool AMyPlayerState::NetMulticast_SetPlayerLevel_Validate(const int32& NewLevel)
-//{
-//	return true;
-//}
-
-
-//void AMyPlayerState::Server_InitializeCharacterStat_Implementation()//입장했을때 내꺼를 다른 애들에게 다 초기화시킴
-//{
-//	NetMulticast_InitializeCharacterStat();
-//}
-//
-//bool AMyPlayerState::Server_InitializeCharacterStat_Validate()
-//{
-//	return true;
-//}
-//
-//void AMyPlayerState::NetMulticast_InitializeCharacterStat_Implementation()
-//{
-//	//CharacterStat->SetLevel(PlayerLevel);
-//}
-//
-//bool AMyPlayerState::NetMulticast_InitializeCharacterStat_Validate ()
-//{
-//	return true;
-//}

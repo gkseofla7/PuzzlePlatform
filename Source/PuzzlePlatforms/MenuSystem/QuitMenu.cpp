@@ -5,6 +5,7 @@
 #include "../PuzzlePlatformsGameInstance.h"
 #include "Components/Button.h"
 
+
 bool UQuitMenu::Initialize()
 {
 	bool Success = Super::Initialize();
@@ -32,7 +33,13 @@ void UQuitMenu::BackToMainMenu()
 	if (MenuInterface != nullptr)
 	{
 		Teardown();
+		auto gameInstance = Cast< UPuzzlePlatformsGameInstance>(UGameplayStatics::GetGameInstance(GetWorld()));
+		gameInstance->JoinClicked = false;
+		
 		MenuInterface->LoadMainMenu();
+		//auto gameInistance = Cast< UPuzzlePlatformsGameInstance>(GetGameInstance());
+		//gameInistance->DestroySession();
+		//gamemode->Logout(UGameplayStatics::GetPlayerController(GetWorld(), 0));
 	}
 
 }

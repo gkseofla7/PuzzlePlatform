@@ -47,6 +47,7 @@ public:
 	UFUNCTION(exec)
 		void  Join(uint32 Index) override;
 	void StartSession();
+	void DestroySession();
 
 	FMyCharacterrData* GetMyCharacterData(int32 Level);
 	FMonsterData* GetMonsterData(int32 Level, EMonsterEnum MonsterEnuml);
@@ -85,6 +86,7 @@ public:
 
 	class UPlayerInfoWidget* PlayerInfoWidget;
 	FText PlayerName;
+	bool JoinClicked= false;
 
 	int CharacterIndex = 1;// 1번이면 Soldier 2번이면 Warrior 
 };

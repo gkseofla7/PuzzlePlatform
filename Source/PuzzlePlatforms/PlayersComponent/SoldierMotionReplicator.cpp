@@ -118,20 +118,9 @@ void USoldierMotionReplicator::Multicast_SendGetItem_Implementation(class AObjec
 
 	auto MyOwner = Cast<ASoldier>(GetOwner());
 
-	//UE_LOG(LogTemp, Warning, TEXT("Multicast"));
+	NewWeapon->SetOwner(MyOwner);
+	MyOwner->EquipItem(NewWeapon, MyOwner->IsItemEquipped);
 
-	//if (MyOwner->HasAuthority())
-	//	return;
-	//PickupItem = NewWeapon;
-	if (MyOwner->DoPickupLinetrace)
-	{
-		if (NewWeapon != nullptr)
-		{
-			NewWeapon->SetOwner(MyOwner);
-			MyOwner->EquipItem(NewWeapon, MyOwner->IsItemEquipped);
-
-		}
-	}
 }
 
 
