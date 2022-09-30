@@ -45,7 +45,8 @@ public:
 		class AController* EventInstigator, AActor* DamageCauser) override;
 	UFUNCTION(NetMulticast, Reliable, WithValidation)
 		void NetMulticast_DestroyEffect();
-
+	UFUNCTION(NetMulticast, Reliable, WithValidation)
+		void NetMulticast_Fire();
 public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	float SensingRange;

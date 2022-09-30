@@ -46,6 +46,7 @@ public:
 	void SetIsAttacking(bool NewIsAttacking);
 	void SetUsingSkill(bool NewUsingSkill);
 	void DestroyPlayer();
+	void UnvisiblePlayer();
 	void OpenSkillTree();
 	void OpenMap();
 	virtual void PossessedBy(AController* NewController) override;

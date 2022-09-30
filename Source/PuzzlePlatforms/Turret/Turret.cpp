@@ -64,6 +64,16 @@ void ATurret::Tick(float DeltaTime)
 	auto Dir = PlayerController->GetPawn()->GetActorLocation() - GetActorLocation();
 	auto DirRot = UKismetMathLibrary::MakeRotFromX(Dir);
 	HPBarWidget->SetWorldRotation(DirRot);
+
+	FindBestTarget();
+	if (Target != nullptr)
+	{
+		UpdateTurretRotation(DeltaTime);
+		if (HasAuthority())
+		{
+			UpdateFire();
+		}
+	}
 }
 
 void ATurret::FindBestTarget()
@@ -150,11 +160,20 @@ void ATurret::UpdateFire()
 		FVector TurretDirection = UKismetMathLibrary::GetDirectionUnitVector(L_From, L_Target);
 		if (FVector::DotProduct(TurretDirection,StaticMeshTop->GetForwardVector()) > .99)
 		{
-			Fire();
+			NetMulticast_Fire();
 		}
 	}
 }
 
+void ATurret::NetMulticast_Fire_Implementation()
+{
+	Fire();
+}
+
+bool ATurret::NetMulticast_Fire_Validate()
+{
+	return true;
+}
 
 float ATurret::TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent,
 	AController* EventInstigator, AActor* DamageCauser)

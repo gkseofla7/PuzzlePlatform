@@ -31,6 +31,7 @@ void AMyDefaultPawn::Server_PossessCharacter_Implementation(APlayerController* N
 		FTransform RespawnTransform;
 		if (Respawns.Num() == 0)
 			return;
+		
 		if (Index == 1)
 		{
 			for (auto RespawnActor : Respawns)

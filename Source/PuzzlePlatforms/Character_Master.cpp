@@ -288,12 +288,21 @@ void ACharacter_Master::BindCharacterStatToWidget()
 void ACharacter_Master::Tick(float DeltaTime)
 {//시작하자마자 로그인되는거임;;ㅋㅋ
 	Super::Tick(DeltaTime);
+
 	if(PlayerInfoHUDWidget !=nullptr)
 		SkillAvailable = !(PlayerInfoHUDWidget->CastBar_UI->WhileBuffering);
-	if (IsLocallyControlled())
-	{
-		//SetTargetPlayerWithLineTrace();
-	}
+	//if (IsLocallyControlled()&& IsPlayerControlled())
+	//{
+	//	if (HasAuthority())
+	//	{
+	//		UE_LOG(LogTemp, Warning, TEXT("Server :TeamNum : %d"), TeamNum);
+	//	}
+	//	else
+	//	{
+	//		UE_LOG(LogTemp, Warning, TEXT("Client :TeamNum : %d"), TeamNum);
+	//	}
+	//	//SetTargetPlayerWithLineTrace();
+	//}
 	if (!IsLocallyControlled())
 	{
 		auto MyController = UGameplayStatics::GetPlayerController(GetWorld(), 0);
@@ -591,6 +600,12 @@ void ACharacter_Master::Die()
 void ACharacter_Master::DestroyPlayer()
 {
 	Destroy();
+}
+
+void ACharacter_Master::UnvisiblePlayer()
+{
+	GetMesh()->SetVisibility(false);
+	HPBarWidget->SetVisibility(false);
 }
 
 void ACharacter_Master::OpenSkillTree()

@@ -611,13 +611,15 @@ void ASoldier::PlayersDied()
 	GetMesh()->SetCollisionObjectType(ECollisionChannel::ECC_PhysicsBody);
 	//GetMesh()->SetSimulatePhysics(true);
 	GetCapsuleComponent()->SetCollisionEnabled(ECollisionEnabled::NoCollision);
-
-
 	GetCharacterMovement()->DisableMovement();
+	FTimerHandle VisibiltyTimerHandler;
+	GetWorld()->GetTimerManager().SetTimer(VisibiltyTimerHandler, this, &ACharacter_Master::UnvisiblePlayer, 2.5f, false);
+
 	if (HasAuthority())
 	{
+
 		FTimerHandle DestroyTimerHandler;
-		GetWorld()->GetTimerManager().SetTimer(DestroyTimerHandler, this, &ACharacter_Master::DestroyPlayer, 10, false);
+		GetWorld()->GetTimerManager().SetTimer(DestroyTimerHandler, this, &ACharacter_Master::DestroyPlayer, 6, false);
 	}
 	if (IsLocallyControlled())
 	{
@@ -641,7 +643,18 @@ void ASoldier::Server_RespawnPawn_Implementation(APlayerController* NewControlle
 	UGameplayStatics::GetAllActorsOfClass(GetWorld(), ARespawnSection::StaticClass(), Respawns);
 	if (Respawns.Num() == 0)
 		return;
-	auto RespawnTransform = Cast< ARespawnSection>(Respawns[0])->GetRandomTransform();
+	FTransform RespawnTransform;
+	for (int i = 0; i < Respawns.Num(); i++)
+	{
+		auto Respawn = Cast<ARespawnSection>(Respawns[i]);
+		if (Respawn->TeamNum == TeamNum)
+		{
+			//UE_LOG(LogTemp, Warning, TEXT("Player TeamNum : %d"), TeamNum);
+			RespawnTransform = Cast< ARespawnSection>(Respawns[i])->GetRandomTransform();
+			break;
+		}
+	}
+	
 	Cast<APuzzlePlatformsGameMode>(UGameplayStatics::GetGameMode(GetWorld()))->RespawnRequested(NewController, RespawnTransform, TeamNum);
 }
 

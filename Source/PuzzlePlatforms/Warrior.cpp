@@ -317,6 +317,8 @@ void AWarrior::PlayersDied()
 
 
 	GetCharacterMovement()->DisableMovement();
+	FTimerHandle VisibiltyTimerHandler;
+	GetWorld()->GetTimerManager().SetTimer(VisibiltyTimerHandler, this, &ACharacter_Master::UnvisiblePlayer, 2.5f, false);
 	if (HasAuthority())
 	{
 		FTimerHandle DestroyTimerHandler;
