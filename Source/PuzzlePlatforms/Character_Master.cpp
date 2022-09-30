@@ -145,7 +145,6 @@ void ACharacter_Master::SetupPlayerInputComponent(class UInputComponent* PlayerI
 	PlayerInputComponent->BindAction("Skill5", IE_Released, this, &ACharacter_Master::SkillReleased);
 	PlayerInputComponent->BindAction("Jump", IE_Pressed, this, &ACharacter::Jump);
 	PlayerInputComponent->BindAction("Jump", IE_Released, this, &ACharacter::StopJumping);
-	PlayerInputComponent->BindAction("GetInTheCar", IE_Pressed, this, &ACharacter_Master::GetInTheCar);
 	PlayerInputComponent->BindAction("Attack", IE_Pressed, this, &ACharacter_Master::Attack);
 
 	PlayerInputComponent->BindAction("SkillTree", IE_Pressed, this, &ACharacter_Master::OpenSkillTree);
@@ -225,14 +224,7 @@ void ACharacter_Master::SetPlayerStat()
 	auto MyPlayerState = Cast<AMyPlayerState>(GetPlayerState());
 	if (MyPlayerState == nullptr)
 		return;
-	if (HasAuthority())
-	{
-		UE_LOG(LogTemp, Warning, TEXT("Server : SetPlayerStat"));
-	}
-	else
-	{
-		UE_LOG(LogTemp, Warning, TEXT("Client : SetPlayerStat"));
-	}
+
 	CharacterStatRef = MyPlayerState->CharacterStat;
 	if (HasAuthority())
 	{
@@ -244,7 +236,7 @@ void ACharacter_Master::SetPlayerStat()
 		auto MyController = Cast<AMyPlayerController>(GetController());
 		MyController->SetWidget(MyPlayerState->CharacterStat);//내 mainwidget
 		PlayerInfoHUDWidget = MyController->PlayerInfoHUDWidget;
-		Server_BindCharacterStatToWidget();//각 플레이어 머리 위 widget
+		ReplicateComponent->Server_BindCharacterStatToWidget();//각 플레이어 머리 위 widget
 
 	}
 	else// 나 외 다른 플레이어들은
@@ -255,25 +247,6 @@ void ACharacter_Master::SetPlayerStat()
 	
 }
 
-
-void ACharacter_Master::Server_BindCharacterStatToWidget_Implementation()
-{
-	NetMulticast_BindCharacterStatToWidget();
-}
-
-bool ACharacter_Master::Server_BindCharacterStatToWidget_Validate()
-{
-	return true;
-}
-void  ACharacter_Master::NetMulticast_BindCharacterStatToWidget_Implementation()
-{
-	BindCharacterStatToWidget();
-}
-
-bool  ACharacter_Master::NetMulticast_BindCharacterStatToWidget_Validate()
-{
-	return true;
-}
 
 void ACharacter_Master::BindCharacterStatToWidget()
 {
@@ -286,23 +259,11 @@ void ACharacter_Master::BindCharacterStatToWidget()
 
 
 void ACharacter_Master::Tick(float DeltaTime)
-{//시작하자마자 로그인되는거임;;ㅋㅋ
+{
 	Super::Tick(DeltaTime);
 
 	if(PlayerInfoHUDWidget !=nullptr)
 		SkillAvailable = !(PlayerInfoHUDWidget->CastBar_UI->WhileBuffering);
-	//if (IsLocallyControlled()&& IsPlayerControlled())
-	//{
-	//	if (HasAuthority())
-	//	{
-	//		UE_LOG(LogTemp, Warning, TEXT("Server :TeamNum : %d"), TeamNum);
-	//	}
-	//	else
-	//	{
-	//		UE_LOG(LogTemp, Warning, TEXT("Client :TeamNum : %d"), TeamNum);
-	//	}
-	//	//SetTargetPlayerWithLineTrace();
-	//}
 	if (!IsLocallyControlled())
 	{
 		auto MyController = UGameplayStatics::GetPlayerController(GetWorld(), 0);
@@ -310,16 +271,13 @@ void ACharacter_Master::Tick(float DeltaTime)
 		auto MyPawn = Cast< ACharacter_Master>(MyController->GetPawn());
 		if (MyPawn == nullptr)
 			return;
-		//ABCHECK(MyPawn != nullptr);
 		ABCHECK(HPBarWidget!=nullptr)
 		auto Dir = MyPawn->FollowCamera->GetComponentLocation() - HPBarWidget->GetComponentLocation();
 		auto DirRot = UKismetMathLibrary::MakeRotFromX(Dir);
 		HPBarWidget->SetWorldRotation(DirRot);
-		//UE_LOG(LogTemp, Warning, TEXT("%s"), *(GetController()->GetName()));
 
-		//아 자기가 0번째니깐!!
 	}
-	//HPBarWidget->SetWorldRotation(FVector(0.f, 0.f, 180.f));
+
 }
 
 void ACharacter_Master::AddControllerPitchInput(float Val)
@@ -346,38 +304,7 @@ void ACharacter_Master::UpdateStat()
 		CharacterStatRef->Server_SetMP(CharacterStatRef->CurrentMP+.5);
 }
 
-void ACharacter_Master::SetTargetPlayerWithLineTrace()
-{
-	UCameraComponent* CurrentCam = FollowCamera;
 
-	const float SkillRange = 20000.f;
-	const FVector StartTrace = CurrentCam->GetComponentLocation();
-	FVector EndTrace = (CurrentCam->GetForwardVector() * SkillRange) + StartTrace;
-	FHitResult Hit;
-	FCollisionQueryParams QueryParams = FCollisionQueryParams(SCENE_QUERY_STAT(WeaponTrace), false, this);
-	
-	if (GetWorld()->LineTraceSingleByChannel(Hit, StartTrace, EndTrace, ECC_Visibility, QueryParams))
-	{
-		//이전꺼
-		auto tmp = Cast< ACharacter_Master>(Hit.Actor);
-		if (TargetPlayer != nullptr && tmp!= nullptr)
-		{
-			TargetPlayer->DecalComponent->SetVisibility(false);
-		}
-		//UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), ImpactParticles, FTransform(Hit.ImpactNormal.Rotation(), Hit.ImpactPoint));
-		if (tmp != nullptr)
-		{
-			TargetPlayer = tmp;
-			ReplicateComponent->Server_SetTargetPlayer(tmp);
-		}
-			if (TargetPlayer != nullptr)
-		{
-			//이후
-			TargetPlayer->DecalComponent->SetVisibility(true);
-		}
-	}
-	//FRotator temp = UKismetMathLibrary::FindLookAtRotation(Start, EndTrace);
-}
 
 void ACharacter_Master::TurnAtRate(float Rate)
 {
@@ -460,8 +387,6 @@ float ACharacter_Master::TakeDamage(float DamageAmount, FDamageEvent const& Dama
 	return FinalDamage;
 
 }
-
-
 FRotator ACharacter_Master::GetMuzzleRotation()
 {
 
@@ -591,7 +516,6 @@ void ACharacter_Master::SetUsingSkill(bool NewUsingSkill)
 	ReplicateComponent->Server_SetUsingSkill(NewUsingSkill);
 }
 
-
 void ACharacter_Master::Die()
 {
 
@@ -639,48 +563,7 @@ void ACharacter_Master::OpenMap()
 }
 
 
-void ACharacter_Master::GetInTheCar()
-{
-	ABCHECK(ReplicateComponent != nullptr)
-		FHitResult HitResult;
-	FCollisionQueryParams Params(NAME_None, false, this);
 
-	float CarRange = 100.f;
-	float CarRadius = 50.f;
-
-
-	bool bResult = GetWorld()->SweepSingleByChannel(
-		OUT HitResult,
-		GetActorLocation(),
-		GetActorLocation() + GetActorForwardVector() * CarRange,
-		FQuat::Identity,
-		ECollisionChannel::ECC_GameTraceChannel3,
-		FCollisionShape::MakeSphere(CarRadius),
-		Params);
-	FVector Vec = GetActorForwardVector() * CarRange;
-	FVector Center = GetActorLocation() + CarRadius * 0.5f;
-	float HalfHeight = CarRange * 0.5f + CarRadius;
-	FQuat Rotation = FRotationMatrix::MakeFromZ(Vec).ToQuat();
-	FColor DrawColor;
-	if (bResult)
-		DrawColor = FColor::Green;
-	else
-		DrawColor = FColor::Red;
-
-
-	DrawDebugCapsule(GetWorld(), Center, HalfHeight, CarRadius,
-		Rotation, DrawColor, false, 5.f);
-	if (bResult && HitResult.Actor.IsValid())
-	{
-
-		auto Car = Cast<AMyProjectPawn>(HitResult.Actor);
-
-		if (Car != nullptr)
-		{
-			ReplicateComponent->Server_SendRide(Car, this);
-		}
-	}
-}
 
 
 
@@ -699,5 +582,79 @@ void ACharacter_Master::GetInTheCar()
 //		HeadsUpDisplayRef->ToggleSpellBook();
 //		controller->SetInputModeGame();
 //		MouseCursorToggle = false;
+//	}
+//}
+//void ACharacter_Master::SetTargetPlayerWithLineTrace()
+//{
+//	UCameraComponent* CurrentCam = FollowCamera;
+//
+//	const float SkillRange = 20000.f;
+//	const FVector StartTrace = CurrentCam->GetComponentLocation();
+//	FVector EndTrace = (CurrentCam->GetForwardVector() * SkillRange) + StartTrace;
+//	FHitResult Hit;
+//	FCollisionQueryParams QueryParams = FCollisionQueryParams(SCENE_QUERY_STAT(WeaponTrace), false, this);
+//
+//	if (GetWorld()->LineTraceSingleByChannel(Hit, StartTrace, EndTrace, ECC_Visibility, QueryParams))
+//	{
+//		//이전꺼
+//		auto tmp = Cast< ACharacter_Master>(Hit.Actor);
+//		if (TargetPlayer != nullptr && tmp != nullptr)
+//		{
+//			TargetPlayer->DecalComponent->SetVisibility(false);
+//		}
+//		//UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), ImpactParticles, FTransform(Hit.ImpactNormal.Rotation(), Hit.ImpactPoint));
+//		if (tmp != nullptr)
+//		{
+//			TargetPlayer = tmp;
+//			ReplicateComponent->Server_SetTargetPlayer(tmp);
+//		}
+//		if (TargetPlayer != nullptr)
+//		{
+//			//이후
+//			TargetPlayer->DecalComponent->SetVisibility(true);
+//		}
+//	}
+//	//FRotator temp = UKismetMathLibrary::FindLookAtRotation(Start, EndTrace);
+//}
+//void ACharacter_Master::GetInTheCar()
+//{
+//	ABCHECK(ReplicateComponent != nullptr)
+//		FHitResult HitResult;
+//	FCollisionQueryParams Params(NAME_None, false, this);
+//
+//	float CarRange = 100.f;
+//	float CarRadius = 50.f;
+//
+//
+//	bool bResult = GetWorld()->SweepSingleByChannel(
+//		OUT HitResult,
+//		GetActorLocation(),
+//		GetActorLocation() + GetActorForwardVector() * CarRange,
+//		FQuat::Identity,
+//		ECollisionChannel::ECC_GameTraceChannel3,
+//		FCollisionShape::MakeSphere(CarRadius),
+//		Params);
+//	FVector Vec = GetActorForwardVector() * CarRange;
+//	FVector Center = GetActorLocation() + CarRadius * 0.5f;
+//	float HalfHeight = CarRange * 0.5f + CarRadius;
+//	FQuat Rotation = FRotationMatrix::MakeFromZ(Vec).ToQuat();
+//	FColor DrawColor;
+//	if (bResult)
+//		DrawColor = FColor::Green;
+//	else
+//		DrawColor = FColor::Red;
+//
+//
+//	DrawDebugCapsule(GetWorld(), Center, HalfHeight, CarRadius,
+//		Rotation, DrawColor, false, 5.f);
+//	if (bResult && HitResult.Actor.IsValid())
+//	{
+//
+//		auto Car = Cast<AMyProjectPawn>(HitResult.Actor);
+//
+//		if (Car != nullptr)
+//		{
+//			ReplicateComponent->Server_SendRide(Car, this);
+//		}
 //	}
 //}

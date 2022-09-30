@@ -72,31 +72,7 @@ void UWarriorMotionReplicator::TickComponent(float DeltaTime, ELevelTick TickTyp
 
 
 
-void UWarriorMotionReplicator::Server_SendRide_Implementation(AActor* _Car, APawn* _Rider)
-{
 
-
-	auto Car = Cast<AGoKart>(_Car);
-	auto Rider = Cast<APawn>(GetOwner());
-	if (Car != nullptr)
-	{
-
-		//Car->SetRider(this);
-
-		DisableActor(true);
-
-		Car->AIController = Car->GetController();
-		Rider->GetController()->Possess(Car);
-		Car->SetRider(Rider);
-
-	}
-}
-
-bool UWarriorMotionReplicator::Server_SendRide_Validate(AActor* Car, APawn* Rider)
-{
-	return true;
-
-}
 
 void UWarriorMotionReplicator::Server_SendAttack_Implementation()
 {
@@ -226,3 +202,29 @@ void UWarriorMotionReplicator::OnAttackMontageEnded()
 
 }
 
+
+//void UWarriorMotionReplicator::Server_SendRide_Implementation(AActor* _Car, APawn* _Rider)
+//{
+//
+//
+//	auto Car = Cast<AGoKart>(_Car);
+//	auto Rider = Cast<APawn>(GetOwner());
+//	if (Car != nullptr)
+//	{
+//
+//		//Car->SetRider(this);
+//
+//		DisableActor(true);
+//
+//		Car->AIController = Car->GetController();
+//		Rider->GetController()->Possess(Car);
+//		Car->SetRider(Rider);
+//
+//	}
+//}
+//
+//bool UWarriorMotionReplicator::Server_SendRide_Validate(AActor* Car, APawn* Rider)
+//{
+//	return true;
+//
+//}

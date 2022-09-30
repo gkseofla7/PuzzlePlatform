@@ -113,17 +113,11 @@ void AWeapon_Master::Shot()
     
     FString name = GetName();
     auto Soldier = Cast<ASoldier>(Player);
-    AmmoCheck();//얘도 결국..
-    //if (Soldier->IsLocallyControlled())
-    //{//절대 나올 수가 없네,,ㅋㅋ
-    //    UE_LOG(LogTemp, Warning, TEXT("IsLocclayControlled"));
-    //    Soldier->SetMuzzleRotation();//어차피 서버에서 맞춤
-    //} 그냥 보니깐 쏠때 맞췄었음;;ㅋㅋ
+    AmmoCheck();
 
- 
     if ( CanFire== true && ClipEmpty == false && Reloading == false)
     {
-       Multicast_SetMuzzleRotation();
+       Multicast_SetMuzzleRotation();//이걸 조종하는애 가져옴
         FVector BulletScale;
        // BulletScale.Set(0.1, 0.1, 0.1);
         FTransform BulletTransform;
@@ -142,7 +136,7 @@ void AWeapon_Master::Shot()
        {
            UE_LOG(LogTemp, Warning, TEXT("nullptr"));
        }
-       Multicast_SetClipAmmo(ClipAmmo - AmmoCost);
+       Multicast_SetClipAmmo(ClipAmmo - AmmoCost);//모든 애들 총알 관리함~
 
 
 

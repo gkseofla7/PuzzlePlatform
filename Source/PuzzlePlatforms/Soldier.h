@@ -50,7 +50,7 @@ public:
 	void SteamPack();
 	void UnSteamPack();
 	void Die() override;
-
+	void UpdateAnimRotation();
 
 	void PlayersDied();
 	void RespawnCharacter();
@@ -68,16 +68,11 @@ private:
 	void WeaponSecondaryReleased();
 	void InteractPressed();
 	void WeaponReload();
-	UFUNCTION(NetMulticast, Reliable, WithValidation)
-		void Everyone_SetMuzzleRotation(FRotator NewRotator);
-	UFUNCTION(Server, Reliable, WithValidation)
-		void Server_SetMuzzleRotation(FRotator NewRotator);
-	UFUNCTION(NetMulticast, Reliable, WithValidation)
-		void Multicast_SetGun(class AWeapon_Master *NewItem);
-	UFUNCTION(Server, Reliable, WithValidation)
-		void Server_WeaponReload();
+
 	UFUNCTION(Server, Reliable, WithValidation)
 		void Server_RespawnPawn(APlayerController* NewController);
+	UFUNCTION(Server, Reliable, WithValidation)
+		void Server_SetControllRotation(FRotator NewControlRotattor);
 
 
 	void AimMissile();
@@ -121,6 +116,8 @@ public:
 		float RocketSpeed = 1000;
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
 		TArray<class USplineMeshComponent*> PointsArray;
+	UFUNCTION()
+		void OnRep_ControlRotation();
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
 	bool ShowPath = false;
 	bool ShowTarget = false;
@@ -165,6 +162,8 @@ public:
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
 		class UTargetableComponent* TargetableComponent;
 	TSubclassOf<class AObject_Master> GunClass;
+	UPROPERTY(ReplicatedUsing = OnRep_ControlRotation)
+		FRotator ControlRotation;
 
 
 };

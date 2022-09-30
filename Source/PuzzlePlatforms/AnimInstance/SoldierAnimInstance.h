@@ -29,8 +29,7 @@ private:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Pawn, Meta = (AllowPrivateAccess = true))
 		float Direction;
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Pawn, Meta = (AllowPrivateAccess = true))
-		FRotator AimRotation;
+
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Pawn, Meta = (AllowPrivateAccess = true))
 	bool IsInAir;
@@ -41,10 +40,17 @@ private:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Pawn, Meta = (AllowPrivateAccess = true))
 		EGunType WeaponType;
 	class ASoldier* Player;
-public:
 
+
+public:
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Pawn, Meta = (AllowPrivateAccess = true))
+		FRotator AimRotation;
 	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly)
 		UAnimMontage* DeathMontage;
+
+	float ClientTimeBetweenLastUpdates = 0;
+	float ClientTimeSinceUpdate = 0;
+	FRotator StartControllerRotator;
 
 public:
 

@@ -26,33 +26,10 @@ void USoldierAnimInstance::NativeUpdateAnimation(float DeltaSeconds)
 	if (::IsValid(Pawn))
 	{
 		Player = Cast<ASoldier>(Pawn);
-		CalculateDirection(Pawn->GetVelocity(), Pawn->GetActorRotation());
-		CurrenPawnSpeed = Pawn->GetVelocity().Size();
-		Direction = CalculateDirection(Pawn->GetVelocity(), Pawn->GetActorRotation());
-		FRotator ControlRotation = Pawn->GetControlRotation();
-		//float A = 360.0 - ControlRotation.Vector().X;
-		float A = 360.0 - ControlRotation.Pitch;
-		//float B = ControlRotation.Vector().Y* -1;
-		float B = ControlRotation.Pitch;
-		//float C = ControlRotation.Vector().Z;
-		float C = ControlRotation.Yaw;
-		float tmp = 0;
-		if (B >= 180)
+		if (Player)
 		{
-			tmp = A / 3;
-		}
-		else
-		{
-			tmp = B *(-1)/ 3;
-		}
-		AimRotation = FRotator(0, 0, tmp);
-		
-		//UE_LOG(LogTemp, Warning, TEXT("%f"), AimRotation.Vector().Y);
-		auto Character = Cast<ACharacter>(Pawn);
-		if (Character)
-		{
-			IsInAir = Character->GetMovementComponent()->IsFalling();
-			
+			IsInAir = Player->GetMovementComponent()->IsFalling();
+
 		}
 
 		IsItemEquipped = Player->IsItemEquipped;
@@ -61,6 +38,29 @@ void USoldierAnimInstance::NativeUpdateAnimation(float DeltaSeconds)
 			WeaponType = Player->EquippedItem->WeaponType;
 		}
 		IsReloading = Player->IsReloading;
+
+
+		CalculateDirection(Player->GetVelocity(), Player->GetActorRotation());
+		CurrenPawnSpeed = Player->GetVelocity().Size();
+		Direction = CalculateDirection(Player->GetVelocity(), Player->GetActorRotation());
+		if ((Player->IsLocallyControlled() && Player->IsPlayerControlled())||(Player->HasAuthority()&&Player->IsPlayerControlled()))
+		{
+			AimRotation = Player->ControlRotation;
+		}
+		else// 그 외애들은
+		{
+
+			ClientTimeSinceUpdate += DeltaSeconds;
+			if (ClientTimeBetweenLastUpdates < KINDA_SMALL_NUMBER) return;
+
+			float LerpRatio = ClientTimeSinceUpdate / ClientTimeBetweenLastUpdates;
+
+			if (LerpRatio > 1)
+				LerpRatio = 1;
+
+			AimRotation = FQuat::Slerp(StartControllerRotator.Quaternion(), Player->ControlRotation.Quaternion(), LerpRatio).Rotator();
+		}
+
 	}
 }
 

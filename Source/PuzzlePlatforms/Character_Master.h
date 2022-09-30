@@ -20,58 +20,44 @@ class ACharacter_Master : public ACharacter
 {
 protected:
 	GENERATED_BODY()
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
-	class USphereComponent* NearObjectCollisionDetector;
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
-	class USpringArmComponent* CameraBoom;
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
-	class UCameraComponent* FollowCamera;
+
 public:
 	ACharacter_Master();
-
+	virtual void PossessedBy(AController* NewController) override;
+	virtual void PostInitializeComponents() override;
+	virtual void BeginPlay() override;
+	virtual void Tick(float DeltaTime) override;
+	virtual void MoveForward(float Value);
+	virtual void MoveRight(float Value);
+	void TurnAtRate(float Rate);
+	void LookUpAtRate(float Rate);
+	virtual void AddControllerPitchInput(float Val);
+	virtual void AddControllerYawInput(float Val);
 	/** Base turn rate, in deg/sec. Other scaling may affect final turn rate. */
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category=Camera)
-	float BaseTurnRate;
-	/** Base look up/down rate, in deg/sec. Other scaling may affect final rate. */
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category=Camera)
-	float BaseLookUpRate;
+
 	void UpdateStat();//이거 hp의 경우엔 서버에도 해줘야됨;
 	FRotator GetMuzzleRotation();
+	void BindCharacterStatToWidget();
+
 	void Skill1Clicked();
 	void Skill2Clicked();
 	void Skill3Clicked();
 	void Skill4Clicked();
 	void Skill5Clicked();
 	void SkillReleased();
+	void OpenSkillTree();
+	void OpenMap();
+
 	void SetIsAttacking(bool NewIsAttacking);
 	void SetUsingSkill(bool NewUsingSkill);
 	void DestroyPlayer();
 	void UnvisiblePlayer();
-	void OpenSkillTree();
-	void OpenMap();
-	virtual void PossessedBy(AController* NewController) override;
-public:
-	virtual void PostInitializeComponents() override;
-	virtual void BeginPlay() override;
-	virtual void Tick(float DeltaTime) override;
-	virtual void MoveForward(float Value);
-	virtual void MoveRight(float Value);
-
-	void TurnAtRate(float Rate);
-	void LookUpAtRate(float Rate);
-	void GetInTheCar();
 	virtual void Attack();
-	virtual void AddControllerPitchInput(float Val);
-	virtual void AddControllerYawInput(float Val);
 	virtual void Die();
-	//void Test();
 	void SetPlayerStat();
-	UFUNCTION(Server, Reliable, WithValidation)
-	void Server_BindCharacterStatToWidget();
-	UFUNCTION(NetMulticast, Reliable, WithValidation)
-	void  NetMulticast_BindCharacterStatToWidget();
 
-	void BindCharacterStatToWidget();
+
+
 
 protected:
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
@@ -84,15 +70,18 @@ public:
 
 	virtual float TakeDamage(float DamageAmount, struct FDamageEvent const& DamageEvent,
 		class AController* EventInstigator, AActor* DamageCauser) override;
-	void SetTargetPlayerWithLineTrace();
-
-	//UFUNCTION(BlueprintCallable)
-	//	bool SaveRenderTarget(UTextureRenderTarget2D* renderTarget, FString path, FString fileName);
-
-
-
 
 public:
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
+		class USphereComponent* NearObjectCollisionDetector;
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
+		class USpringArmComponent* CameraBoom;
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
+		class UCameraComponent* FollowCamera;
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera)
+		float BaseTurnRate;
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera)
+		float BaseLookUpRate;
 
 	UPROPERTY(EditAnywhere,BlueprintReadWrite, Category = Stat)
 		class UMyCharacterStatComponent* CharacterStatRef;

@@ -27,15 +27,25 @@ void UCharacterMotionReplicator::BeginPlay()
 	
 }
 
-
-// Called every frame
-void UCharacterMotionReplicator::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
+void UCharacterMotionReplicator::Server_BindCharacterStatToWidget_Implementation()
 {
-	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
-
-	// ...
+	NetMulticast_BindCharacterStatToWidget();
 }
 
+bool UCharacterMotionReplicator::Server_BindCharacterStatToWidget_Validate()
+{
+	return true;
+}
+void  UCharacterMotionReplicator::NetMulticast_BindCharacterStatToWidget_Implementation()
+{
+	
+	PlayerRef->BindCharacterStatToWidget();
+}
+
+bool  UCharacterMotionReplicator::NetMulticast_BindCharacterStatToWidget_Validate()
+{
+	return true;
+}
 
 
 void UCharacterMotionReplicator::Server_SendRide(AActor* _Car, APawn* _Rider)
@@ -136,25 +146,7 @@ bool UCharacterMotionReplicator::NetMulticast_SetTargetPlayer_Validate(ACharacte
 	return true;
 }
 
-void UCharacterMotionReplicator::Server_SetIsAttacking_Implementation(bool NewIsAttacking)
-{
-	NetMulticast_SetIsAttacking(NewIsAttacking);
-}
 
-void UCharacterMotionReplicator::NetMulticast_SetIsAttacking_Implementation(bool NewIsAttacking)
-{
-	PlayerRef->IsAttacking = NewIsAttacking;
-	PlayerRef->MyAnim->IsAttacking = NewIsAttacking;
-}
-bool UCharacterMotionReplicator::Server_SetIsAttacking_Validate(bool NewIsAttacking)
-{
-	return true;
-}
-
-bool UCharacterMotionReplicator::NetMulticast_SetIsAttacking_Validate(bool NewIsAttacking)
-{
-	return true;
-}
 
 
 void UCharacterMotionReplicator::Server_SetUsingSkill_Implementation(bool NewUsingSkill)
@@ -174,6 +166,27 @@ bool UCharacterMotionReplicator::Server_SetUsingSkill_Validate(bool NewUsingSkil
 }
 
 bool UCharacterMotionReplicator::NetMulticast_SetUsingSkill_Validate(bool NewUsingSkill)
+{
+	return true;
+}
+
+
+void UCharacterMotionReplicator::Server_SetIsAttacking_Implementation(bool NewIsAttacking)
+{
+	NetMulticast_SetIsAttacking(NewIsAttacking);
+}
+
+void UCharacterMotionReplicator::NetMulticast_SetIsAttacking_Implementation(bool NewIsAttacking)
+{
+	PlayerRef->IsAttacking = NewIsAttacking;
+	PlayerRef->MyAnim->IsAttacking = NewIsAttacking;
+}
+bool UCharacterMotionReplicator::Server_SetIsAttacking_Validate(bool NewIsAttacking)
+{
+	return true;
+}
+
+bool UCharacterMotionReplicator::NetMulticast_SetIsAttacking_Validate(bool NewIsAttacking)
 {
 	return true;
 }

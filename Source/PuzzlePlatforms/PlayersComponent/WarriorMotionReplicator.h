@@ -29,8 +29,8 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Disable")
 		void DisableActor(bool toHide);
 
-	UFUNCTION(Server, Reliable, WithValidation)
-		void Server_SendRide(AActor* _Car, APawn* _Rider) override;
+	//UFUNCTION(Server, Reliable, WithValidation)
+	//	void Server_SendRide(AActor* _Car, APawn* _Rider) override;
 	UFUNCTION(Server, Reliable, WithValidation)
 		void Server_SendAttack() override;
 	UFUNCTION(Server, Reliable, WithValidation)

@@ -32,7 +32,13 @@ public:
 
 
 	UFUNCTION(Server, Reliable, WithValidation)
-		void Server_SendRide(AActor* _Car, APawn* _Rider) override;
+		void Server_SetMuzzleRotation(FRotator NewRotator);
+	UFUNCTION(NetMulticast, Reliable, WithValidation)
+		void NetMulticast_SetMuzzleRotation(FRotator NewRotator);
+	UFUNCTION(Server, Reliable, WithValidation)
+		void Server_WeaponReload();
+	UFUNCTION(NetMulticast, Reliable, WithValidation)
+		void NetMulticast_WeaponReload();
 	UFUNCTION(Server, Reliable, WithValidation)
 		void Server_SendAttack() override;
 	UFUNCTION(Server, Reliable, WithValidation)

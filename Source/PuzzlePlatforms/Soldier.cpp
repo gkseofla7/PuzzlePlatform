@@ -79,37 +79,10 @@ ASoldier::ASoldier()
 	TeamNum = 1;
 }
 
-void ASoldier::SteamPack()
+void ASoldier::GetLifetimeReplicatedProps(TArray< FLifetimeProperty >& OutLifetimeProps) const
 {
-	if (EquippedItem == nullptr)
-		return;
-	auto Movement = GetCharacterMovement();
-	Movement->MaxWalkSpeed = GeneralWalkSpeed;
-	Movement->MaxAcceleration = GeneralAcceleration;
-	EquippedItem->SteamPack = true;
-
-}
-
-void ASoldier::UnSteamPack()
-{
-	auto Movement = GetCharacterMovement();
-	Movement->MaxWalkSpeed = SteamPackWalkSpeed;
-	Movement->MaxAcceleration = SteamPackAcceleration;
-	if(EquippedItem!=nullptr)
-		EquippedItem->SteamPack = false;
-
-}
-
-void ASoldier::SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent)
-{
-	Super::SetupPlayerInputComponent(PlayerInputComponent);
-	// Set up gameplay key bindings
-	PlayerInputComponent->BindAxis("MoveForward", this, &ACharacter_Master::MoveForward);
-	PlayerInputComponent->BindAction("WeaponPrimary", IE_Released, this, &ASoldier::WeaponPrimaryReleased);
-	PlayerInputComponent->BindAction("WeaponSecondary", IE_Pressed, this, &ASoldier::WeaponSecondaryPressed);
-	PlayerInputComponent->BindAction("WeaponSecondary", IE_Released, this, &ASoldier::WeaponSecondaryReleased);
-	PlayerInputComponent->BindAction("WeaponReload", IE_Pressed, this, &ASoldier::WeaponReload);
-	PlayerInputComponent->BindAction("Interact", IE_Pressed, this, &ASoldier::InteractPressed);
+	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
+	DOREPLIFETIME(ASoldier, ControlRotation);
 
 }
 
@@ -128,32 +101,30 @@ void ASoldier::BeginPlay()
 	Super::BeginPlay();
 	MyAnim = Cast<UAnimInstance_Master>(GetMesh()->GetAnimInstance());
 	FActorSpawnParameters SpawnParams;
-	//if (HasAuthority())
-	//{
-
-	//	auto temp = GetWorld()->SpawnActor<AWeapon_Master>(WeaponMasterClass, SpawnParams);
-	//	//서로 다른 시간에 만들어지므로..
-	//	Multicast_SetGun(temp);
-	//}
-	//EquipItem(Gun, false);
-	//if (EquippedItem == nullptr)
-	//{
-	//	IsItemEquipped = false;
-	//}
 	bUseControllerRotationYaw = true;
 	GetCharacterMovement()->bOrientRotationToMovement = false;
 
 	
 }
 
+void ASoldier::SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent)
+{
+	Super::SetupPlayerInputComponent(PlayerInputComponent);
+	// Set up gameplay key bindings
+	PlayerInputComponent->BindAxis("MoveForward", this, &ACharacter_Master::MoveForward);
+	PlayerInputComponent->BindAction("WeaponPrimary", IE_Released, this, &ASoldier::WeaponPrimaryReleased);
+	PlayerInputComponent->BindAction("WeaponSecondary", IE_Pressed, this, &ASoldier::WeaponSecondaryPressed);
+	PlayerInputComponent->BindAction("WeaponSecondary", IE_Released, this, &ASoldier::WeaponSecondaryReleased);
+	PlayerInputComponent->BindAction("WeaponReload", IE_Pressed, this, &ASoldier::WeaponReload);
+	PlayerInputComponent->BindAction("Interact", IE_Pressed, this, &ASoldier::InteractPressed);
+
+}
 
 
 void ASoldier::SetFPSHudWidget()
 {
-	UE_LOG(LogTemp, Warning, TEXT("SetFPS"));
 	if (FPSHudClass != nullptr)
 	{
-		UE_LOG(LogTemp, Warning, TEXT("IsIn"));
 		HudWidget = CreateWidget<UFPSHudWidget>(GetWorld(), FPSHudClass);
 		HudWidget->AddToViewport();
 
@@ -164,7 +135,27 @@ void ASoldier::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 	//SetMuzzleRotation();
-
+	if (EquippedItem!=nullptr &&IsLocallyControlled() && IsPlayerControlled())
+	{
+		ControlRotation = GetControlRotation();
+		//float A = 360.0 - ControlRotation.Vector().X;
+		float A = 360.0 - ControlRotation.Pitch;
+		//float B = ControlRotation.Vector().Y* -1;
+		float B = ControlRotation.Pitch;
+		//float C = ControlRotation.Vector().Z;
+		float C = ControlRotation.Yaw;
+		float tmp = 0;
+		if (B >= 180)
+		{
+			tmp = A / 3;
+		}
+		else
+		{
+			tmp = B * (-1) / 3;
+		}
+		ControlRotation = FRotator(0, 0, tmp);;
+		Server_SetControllRotation(ControlRotation);
+	}
 	if (IsAiming)
 	{
 		AimDownSights();
@@ -249,6 +240,26 @@ void ASoldier::Tick(float DeltaTime)
 
 }
 
+void ASoldier::Server_SetControllRotation_Implementation(FRotator NewControlRotattor)
+{
+	ControlRotation = NewControlRotattor;
+}
+
+bool ASoldier::Server_SetControllRotation_Validate(FRotator NewControlRotattor)
+{
+	return true;
+}
+
+void ASoldier::OnRep_ControlRotation()//서버에서 진행 안하니..?
+{
+	auto Anim = Cast<USoldierAnimInstance>(MyAnim);
+	Anim->ClientTimeBetweenLastUpdates = Anim->ClientTimeSinceUpdate;
+	Anim->ClientTimeSinceUpdate = 0;
+
+	Anim->StartControllerRotator = Anim->AimRotation;
+}
+
+
 void ASoldier::AddControllerPitchInput(float Val)
 {
 	if (IsDashing == false)
@@ -286,35 +297,40 @@ void ASoldier::SetMuzzleRotation()
 
 	FRotator temp = UKismetMathLibrary::FindLookAtRotation(Start, EndTrace);
 
-
-	Server_SetMuzzleRotation(temp);
+	auto MyReplicateComponent = Cast< USoldierMotionReplicator>(ReplicateComponent);
+	MyReplicateComponent->Server_SetMuzzleRotation(temp);
 
 }
 
-void ASoldier::Everyone_SetMuzzleRotation_Implementation(FRotator NewRotator)
+void ASoldier::SteamPack()
 {
-
 	if (EquippedItem == nullptr)
 		return;
-	EquippedItem->SetMuzzleRotation(NewRotator);
-	
-}
-bool ASoldier::Everyone_SetMuzzleRotation_Validate(FRotator NewRotator)
-{
-	return true;
+	auto Movement = GetCharacterMovement();
+	Movement->MaxWalkSpeed = GeneralWalkSpeed;
+	Movement->MaxAcceleration = GeneralAcceleration;
+	EquippedItem->SteamPack = true;
+
 }
 
-bool ASoldier::Server_SetMuzzleRotation_Validate(FRotator NewRotator)
+void ASoldier::UnSteamPack()
 {
-	return true;
+	auto Movement = GetCharacterMovement();
+	Movement->MaxWalkSpeed = SteamPackWalkSpeed;
+	Movement->MaxAcceleration = SteamPackAcceleration;
+	if (EquippedItem != nullptr)
+		EquippedItem->SteamPack = false;
+
 }
 
-void ASoldier::Server_SetMuzzleRotation_Implementation(FRotator NewRotator)
+void ASoldier::Attack()
 {
-	Everyone_SetMuzzleRotation(NewRotator);
-	//if (EquippedItem == nullptr)
-	//	return;
-	//EquippedItem->SetMuzzleRotation(NewRotator);
+	if (EquippedItem == nullptr || CanAim == false)
+	{
+		return;
+	}
+	SetMuzzleRotation();
+	Super::Attack();
 
 }
 
@@ -393,17 +409,6 @@ void ASoldier::UnAimMissile()
 }
 
 
-void ASoldier::Attack()
-{
-	if (EquippedItem == nullptr || CanAim == false)
-	{
-		return;
-	}
-	SetMuzzleRotation();
-	Super::Attack();
-
-}
-
 void ASoldier::WeaponPrimaryReleased()
 {
 
@@ -413,69 +418,19 @@ void ASoldier::WeaponPrimaryReleased()
 
 }
 
-void ASoldier::WeaponSecondaryPressed()
-{
-	if (CanAim == false)
-		return;
-	if (EquippedItem != nullptr)
-		IsAiming = true;
 
-}
-void ASoldier::WeaponSecondaryReleased()
-{
-	if (EquippedItem != nullptr)
-		IsAiming = false;
-}
 void ASoldier::WeaponReload()
 {
 	if (EquippedItem == nullptr)
-	{
-
 		return;
-	}
+	bool MyIsFiring = Cast<USoldierMotionReplicator>(ReplicateComponent)->IsFiring;
 
-	bool IsFiring__ = Cast<USoldierMotionReplicator>(ReplicateComponent)->IsFiring;
-
-	if (EquippedItem->CanReload == true && IsFiring__ == false && IsReloading == false && IsItemEquipped == true)
+	if (EquippedItem->CanReload == true && MyIsFiring == false && IsReloading == false && IsItemEquipped == true)
 	{
-		Server_WeaponReload();
-		CanAim = false;
-		IsReloading = true;
-
-		FTimerHandle WaitHandle;
-		EquippedItem->Reload();
-		float WaitTime =EquippedItem->ReloadDelay; //시간을 설정하고
-		GetWorld()->GetTimerManager().SetTimer(WaitHandle, FTimerDelegate::CreateLambda([&]()
-			{
-
-				// 여기에 코드를 치면 된다.
-				IsReloading = false;
-				CanAim = true;
-			}), WaitTime, false); //반복도 여기서 추가 변수를 선언해 설정가능
-
-
+		Cast<USoldierMotionReplicator>(ReplicateComponent)->Server_WeaponReload();
 	}
 }
-void ASoldier::Server_WeaponReload_Implementation()
-{
-	CanAim = false;
-	IsReloading = true;
 
-	FTimerHandle WaitHandle;
-	EquippedItem->Reload();
-	float WaitTime = EquippedItem->ReloadDelay; //시간을 설정하고
-	GetWorld()->GetTimerManager().SetTimer(WaitHandle, FTimerDelegate::CreateLambda([&]()
-		{
-
-			// 여기에 코드를 치면 된다.
-			IsReloading = false;
-			CanAim = true;
-		}), WaitTime, false); //반복도 여기서 추가 변수를 선언해 설정가능
-}
-bool ASoldier::Server_WeaponReload_Validate()
-{
-	return true;
-}
 void ASoldier::EquipItem(AObject_Master* Item, bool EquipAndHold)
 {
 	if (EquipAndHold == false)
@@ -526,25 +481,7 @@ void ASoldier::EquipItem(AObject_Master* Item, bool EquipAndHold)
 }
 
 
-void ASoldier::Multicast_SetGun_Implementation(AWeapon_Master* weapon)
-{
-	EquippedItem = weapon;//요건 전체
-	PrimaryWeapon = weapon;//전체
-	EquippedItem->Player = this;//전체
-	EquippedItem->GetSkeletalMesh()->SetCollisionEnabled(ECollisionEnabled::NoCollision);
-	EquippedItem->AttachToPlayer(this, "GripPoint");//전체
-	IsItemEquipped = true;//전체
-	bUseControllerRotationYaw = true;
-	//자연스럽게 원하는 방향으로 회전
-	GetCharacterMovement()->bOrientRotationToMovement = false;
-	// 자동적으로 캐릭터의 이동방향을 움직이는 방향에 맞춰주며 회전보간을 해줌
 
-	WeaponSlotUse = EWeaponSlot::TE_PrimaryWeapon;
-}
-bool ASoldier::Multicast_SetGun_Validate(AWeapon_Master* NewItem)
-{
-	return true;
-}
 
 void ASoldier::InteractPressed()
 {
@@ -554,8 +491,7 @@ void ASoldier::InteractPressed()
 		Cast<USoldierMotionReplicator>(ReplicateComponent)->Server_SendGetItem(PickupItem);
 		//SetFPSHudWidget();
 	}
-	//else
-	//	Cast<USoldierMotionReplicator>(ReplicateComponent)->Server_SendGetItem(PickupItem);
+
 
 }
 
@@ -735,3 +671,38 @@ void ASoldier::BeginTarget()
 	}
 }
 
+
+
+void ASoldier::WeaponSecondaryPressed()
+{
+	if (CanAim == false)
+		return;
+	if (EquippedItem != nullptr)
+		IsAiming = true;
+
+}
+void ASoldier::WeaponSecondaryReleased()
+{
+	if (EquippedItem != nullptr)
+		IsAiming = false;
+}
+
+//void ASoldier::Multicast_SetGun_Implementation(AWeapon_Master* weapon)
+//{
+//	EquippedItem = weapon;//요건 전체
+//	PrimaryWeapon = weapon;//전체
+//	EquippedItem->Player = this;//전체
+//	EquippedItem->GetSkeletalMesh()->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+//	EquippedItem->AttachToPlayer(this, "GripPoint");//전체
+//	IsItemEquipped = true;//전체
+//	bUseControllerRotationYaw = true;
+//	//자연스럽게 원하는 방향으로 회전
+//	GetCharacterMovement()->bOrientRotationToMovement = false;
+//	// 자동적으로 캐릭터의 이동방향을 움직이는 방향에 맞춰주며 회전보간을 해줌
+//
+//	WeaponSlotUse = EWeaponSlot::TE_PrimaryWeapon;
+//}
+//bool ASoldier::Multicast_SetGun_Validate(AWeapon_Master* NewItem)
+//{
+//	return true;
+//}

@@ -21,13 +21,13 @@ protected:
 	virtual void BeginPlay() override;
 
 public:	
-	// Called every frame
-	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 
 	virtual void Server_SendRide(AActor* _Car, APawn* _Rider);
-
 	virtual void Server_SendAttack();
-
+	UFUNCTION(Server, Reliable, WithValidation)
+		void Server_BindCharacterStatToWidget();
+	UFUNCTION(NetMulticast, Reliable, WithValidation)
+		void  NetMulticast_BindCharacterStatToWidget();
 	virtual void DisableActor(bool toHide);
 	void AbilitySpawn(TSubclassOf<class AAbility>AbilityClass);
 	UFUNCTION(Server, Reliable, WithValidation)
