@@ -25,6 +25,8 @@ void UPointOfInterestComponent::BeginPlay()
 	FTimerHandle PossessCharacterHandle;
 	FTimerDelegate PossessCharacterDelegate = FTimerDelegate::CreateUObject(this, &UPointOfInterestComponent::AddPOI);
 	GetOwner()->GetWorldTimerManager().SetTimer(PossessCharacterHandle, PossessCharacterDelegate, 2.5f, false);
+
+
 }
 
 
@@ -38,6 +40,7 @@ void UPointOfInterestComponent::TickComponent(float DeltaTime, ELevelTick TickTy
 
 void UPointOfInterestComponent::AddPOI()
 {
+	SetIcon();
 	auto Pawn = Cast<APawn>(GetOwner());
 	if (Pawn != nullptr && Pawn->IsLocallyControlled() == true&&Pawn->IsPlayerControlled() )//자기 자신은 안그림
 		return;

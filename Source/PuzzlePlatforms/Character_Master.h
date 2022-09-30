@@ -96,8 +96,8 @@ public:
 		class UParticleSystemComponent* ParticleSystemComponent;
 	UPROPERTY(VisibleAnywhere, Category = UI)
 		class UWidgetComponent* HPBarWidget;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-		class UPointOfInterestComponent* PointOfInterestComponent;
+	//UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	//	class UPointOfInterestComponent* PointOfInterestComponent;
 
 	class UPlayerInfoWidget* PlayerInfoHUDWidget;
 	ACharacter_Master* TargetPlayer;

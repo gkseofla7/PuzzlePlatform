@@ -90,6 +90,6 @@ public:
 	class UPlayerInfoWidget* PlayerInfoWidget;
 	FText PlayerName;
 	bool JoinClicked= false;
-
-	int CharacterIndex = 1;// 1번이면 Soldier 2번이면 Warrior 
+	UPROPERTY(EditAnywhere , BlueprintReadWrite)
+	int CharacterIndex = 2;// 1번이면 Soldier 2번이면 Warrior 
 };

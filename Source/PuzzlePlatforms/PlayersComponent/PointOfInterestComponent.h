@@ -19,6 +19,8 @@ public:
 protected:
 	// Called when the game starts
 	virtual void BeginPlay() override;
+	UFUNCTION(BlueprintImplementableEvent, BlueprintCallable)
+	void SetIcon();
 
 public:	
 	// Called every frame

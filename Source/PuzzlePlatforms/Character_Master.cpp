@@ -106,7 +106,7 @@ ACharacter_Master::ACharacter_Master()
 
 	HPBarWidget->SetupAttachment(GetMesh());
 
-	PointOfInterestComponent = CreateDefaultSubobject<UPointOfInterestComponent>(TEXT("PointOfInterestComponent"));
+	//PointOfInterestComponent = CreateDefaultSubobject<UPointOfInterestComponent>(TEXT("PointOfInterestComponent"));
 	
 
 	HPBarWidget->SetRelativeLocation(FVector(0.f, 0.f, 220.f));
