@@ -6,6 +6,8 @@
 #include "../UI/HPBarWidget.h"
 #include "TurretStatComponent.h"
 #include "Components/StaticMeshComponent.h"
+#include "../PuzzlePlatformsGameInstance.h"
+#include "../MenuSystem/QuitMenu.h"
 
 #include "Kismet/KismetSystemLibrary.h"
 #include "Kismet/GameplayStatics.h"
@@ -203,6 +205,10 @@ void ATurret::NetMulticast_DestroyEffect_Implementation()
 	{
 		UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), DestroyImpactParticles, GetTransform());
 	}
+
+	auto MyGameInstance = Cast< UPuzzlePlatformsGameInstance>(UGameplayStatics::GetGameInstance(GetWorld()));
+	MyGameInstance->LoadCloseMenu();
+	MyGameInstance->GetQuitMenu()->EndGame(TeamNum);
 }
 
 

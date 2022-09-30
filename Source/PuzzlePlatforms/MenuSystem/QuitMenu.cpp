@@ -4,7 +4,7 @@
 #include "QuitMenu.h"
 #include "../PuzzlePlatformsGameInstance.h"
 #include "Components/Button.h"
-
+#include "Components/TextBlock.h"
 
 bool UQuitMenu::Initialize()
 {
@@ -42,4 +42,21 @@ void UQuitMenu::BackToMainMenu()
 		//gamemode->Logout(UGameplayStatics::GetPlayerController(GetWorld(), 0));
 	}
 
+}
+
+void UQuitMenu::EndGame(int index)
+{
+	auto MyGameInstance = Cast< UPuzzlePlatformsGameInstance>(UGameplayStatics::GetGameInstance(GetWorld()));
+
+	if (index == MyGameInstance->CharacterIndex)
+	{
+		FString s = FString("Defeat");
+		T_Victory->SetText(FText::FromString(s));
+
+	}
+	else
+	{
+		FString s = FString("Victory");
+		T_Victory->SetText(FText::FromString(s));
+	}
 }

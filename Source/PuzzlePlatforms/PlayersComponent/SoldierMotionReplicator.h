@@ -30,7 +30,8 @@ public:
 
 public:
 
-
+	UFUNCTION(Server, Reliable, WithValidation)
+		void Server_SetControllRotation(FRotator NewControlRotattor);
 	UFUNCTION(Server, Reliable, WithValidation)
 		void Server_SetMuzzleRotation(FRotator NewRotator);
 	UFUNCTION(NetMulticast, Reliable, WithValidation)
@@ -47,7 +48,8 @@ public:
 		void Server_SendGetItem(class AObject_Master* NewWeapon);
 	UFUNCTION(NetMulticast, Reliable, WithValidation)
 		void Multicast_SendGetItem(class AObject_Master* NewWeapon);
-
+	UFUNCTION(Server, Reliable, WithValidation)
+		void Server_RespawnPawn(APlayerController* NewController);
 
 	UFUNCTION(BlueprintCallable, Category = "Disable")
 		void DisableActor(bool toHide);

@@ -7,6 +7,8 @@
 #include "../AnimInstance/SoldierAnimInstance.h"
 #include "../Soldier.h"
 #include "../Weapons/Weapon_Master.h"
+#include "../Sections/RespawnSection.h"
+#include "../PuzzlePlatformsGameMode.h"
 
 #include "Net/UnrealNetwork.h"
 #include "GameFramework/Character.h"
@@ -97,6 +99,42 @@ bool USoldierMotionReplicator::NetMulticast_WeaponReload_Validate()
 	return true;
 }
 
+void USoldierMotionReplicator::Server_RespawnPawn_Implementation(APlayerController* NewController)
+{
+	auto Soldier = Cast<ASoldier>(GetOwner());
+	TArray<AActor*>Respawns;
+	UGameplayStatics::GetAllActorsOfClass(GetWorld(), ARespawnSection::StaticClass(), Respawns);
+	if (Respawns.Num() == 0)
+		return;
+	FTransform RespawnTransform;
+	for (int i = 0; i < Respawns.Num(); i++)
+	{
+		auto Respawn = Cast<ARespawnSection>(Respawns[i]);
+		if (Respawn->TeamNum == Soldier->TeamNum)
+		{
+			//UE_LOG(LogTemp, Warning, TEXT("Player TeamNum : %d"), TeamNum);
+			RespawnTransform = Cast< ARespawnSection>(Respawns[i])->GetRandomTransform();
+			break;
+		}
+	}
+
+	Cast<APuzzlePlatformsGameMode>(UGameplayStatics::GetGameMode(GetWorld()))->RespawnRequested(NewController, RespawnTransform, Soldier->TeamNum);
+}
+
+
+bool USoldierMotionReplicator::Server_RespawnPawn_Validate(APlayerController* NewController)
+{
+	return true;
+}
+void USoldierMotionReplicator::Server_SetControllRotation_Implementation(FRotator NewControlRotattor)
+{
+	Cast<ASoldier>(GetOwner())->ControlRotation = NewControlRotattor;
+}
+
+bool USoldierMotionReplicator::Server_SetControllRotation_Validate(FRotator NewControlRotattor)
+{
+	return true;
+}
 
 void USoldierMotionReplicator::Server_SendAttack_Implementation()
 {

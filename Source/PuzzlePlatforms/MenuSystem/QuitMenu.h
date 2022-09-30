@@ -25,11 +25,13 @@ public:
 
 	UPROPERTY(meta = (BindWidget))
 	class UButton* QuitButton;
-
+	UPROPERTY(meta = (BindWidget))
+		class UTextBlock* T_Victory;
 
 	UFUNCTION()
 	void CancelMenu();
 
 	UFUNCTION()
 	void BackToMainMenu();
+	void EndGame(int index);
 };

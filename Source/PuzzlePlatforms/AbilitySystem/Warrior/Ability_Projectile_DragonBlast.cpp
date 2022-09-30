@@ -18,14 +18,14 @@ AAbility_Projectile_DragonBlast::AAbility_Projectile_DragonBlast()
 	AbilityRoot->SetNotifyRigidBodyCollision(true);
 	bReplicates = true;
 
-	static ConstructorHelpers::FClassFinder<AAbility> Ability_Buff_Fortitude_BPClass(TEXT("/Game/AbilitySystem/Buff/BP_Ability_Buff_Fire"));
-	if (Ability_Buff_Fortitude_BPClass.Succeeded())
+	static ConstructorHelpers::FClassFinder<AAbility> Ability_Buff_Heal_BPClass(TEXT("/Game/AbilitySystem/Buff/BP_Ability_Buff_Fire"));
+	if (Ability_Buff_Heal_BPClass.Succeeded())
 	{
-		Ability_Buff_Fortitude_Class = Ability_Buff_Fortitude_BPClass.Class;
+		Ability_Buff_Heal_Class = Ability_Buff_Heal_BPClass.Class;
 
 		//EquippedItem->Get
 	}
-	//Ability_Buff_Fortitude_Class
+	//Ability_Buff_Heal_Class
 }
 
 void AAbility_Projectile_DragonBlast::BeginPlay()
@@ -113,7 +113,7 @@ void AAbility_Projectile_DragonBlast::OnOverlapBegin(class UPrimitiveComponent* 
 				UGameplayStatics::ApplyDamage(OtherActor, DamageAmount, PlayerRef->GetController(), this, UDamageType::StaticClass());
 				//고블린도 진행해야됨
 				if(PuzzleCharacter!=nullptr)
-					PuzzleCharacter->ReplicateComponent->AbilitySpawn(Ability_Buff_Fortitude_Class);
+					PuzzleCharacter->ReplicateComponent->AbilitySpawn(Ability_Buff_Heal_Class);
 				SweepArray.Add(OtherActor);
 			}
 			

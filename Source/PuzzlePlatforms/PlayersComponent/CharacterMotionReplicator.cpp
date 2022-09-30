@@ -27,6 +27,28 @@ void UCharacterMotionReplicator::BeginPlay()
 	
 }
 
+void UCharacterMotionReplicator::Server_SetMaxWalkSpeed_Implementation(float NewWalkSpeed)
+{
+	UE_LOG(LogTemp, Warning, TEXT("SERVER SteamPack"));
+	NetMulticast_SetMaxWalkSpeed(NewWalkSpeed);
+}
+
+bool UCharacterMotionReplicator::Server_SetMaxWalkSpeed_Validate(float NewWalkSpeed)
+{
+	return true;
+}
+
+
+void  UCharacterMotionReplicator::NetMulticast_SetMaxWalkSpeed_Implementation(float NewWalkSpeed)
+{
+	PlayerRef->GetCharacterMovement()->MaxWalkSpeed = NewWalkSpeed;
+}
+
+bool  UCharacterMotionReplicator::NetMulticast_SetMaxWalkSpeed_Validate(float NewWalkSpeed)
+{
+	return true;
+}
+
 void UCharacterMotionReplicator::Server_BindCharacterStatToWidget_Implementation()
 {
 	NetMulticast_BindCharacterStatToWidget();

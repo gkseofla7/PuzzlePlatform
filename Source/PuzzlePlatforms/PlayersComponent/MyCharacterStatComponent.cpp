@@ -35,6 +35,8 @@ void UMyCharacterStatComponent::InitializeComponent() //Post Initialize Àü¿¡ ÀÏ¾
 
 void UMyCharacterStatComponent::SetHP(float NewHP)
 {
+	if (NewHP > CurrentStatData->MaxHP)
+		return;
 	CurrentHP = NewHP;
 	OnHPChanged.Broadcast();
 	if (CurrentHP < KINDA_SMALL_NUMBER)

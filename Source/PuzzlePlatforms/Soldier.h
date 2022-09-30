@@ -69,10 +69,8 @@ private:
 	void InteractPressed();
 	void WeaponReload();
 
-	UFUNCTION(Server, Reliable, WithValidation)
-		void Server_RespawnPawn(APlayerController* NewController);
-	UFUNCTION(Server, Reliable, WithValidation)
-		void Server_SetControllRotation(FRotator NewControlRotattor);
+
+
 
 
 	void AimMissile();
@@ -137,8 +135,7 @@ public:
 	FVector MissileCameraPosition;
 	float GeneralTargetArmLength = 250;
 	float MissileTargetArmLength = 500;
-	float GeneralWalkSpeed = 600;
-	float SteamPackWalkSpeed = 1000;
+
 	float GeneralAcceleration = 2048.0;
 	float SteamPackAcceleration = 4000;
 	const float TargetingRange = 10000;

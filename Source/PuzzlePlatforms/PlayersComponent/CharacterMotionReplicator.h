@@ -41,6 +41,12 @@ public:
 	UFUNCTION(Server, Reliable, WithValidation)
 		void Server_Skill5Clicked(TSubclassOf<AAbility>AbilityClass);
 
+
+	UFUNCTION(Server, Reliable, WithValidation)
+		void Server_SetMaxWalkSpeed(float NewWalkSpeed);
+	UFUNCTION(NetMulticast, Reliable, WithValidation)
+		void  NetMulticast_SetMaxWalkSpeed(float NewWalkSpeed);
+
 	UFUNCTION(Server, Reliable, WithValidation)
 		void Server_SetTargetPlayer(class ACharacter_Master* NewTarget);
 	UFUNCTION(NetMulticast, Reliable, WithValidation)

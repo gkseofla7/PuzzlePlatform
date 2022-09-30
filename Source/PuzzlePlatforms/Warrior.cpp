@@ -129,6 +129,7 @@ void AWarrior::AttackCheck()
 					return;
 				}
 			}
+			UE_LOG(LogTemp, Warning, TEXT("HitCheck"));
 			FDamageEvent DamageEvent;
 			HitResult.Actor->TakeDamage(50.0f, DamageEvent, GetController(), this);
 			//UAISense_Damage::ReportDamageEvent(GetWorld(), HitResult.Actor.Get(), this, 10., HitResult.TraceStart, HitResult.Location);

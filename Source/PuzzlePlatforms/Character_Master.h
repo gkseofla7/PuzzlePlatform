@@ -47,7 +47,8 @@ public:
 	void SkillReleased();
 	void OpenSkillTree();
 	void OpenMap();
-
+	void Sprint();
+	void UnSprint();
 	void SetIsAttacking(bool NewIsAttacking);
 	void SetUsingSkill(bool NewUsingSkill);
 	void DestroyPlayer();
@@ -121,7 +122,8 @@ public:
 	bool bDead = false;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	int CharacterNum = 0;
-
+	float GeneralWalkSpeed = 600;
+	float SteamPackWalkSpeed = 1000;
 	UFUNCTION(NetMulticast, Reliable, WithValidation)
 		void Server_SetPlayerStat();
 	UFUNCTION(NetMulticast, Reliable, WithValidation)

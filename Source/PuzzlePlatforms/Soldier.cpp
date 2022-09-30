@@ -7,7 +7,7 @@
 #include "Missile//Missile.h"
 #include "MyPlayerController.h"
 #include "PuzzlePlatformsGameMode.h"
-#include "Sections/RespawnSection.h"
+
 #include "Missile/TargetMarker.h"
 #include "Missile/TargetableComponent.h"
 
@@ -154,7 +154,7 @@ void ASoldier::Tick(float DeltaTime)
 			tmp = B * (-1) / 3;
 		}
 		ControlRotation = FRotator(0, 0, tmp);;
-		Server_SetControllRotation(ControlRotation);
+		Cast< USoldierMotionReplicator>(ReplicateComponent)->Server_SetControllRotation(ControlRotation);
 	}
 	if (IsAiming)
 	{
@@ -240,15 +240,7 @@ void ASoldier::Tick(float DeltaTime)
 
 }
 
-void ASoldier::Server_SetControllRotation_Implementation(FRotator NewControlRotattor)
-{
-	ControlRotation = NewControlRotattor;
-}
 
-bool ASoldier::Server_SetControllRotation_Validate(FRotator NewControlRotattor)
-{
-	return true;
-}
 
 void ASoldier::OnRep_ControlRotation()//서버에서 진행 안하니..?
 {
@@ -304,20 +296,18 @@ void ASoldier::SetMuzzleRotation()
 
 void ASoldier::SteamPack()
 {
+	Sprint();
 	if (EquippedItem == nullptr)
 		return;
-	auto Movement = GetCharacterMovement();
-	Movement->MaxWalkSpeed = GeneralWalkSpeed;
-	Movement->MaxAcceleration = GeneralAcceleration;
+
+	//Movement->MaxAcceleration = GeneralAcceleration;
 	EquippedItem->SteamPack = true;
 
 }
 
 void ASoldier::UnSteamPack()
 {
-	auto Movement = GetCharacterMovement();
-	Movement->MaxWalkSpeed = SteamPackWalkSpeed;
-	Movement->MaxAcceleration = SteamPackAcceleration;
+	UnSprint();
 	if (EquippedItem != nullptr)
 		EquippedItem->SteamPack = false;
 
@@ -568,36 +558,12 @@ void ASoldier::PlayersDied()
 void ASoldier::RespawnCharacter()//Run on Owning Client
 {
 
-	Server_RespawnPawn(Cast<APlayerController>(GetController()));
-	//Cast<AMyPlayerController>(GetController())->Server_RespawnPawn(GetActorTransform());//위치 임시로
+	Cast<USoldierMotionReplicator>(ReplicateComponent)->Server_RespawnPawn(Cast<APlayerController>(GetController()));
 	UnPossessed();
 }
 
-void ASoldier::Server_RespawnPawn_Implementation(APlayerController* NewController)
-{
-	TArray<AActor*>Respawns;
-	UGameplayStatics::GetAllActorsOfClass(GetWorld(), ARespawnSection::StaticClass(), Respawns);
-	if (Respawns.Num() == 0)
-		return;
-	FTransform RespawnTransform;
-	for (int i = 0; i < Respawns.Num(); i++)
-	{
-		auto Respawn = Cast<ARespawnSection>(Respawns[i]);
-		if (Respawn->TeamNum == TeamNum)
-		{
-			//UE_LOG(LogTemp, Warning, TEXT("Player TeamNum : %d"), TeamNum);
-			RespawnTransform = Cast< ARespawnSection>(Respawns[i])->GetRandomTransform();
-			break;
-		}
-	}
-	
-	Cast<APuzzlePlatformsGameMode>(UGameplayStatics::GetGameMode(GetWorld()))->RespawnRequested(NewController, RespawnTransform, TeamNum);
-}
 
-bool ASoldier::Server_RespawnPawn_Validate(APlayerController* NewController)
-{
-	return true;
-}
+
 
 AActor* ASoldier::FindBestTarget()
 {

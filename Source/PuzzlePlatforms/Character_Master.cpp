@@ -387,6 +387,17 @@ float ACharacter_Master::TakeDamage(float DamageAmount, FDamageEvent const& Dama
 	return FinalDamage;
 
 }
+
+void ACharacter_Master::Sprint()
+{
+	ReplicateComponent->Server_SetMaxWalkSpeed(SteamPackWalkSpeed);
+}
+
+void ACharacter_Master::UnSprint()
+{
+	ReplicateComponent->Server_SetMaxWalkSpeed(GeneralWalkSpeed);
+}
+
 FRotator ACharacter_Master::GetMuzzleRotation()
 {
 

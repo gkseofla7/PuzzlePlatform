@@ -48,7 +48,10 @@ public:
 		void  Join(uint32 Index) override;
 	void StartSession();
 	void DestroySession();
-
+	class UQuitMenu* GetQuitMenu() {
+		return QuitMenu
+			;
+	}
 	FMyCharacterrData* GetMyCharacterData(int32 Level);
 	FMonsterData* GetMonsterData(int32 Level, EMonsterEnum MonsterEnuml);
 	//FMyCharacterrData* GetMyCharacterData(int32 Level);
