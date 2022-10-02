@@ -38,13 +38,14 @@ protected:
 	UFUNCTION(BlueprintCallable)
 		void DropDown();
 	//void ClimbTheWall();
-	void Dash();
+
 	void Climb();
 
 private:
 	void AttackCheck();
 
 public:
+	void Dash();
 	void PlayHangToCrouchMontage();
 	void Die() override;
 	void PlayersDied();

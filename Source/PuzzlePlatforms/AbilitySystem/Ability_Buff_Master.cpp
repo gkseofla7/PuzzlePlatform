@@ -14,6 +14,14 @@ void AAbility_Buff_Master::BeginPlay()
 	Super::BeginPlay();
 
 	bReplicates = true;
+	if (HasAuthority())
+	{
+		UE_LOG(LogTemp, Warning, TEXT("Server : Dash1"));
+	}
+	else
+	{
+		UE_LOG(LogTemp, Warning, TEXT("Client : Dash1"));
+	}
 	AbilityRoot->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 	ClearDuplicates();
 

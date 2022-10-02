@@ -67,13 +67,13 @@ void UPointOfInterestWidget::CustomInitialize(AActor* NewOwner, bool NewIsStatic
 	{
 		CustomImage->SetBrushFromTexture(PointOfInterest->IconImage);
 		CustomImage->SetVisibility(ESlateVisibility::Visible);
-		DefaultImage->SetVisibility(ESlateVisibility::Hidden);
+		//DefaultImage->SetVisibility(ESlateVisibility::Hidden);
 
 	}
 	else
 	{
 		CustomImage->SetVisibility(ESlateVisibility::Hidden);
-		DefaultImage->SetVisibility(ESlateVisibility::Visible);
+		//DefaultImage->SetVisibility(ESlateVisibility::Visible);
 	}
 
 	SetColor();
@@ -131,7 +131,7 @@ void UPointOfInterestWidget::MapCoord()
 			//UE_LOG(LogTemp, Warning, TEXT("%f"),  Angle);
 			FVector2D CoordVec = FindCoord(Radius, Angle);
 			SetRenderTranslation(CoordVec);
-			DefaultImage->SetVisibility(ESlateVisibility::Visible);
+			//DefaultImage->SetVisibility(ESlateVisibility::Visible);
 
 		}
 	}
@@ -173,13 +173,13 @@ void UPointOfInterestWidget::MinimapCoord()
 			{
 				if (CoordVec.Size() >= 129.)
 				{
-					DefaultImage->SetVisibility(ESlateVisibility::Hidden);//이미지 있으면 이미지로 해야됨
+					//DefaultImage->SetVisibility(ESlateVisibility::Hidden);//이미지 있으면 이미지로 해야됨
 					CustomImage->SetVisibility(ESlateVisibility::Hidden);//이미지 있으면 이미지로 해야됨
 
 				}
 				else
 				{
-					DefaultImage->SetVisibility(ESlateVisibility::Visible);
+					//DefaultImage->SetVisibility(ESlateVisibility::Visible);
 					CustomImage->SetVisibility(ESlateVisibility::Visible);//이미지 있으면 이미지로 해야됨
 				}
 			}

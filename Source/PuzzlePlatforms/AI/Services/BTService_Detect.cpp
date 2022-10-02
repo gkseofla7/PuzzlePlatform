@@ -76,7 +76,7 @@ void UBTService_Detect::TickNode(UBehaviorTreeComponent& OwnerComp, uint8* NodeM
 					Archer->NetMulticast_SetTarget(Target);
 				}
 				
-				DrawDebugSphere(World, Center, DetectRadius, 16, FColor::Green, false, 0.2f);
+				//DrawDebugSphere(World, Center, DetectRadius, 16, FColor::Green, false, 0.2f);
 
 				DrawDebugPoint(World, Player->GetActorLocation(), 10.f, FColor::Blue, false, 0.2f);
 				DrawDebugLine(World, ControllingPawn->GetActorLocation(),
@@ -98,7 +98,7 @@ void UBTService_Detect::TickNode(UBehaviorTreeComponent& OwnerComp, uint8* NodeM
 
 	}
 
-	DrawDebugSphere(World, Center, DetectRadius, 16, FColor::Red, false, 0.2f);
+	//DrawDebugSphere(World, Center, DetectRadius, 16, FColor::Red, false, 0.2f);
 
 
 	//UE_LOG(LogTemp, Warning, TEXT("Setting Nullptr"));

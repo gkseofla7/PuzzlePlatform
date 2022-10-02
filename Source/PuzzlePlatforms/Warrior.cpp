@@ -117,8 +117,8 @@ void AWarrior::AttackCheck()
 			DrawColor = FColor::Red;
 
 
-		DrawDebugCapsule(GetWorld(), Center, HalfHeight, AttackRadius,
-			Rotation, DrawColor, false, 5.f);
+		//DrawDebugCapsule(GetWorld(), Center, HalfHeight, AttackRadius,
+//			Rotation, DrawColor, false, 5.f);
 		if (bResult && HitResult.Actor.IsValid())
 		{
 			auto Player = Cast<ACharacter_Master>(HitResult.Actor);
@@ -257,6 +257,7 @@ void AWarrior::DropDown()
 
 void AWarrior::Dash()
 {
+	UE_LOG(LogTemp, Warning, TEXT("Dash!!"));
 	Cast<UWarriorMotionReplicator>(ReplicateComponent)->Server_SendDash();
 }
 
@@ -265,6 +266,7 @@ void AWarrior::EndAnimation(UAnimMontage* Montage, bool bInterrupted)
 	auto Anim = Cast<UPlayerAnimInstance>(MyAnim);
 	if (Montage == Anim->DashMontage)
 	{
+		UE_LOG(LogTemp, Warning, TEXT("DashMontageEnd"));
 		IsDashing = false;
 		ParticleSystemComponent->SetVisibility(false);
 		ParticleSystemComponent->Deactivate();
@@ -273,26 +275,6 @@ void AWarrior::EndAnimation(UAnimMontage* Montage, bool bInterrupted)
 		Cast<UCharacterMovementComponent>(GetMovementComponent())->GravityScale = 1;
 	}
 }
-//void AWarrior::Die()
-//{
-//	auto Anim = Cast<UPlayerAnimInstance>(MyAnim);
-//	if (Anim != nullptr)
-//	{
-//		Anim->PlayDeathMontage();
-//		SetActorEnableCollision(false);
-//		if (HasAuthority() == true)
-//		{
-//			FTimerHandle TimerHandler;
-//			GetWorld()->GetTimerManager().SetTimer(TimerHandler, this, &ACharacter_Master::DestroyPlayer, 10, false);
-//			
-//		}
-//		if (HasAuthority())
-//		{
-//			FTimerHandle DestroyTimerHandler;
-//			GetWorld()->GetTimerManager().SetTimer(DestroyTimerHandler, this, &ACharacter_Master::DestroyPlayer, 10, false);
-//		}
-//	}
-//}
 
 
 void AWarrior::Die()

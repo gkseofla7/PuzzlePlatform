@@ -174,7 +174,7 @@ void USoldierMotionReplicator::Multicast_SendGetItem_Implementation(class AObjec
 {
 
 	auto MyOwner = Cast<ASoldier>(GetOwner());
-
+	ABCHECK(NewWeapon!=nullptr)
 	NewWeapon->SetOwner(MyOwner);
 	MyOwner->EquipItem(NewWeapon, MyOwner->IsItemEquipped);
 

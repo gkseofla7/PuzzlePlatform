@@ -13,7 +13,7 @@ AAbility_Buff_Fire::AAbility_Buff_Fire()
 void AAbility_Buff_Fire::BeginPlay()
 {
 	Super::BeginPlay();
-	AttachToComponent(PlayerRef->GetMesh(), FAttachmentTransformRules::SnapToTargetNotIncludingScale, "hand_rSocket");
+	AttachToComponent(PlayerRef->GetMesh(), FAttachmentTransformRules::SnapToTargetNotIncludingScale, "spine_01Socket");
 }
 
 

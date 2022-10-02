@@ -35,8 +35,8 @@ public:
 	TSubclassOf<UActorComponent> PointOfInterestComponentClass;
 	UPROPERTY(meta = (BindWidget),BlueprintReadWrite)
 		class UImage* CustomImage;
-	UPROPERTY(meta = (BindWidget), BlueprintReadWrite)
-		class UThrobber* DefaultImage;
+	//UPROPERTY(meta = (BindWidget), BlueprintReadWrite)
+	//	class UThrobber* DefaultImage;
 	bool IsMinimap;
 
 };

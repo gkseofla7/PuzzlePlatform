@@ -93,8 +93,8 @@ void ANPC_Goblin::AttackCheck()
 			DrawColor = FColor::Red;
 
 
-		DrawDebugCapsule(GetWorld(), Center, HalfHeight, AttackRadius,
-			Rotation, DrawColor, false, 5.f);
+		//DrawDebugCapsule(GetWorld(), Center, HalfHeight, AttackRadius,
+			//Rotation, DrawColor, false, 5.f);
 		if (bResult && HitResult.Actor.IsValid())
 		{
 			FDamageEvent DamageEvent;

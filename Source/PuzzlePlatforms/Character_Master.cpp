@@ -193,7 +193,7 @@ void ACharacter_Master::BeginPlay()
 	}
 
 	FTimerDelegate RespawnDelegate = FTimerDelegate::CreateUObject(this, &ACharacter_Master::SetPlayerStat);//어차피 자기 자신만 실행함
-	GetWorldTimerManager().SetTimer(StatResetHandle, RespawnDelegate, 2.f, false);
+	GetWorldTimerManager().SetTimer(StatResetHandle, RespawnDelegate, 4.f, false);
 
 	//SetPlayerStat();
 }

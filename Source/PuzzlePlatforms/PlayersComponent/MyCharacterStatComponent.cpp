@@ -103,7 +103,8 @@ void UMyCharacterStatComponent::SetLevel(float NewLevel)
 		if (GetOwner()->HasAuthority())
 		{
 			auto MyPlayerState = Cast< AMyPlayerState>(GetOwner());
-			MyPlayerState->Server_SetSkillPoints(MyPlayerState->SkillPoints + 1);
+			if(NewLevel !=1)
+				MyPlayerState->Server_SetSkillPoints(MyPlayerState->SkillPoints + 1);
 		}
 
 		//Attackµµ «ÿ¡‹

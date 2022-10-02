@@ -37,7 +37,6 @@ void AAbility::BeginPlay()
 	AnimRef = Cast<UAnimInstance_Master>(PlayerRef->GetMesh()->GetAnimInstance());
 	auto IsBuff = Cast<AAbility_Buff_Master>(this);
 	SetAbilityLevel();
-	UE_LOG(LogTemp, Warning, TEXT("Ability Level %d"), AbilityLevel);
 	//AnimRef->IsAttacking = true;
 	if(IsBuff== nullptr)
 		PlayerRef->SetUsingSkill(true);

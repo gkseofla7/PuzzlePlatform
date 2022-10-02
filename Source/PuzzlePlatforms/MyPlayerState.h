@@ -42,7 +42,7 @@ public:
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
 		TArray<int> SpellsUpgrade;
-	int SkillPoints = 3;
+	int SkillPoints = 5;
 
 
 	FOnSkillPointChangedDelegate OnSkillPointChangedDelegate;

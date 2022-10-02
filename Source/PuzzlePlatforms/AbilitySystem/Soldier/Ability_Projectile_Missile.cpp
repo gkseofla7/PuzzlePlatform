@@ -24,7 +24,7 @@ AAbility_Projectile_Missile::AAbility_Projectile_Missile()
 void AAbility_Projectile_Missile::BeginPlay()
 {
 	Super::BeginPlay();
-
+	DamageAmount = 50;
 	if (PlayerRef->IsLocallyControlled() == true)//조종하는사람만
 	{
 
@@ -90,12 +90,31 @@ void AAbility_Projectile_Missile::OnOverlapBegin(class UPrimitiveComponent* Over
 	{
 
 		NetMulticast_Spark(GetActorLocation());
-		//auto Player = Cast<ACharacter_Master>(OtherActor);
-		//if (Player != nullptr)
-		//{
-		//	UGameplayStatics::ApplyDamage(Player, DamageAmount, PlayerRef->GetController(), PlayerRef, UDamageType::StaticClass());
+		TArray<TEnumAsByte<EObjectTypeQuery> > ObjectTypes;//
+		UClass* ActorClassFilter = AActor::StaticClass();
+		TArray<AActor*> ActorsToIgnore;// TArray<AActor*>& OutActors)
+		ObjectTypes.Add(EObjectTypeQuery::ObjectTypeQuery7);//아마 이게 Character
+		ObjectTypes.Add(EObjectTypeQuery::ObjectTypeQuery3);//아마 이게 Pawn
+		TArray<AActor*> OutActors;
+		UKismetSystemLibrary::SphereOverlapActors(GetWorld(), GetActorLocation(), 500., ObjectTypes, ActorClassFilter, ActorsToIgnore, OutActors);
+		UE_LOG(LogTemp, Warning, TEXT("OverlapActors : %d"), OutActors.Num());
+		for (int i = 0; i < OutActors.Num(); i++)
+		{
+			auto Player = Cast< ACharacter_Master>(OutActors[i]);
+			if (Player != nullptr)
+			{//걍 같은 팀이면 안맞게함
+				if (Player->TeamNum == PlayerRef->TeamNum)//같은팀이면 데미지X
+				{
+					continue;
+				}
+			}
+			FDamageEvent DamageEvent;
+			if (OutActors[i] != nullptr)
+			{
+				UGameplayStatics::ApplyDamage(OutActors[i], DamageAmount, PlayerRef->GetController(), PlayerRef, UDamageType::StaticClass());
 
-		//}
+			}
+		}
 		Destroy();
 	}
 

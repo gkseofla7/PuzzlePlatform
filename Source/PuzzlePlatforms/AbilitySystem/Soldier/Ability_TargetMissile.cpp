@@ -28,7 +28,7 @@ AAbility_TargetMissile::AAbility_TargetMissile()
 void AAbility_TargetMissile::BeginPlay()
 {
 	Super::BeginPlay();
-
+	DamageAmount = 70;
 	if (PlayerRef->IsLocallyControlled())//애초에 서버로 알려줘야되니,,ㅋ
 	{
 
@@ -86,16 +86,35 @@ void AAbility_TargetMissile::OnOverlapBegin(class UPrimitiveComponent* Overlappe
 
 	if (OtherActor == PlayerRef)
 		return;
-	//UE_LOG(LogTemp, Warning, TEXT("Hit %s, %s, %s %s"), *OtherActor->GetName(), *OverlappedComp->GetName(), *OtherActor->GetName(), *OtherComp->GetName());
+	//UE_LOG(LogTemp, Warning, TEXT("Hit %s, %s %s"), *OverlappedComp->GetName(), *OtherActor->GetName(), *OtherComp->GetName());
+
 	if (HasAuthority() == true)
 	{
-		NetMulticast_Spark(GetActorLocation());
-		//auto Player = Cast<ACharacter_Master>(OtherActor);
-		//if (Player != nullptr)
-		//{
-		//	UGameplayStatics::ApplyDamage(Player, DamageAmount, PlayerRef->GetController(), PlayerRef, UDamageType::StaticClass());
 
-		//}
+		NetMulticast_Spark(GetActorLocation());
+		auto Player = Cast<ACharacter_Master>(OtherActor);
+
+		if (Player != nullptr)
+		{//걍 같은 팀이면 안맞게함
+			if (Player->TeamNum == PlayerRef->TeamNum)//같은팀이면 데메지X
+			{
+
+				this->Destroy();
+				return;
+			}
+
+
+			//여기서 컨트롤러가..ㅋㅋ 다른 서버쪽 기준 컨트롤러로 돼있을텐데
+
+
+		}
+		FDamageEvent DamageEvent;
+		//auto Player = Cast<ACharacter_Master>(OtherActor);
+		if (OtherActor != nullptr)
+		{
+			UGameplayStatics::ApplyDamage(OtherActor, DamageAmount, PlayerRef->GetController(), PlayerRef, UDamageType::StaticClass());
+
+		}
 		Destroy();
 	}
 }
