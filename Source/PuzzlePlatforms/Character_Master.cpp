@@ -173,8 +173,7 @@ void ACharacter_Master::PostInitializeComponents()
 void ACharacter_Master::PossessedBy(AController* NewController)//이것도 결국 서버에서 실행함
 {//입장하면 자기 자신의 Level을 다른애들한테도 뿌림
 	Super::PossessedBy(NewController);
-	auto MyController = Cast<AMyPlayerController>(NewController);
-	//Server_SetPlayerStat();
+	SetPlayerStat();
 }
 
 void ACharacter_Master::BeginPlay()
@@ -192,30 +191,22 @@ void ACharacter_Master::BeginPlay()
 		CharacterWidget->SetVisibility(ESlateVisibility::Hidden);
 	}
 
-	FTimerDelegate RespawnDelegate = FTimerDelegate::CreateUObject(this, &ACharacter_Master::SetPlayerStat);//어차피 자기 자신만 실행함
-	GetWorldTimerManager().SetTimer(StatResetHandle, RespawnDelegate, 4.f, false);
-
-	//SetPlayerStat();
 }
 
-void ACharacter_Master::Server_SetPlayerStat_Implementation()
-{
-	NetMulticast_SetPlayerStat();
-}
 
-bool ACharacter_Master::Server_SetPlayerStat_Validate()
+void 	ACharacter_Master::OnRep_PlayerState()
 {
-	return true;
-}
+	Super::OnRep_PlayerState();
+	if (HasAuthority())
+	{
+		UE_LOG(LogTemp, Warning, TEXT("Server PlayerState Rep"))
+	}
+	else
+	{
+		UE_LOG(LogTemp, Warning, TEXT("Client PlayerState Rep"))
+	}
 
-void ACharacter_Master::NetMulticast_SetPlayerStat_Implementation()
-{
 	SetPlayerStat();
-}
-
-bool ACharacter_Master::NetMulticast_SetPlayerStat_Validate()
-{
-	return true;
 }
 
 void ACharacter_Master::SetPlayerStat()
@@ -228,7 +219,7 @@ void ACharacter_Master::SetPlayerStat()
 	CharacterStatRef = MyPlayerState->CharacterStat;
 	if (HasAuthority())
 	{
-		CharacterStatRef->Respawn();
+		CharacterStatRef->Respawn();//HP MP 초기화
 	}
 	CharacterStatRef->CharacterRef = this;
 	if (IsLocallyControlled() && IsPlayerControlled())//새로입장 or 리스폰 모두에게 내 정보 뿌려줌	
@@ -243,6 +234,7 @@ void ACharacter_Master::SetPlayerStat()
 	{
 		BindCharacterStatToWidget();
 	}
+
 
 	
 }

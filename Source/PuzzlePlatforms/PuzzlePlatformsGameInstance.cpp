@@ -7,7 +7,6 @@
 #include "OnlineSessionSettings.h"
 #include "UI/PlayerInfoWidget.h"
 
-#include "PlatformTrigger.h"
 #include "MenuSystem/QuitMenu.h"
 #include "MenuSystem/MainMenu.h"
 #include "MenuSystem/SetNameMenu.h"

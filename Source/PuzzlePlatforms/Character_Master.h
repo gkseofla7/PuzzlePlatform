@@ -56,7 +56,7 @@ public:
 	virtual void Attack();
 	virtual void Die();
 	void SetPlayerStat();
-
+	void 	OnRep_PlayerState() override;
 
 
 
@@ -124,9 +124,6 @@ public:
 	int CharacterNum = 0;
 	float GeneralWalkSpeed = 600;
 	float SteamPackWalkSpeed = 1000;
-	UFUNCTION(NetMulticast, Reliable, WithValidation)
-		void Server_SetPlayerStat();
-	UFUNCTION(NetMulticast, Reliable, WithValidation)
-		void NetMulticast_SetPlayerStat();
+
 };
 
