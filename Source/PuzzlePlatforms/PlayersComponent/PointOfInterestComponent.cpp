@@ -7,6 +7,8 @@
 #include "../UI/PlayerInfoWidget.h"
 #include "../UI/MinimapWidget.h"
 #include "../UI/MapWidget.h"
+#include "../PuzzlePlatformsGameInstance.h"
+#include "../Character_Master.h"
 // Sets default values for this component's properties
 UPointOfInterestComponent::UPointOfInterestComponent()
 {
@@ -22,9 +24,9 @@ UPointOfInterestComponent::UPointOfInterestComponent()
 void UPointOfInterestComponent::BeginPlay()
 {
 	Super::BeginPlay();
-	FTimerHandle PossessCharacterHandle;
-	FTimerDelegate PossessCharacterDelegate = FTimerDelegate::CreateUObject(this, &UPointOfInterestComponent::AddPOI);
-	GetOwner()->GetWorldTimerManager().SetTimer(PossessCharacterHandle, PossessCharacterDelegate, 2.5f, false);
+//	FTimerHandle PossessCharacterHandle;
+	//FTimerDelegate PossessCharacterDelegate = FTimerDelegate::CreateUObject(this, &UPointOfInterestComponent::AddPOI);
+	//GetOwner()->GetWorldTimerManager().SetTimer(PossessCharacterHandle, PossessCharacterDelegate, 2.5f, false);
 
 
 }
@@ -58,3 +60,22 @@ void UPointOfInterestComponent::AddPOI()
 	if(MapWidget!=nullptr)
 		MapWidget->AddsPOI(GetOwner());
 }
+
+//void UPointOfInterestComponent::SetIcons()
+//{
+//	auto MyGameInstance = Cast< UPuzzlePlatformsGameInstance>(UGameplayStatics::GetGameInstance(GetWorld()));
+//	auto ThisCharacter = Cast<ACharacter_Master>(GetOwner());
+//
+//	
+//	int MyTeamNum = MyGameInstance->CharacterIndex;
+//	int thisTeamNum = ThisCharacter->TeamNum;
+//
+//	if (MyTeamNum == thisTeamNum)
+//	{
+//		IconImage->
+//	}
+//	else
+//	{
+//
+//	}
+//}

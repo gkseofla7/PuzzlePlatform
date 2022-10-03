@@ -33,6 +33,8 @@ public:
 	void LookUpAtRate(float Rate);
 	virtual void AddControllerPitchInput(float Val);
 	virtual void AddControllerYawInput(float Val);
+	UFUNCTION(BlueprintImplementableEvent, BlueprintCallable)
+		void SetIcon();
 	/** Base turn rate, in deg/sec. Other scaling may affect final turn rate. */
 
 	void UpdateStat();//이거 hp의 경우엔 서버에도 해줘야됨;
@@ -96,8 +98,8 @@ public:
 		class UParticleSystemComponent* ParticleSystemComponent;
 	UPROPERTY(VisibleAnywhere, Category = UI)
 		class UWidgetComponent* HPBarWidget;
-	//UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	//	class UPointOfInterestComponent* PointOfInterestComponent;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+		class UPointOfInterestComponent* PointOfInterestComponent;
 
 	class UPlayerInfoWidget* PlayerInfoHUDWidget;
 	ACharacter_Master* TargetPlayer;
@@ -124,6 +126,7 @@ public:
 	int CharacterNum = 0;
 	float GeneralWalkSpeed = 600;
 	float SteamPackWalkSpeed = 1000;
+	bool ChangeIcon = false;
 
 };
 

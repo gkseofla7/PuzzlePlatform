@@ -92,6 +92,8 @@ ACharacter_Master::ACharacter_Master()
 	//Component 초기화
 	ActorAbilitiesComponent = CreateDefaultSubobject<UActorAbilities>(TEXT("ActorAbilities"));
 
+
+
 	DecalComponent = CreateDefaultSubobject<UDecalComponent>(TEXT("DecalComponent"));
 	DecalComponent->SetupAttachment(RootComponent);
 	DecalComponent->SetVisibility(false);
@@ -106,7 +108,7 @@ ACharacter_Master::ACharacter_Master()
 
 	HPBarWidget->SetupAttachment(GetMesh());
 
-	//PointOfInterestComponent = CreateDefaultSubobject<UPointOfInterestComponent>(TEXT("PointOfInterestComponent"));
+	PointOfInterestComponent = CreateDefaultSubobject<UPointOfInterestComponent>(TEXT("PointOfInterestComponent"));
 	
 
 	HPBarWidget->SetRelativeLocation(FVector(0.f, 0.f, 220.f));
@@ -174,6 +176,12 @@ void ACharacter_Master::PossessedBy(AController* NewController)//이것도 결국 서�
 {//입장하면 자기 자신의 Level을 다른애들한테도 뿌림
 	Super::PossessedBy(NewController);
 	SetPlayerStat();
+	if (IsPlayerControlled())
+	{
+		PointOfInterestComponent->AddPOI();
+		SetIcon();
+	}
+
 }
 
 void ACharacter_Master::BeginPlay()
@@ -197,16 +205,10 @@ void ACharacter_Master::BeginPlay()
 void 	ACharacter_Master::OnRep_PlayerState()
 {
 	Super::OnRep_PlayerState();
-	if (HasAuthority())
-	{
-		UE_LOG(LogTemp, Warning, TEXT("Server PlayerState Rep"))
-	}
-	else
-	{
-		UE_LOG(LogTemp, Warning, TEXT("Client PlayerState Rep"))
-	}
 
 	SetPlayerStat();
+	PointOfInterestComponent->AddPOI();
+	SetIcon();
 }
 
 void ACharacter_Master::SetPlayerStat()
@@ -253,7 +255,11 @@ void ACharacter_Master::BindCharacterStatToWidget()
 void ACharacter_Master::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
-
+	if (ChangeIcon == false)
+	{
+		ChangeIcon = true;
+		SetIcon();
+	}
 	if(PlayerInfoHUDWidget !=nullptr)
 		SkillAvailable = !(PlayerInfoHUDWidget->CastBar_UI->WhileBuffering);
 	if (!IsLocallyControlled())
