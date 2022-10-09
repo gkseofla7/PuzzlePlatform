@@ -172,17 +172,6 @@ void ACharacter_Master::PostInitializeComponents()
 
 }
 
-void ACharacter_Master::PossessedBy(AController* NewController)//이것도 결국 서버에서 실행함
-{//입장하면 자기 자신의 Level을 다른애들한테도 뿌림
-	Super::PossessedBy(NewController);
-	SetPlayerStat();
-	if (IsPlayerControlled())
-	{
-		PointOfInterestComponent->AddPOI();
-		SetIcon();
-	}
-
-}
 
 void ACharacter_Master::BeginPlay()
 {
@@ -197,6 +186,19 @@ void ACharacter_Master::BeginPlay()
 	{
 		auto CharacterWidget = Cast< UPlayerHPBarWidget>(HPBarWidget->GetUserWidgetObject());
 		CharacterWidget->SetVisibility(ESlateVisibility::Hidden);
+	}
+
+}
+
+
+void ACharacter_Master::PossessedBy(AController* NewController)//이것도 결국 서버에서 실행함
+{//입장하면 자기 자신의 Level을 다른애들한테도 뿌림
+	Super::PossessedBy(NewController);
+	SetPlayerStat();
+	if (IsPlayerControlled())
+	{
+		PointOfInterestComponent->AddPOI();
+		SetIcon();
 	}
 
 }
@@ -240,7 +242,6 @@ void ACharacter_Master::SetPlayerStat()
 
 	
 }
-
 
 void ACharacter_Master::BindCharacterStatToWidget()
 {

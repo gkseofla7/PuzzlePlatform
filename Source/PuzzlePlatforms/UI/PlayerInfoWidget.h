@@ -61,5 +61,6 @@ public:
 	UPROPERTY(meta = (BindWidget), BlueprintReadWrite)
 		class USpellbook_UI* Spellbook_UI;
 
+
 	TWeakObjectPtr<class UMyCharacterStatComponent> CurrentCharacterStat;
 };

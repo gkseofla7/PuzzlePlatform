@@ -16,6 +16,7 @@ class PUZZLEPLATFORMS_API USpellbook_UI : public UUserWidget
 public:
 	USpellbook_UI(const FObjectInitializer& ObjectInitializer);
 	void 	NativeConstruct() override;
+	void CustomInitialize();
 	void SetSkillPoints(int NewSkillPoint);
 public:
 	UPROPERTY(meta = (BindWidget), BlueprintReadWrite)

@@ -24,9 +24,21 @@ USpellbook_UI::USpellbook_UI(const FObjectInitializer& ObjectInitializer)
 
 void 	USpellbook_UI::NativeConstruct()
 {
+
+	FTimerHandle TimerHandler;
+	GetWorld()->GetTimerManager().SetTimer(TimerHandler, this, &USpellbook_UI::CustomInitialize, .5, false);
+
+}
+
+void USpellbook_UI::CustomInitialize()
+{
 	auto PlayerRef = Cast<ACharacter_Master>(UGameplayStatics::GetPlayerCharacter(GetWorld(), 0));
 	if (PlayerRef == nullptr)
-		return;
+	{
+		UE_LOG(LogTemp, Warning, TEXT("No PlayerRef"))
+			return;
+	}
+
 	auto SpellsRef = PlayerRef->ActorAbilitiesComponent->PlayerSpells;
 	auto MyPlayerState = Cast<AMyPlayerState>(PlayerRef->GetPlayerState());
 	SetSkillPoints(MyPlayerState->SkillPoints);
@@ -42,6 +54,7 @@ void 	USpellbook_UI::NativeConstruct()
 
 	}
 }
+
 
 void USpellbook_UI::SetSkillPoints(int NewSkillPoint)
 {
