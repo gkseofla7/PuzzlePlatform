@@ -13,5 +13,15 @@ UCLASS()
 class PUZZLEPLATFORMS_API ABotAIController : public AAIController
 {
 	GENERATED_BODY()
-	
+public:
+	ABotAIController();
+protected:
+	// Called when the game starts or when spawned
+	virtual void BeginPlay() override;
+
+private:
+	UPROPERTY()
+		class UBehaviorTree* BTAsset;
+	UPROPERTY()
+		class UBlackboardData* BBAsset;
 };
