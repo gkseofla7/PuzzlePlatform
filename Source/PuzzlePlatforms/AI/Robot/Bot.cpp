@@ -3,6 +3,7 @@
 
 #include "Bot.h"
 #include "Components/SkeletalMeshComponent.h"
+#include "BotAIController.h"
 
 // Sets default values
 ABot::ABot()
@@ -12,13 +13,14 @@ ABot::ABot()
 	static ConstructorHelpers::FObjectFinder<USkeletalMesh>MeshAsset(TEXT("/Game/Sci_Fi_Character_08/Mesh/Character/SK_Sci_Fi_Character_08_Full_01"));
 	USkeletalMesh* Asset = MeshAsset.Object;
 	GetMesh()->SetSkeletalMesh(Asset);
-
+	AIControllerClass = ABotAIController::StaticClass();
+	AutoPossessAI = EAutoPossessAI::PlacedInWorldOrSpawned;
 	GunComponent = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("GunMeshComponent"));
 	GunComponent->SetSimulatePhysics(false);
 	GunComponent->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 	GunComponent->SetupAttachment(GetMesh(), "hand_rSocket");
 	//GunMeshComponent->AttachToComponent(GetMesh(), FAttachmentTransformRules::SnapToTargetNotIncludingScale, "hand_rSocket");
-
+	bReplicates = true;
 	//RootComponent =GunMeshComponent;
 
 	//auto MyMesh = GetMesh();
@@ -32,6 +34,25 @@ void ABot::BeginPlay()
 
 	GunComponent->AttachToComponent(GetMesh()
 		, FAttachmentTransformRules(EAttachmentRule::SnapToTarget, true), TEXT("hand_rSocket"));
+
+
+
+
+}
+void ABot::PossessedBy(AController* NewController)
+{
+	Super::PossessedBy(NewController);
+
+	
+	UE_LOG(LogTemp, Warning, TEXT("Possessed"));
+	PlayerRef = GetInstigator();
+	if (PlayerRef != nullptr)
+	{
+		auto MyController = Cast< ABotAIController>(GetController());
+		MyController->SetPlayerRefKey(PlayerRef);
+
+	}
+
 }
 
 // Called every frame

@@ -25,6 +25,7 @@ public:
 	void SetHomePosKey(FVector NewPos);
 	void SetIsHitKey(bool NewIsHit);
 	void SetIsAttackingKey(bool NewIsAttackingKey);
+	void SetIsAttackingKey(FVector NewTargetLocationKey);
 	//UFUNCTION(NetMulticast, Reliable, WithValidation)
 	//	void NetMulticast_SetHomePosKey(FVector NewPos);
 
@@ -45,6 +46,7 @@ public:
 	static const FName HomePosKey;
 	static const FName PatrolPosKey;
 	static const FName TargetKey;
+	static const FName TargetLocationKey;
 	static const FName AttackRangeKey;
 	static const FName IsHitKey;
 	static const FName IsAttackingKey;

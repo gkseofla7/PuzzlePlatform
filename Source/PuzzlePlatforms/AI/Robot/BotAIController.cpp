@@ -4,6 +4,10 @@
 #include "BotAIController.h"
 #include "BehaviorTree/BehaviorTree.h"
 #include "BehaviorTree/BlackboardData.h"
+#include "BehaviorTree/BlackboardComponent.h"
+
+const FName ABotAIController::PlayerRefKey(TEXT("PlayerRef"));
+const FName ABotAIController::PlayerRangeKey(TEXT("PlayerRange"));
 
 ABotAIController::ABotAIController()
 {
@@ -24,5 +28,12 @@ ABotAIController::ABotAIController()
 void ABotAIController::BeginPlay()
 {
 	Super::BeginPlay();
+	UE_LOG(LogTemp, Warning, TEXT("RunBehaviorTree"));
 	RunBehaviorTree(BTAsset);
+}
+
+void ABotAIController::SetPlayerRefKey(AActor* NewPlayerRef)
+{
+	UE_LOG(LogTemp, Warning, TEXT("%s"), *NewPlayerRef->GetName());
+	GetBlackboardComponent()->SetValueAsObject(ABotAIController::PlayerRefKey, NewPlayerRef);
 }

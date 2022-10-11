@@ -15,6 +15,7 @@ class PUZZLEPLATFORMS_API ABotAIController : public AAIController
 	GENERATED_BODY()
 public:
 	ABotAIController();
+	void SetPlayerRefKey(AActor* NewPlayerRef);
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
@@ -24,4 +25,8 @@ private:
 		class UBehaviorTree* BTAsset;
 	UPROPERTY()
 		class UBlackboardData* BBAsset;
+
+public:
+	static const FName PlayerRangeKey;
+	static const FName PlayerRefKey;
 };

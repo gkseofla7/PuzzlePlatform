@@ -17,6 +17,7 @@
 const FName ANPCAIController::HomePosKey(TEXT("HomePos"));
 const FName ANPCAIController::PatrolPosKey(TEXT("PatrolPos"));
 const FName ANPCAIController::TargetKey(TEXT("Target"));
+const FName ANPCAIController::TargetLocationKey(TEXT("TargetLocation"));
 const FName ANPCAIController::AttackRangeKey(TEXT("AttackRange"));
 const FName ANPCAIController::IsHitKey(TEXT("IsHit"));
 const FName ANPCAIController::IsAttackingKey(TEXT("IsAttacking"));
@@ -88,4 +89,9 @@ void ANPCAIController::SetIsHitKey(bool NewIsHit)
 void ANPCAIController::SetIsAttackingKey(bool NewIsAttackingKey)
 {
 	GetBlackboardComponent()->SetValueAsBool(ANPCAIController::IsAttackingKey, NewIsAttackingKey);
+}
+
+void ANPCAIController::SetIsAttackingKey(FVector NewTargetLocationKey)
+{
+	GetBlackboardComponent()->SetValueAsVector(ANPCAIController::TargetLocationKey, NewTargetLocationKey);
 }
