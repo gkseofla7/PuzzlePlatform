@@ -53,10 +53,8 @@ void UWarriorMotionReplicator::BeginPlay()
 	auto Character = Cast<ACharacter>(GetOwner());
 	MyAnim = Cast<UPlayerAnimInstance>(Character->GetMesh()->GetAnimInstance());
 
+	MyAnim->OnMontageEnded.AddDynamic(this, &UWarriorMotionReplicator::OnAttackMontageEnded);
 
-	MyAnim->OnAttackEndCheck.AddLambda([this]()->void {
-		OnAttackMontageEnded();
-		});
 
 
 }
@@ -189,17 +187,33 @@ void UWarriorMotionReplicator::OnRep_Attack()//서버에서는 안하는구나..?ㅋ
 	MyAnim->JumpToAttackMontageSection(CurrentCombo);
 }
 
-
-
-void UWarriorMotionReplicator::OnAttackMontageEnded()
+void UWarriorMotionReplicator::OnAttackMontageEnded(UAnimMontage* Montage, bool bInterrupted)
 {
 	if (MyAnim == nullptr)
 	{
-		//MyAnim->IsAttacking = false;
 		return;
 	}
-	MyAnim->IsAttacking = false;
+	if (Montage != MyAnim->SwordAttackMontage)
+		return;
 
+
+
+	auto MyWarrior = Cast<AWarrior>(GetOwner());
+	UE_LOG(LogTemp, Warning, TEXT("EndMontage"));
+	if (MyWarrior->bNextAttack == true)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("NextAttack Start"));
+		MyWarrior->bNextAttack = false;
+		MyWarrior->IsAttacking = false;
+		Server_SendAttack();
+
+	}
+	else
+	{
+		UE_LOG(LogTemp, Warning, TEXT("IsAttack False"));
+		MyAnim->IsAttacking = false;
+		MyWarrior->IsAttacking = false;
+	}
 }
 
 

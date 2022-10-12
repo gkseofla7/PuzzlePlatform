@@ -29,4 +29,5 @@ private:
 public:
 	static const FName PlayerRangeKey;
 	static const FName PlayerRefKey;
+	static const FName PatrolPosKey;
 };

@@ -27,6 +27,14 @@ bool UBTDecorator_IsInOwnerRange::CalculateRawConditionValue(UBehaviorTreeCompon
 	bResult = (Target->GetDistanceTo(ControllingPawn) <= OwnerComp.GetBlackboardComponent()->GetValueAsFloat(ABotAIController::PlayerRangeKey));
 	//OwnerComp.GetBlackboardComponent()->SetValueAsVector("TargetLocation", Target->GetActorLocation());
 	//범위 내에 있으면 true~
+	//if (bResult == true)
+	//{
+	//	UE_LOG(LogTemp, Warning, TEXT("bResult : True"));
+	//}
+	//else
+	//{
+	//	UE_LOG(LogTemp, Warning, TEXT("bResult : False"));
+	//}
 
 	return bResult;
 }

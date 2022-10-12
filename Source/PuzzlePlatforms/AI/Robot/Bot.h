@@ -32,4 +32,5 @@ public:
 	USkeletalMeshComponent* GunComponent;
 	AActor* PlayerRef;
 	AActor* PlayerRefKey;
+	float PlayerRange = 500;
 };

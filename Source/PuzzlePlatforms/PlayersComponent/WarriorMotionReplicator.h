@@ -68,5 +68,5 @@ public:
 
 
 	UFUNCTION()
-		void OnAttackMontageEnded();
+		void OnAttackMontageEnded(UAnimMontage* Montage, bool bInterrupted);
 };

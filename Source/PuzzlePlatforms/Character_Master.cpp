@@ -358,9 +358,14 @@ void ACharacter_Master::MoveRight(float Value)
 void ACharacter_Master::Attack()
 {
 	//만약 종족이 두개있다면..?
-
 	if (IsAttacking == true || UsingSkill == true)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("bNextAttack True"));
+		bNextAttack = true;
 		return;
+	}
+	IsAttacking = true;
+	UE_LOG(LogTemp, Warning, TEXT("bNextAttack false"));
 	if(ReplicateComponent != nullptr)
 		ReplicateComponent->Server_SendAttack();
 

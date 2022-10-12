@@ -11,7 +11,7 @@ UPlayerAnimInstance::UPlayerAnimInstance()
 	IsInAir = false;
 #pragma region MontageAssetsSetting
 	static ConstructorHelpers::FObjectFinder<UAnimMontage> SWORD_ATTACK_MONTAGE(TEXT(
-		"/Game/Animation/Player_Attack_Montage"
+		"/Game/Animation/Warrior/Montage/Warrior_Attack_Montage"
 	));
 	if (SWORD_ATTACK_MONTAGE.Succeeded())
 	{
@@ -143,11 +143,7 @@ void UPlayerAnimInstance::AnimNotify_NextAttackCheck()
 {
 	OnNextAttackCheck.Broadcast();
 }
-void UPlayerAnimInstance::AnimNotify_EndAttack()
-{
-	OnAttackEndCheck.Broadcast();
-	
-}
+
 void UPlayerAnimInstance::AnimNotify_LaunchProjectile()
 {
 	OnFireBall.Broadcast();

@@ -61,7 +61,6 @@ public:
 	void 	OnRep_PlayerState() override;
 
 
-
 protected:
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
@@ -127,6 +126,6 @@ public:
 	float GeneralWalkSpeed = 600;
 	float SteamPackWalkSpeed = 1000;
 	bool ChangeIcon = false;
-
+	bool bNextAttack = false;
 };
 

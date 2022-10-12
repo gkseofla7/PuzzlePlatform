@@ -86,6 +86,8 @@ void AWarrior::Tick(float DeltaTime)
 	//HeightTrace();
 }
 
+
+
 void AWarrior::AttackCheck()
 {
 

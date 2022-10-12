@@ -48,7 +48,19 @@ FTransform ARespawnSection::GetRandomTransform()
 
 	}
 	FTransform OutTransform;
+	//if (int(RandomLoc.X) == 0)
+	//{
+	//	RandomLoc.X = GetActorLocation()
+	//}
 	OutTransform.SetLocation(RandomLoc);
+	
+	
+	UE_LOG(LogTemp, Warning, TEXT("WTFISHappening %f, %f"), RandomLoc.X, RandomLoc.Y);
 
-	return OutTransform;
+	if (int(RandomLoc.X) == 0)
+	{
+		return GetActorTransform();
+	}
+	else
+		return OutTransform;
 }

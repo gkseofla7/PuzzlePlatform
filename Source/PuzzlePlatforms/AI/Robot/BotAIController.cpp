@@ -8,7 +8,7 @@
 
 const FName ABotAIController::PlayerRefKey(TEXT("PlayerRef"));
 const FName ABotAIController::PlayerRangeKey(TEXT("PlayerRange"));
-
+const FName ABotAIController::PatrolPosKey(TEXT("PatrolPos"));
 ABotAIController::ABotAIController()
 {
 

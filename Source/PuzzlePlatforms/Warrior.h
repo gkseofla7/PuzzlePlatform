@@ -79,10 +79,10 @@ public:
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
 		FVector HeightLocation;
 
-
-
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
 		TSubclassOf<class UUserWidget>CrosshairHudClass;
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
 		class UUserWidget* HudWidget;
+
+
 };

@@ -9,7 +9,6 @@
 
 DECLARE_MULTICAST_DELEGATE(FOnNextAttackCheckDelegate);
 DECLARE_MULTICAST_DELEGATE(FOnAttackHitCheckDelegate);
-DECLARE_MULTICAST_DELEGATE(FOnAttackEndCheckDelegate);
 DECLARE_MULTICAST_DELEGATE(FOnHangMovePlaceDelegate);
 DECLARE_MULTICAST_DELEGATE(FOnFireBallDelegate);
 DECLARE_MULTICAST_DELEGATE(FOnActivateSpellDelegate);
@@ -38,8 +37,6 @@ public:
 public:
 	UFUNCTION()
 		void AnimNotify_NextAttackCheck();
-	UFUNCTION()
-		void AnimNotify_EndAttack();
 	UFUNCTION()
 		void AnimNotify_MovePlace();
 	UFUNCTION()
@@ -89,7 +86,7 @@ public:
 public:
 	FOnNextAttackCheckDelegate OnNextAttackCheck;
 	FOnAttackHitCheckDelegate OnAttackHitCheck;
-	FOnAttackEndCheckDelegate OnAttackEndCheck;
+
 	FOnHangMovePlaceDelegate OnHangMovePlace;
 	FOnFireBallDelegate OnFireBall;
 	FOnFireDragonBlastDelegate OnFireDragonBlastDelegate;

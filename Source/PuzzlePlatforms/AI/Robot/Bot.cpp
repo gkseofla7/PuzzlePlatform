@@ -5,6 +5,8 @@
 #include "Components/SkeletalMeshComponent.h"
 #include "BotAIController.h"
 
+#include "BehaviorTree/BlackboardComponent.h"
+
 // Sets default values
 ABot::ABot()
 {
@@ -34,7 +36,8 @@ void ABot::BeginPlay()
 
 	GunComponent->AttachToComponent(GetMesh()
 		, FAttachmentTransformRules(EAttachmentRule::SnapToTarget, true), TEXT("hand_rSocket"));
-
+	auto MyController = Cast< ABotAIController>(GetController());
+	MyController->GetBlackboardComponent()->SetValueAsFloat(ABotAIController::PlayerRangeKey, PlayerRange);
 
 
 
