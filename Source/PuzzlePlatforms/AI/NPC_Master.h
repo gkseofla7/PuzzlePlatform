@@ -37,9 +37,13 @@ public:
 	virtual float TakeDamage(float DamageAmount, struct FDamageEvent const& DamageEvent,
 		class AController* EventInstigator, AActor* DamageCauser) override;
 	virtual void TakeDamage_Implementation();
+	void DamageImpact();
 	virtual void Die();
 
 	void DestroyMonster();
+
+	UFUNCTION(NetMulticast, Reliable, WithValidation)
+		void NetMulticast_DamageImpact();
 
 public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
@@ -54,6 +58,7 @@ public:
 		class UWidgetComponent* HPBarWidget;
 	bool bDead = false;
 	AActor * AttackedPlayer;
+	class UParticleSystem* ParticleTemplate;
 
 	
 

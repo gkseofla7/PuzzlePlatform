@@ -50,6 +50,7 @@ public:
 	void RespawnCharacter();
 	UFUNCTION(Server, Reliable, WithValidation)
 	void Server_RespawnPawn(APlayerController* NewController);
+	void SetIsAttacking(bool NewIsAttacking);
 	virtual void Attack();
 private:	
 	//UPROPERTY()
@@ -58,7 +59,7 @@ private:
 public:
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
 		class ASword_Master* EquippedItem;
-	TSubclassOf<class ASword_Master>SwordClass;
+	//TSubclassOf<class ASword_Master>SwordClass;
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
 		bool IsClimbing;
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)

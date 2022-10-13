@@ -321,7 +321,7 @@ void ACharacter_Master::LookUpAtRate(float Rate)
 
 void ACharacter_Master::MoveForward(float Value)
 {
-	if (UsingSkill == true|| IsAttacking == true)
+	if (UsingSkill == true)
 	{
 
 		return;
@@ -340,7 +340,7 @@ void ACharacter_Master::MoveForward(float Value)
 
 void ACharacter_Master::MoveRight(float Value)
 {
-	if (UsingSkill == true|| IsAttacking == true)
+	if (UsingSkill == true)
 		return;
 	if ( (Controller != nullptr) && (Value != 0.0f) )
 	{

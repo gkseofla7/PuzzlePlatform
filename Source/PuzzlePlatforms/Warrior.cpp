@@ -6,6 +6,7 @@
 #include "MyPlayerController.h"
 #include "PuzzlePlatformsGameMode.h"
 #include "Sections/RespawnSection.h"
+#include "PlayersComponent//MyCharacterStatComponent.h"
 
 #include "DrawDebugHelpers.h"
 #include "Kismet/KismetSystemLibrary.h"
@@ -18,13 +19,13 @@ AWarrior::AWarrior()
 	bReplicates = true;
 	ReplicateComponent = CreateDefaultSubobject<UWarriorMotionReplicator>(TEXT("MOTIOREPLICATOR"));
 
-	static ConstructorHelpers::FClassFinder<ASword_Master> FinderSword(TEXT("/Game/Weapons/BP_Sword_Master"));
-	if (FinderSword.Succeeded())
-	{
-		SwordClass = FinderSword.Class;
-		
-		//EquippedItem->Get
-	}
+	//static ConstructorHelpers::FClassFinder<ASword_Master> FinderSword(TEXT("/Game/Weapons/BP_Sword_Master"));
+	//if (FinderSword.Succeeded())
+	//{
+	//	SwordClass = FinderSword.Class;
+	//	
+	//	//EquippedItem->Get
+	//}
 
 	static ConstructorHelpers::FClassFinder<UAnimInstance> WARRIO_ANIM((TEXT("/Game/Animation/BP_WarriorAnimInstance")));
 	if (WARRIO_ANIM.Succeeded())
@@ -59,9 +60,9 @@ void AWarrior::BeginPlay()
 	Super::BeginPlay();
 	MyAnim = Cast<UAnimInstance_Master>(GetMesh()->GetAnimInstance());
 
-	EquippedItem = GetWorld()->SpawnActor<ASword_Master>(SwordClass);// GetMesh()->GetSocketTransform("SwordSocket")
-	EquippedItem->GetSkeletalMesh()->SetCollisionEnabled(ECollisionEnabled::NoCollision);
-	EquippedItem->AttachToPlayer(this, "SwordSocket");
+	//EquippedItem = GetWorld()->SpawnActor<ASword_Master>(SwordClass);// GetMesh()->GetSocketTransform("SwordSocket")
+	//EquippedItem->GetSkeletalMesh()->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+	//EquippedItem->AttachToPlayer(this, "SwordSocket");
 	auto Anim = Cast<UPlayerAnimInstance>(GetMesh()->GetAnimInstance());
 	
 	Anim->OnHangMovePlace.AddLambda([this]()->void {
@@ -96,13 +97,27 @@ void AWarrior::Attack()
 			bNextAttack = true;
 		return;
 	}
-	IsAttacking = true;
+	SetIsAttacking(true);
+
 	if (ReplicateComponent != nullptr)
 		ReplicateComponent->Server_SendAttack();
 
 }
 
-
+void AWarrior::SetIsAttacking(bool NewIsAttacking)
+{
+	IsAttacking = NewIsAttacking;
+	MyAnim->IsAttacking = NewIsAttacking;
+	auto WarriorReplicateComponent = Cast< UWarriorMotionReplicator>(ReplicateComponent);
+	if (NewIsAttacking == true)//속도 바꿔주고~
+	{
+		WarriorReplicateComponent->Server_SetSpeed(300.);//걸을때
+	}
+	else
+	{
+		WarriorReplicateComponent->Server_SetSpeed(600.);//뛸때
+	}
+}
 
 void AWarrior::AttackCheck()
 {
@@ -149,7 +164,7 @@ void AWarrior::AttackCheck()
 			}
 			UE_LOG(LogTemp, Warning, TEXT("HitCheck"));
 			FDamageEvent DamageEvent;
-			HitResult.Actor->TakeDamage(50.0f, DamageEvent, GetController(), this);
+			HitResult.Actor->TakeDamage(CharacterStatRef->AttackDamage, DamageEvent, GetController(), this);
 			//UAISense_Damage::ReportDamageEvent(GetWorld(), HitResult.Actor.Get(), this, 10., HitResult.TraceStart, HitResult.Location);
 		}
 	}

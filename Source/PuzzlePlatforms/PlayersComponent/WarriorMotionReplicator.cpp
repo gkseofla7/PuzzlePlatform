@@ -55,7 +55,7 @@ void UWarriorMotionReplicator::BeginPlay()
 	MyAnim->OnMontageEnded.AddDynamic(this, &UWarriorMotionReplicator::OnAttackMontageEnded);
 	MyAnim->OnNextAttackCheck.AddUObject(this, &UWarriorMotionReplicator::NextAttack);
 	
-
+	WarriorRef = Cast<AWarrior>(Character);
 }
 
 
@@ -70,9 +70,7 @@ void UWarriorMotionReplicator::TickComponent(float DeltaTime, ELevelTick TickTyp
 
 void UWarriorMotionReplicator::NextAttack()
 {
-	UE_LOG(LogTemp, Warning, TEXT("NextAttackNotify"));
-	auto Warrior = Cast<AWarrior>(GetOwner());
-	Warrior->bNextAttackStart = true;
+	WarriorRef->bNextAttackStart = true;
 }
 
 
@@ -99,7 +97,9 @@ void UWarriorMotionReplicator::NetMulticast_SendAttack_Implementation()
 	//MyAnim->IsAttacking = true;
 	PlaySwordAttackMontage();
 	MyAnim->JumpToAttackMontageSection(CurrentCombo);
-	//AttackToggle = !AttackToggle;
+
+
+
 }
 
 bool UWarriorMotionReplicator::NetMulticast_SendAttack_Validate()
@@ -107,8 +107,16 @@ bool UWarriorMotionReplicator::NetMulticast_SendAttack_Validate()
 	return true;
 }
 
+void UWarriorMotionReplicator::Server_SetSpeed_Implementation(float NewSpeed)
+{
+	WarriorRef->GetCharacterMovement()->MaxWalkSpeed = NewSpeed;
 
+}
 
+bool UWarriorMotionReplicator::Server_SetSpeed_Validate(float NewSpeed)
+{
+	return true;
+}
 
 void UWarriorMotionReplicator::Server_SendClimbUp_Implementation()
 {
@@ -129,14 +137,13 @@ void UWarriorMotionReplicator::Server_SendDash_Implementation()
 
 void UWarriorMotionReplicator::NetMulticast_SendDash_Implementation()
 {
-	auto Warrior = Cast<AWarrior>(GetOwner());
-	Warrior->IsDashing = true;
+	WarriorRef->IsDashing = true;
 	MyAnim->PlayDashMontage();
-	Warrior->ParticleSystemComponent->SetVisibility(true);
-	Warrior->ParticleSystemComponent->Activate(true);
-	Warrior->GetMesh()->SetVisibility(false);
-	Warrior->EquippedItem->SkeletalMeshComponent->SetVisibility(false);
-	Cast<UCharacterMovementComponent>(Warrior->GetMovementComponent())->GravityScale = 0;
+	WarriorRef->ParticleSystemComponent->SetVisibility(true);
+	WarriorRef->ParticleSystemComponent->Activate(true);
+	WarriorRef->GetMesh()->SetVisibility(false);
+	WarriorRef->EquippedItem->SkeletalMeshComponent->SetVisibility(false);
+	Cast<UCharacterMovementComponent>(WarriorRef->GetMovementComponent())->GravityScale = 0;
 
 }
 
@@ -156,11 +163,9 @@ bool UWarriorMotionReplicator::Server_SendClimbUp_Validate()
 }
 void UWarriorMotionReplicator::NetMulticast_SendClimbUp_Implementation()
 {
-	UE_LOG(LogTemp, Warning, TEXT("Climb"), *GetOwner()->GetName());
-	auto Warrior = Cast<AWarrior>(GetOwner());
-	if (Warrior->IsClimbing == true)
+	if (WarriorRef->IsClimbing == true)
 	{
-		Warrior->PlayHangToCrouchMontage();
+		WarriorRef->PlayHangToCrouchMontage();
 	}
 }
 
@@ -202,19 +207,16 @@ void UWarriorMotionReplicator::OnAttackMontageEnded(UAnimMontage* Montage, bool 
 		return;
 
 
-
-	auto MyWarrior = Cast<AWarrior>(GetOwner());
-
-	MyWarrior->bNextAttackStart = false;
-	if (MyWarrior->bNextAttack == true)
+	WarriorRef->bNextAttackStart = false;
+	if (WarriorRef->bNextAttack == true)
 	{
-		MyWarrior->bNextAttack = false;
+		WarriorRef->bNextAttack = false;
 		Server_SendAttack();
 
 	}
 	else
 	{
-		MyWarrior->IsAttacking = false;
+		WarriorRef->SetIsAttacking(false);
 	}
 }
 

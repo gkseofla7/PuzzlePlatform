@@ -135,7 +135,11 @@ void ANPC_Goblin::TakeDamage_Implementation()
 	auto AIController = Cast< ANPCAIController>(GetController());
 	
 	//Montage 실행 및 비헤이비어 트리 정지
+	if (bDead == true)
+		return;
 	MyAnim->PlayImpactMontage();
+
+
 	AIController->PauseLogic();
 }
 
@@ -145,6 +149,7 @@ void ANPC_Goblin::Die()
 {
 	Super::Die();
 	MyAnim->PlayDeathMontage();
+	UE_LOG(LogTemp, Warning, TEXT("PlayDieMontage"));
 	//SetActorEnableCollision(false);
 	if (HasAuthority()==true)
 	{

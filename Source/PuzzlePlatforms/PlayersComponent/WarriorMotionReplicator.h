@@ -43,6 +43,8 @@ public:
 		void Server_SendDash();
 	UFUNCTION(NetMulticast, Reliable, WithValidation)
 		void NetMulticast_SendDash();
+	UFUNCTION(Server, Reliable, WithValidation)
+		void Server_SetSpeed(float NewSpeed);
 	UFUNCTION()
 		void NextAttack();
 
@@ -65,6 +67,8 @@ public:
 	UPROPERTY(VisibleInstanceOnly, BlueprintReadOnly, Category = Attack, Meta = (AllowPrivateAccess = true))
 		int32 MaxCombo;
 
+	UPROPERTY()
+		class AWarrior* WarriorRef;
 
 
 

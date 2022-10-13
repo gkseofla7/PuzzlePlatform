@@ -41,7 +41,14 @@ ANPC_Master::ANPC_Master()
 		HPBarWidget->SetWidgetClass(UI_HUD.Class);
 		HPBarWidget->SetDrawSize(FVector2D(150.f, 50.f));
 	}
+
+	static ConstructorHelpers::FObjectFinder<UParticleSystem> ParticleAsset(TEXT("/Game/InfinityBladeEffects/Effects/FX_Mobile/Fire/combat/P_FireBall_Powerup"));
+	if (ParticleAsset.Succeeded())
+	{;
+		ParticleTemplate = ParticleAsset.Object;
+	}
 }
+
 
 // Called when the game starts or when spawned
 void ANPC_Master::BeginPlay()
@@ -122,11 +129,30 @@ float ANPC_Master::TakeDamage(float DamageAmount, FDamageEvent const& DamageEven
 	
 
 	MonsterStat->IncreaseHP(-FinalDamage);
-
+	NetMulticast_DamageImpact();
 	TakeDamage_Implementation();
 
 	return FinalDamage;
 }
+
+void ANPC_Master::DamageImpact()
+{
+	UE_LOG(LogTemp, Warning, TEXT("Impact"));
+	UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), ParticleTemplate, GetActorLocation(), FRotator(0, 0, 0));
+	UGameplayStatics::SpawnEmitterAttached(ParticleTemplate, GetCapsuleComponent());
+}
+
+void ANPC_Master::NetMulticast_DamageImpact_Implementation()
+{
+	DamageImpact();
+}
+
+bool ANPC_Master::NetMulticast_DamageImpact_Validate()
+{
+	return true;
+}
+
+
 void ANPC_Master::TakeDamage_Implementation()
 {
 
