@@ -126,6 +126,6 @@ public:
 	float GeneralWalkSpeed = 600;
 	float SteamPackWalkSpeed = 1000;
 	bool ChangeIcon = false;
-	bool bNextAttack = false;
+
 };
 

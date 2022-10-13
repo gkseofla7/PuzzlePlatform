@@ -87,6 +87,22 @@ void AWarrior::Tick(float DeltaTime)
 }
 
 
+void AWarrior::Attack()
+{
+	//만약 종족이 두개있다면..?
+	if (IsAttacking == true || UsingSkill == true)
+	{
+		if(bNextAttackStart == true)
+			bNextAttack = true;
+		return;
+	}
+	IsAttacking = true;
+	if (ReplicateComponent != nullptr)
+		ReplicateComponent->Server_SendAttack();
+
+}
+
+
 
 void AWarrior::AttackCheck()
 {

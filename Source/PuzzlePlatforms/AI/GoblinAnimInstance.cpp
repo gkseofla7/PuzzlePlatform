@@ -22,6 +22,14 @@ UGoblinAnimInstance::UGoblinAnimInstance()
 	{
 		DeathMontage = DEATH_MONTAGE.Object;
 	}
+
+	static ConstructorHelpers::FObjectFinder<UAnimMontage> Impact_Montage(TEXT(
+		"/Game/Animation/Montage/Goblin_Impact_Montage"
+	));
+	if (Impact_Montage.Succeeded())
+	{
+		ImpactMontage = Impact_Montage.Object;
+	}
 }
 
 void UGoblinAnimInstance::PlaySwordAttackMontage()
@@ -32,6 +40,11 @@ void UGoblinAnimInstance::PlaySwordAttackMontage()
 void UGoblinAnimInstance::PlayDeathMontage()
 {
 	Montage_Play(DeathMontage, 1.0);
+}
+
+void UGoblinAnimInstance::PlayImpactMontage()
+{
+	Montage_Play(ImpactMontage, 1.0);
 }
 
 

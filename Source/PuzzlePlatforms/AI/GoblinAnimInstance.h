@@ -19,6 +19,7 @@ public:
 	UGoblinAnimInstance();
 	void PlaySwordAttackMontage();
 	void PlayDeathMontage();
+	void PlayImpactMontage();
 	UFUNCTION()
 		void AnimNotify_AttackHitCheck();
 
@@ -27,6 +28,8 @@ public:
 		UAnimMontage* SwordAttackMontage;
 	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly)
 		UAnimMontage* DeathMontage;
+	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly)
+		UAnimMontage* ImpactMontage;
 	FOnAttackHitCheckDelegate OnAttackHitCheck;
 
 	UPROPERTY(EditAnywhere,BlueprintReadWrite)

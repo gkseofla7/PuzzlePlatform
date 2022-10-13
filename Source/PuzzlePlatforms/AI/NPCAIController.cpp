@@ -21,6 +21,7 @@ const FName ANPCAIController::TargetLocationKey(TEXT("TargetLocation"));
 const FName ANPCAIController::AttackRangeKey(TEXT("AttackRange"));
 const FName ANPCAIController::IsHitKey(TEXT("IsHit"));
 const FName ANPCAIController::IsAttackingKey(TEXT("IsAttacking"));
+const FName ANPCAIController::IsAttackedKey(TEXT("IsAttacked"));
 
 ANPCAIController::ANPCAIController()
 {
@@ -91,7 +92,22 @@ void ANPCAIController::SetIsAttackingKey(bool NewIsAttackingKey)
 	GetBlackboardComponent()->SetValueAsBool(ANPCAIController::IsAttackingKey, NewIsAttackingKey);
 }
 
-void ANPCAIController::SetIsAttackingKey(FVector NewTargetLocationKey)
+//void ANPCAIController::SetIsAttackedKey(bool NewIsAttackedKey)
+//{
+//	GetBlackboardComponent()->SetValueAsBool(ANPCAIController::IsAttackedKey, NewIsAttackedKey);
+//}
+
+void ANPCAIController::SetTargetLocationKey(FVector NewTargetLocationKey)
 {
 	GetBlackboardComponent()->SetValueAsVector(ANPCAIController::TargetLocationKey, NewTargetLocationKey);
+}
+
+void ANPCAIController::PauseLogic()
+{
+	BrainComponent->PauseLogic(TEXT("Impacted"));
+}
+
+void ANPCAIController::ResumeLogic()
+{
+	BrainComponent->ResumeLogic(TEXT("Impacted"));
 }

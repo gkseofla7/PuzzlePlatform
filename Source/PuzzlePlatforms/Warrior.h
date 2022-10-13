@@ -21,8 +21,6 @@ protected:
 	virtual void BeginPlay();
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 	virtual void Tick(float DeltaTime);
-	//virtual void MoveForward(float Value) override;
-	//virtual void MoveRight(float Value) override;;
 
 	UFUNCTION(BlueprintCallable, BlueprintImplementableEvent)
 	void JumpFromWall();
@@ -52,6 +50,7 @@ public:
 	void RespawnCharacter();
 	UFUNCTION(Server, Reliable, WithValidation)
 	void Server_RespawnPawn(APlayerController* NewController);
+	virtual void Attack();
 private:	
 	//UPROPERTY()
 	//class UPlayerAnimInstance* MyAnim;
@@ -83,6 +82,8 @@ public:
 		TSubclassOf<class UUserWidget>CrosshairHudClass;
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
 		class UUserWidget* HudWidget;
+	bool bNextAttack = false;
+	bool bNextAttackStart = false;
 
 
 };

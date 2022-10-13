@@ -33,6 +33,8 @@ public:
 	//	void Server_SendRide(AActor* _Car, APawn* _Rider) override;
 	UFUNCTION(Server, Reliable, WithValidation)
 		void Server_SendAttack() override;
+	UFUNCTION(NetMulticast, Reliable, WithValidation)
+		void NetMulticast_SendAttack();
 	UFUNCTION(Server, Reliable, WithValidation)
 		void Server_SendClimbUp();
 	UFUNCTION(NetMulticast, Reliable, WithValidation)
@@ -41,11 +43,11 @@ public:
 		void Server_SendDash();
 	UFUNCTION(NetMulticast, Reliable, WithValidation)
 		void NetMulticast_SendDash();
-
 	UFUNCTION()
-		void OnRep_Attack();
-	UPROPERTY(ReplicatedUsing = OnRep_Attack)
-		bool AttackToggle = false;
+		void NextAttack();
+
+	//UPROPERTY(ReplicatedUsing = OnRep_Attack)
+	//	bool AttackToggle = false;
 
 	void PlaySwordAttackMontage();
 

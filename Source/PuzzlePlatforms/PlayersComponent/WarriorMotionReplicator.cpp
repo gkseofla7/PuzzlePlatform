@@ -35,7 +35,6 @@ void UWarriorMotionReplicator::InitializeComponent()
 void UWarriorMotionReplicator::GetLifetimeReplicatedProps(TArray< FLifetimeProperty >& OutLifetimeProps) const
 {
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
-	DOREPLIFETIME(UWarriorMotionReplicator, AttackToggle);
 	DOREPLIFETIME(UWarriorMotionReplicator, CurrentCombo);
 
 
@@ -54,8 +53,8 @@ void UWarriorMotionReplicator::BeginPlay()
 	MyAnim = Cast<UPlayerAnimInstance>(Character->GetMesh()->GetAnimInstance());
 
 	MyAnim->OnMontageEnded.AddDynamic(this, &UWarriorMotionReplicator::OnAttackMontageEnded);
-
-
+	MyAnim->OnNextAttackCheck.AddUObject(this, &UWarriorMotionReplicator::NextAttack);
+	
 
 }
 
@@ -69,31 +68,47 @@ void UWarriorMotionReplicator::TickComponent(float DeltaTime, ELevelTick TickTyp
 }
 
 
-
+void UWarriorMotionReplicator::NextAttack()
+{
+	UE_LOG(LogTemp, Warning, TEXT("NextAttackNotify"));
+	auto Warrior = Cast<AWarrior>(GetOwner());
+	Warrior->bNextAttackStart = true;
+}
 
 
 void UWarriorMotionReplicator::Server_SendAttack_Implementation()
 {
-
-	if (MyAnim->IsAttacking == false)
-	{
-
-		CurrentCombo++;
-		if (CurrentCombo == 4)
-			CurrentCombo = 1;
-		MyAnim->IsAttacking = true;
-		PlaySwordAttackMontage();
-		MyAnim->JumpToAttackMontageSection(CurrentCombo);
-		AttackToggle = !AttackToggle;
-
-	}
-
+	NetMulticast_SendAttack();
 }
-
 bool UWarriorMotionReplicator::Server_SendAttack_Validate()
 {
 	return true;
 }
+
+void UWarriorMotionReplicator::NetMulticast_SendAttack_Implementation()
+{
+	//if (MyAnim->IsAttacking == false)
+//{
+
+
+
+//}
+	CurrentCombo++;
+	if (CurrentCombo == 4)
+		CurrentCombo = 1;
+	//MyAnim->IsAttacking = true;
+	PlaySwordAttackMontage();
+	MyAnim->JumpToAttackMontageSection(CurrentCombo);
+	//AttackToggle = !AttackToggle;
+}
+
+bool UWarriorMotionReplicator::NetMulticast_SendAttack_Validate()
+{
+	return true;
+}
+
+
+
 
 void UWarriorMotionReplicator::Server_SendClimbUp_Implementation()
 {
@@ -175,17 +190,7 @@ void UWarriorMotionReplicator::DisableActor(bool toHide)
 	GetOwner()->SetActorTickEnabled(!toHide);
 }
 
-void UWarriorMotionReplicator::OnRep_Attack()//서버에서는 안하는구나..?ㅋ
-{
-	if (MyAnim == nullptr)
-	{
-		//MyAnim->IsAttacking = false;
-		return;
-	}
-	MyAnim->IsAttacking = true;
-	PlaySwordAttackMontage();
-	MyAnim->JumpToAttackMontageSection(CurrentCombo);
-}
+
 
 void UWarriorMotionReplicator::OnAttackMontageEnded(UAnimMontage* Montage, bool bInterrupted)
 {
@@ -199,19 +204,16 @@ void UWarriorMotionReplicator::OnAttackMontageEnded(UAnimMontage* Montage, bool 
 
 
 	auto MyWarrior = Cast<AWarrior>(GetOwner());
-	UE_LOG(LogTemp, Warning, TEXT("EndMontage"));
+
+	MyWarrior->bNextAttackStart = false;
 	if (MyWarrior->bNextAttack == true)
 	{
-		UE_LOG(LogTemp, Warning, TEXT("NextAttack Start"));
 		MyWarrior->bNextAttack = false;
-		MyWarrior->IsAttacking = false;
 		Server_SendAttack();
 
 	}
 	else
 	{
-		UE_LOG(LogTemp, Warning, TEXT("IsAttack False"));
-		MyAnim->IsAttacking = false;
 		MyWarrior->IsAttacking = false;
 	}
 }

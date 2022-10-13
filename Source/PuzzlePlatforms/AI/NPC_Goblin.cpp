@@ -121,8 +121,24 @@ void ANPC_Goblin::EndAnimation(UAnimMontage* Montage, bool bInterrupted)
 	{
 		OnAttackEnd.Broadcast();
 	}
+	
+	if (HasAuthority()&&Montage == MyAnim->ImpactMontage)
+	{
+		auto AIController = Cast< ANPCAIController>(GetController());
+		AIController->ResumeLogic();
+	}
 
 }
+
+void ANPC_Goblin::TakeDamage_Implementation()
+{
+	auto AIController = Cast< ANPCAIController>(GetController());
+	
+	//Montage 실행 및 비헤이비어 트리 정지
+	MyAnim->PlayImpactMontage();
+	AIController->PauseLogic();
+}
+
 
 
 void ANPC_Goblin::Die()

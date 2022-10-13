@@ -123,9 +123,13 @@ float ANPC_Master::TakeDamage(float DamageAmount, FDamageEvent const& DamageEven
 
 	MonsterStat->IncreaseHP(-FinalDamage);
 
-	
+	TakeDamage_Implementation();
 
 	return FinalDamage;
+}
+void ANPC_Master::TakeDamage_Implementation()
+{
+
 }
 
 

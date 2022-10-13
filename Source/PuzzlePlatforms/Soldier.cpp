@@ -121,6 +121,8 @@ void ASoldier::SetupPlayerInputComponent(class UInputComponent* PlayerInputCompo
 }
 
 
+
+
 void ASoldier::SetFPSHudWidget()
 {
 	if (FPSHudClass != nullptr)
