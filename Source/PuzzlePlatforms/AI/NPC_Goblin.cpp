@@ -27,8 +27,13 @@ ANPC_Goblin::ANPC_Goblin()
 	if (NPC_ANIM.Succeeded())
 	{
 		GetMesh()->SetAnimInstanceClass(NPC_ANIM.Class);
-
 	}
+
+	static ConstructorHelpers::FObjectFinder<UMaterialInterface> ImpactedGoblinMaterialAsset(TEXT("/Game/Animation/GoblinAssets/phong1_Inst"));
+	ImpactedGoblinMaterial = ImpactedGoblinMaterialAsset.Object;
+
+	static ConstructorHelpers::FObjectFinder<UMaterialInterface> GoblinMaterialAsset(TEXT("/Game/Animation/GoblinAssets/phong1"));
+	GoblinMaterial = GoblinMaterialAsset.Object;
 
 }
 
@@ -103,6 +108,18 @@ void ANPC_Goblin::AttackCheck()
 			//UAISense_Damage::ReportDamageEvent(GetWorld(), HitResult.Actor.Get(), this, 10., HitResult.TraceStart, HitResult.Location);
 		}
 	}
+}
+
+void ANPC_Goblin::ChangeDamageColor()
+{
+	GetMesh()->SetMaterial(0, ImpactedGoblinMaterial);
+	FTimerHandle TimerHandler;
+	GetWorld()->GetTimerManager().SetTimer(TimerHandler, this, &ANPC_Goblin::ChangeOriginalColor, 1., false);
+}
+
+void ANPC_Goblin::ChangeOriginalColor()
+{
+	GetMesh()->SetMaterial(0, GoblinMaterial);
 }
 
 void ANPC_Goblin::NetMulticast_Attack_Implementation()

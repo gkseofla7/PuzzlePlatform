@@ -129,12 +129,20 @@ float ANPC_Master::TakeDamage(float DamageAmount, FDamageEvent const& DamageEven
 	
 
 	MonsterStat->IncreaseHP(-FinalDamage);
+	FVector OposDir = (GetActorLocation() - DamageCauser->GetActorLocation()).GetSafeNormal();
+
+
+	LaunchCharacter(OposDir * 1000,false, false);
 	NetMulticast_DamageImpact();
 	TakeDamage_Implementation();
 
 	return FinalDamage;
 }
 
+void ANPC_Master::ChangeDamageColor()
+{
+
+}
 void ANPC_Master::DamageImpact()
 {
 	UE_LOG(LogTemp, Warning, TEXT("Impact"));
@@ -145,6 +153,7 @@ void ANPC_Master::DamageImpact()
 void ANPC_Master::NetMulticast_DamageImpact_Implementation()
 {
 	DamageImpact();
+	ChangeDamageColor();//¿Ã∞« ∞¢∞¢ ¡§¿««ÿ ¡‡æﬂµ 
 }
 
 bool ANPC_Master::NetMulticast_DamageImpact_Validate()

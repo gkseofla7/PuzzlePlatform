@@ -41,7 +41,7 @@ public:
 	virtual void Die();
 
 	void DestroyMonster();
-
+	virtual void ChangeDamageColor();
 	UFUNCTION(NetMulticast, Reliable, WithValidation)
 		void NetMulticast_DamageImpact();
 

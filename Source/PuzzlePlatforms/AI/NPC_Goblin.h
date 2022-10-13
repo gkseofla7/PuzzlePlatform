@@ -23,12 +23,16 @@ public:
 	virtual void TakeDamage_Implementation() override;
 	UFUNCTION(NetMulticast, Reliable, WithValidation)
 		void NetMulticast_Attack();
+
 	UFUNCTION()
 		virtual void EndAnimation(UAnimMontage* Montage, bool bInterrupted);
-
+	virtual void ChangeDamageColor() override;
+	void ChangeOriginalColor();
 	virtual void Die() override;
 public:
 	UPROPERTY()
 		class UGoblinAnimInstance* MyAnim;
 	float AttackRange = 200;
+	UMaterialInterface* ImpactedGoblinMaterial = nullptr;
+	UMaterialInterface* GoblinMaterial = nullptr;
 };
