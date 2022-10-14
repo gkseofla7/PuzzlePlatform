@@ -118,7 +118,8 @@ void AMyPlayerController::SetWidget(class UMyCharacterStatComponent* NewCharacte
 		PlayerInfoHUDWidget->BindCharacterStat(NewCharacterStat);
 		auto MyGameInstance = Cast< UPuzzlePlatformsGameInstance>(GetGameInstance());
 		auto MyPlayerState = GetPlayerState<AMyPlayerState>();
-		PlayerInfoHUDWidget->BindCharacterName(FText::FromString(MyPlayerState->GetPlayerName()));//내 HP MP 위젯에 이름 등록
+		if(MyPlayerState!= nullptr)
+			PlayerInfoHUDWidget->BindCharacterName(FText::FromString(MyPlayerState->GetPlayerName()));//내 HP MP 위젯에 이름 등록
 	}
 	
 }
