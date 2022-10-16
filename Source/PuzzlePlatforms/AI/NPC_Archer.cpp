@@ -108,11 +108,5 @@ void ANPC_Archer::Die()
 	Super::Die();
 	MyAnim->PlayDeathMontage();
 	//SetActorEnableCollision(false);
-	if (HasAuthority() == true)
-	{
-		Cast<ANPCAIController>(GetController())->BrainComponent->StopLogic("Die");
-		FTimerHandle TimerHandler;
-		GetWorld()->GetTimerManager().SetTimer(TimerHandler, this, &ANPC_Master::DestroyMonster, 10, false);
 
-	}
 }

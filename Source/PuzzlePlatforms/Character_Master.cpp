@@ -34,6 +34,7 @@
 #include "Kismet/KismetMathLibrary.h"
 #include "Components/DecalComponent.h"
 #include "Components/WidgetComponent.h"
+#include "Camera/CameraShakeBase.h"
 
 
 #include "ImageUtils.h"
@@ -118,6 +119,12 @@ ACharacter_Master::ACharacter_Master()
 	{
 		HPBarWidget->SetWidgetClass(UI_HUD.Class);
 		HPBarWidget->SetDrawSize(FVector2D(150.f, 50.f));
+	}
+
+	static ConstructorHelpers::FClassFinder<UCameraShakeBase> CameraShakeBPClass(TEXT("/Game/Etcs/BP_PlayerCameraShake"));
+	if (CameraShakeBPClass.Succeeded())
+	{
+		CameraShakeClass = CameraShakeBPClass.Class;
 	}
 	
 

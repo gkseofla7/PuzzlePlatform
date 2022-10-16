@@ -8,7 +8,7 @@
 #include "NPCAIController.h"
 
 #include "DrawDebugHelpers.h"
-#include "BrainComponent.h"
+
 #include "BehaviorTree/BlackboardData.h"
 #include "BehaviorTree/BlackboardComponent.h"
 #include "Net/UnrealNetwork.h"
@@ -147,17 +147,10 @@ void ANPC_Goblin::EndAnimation(UAnimMontage* Montage, bool bInterrupted)
 
 }
 
-void ANPC_Goblin::TakeDamage_Implementation()
+void ANPC_Goblin::PlayImpactMontage()
 {
-	auto AIController = Cast< ANPCAIController>(GetController());
-	
-	//Montage 실행 및 비헤이비어 트리 정지
-	if (bDead == true)
-		return;
 	MyAnim->PlayImpactMontage();
 
-
-	AIController->PauseLogic();
 }
 
 
@@ -168,11 +161,5 @@ void ANPC_Goblin::Die()
 	MyAnim->PlayDeathMontage();
 	UE_LOG(LogTemp, Warning, TEXT("PlayDieMontage"));
 	//SetActorEnableCollision(false);
-	if (HasAuthority()==true)
-	{
-		Cast<ANPCAIController>(GetController())->BrainComponent->StopLogic("Die");
-		FTimerHandle TimerHandler;
-		GetWorld()->GetTimerManager().SetTimer(TimerHandler, this, &ANPC_Master::DestroyMonster, 10, false);
 
-	}
 }

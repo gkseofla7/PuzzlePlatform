@@ -74,6 +74,7 @@ public:
 		class AController* EventInstigator, AActor* DamageCauser) override;
 
 public:
+	TSubclassOf<class UCameraShakeBase>CameraShakeClass;
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
 		class USphereComponent* NearObjectCollisionDetector;
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))

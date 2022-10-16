@@ -2,6 +2,10 @@
 
 
 #include "CharDamageText.h"
+#include "../Character_Master.h"
+
+#include "Kismet/GameplayStatics.h"
+#include "Kismet/KismetMathLibrary.h"
 
 // Sets default values
 ACharDamageText::ACharDamageText()
@@ -22,6 +26,13 @@ void ACharDamageText::BeginPlay()
 void ACharDamageText::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
-
+	auto MyController = UGameplayStatics::GetPlayerController(GetWorld(), 0);
+	ABCHECK(MyController != nullptr);
+	auto MyPawn = Cast< ACharacter_Master>(MyController->GetPawn());
+	if (MyPawn == nullptr)
+		return;
+	auto Dir = MyPawn->FollowCamera->GetComponentLocation() - GetActorLocation();
+	auto DirRot = UKismetMathLibrary::MakeRotFromX(Dir);
+	SetActorRotation(DirRot);
 }
 

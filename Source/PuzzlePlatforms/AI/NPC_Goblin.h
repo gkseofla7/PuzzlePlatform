@@ -20,7 +20,7 @@ public:
 	void BeginPlay();
 	virtual void Attack();
 	void AttackCheck();
-	virtual void TakeDamage_Implementation() override;
+	virtual void PlayImpactMontage() override;
 	UFUNCTION(NetMulticast, Reliable, WithValidation)
 		void NetMulticast_Attack();
 

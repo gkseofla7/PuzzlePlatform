@@ -10,11 +10,14 @@
 #include "NPC_Archer.h"
 #include "../MyPlayerState.h"
 #include "../PlayersComponent/MyCharacterStatComponent.h"
+#include "../Etc/CharDamageText.h"
+#include "../Etc/SoulItem.h"
 
 #include "DrawDebugHelpers.h"
 #include "Components/WidgetComponent.h"
 #include "Kismet/KismetMathLibrary.h"
 #include "Net/UnrealNetwork.h"
+#include "BrainComponent.h"
 
 // Sets default values
 ANPC_Master::ANPC_Master()
@@ -26,6 +29,18 @@ ANPC_Master::ANPC_Master()
 	//{
 	//	AIControllerClass = AIControllerBPClass.Class;
 	//}
+	static ConstructorHelpers::FClassFinder<ACharDamageText> CharDamageTextBPClass(TEXT("/Game/Blueprint/Etc/BP_CharDamageText"));
+	if (CharDamageTextBPClass.Succeeded())
+	{
+		CharDamageTextClass = CharDamageTextBPClass.Class;
+	}
+
+	static ConstructorHelpers::FClassFinder<ASoulItem> SoulItemtBPClass(TEXT("/Game/Blueprint/Etc/BP_SoulItem"));
+	if (SoulItemtBPClass.Succeeded())
+	{
+		SoulItemtClass = SoulItemtBPClass.Class;
+	}
+
 	AIControllerClass = ANPCAIController::StaticClass();
 	AutoPossessAI = EAutoPossessAI::PlacedInWorldOrSpawned;
 	MonsterStat = CreateDefaultSubobject<UMonsterStatComponent>(TEXT("MonsterStat"));
@@ -129,12 +144,13 @@ float ANPC_Master::TakeDamage(float DamageAmount, FDamageEvent const& DamageEven
 	
 
 	MonsterStat->IncreaseHP(-FinalDamage);
+
 	FVector OposDir = (GetActorLocation() - DamageCauser->GetActorLocation()).GetSafeNormal();
 
 
 	LaunchCharacter(OposDir * 1000,false, false);
-	NetMulticast_DamageImpact();
-	TakeDamage_Implementation();
+	NetMulticast_DamageImpact(FinalDamage);
+
 
 	return FinalDamage;
 }
@@ -143,26 +159,47 @@ void ANPC_Master::ChangeDamageColor()
 {
 
 }
-void ANPC_Master::DamageImpact()
+void ANPC_Master::DamageImpact(float Damage)
 {
 	UE_LOG(LogTemp, Warning, TEXT("Impact"));
+	FTransform PlayerTransform = GetActorTransform();
+	FActorSpawnParameters Params;
+	FActorSpawnParameters SpawnInfo;
+
+	SpawnInfo.Owner = GetOwner();
+	SpawnInfo.Instigator = Cast<APawn>(GetOwner());
+	auto DamageText = GetWorld()->SpawnActor<ACharDamageText>(CharDamageTextClass, PlayerTransform, SpawnInfo);
+	DamageText->SetDamageText(Damage);
 	UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), ParticleTemplate, GetActorLocation(), FRotator(0, 0, 0));
 	UGameplayStatics::SpawnEmitterAttached(ParticleTemplate, GetCapsuleComponent());
 }
 
-void ANPC_Master::NetMulticast_DamageImpact_Implementation()
+void ANPC_Master::NetMulticast_DamageImpact_Implementation(float Damage)
 {
-	DamageImpact();
+
+	DamageImpact(Damage);
 	ChangeDamageColor();//이건 각각 정의해 줘야됨
+	if (HasAuthority())
+	{
+		auto AIController = Cast< ANPCAIController>(GetController());
+
+		//Montage 실행 및 비헤이비어 트리 정지
+		if (bDead == true)
+			return;
+		AIController->PauseLogic();
+
+	}
+	if(bDead == false)
+		PlayImpactMontage();
 }
 
-bool ANPC_Master::NetMulticast_DamageImpact_Validate()
+bool ANPC_Master::NetMulticast_DamageImpact_Validate(float Damage)
 {
 	return true;
 }
 
 
-void ANPC_Master::TakeDamage_Implementation()
+void ANPC_Master::PlayImpactMontage()
 {
 
 }
@@ -170,22 +207,52 @@ void ANPC_Master::TakeDamage_Implementation()
 
 void ANPC_Master::Die()
 {
-
-	if (HasAuthority() == true)//서버에서만 실행
+	if (HasAuthority() == true)
 	{
-		//죽인 Player exp 줌
+		Cast<ANPCAIController>(GetController())->BrainComponent->StopLogic("Die");
+		FTimerHandle TimerHandler;
+		GetWorld()->GetTimerManager().SetTimer(TimerHandler, this, &ANPC_Master::DestroyMonster, 4, false);
+	}
+	//if (HasAuthority() == true)//서버에서만 실행
+
+}
+
+void ANPC_Master::Destroyed()
+{
+	if (HasAuthority())
+	{
 		auto MyPlayer = Cast<ACharacter_Master>(AttackedPlayer);
 		if (MyPlayer != nullptr)
 		{
-
-			auto MyPlayerState = Cast<AMyPlayerState>(MyPlayer->GetPlayerState());
-			MyPlayerState->CharacterStat->Server_SetExp(MyPlayerState->CharacterStat->CurrentExp + MonsterStat->DropExp);
+			int quantity = UKismetMathLibrary::RandomIntegerInRange(1, 3);
+			SpawnLoot(quantity);
 		}
+
 	}
 
 }
 
+void ANPC_Master::SpawnLoot(int Quantity)
+{
+	for (int i = 0; i < Quantity; i++)
+	{
+		auto MyLoc = UKismetMathLibrary::RandomPointInBoundingBox(GetActorLocation(), FVector(40, 40, 40));
+		FTransform MyTransform;
+		MyTransform.SetLocation(MyLoc);
+		FActorSpawnParameters Params;
+		FActorSpawnParameters SpawnInfo;
+
+		SpawnInfo.Owner = AttackedPlayer;
+		UE_LOG(LogTemp, Warning, TEXT("Spawn Soul Item"));
+		auto SoulItem = GetWorld()->SpawnActor<ASoulItem>(SoulItemtClass, MyTransform, SpawnInfo);
+		SoulItem->CustomInitialize(MonsterStat->DropExp);
+	}
+}
+
+
 void ANPC_Master::DestroyMonster()
 {
 	Destroy();
+	HPBarWidget->DestroyComponent();
 }
+

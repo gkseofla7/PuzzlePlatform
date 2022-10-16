@@ -2,7 +2,7 @@
 
 #pragma once
 
-#include "CoreMinimal.h"
+#include "../PuzzlePlatforms.h"
 #include "GameFramework/Actor.h"
 #include "CharDamageText.generated.h"
 
@@ -22,7 +22,8 @@ protected:
 public:	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
-
+	UFUNCTION(BlueprintCallable, BlueprintImplementableEvent)
+	void SetDamageText(float NewDamage);
 public:
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
 	FVector StartPos;

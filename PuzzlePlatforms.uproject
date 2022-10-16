@@ -12,7 +12,8 @@
 				"Engine",
 				"UMG",
 				"PhysXVehicles",
-				"AIModule"
+				"AIModule",
+				"GameplayCameras"
 			]
 		}
 	],

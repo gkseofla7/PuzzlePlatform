@@ -150,19 +150,18 @@ void AWarrior::AttackCheck()
 			DrawColor = FColor::Red;
 
 
-		//DrawDebugCapsule(GetWorld(), Center, HalfHeight, AttackRadius,
-//			Rotation, DrawColor, false, 5.f);
 		if (bResult && HitResult.Actor.IsValid())
 		{
 			auto Player = Cast<ACharacter_Master>(HitResult.Actor);
-			if (Player != nullptr)
+			if (Player != nullptr)//같은팀이면 안때림
 			{
 				if (Player->TeamNum == TeamNum)
 				{
 					return;
 				}
 			}
-			UE_LOG(LogTemp, Warning, TEXT("HitCheck"));
+			auto MyController = Cast<APlayerController>(GetController());
+			MyController->ClientPlayCameraShake(CameraShakeClass, 0.1);
 			FDamageEvent DamageEvent;
 			HitResult.Actor->TakeDamage(CharacterStatRef->AttackDamage, DamageEvent, GetController(), this);
 			//UAISense_Damage::ReportDamageEvent(GetWorld(), HitResult.Actor.Get(), this, 10., HitResult.TraceStart, HitResult.Location);

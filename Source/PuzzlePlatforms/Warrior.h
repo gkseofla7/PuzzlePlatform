@@ -59,7 +59,7 @@ private:
 public:
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
 		class ASword_Master* EquippedItem;
-	//TSubclassOf<class ASword_Master>SwordClass;
+
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
 		bool IsClimbing;
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)

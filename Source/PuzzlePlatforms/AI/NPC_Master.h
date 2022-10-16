@@ -36,14 +36,16 @@ public:
 
 	virtual float TakeDamage(float DamageAmount, struct FDamageEvent const& DamageEvent,
 		class AController* EventInstigator, AActor* DamageCauser) override;
-	virtual void TakeDamage_Implementation();
-	void DamageImpact();
+	virtual void PlayImpactMontage();
+	void DamageImpact(float Damage);
 	virtual void Die();
 
 	void DestroyMonster();
 	virtual void ChangeDamageColor();
 	UFUNCTION(NetMulticast, Reliable, WithValidation)
-		void NetMulticast_DamageImpact();
+		void NetMulticast_DamageImpact(float Damage);
+	void Destroyed() override;
+	void SpawnLoot(int Quantity);
 
 public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
@@ -54,12 +56,13 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Stat)
 	class UMonsterStatComponent* MonsterStat;//약간 애들
 
-	UPROPERTY(VisibleAnywhere, Category = UI)
+
 		class UWidgetComponent* HPBarWidget;
 	bool bDead = false;
 	AActor * AttackedPlayer;
 	class UParticleSystem* ParticleTemplate;
-
+	TSubclassOf<class ACharDamageText> CharDamageTextClass;
+	TSubclassOf<class ASoulItem> SoulItemtClass;
 	
 
 };
