@@ -34,7 +34,7 @@ EBTNodeResult::Type UBTTask_TurnToTarget::ExecuteTask(UBehaviorTreeComponent& Ow
 	FRotator TargetRot = FRotationMatrix::MakeFromX(LookVector).Rotator();
 	if (Monster->HasAuthority())
 	{//movement 알아서 해주나?
-		Monster->SetActorRotation(FMath::RInterpTo(Monster->GetActorRotation(), TargetRot, GetWorld()->GetDeltaSeconds(), 2.0f));
+		Monster->SetActorRotation(FMath::RInterpTo(Monster->GetActorRotation(), TargetRot, GetWorld()->GetDeltaSeconds(), 4.0f));
 	}
 	return EBTNodeResult::Succeeded;
 }

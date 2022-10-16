@@ -17,6 +17,7 @@ public:
 	UArcherAnimInstance();
 	void PlayArrowAttackMontage();
 	void PlayDeathMontage();
+	void PlayImpactMontage();
 	UFUNCTION()
 		void AnimNotify_ArrowShot();
 public:
@@ -28,4 +29,6 @@ public:
 
 	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly)
 		UAnimMontage* DeathMontage;
+	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly)
+		UAnimMontage* ImpactMontage;
 };

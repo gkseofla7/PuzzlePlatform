@@ -142,7 +142,7 @@ void UWarriorMotionReplicator::NetMulticast_SendDash_Implementation()
 	WarriorRef->ParticleSystemComponent->SetVisibility(true);
 	WarriorRef->ParticleSystemComponent->Activate(true);
 	WarriorRef->GetMesh()->SetVisibility(false);
-	WarriorRef->EquippedItem->SkeletalMeshComponent->SetVisibility(false);
+	//WarriorRef->EquippedItem->SkeletalMeshComponent->SetVisibility(false);
 	Cast<UCharacterMovementComponent>(WarriorRef->GetMovementComponent())->GravityScale = 0;
 
 }

@@ -303,7 +303,7 @@ void AWarrior::EndAnimation(UAnimMontage* Montage, bool bInterrupted)
 		ParticleSystemComponent->SetVisibility(false);
 		ParticleSystemComponent->Deactivate();
 		GetMesh()->SetVisibility(true);
-		EquippedItem->SkeletalMeshComponent->SetVisibility(true);
+		//EquippedItem->SkeletalMeshComponent->SetVisibility(true);
 		Cast<UCharacterMovementComponent>(GetMovementComponent())->GravityScale = 1;
 	}
 }

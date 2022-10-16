@@ -22,5 +22,5 @@ protected:
 
 public:
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
-	float Speed = 500;
+	float Speed = 550;
 };

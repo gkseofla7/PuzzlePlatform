@@ -18,6 +18,8 @@ public:
 	ANPC_Archer();
 	void BeginPlay();
 	virtual void Attack();
+	virtual void ChangeDamageColor() override;
+	virtual void PlayImpactMontage() override;
 	UFUNCTION(NetMulticast, Reliable, WithValidation)
 		void NetMulticast_Attack();
 	UFUNCTION(NetMulticast, Reliable, WithValidation)
@@ -26,10 +28,16 @@ public:
 	UFUNCTION()
 		virtual void EndAnimation(UAnimMontage* Montage, bool bInterrupted);
 	virtual void Die() override;
+	void ChangeOriginalColor();
 public:
 	UPROPERTY()
 		class UArcherAnimInstance* MyAnim;
 	float AttackRange = 500;
 	class ACharacter_Master* Target;
 	TSubclassOf<class AArrowMaster> ArrowMasterClass;
+	UMaterialInterface* ImpactedArcherMaterial = nullptr;
+	UMaterialInterface* ArcherMaterial = nullptr;
+
+	UMaterialInterface* ImpactedArcherBodyMaterial = nullptr;
+	UMaterialInterface* ArcherBodyMaterial = nullptr;
 };

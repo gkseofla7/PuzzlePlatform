@@ -39,7 +39,8 @@ void AAbility_AoE_HolyGround::ActivateEffect_Implementation()
 				if (PuzzleCharacter == PlayerRef||PuzzleCharacter->TeamNum==PlayerRef->TeamNum)//자기 자신이던가 같은팀이면
 					continue;
 			}
-
+			FVector OposDir = ( Player->GetActorLocation() - GetActorLocation()).GetSafeNormal() + FVector(0, 0, 500);
+			Player->LaunchCharacter(OposDir * 3000, false, false);
 			UGameplayStatics::ApplyDamage(Player, DamageAmount, PlayerRef->GetController(), PlayerRef, UDamageType::StaticClass());
 
 		}

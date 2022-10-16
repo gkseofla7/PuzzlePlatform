@@ -29,6 +29,11 @@ public:
 		void Server_PlayNextAnimation();
 	UFUNCTION(NetMulticast, Reliable, WithValidation)
 		void NetMulticast_PlayNextAnimation();
+
+	UFUNCTION(Server, Reliable, WithValidation)
+		void Server_SetFireballParticle();
+	UFUNCTION(NetMulticast, Reliable, WithValidation)
+		void NetMulticast_SetFireballParticle();
 	void SetAbilityLevel() override;
 
 	UFUNCTION()
@@ -38,5 +43,6 @@ public:
 		class UPlayerAnimInstance* AsPlayerAnimInstance;
 
 	class UParticleSystem* ParticleTemplate;
+	class UParticleSystem* BigFireParticleTemplate;
 
 };

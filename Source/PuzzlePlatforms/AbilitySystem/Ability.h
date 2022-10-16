@@ -49,7 +49,7 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	class USphereComponent* AbilityRoot;
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
-		class UParticleSystemComponent* ParticleSystemComponent;
+	class UParticleSystemComponent* ParticleSystemComponent;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 		class ACharacter_Master* PlayerRef;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)

@@ -25,6 +25,12 @@ AAbility_Projectile_Fireball::AAbility_Projectile_Fireball()
 	{
 		ParticleTemplate = ParticleAsset.Object;
 	}
+
+	static ConstructorHelpers::FObjectFinder<UParticleSystem> BigFireParticleTemplateAsset(TEXT("/Game/Effects/FX_Mobile/Fire/combat/P_FireBall_Strong"));
+	if (ParticleAsset.Succeeded())
+	{
+		BigFireParticleTemplate = BigFireParticleTemplateAsset.Object;
+	}
 }
 void AAbility_Projectile_Fireball::BeginPlay()
 {
@@ -68,11 +74,32 @@ void AAbility_Projectile_Fireball::ActivateEffect_Implementation()
 	Server_DetachAbilityFromPlayer();//¸ðµÎ ÀÏ´Ü ¶ç¾î³¿
 	Server_SetLocation(GetActorLocation());
 	Server_SetVelocity(PlayerRef->GetMuzzleRotation().Vector() * 1500);
+	Server_SetFireballParticle();
 	Server_Activate();
 	//ÃÊ±â°ª À§Ä¡ ´Ù ¸ÂÃã
 
 
 
+}
+
+void AAbility_Projectile_Fireball::Server_SetFireballParticle_Implementation()
+{
+	NetMulticast_SetFireballParticle();
+}
+
+bool AAbility_Projectile_Fireball::Server_SetFireballParticle_Validate()
+{
+	return true;
+}
+
+void AAbility_Projectile_Fireball::NetMulticast_SetFireballParticle_Implementation()
+{
+	ParticleSystemComponent->SetTemplate(BigFireParticleTemplate);
+}
+
+bool AAbility_Projectile_Fireball::NetMulticast_SetFireballParticle_Validate()
+{
+	return true;
 }
 
 
@@ -137,11 +164,11 @@ void AAbility_Projectile_Fireball::OnOverlapBegin(class UPrimitiveComponent* Ove
 {
 	if (OtherActor == PlayerRef)
 		return;
-	//UE_LOG(LogTemp, Warning, TEXT("Hit %s, %s %s") ,*OverlappedComp->GetName(),*OtherActor->GetName(), *OtherComp->GetName());
+	UE_LOG(LogTemp, Warning, TEXT("Hit %s, %s %s") ,*OverlappedComp->GetName(),*OtherActor->GetName(), *OtherComp->GetName());
 
 	if (HasAuthority() == true)
 	{
-		NetMulticast_Spark(OtherActor->GetActorLocation());
+		NetMulticast_Spark(GetActorLocation());
 		auto Player = Cast<ACharacter>(OtherActor);
 		auto PuzzleCharacter = Cast<ACharacter_Master>(OtherActor);
 		bool Check = false;

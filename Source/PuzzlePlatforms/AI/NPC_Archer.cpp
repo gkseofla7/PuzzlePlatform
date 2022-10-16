@@ -34,6 +34,18 @@ ANPC_Archer::ANPC_Archer()
 
 	}
 
+	static ConstructorHelpers::FObjectFinder<UMaterialInterface> ImpactedArcherMaterialAsset(TEXT("/Game/Animation/ArcherAssets/phong1_Inst"));
+	ImpactedArcherMaterial = ImpactedArcherMaterialAsset.Object;
+
+	static ConstructorHelpers::FObjectFinder<UMaterialInterface> ArcherMaterialAsset(TEXT("/Game/Animation/ArcherAssets/phong1"));
+	ArcherMaterial = ArcherMaterialAsset.Object;
+
+	static ConstructorHelpers::FObjectFinder<UMaterialInterface> ImpactedArcherBodyMaterialAsset(TEXT("/Game/Animation/ArcherAssets/Body_MAT1_Inst"));
+	ImpactedArcherBodyMaterial = ImpactedArcherBodyMaterialAsset.Object;
+
+	static ConstructorHelpers::FObjectFinder<UMaterialInterface> ArcherBodyMaterialAsset(TEXT("/Game/Animation/ArcherAssets/Body_MAT1"));
+	ArcherBodyMaterial = ArcherBodyMaterialAsset.Object;
+
 }
 
 void ANPC_Archer::BeginPlay()
@@ -69,6 +81,26 @@ void ANPC_Archer::ArrowShot()
 	}
 }
 
+void ANPC_Archer::ChangeDamageColor()
+{
+	GetMesh()->SetMaterial(0, ImpactedArcherMaterial);
+	GetMesh()->SetMaterial(1, ImpactedArcherBodyMaterial);
+	UE_LOG(LogTemp, Warning, TEXT("Red"));
+	FTimerHandle TimerHandler;
+	GetWorld()->GetTimerManager().SetTimer(TimerHandler, this, &ANPC_Archer::ChangeOriginalColor, 1., false);
+}
+
+void ANPC_Archer::ChangeOriginalColor()
+{
+	GetMesh()->SetMaterial(0, ArcherMaterial);
+	GetMesh()->SetMaterial(1, ArcherBodyMaterial);
+}
+
+void ANPC_Archer::PlayImpactMontage()
+{
+	MyAnim->PlayImpactMontage();
+}
+
 void ANPC_Archer::Attack()
 {
 	NetMulticast_Attack();
@@ -100,6 +132,11 @@ void ANPC_Archer::EndAnimation(UAnimMontage* Montage, bool bInterrupted)
 	if (Montage == MyAnim->ArrowAttackMontage)
 	{
 		OnAttackEnd.Broadcast();//이새끼가 계속 end때림.. 해도 왜.. Goblin까지 터짐? 아니 무슨 공용이여?
+	}
+	if (HasAuthority() && Montage == MyAnim->ImpactMontage)
+	{
+		auto AIController = Cast< ANPCAIController>(GetController());
+		AIController->ResumeLogic();
 	}
 }
 

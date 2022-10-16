@@ -123,6 +123,7 @@ void ANPC_Master::Attack()
 float ANPC_Master::TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent,
 	AController* EventInstigator, AActor* DamageCauser)
 {
+	UE_LOG(LogTemp, Warning, TEXT("Damaged holyground"));
 	if (bDead == true)
 		return 0;
 	if (!HasAuthority())
@@ -134,6 +135,7 @@ float ANPC_Master::TakeDamage(float DamageAmount, FDamageEvent const& DamageEven
 
 	AttackedPlayer = DamageCauser;
 	auto Player = Cast< ACharacter_Master>(DamageCauser);
+	MonsterStat->IncreaseHP(-FinalDamage);
 	Cast<ANPCAIController>(GetController())->SetTargetKey(Player);
 	Cast<ANPCAIController>(GetController())->SetIsHitKey(true);
 	auto Archer = Cast<ANPC_Archer>(this);
@@ -143,12 +145,11 @@ float ANPC_Master::TakeDamage(float DamageAmount, FDamageEvent const& DamageEven
 	}
 	
 
-	MonsterStat->IncreaseHP(-FinalDamage);
+
 
 	FVector OposDir = (GetActorLocation() - DamageCauser->GetActorLocation()).GetSafeNormal();
+	LaunchCharacter(OposDir * 1000, false, false);
 
-
-	LaunchCharacter(OposDir * 1000,false, false);
 	NetMulticast_DamageImpact(FinalDamage);
 
 
@@ -190,7 +191,7 @@ void ANPC_Master::NetMulticast_DamageImpact_Implementation(float Damage)
 
 	}
 	if(bDead == false)
-		PlayImpactMontage();
+		PlayImpactMontage();//이것도 각자
 }
 
 bool ANPC_Master::NetMulticast_DamageImpact_Validate(float Damage)
@@ -201,7 +202,7 @@ bool ANPC_Master::NetMulticast_DamageImpact_Validate(float Damage)
 
 void ANPC_Master::PlayImpactMontage()
 {
-
+	
 }
 
 

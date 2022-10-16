@@ -10,7 +10,7 @@ USoldierAnimInstance::USoldierAnimInstance()
 	CurrenPawnSpeed = 0.0f;
 
 	static ConstructorHelpers::FObjectFinder<UAnimMontage> DEATH_MONTAGE(TEXT(
-		"/Game/Animation/Montage/SoldierDeath_Montage"
+		"/Game/Animation/Soldier/Montage/SoldierDeath_Montage"
 	));
 	if (DEATH_MONTAGE.Succeeded())
 	{

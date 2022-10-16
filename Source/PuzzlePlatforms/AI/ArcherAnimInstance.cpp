@@ -21,6 +21,14 @@ UArcherAnimInstance::UArcherAnimInstance()
 	{
 		DeathMontage = DEATH_MONTAGE.Object;
 	}
+
+	static ConstructorHelpers::FObjectFinder<UAnimMontage> Impact_Montage(TEXT(
+		"/Game/Animation/Montage/Archer_Impact_Montage"
+	));
+	if (Impact_Montage.Succeeded())
+	{
+		ImpactMontage = Impact_Montage.Object;
+	}
 }
 
 void UArcherAnimInstance::PlayArrowAttackMontage()
@@ -38,6 +46,10 @@ void UArcherAnimInstance::AnimNotify_ArrowShot()
 	}
 }
 
+void UArcherAnimInstance::PlayImpactMontage()
+{
+	Montage_Play(ImpactMontage, 1.0);
+}
 
 void UArcherAnimInstance::PlayDeathMontage()
 {
