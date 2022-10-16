@@ -146,9 +146,12 @@ float ANPC_Master::TakeDamage(float DamageAmount, FDamageEvent const& DamageEven
 	
 
 
+	if (DamageCauser != nullptr)
+	{
+		FVector OposDir = (GetActorLocation() - DamageCauser->GetActorLocation()).GetSafeNormal();
+		LaunchCharacter(OposDir * 1000, false, false);
+	}
 
-	FVector OposDir = (GetActorLocation() - DamageCauser->GetActorLocation()).GetSafeNormal();
-	LaunchCharacter(OposDir * 1000, false, false);
 
 	NetMulticast_DamageImpact(FinalDamage);
 

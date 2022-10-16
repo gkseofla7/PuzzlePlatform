@@ -51,7 +51,8 @@ public:
 		class UMapWidget* MapWidget;
 	UPROPERTY(meta = (BindWidget), BlueprintReadWrite)
 		class UMinimapWidget* Minimap_Widget;
-
+	UPROPERTY(meta = (BindWidget), BlueprintReadWrite)
+		class UFPSTargetWidget* WBCrosshair;
 	UPROPERTY(meta = (BindWidget), BlueprintReadWrite)
 		class UCastBarWidget* CastBar_UI;
 	UPROPERTY(meta = (BindWidget), BlueprintReadWrite)

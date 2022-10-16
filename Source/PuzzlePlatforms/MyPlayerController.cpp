@@ -63,6 +63,15 @@ void AMyPlayerController::SetInputModeGameAndUI()
 	SetShowMouseCursor(true);
 }
 
+void AMyPlayerController::SetInputModeGameUI()
+{
+	FInputModeUIOnly InputMode;
+	InputMode.SetLockMouseToViewportBehavior(EMouseLockMode::DoNotLock);
+
+	SetInputMode(InputMode);
+	SetShowMouseCursor(true);
+}
+
 void AMyPlayerController::SetInputModeGame()
 {
 	FInputModeGameOnly InputMode;

@@ -60,6 +60,8 @@ public:
 	void SetPlayerStat();
 	void 	OnRep_PlayerState() override;
 
+	UFUNCTION(BlueprintImplementableEvent)
+		void AddCrosshairWidget();
 
 protected:
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
@@ -106,7 +108,8 @@ public:
 	UPROPERTY(BlueprintAssignable, BlueprintCallable)
 	FInterruptCastingDeleagate InterruptCasting;
 	FOnSkillReleased OnSkillReleased;
-
+	UPROPERTY(BlueprintReadWrite, EditAnywhere)
+		class UFPSTargetWidget* CrosshairWidget;
 	UPROPERTY()
 		class UAnimInstance_Master* MyAnim;
 	FTimerHandle StatResetHandle;

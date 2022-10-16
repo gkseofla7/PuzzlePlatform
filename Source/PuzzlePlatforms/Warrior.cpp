@@ -35,12 +35,7 @@ AWarrior::AWarrior()
 
 	}
 
-	static ConstructorHelpers::FClassFinder<UUserWidget> CrosshairHudBPClass(TEXT("/Game/Weapons/UI/BP_Crosshair_Hud"));
-	if (CrosshairHudBPClass.Succeeded())
-	{
-		CrosshairHudClass = CrosshairHudBPClass.Class;
 
-	}
 	
 	TeamNum = 2;
 
@@ -69,13 +64,7 @@ void AWarrior::BeginPlay()
 		HangMontageNotify();
 		});
 
-	if (CrosshairHudClass != nullptr)
-	{
 
-		HudWidget = CreateWidget<UUserWidget>(GetWorld(), CrosshairHudClass);
-		HudWidget->AddToViewport();
-
-	}
 
 	MyAnim->OnMontageEnded.AddDynamic(this, &AWarrior::EndAnimation);
 }

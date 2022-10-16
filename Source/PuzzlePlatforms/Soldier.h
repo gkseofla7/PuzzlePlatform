@@ -33,7 +33,7 @@ class PUZZLEPLATFORMS_API ASoldier : public ACharacter_Master
 	GENERATED_BODY()
 public:
 	ASoldier();
-
+	virtual void Attack() override;
 	UFUNCTION(BlueprintCallable)
 	void SetMuzzleRotation();
 	UFUNCTION(BlueprintCallable)
@@ -59,7 +59,7 @@ protected:
 	virtual void BeginPlay() override;
 	virtual void Tick(float DeltaTime) override;
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
-	virtual void Attack() override;
+
 	virtual void AddControllerPitchInput(float Val);
 private:
 
@@ -114,6 +114,7 @@ public:
 		float RocketSpeed = 1000;
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
 		TArray<class USplineMeshComponent*> PointsArray;
+
 	UFUNCTION()
 		void OnRep_ControlRotation();
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
@@ -161,6 +162,9 @@ public:
 	TSubclassOf<class AObject_Master> GunClass;
 	UPROPERTY(ReplicatedUsing = OnRep_ControlRotation)
 		FRotator ControlRotation;
+	bool IsShooting = false;
+	float CurrentFiringSpread = 0.f;
+	float CurrentSpread;
 
 
 };

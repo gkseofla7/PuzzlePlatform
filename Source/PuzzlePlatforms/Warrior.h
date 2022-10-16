@@ -80,8 +80,6 @@ public:
 		FVector HeightLocation;
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
-		TSubclassOf<class UUserWidget>CrosshairHudClass;
-	UPROPERTY(BlueprintReadWrite, EditAnywhere)
 		class UUserWidget* HudWidget;
 	bool bNextAttack = false;
 	bool bNextAttackStart = false;

@@ -7,6 +7,7 @@
 #include "Missile//Missile.h"
 #include "MyPlayerController.h"
 #include "PuzzlePlatformsGameMode.h"
+#include "UI/FPSTargetWidget.h"
 
 #include "Missile/TargetMarker.h"
 #include "Missile/TargetableComponent.h"
@@ -121,8 +122,6 @@ void ASoldier::SetupPlayerInputComponent(class UInputComponent* PlayerInputCompo
 }
 
 
-
-
 void ASoldier::SetFPSHudWidget()
 {
 	if (FPSHudClass != nullptr)
@@ -137,6 +136,21 @@ void ASoldier::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 	//SetMuzzleRotation();
+
+	if (CrosshairWidget != nullptr)
+	{
+		if (IsShooting == true)
+		{
+			CurrentSpread = UKismetMathLibrary::FClamp(CurrentSpread + 5.f, 5.0, 40.f);
+			CrosshairWidget->crosshair_spread = CurrentSpread;
+		}
+		if (IsShooting == false)
+		{
+			CurrentSpread = UKismetMathLibrary::FClamp(CurrentSpread - 5.f, 5.0, 40.f);
+			CrosshairWidget->crosshair_spread = CurrentSpread;
+		}
+	}
+
 	if (EquippedItem!=nullptr &&IsLocallyControlled() && IsPlayerControlled())
 	{
 		ControlRotation = GetControlRotation();
@@ -273,8 +287,10 @@ void ASoldier::SetMuzzleRotation()
 {
 	if (EquippedItem == nullptr)
 		return;
+	
 	UCameraComponent* CurrentCam = FollowCamera;
-
+	if (IsAiming)
+		CurrentCam = ADSCam_;
 
 	const float WeaponRange = 20000.f;
 	const FVector StartTrace = CurrentCam->GetComponentLocation();
@@ -290,9 +306,30 @@ void ASoldier::SetMuzzleRotation()
 	}
 
 	FRotator temp = UKismetMathLibrary::FindLookAtRotation(Start, EndTrace);
+	FVector AimDir = (EndTrace - Start).GetSafeNormal();
+	const int32 RandomSeed = FMath::Rand();
+	FRandomStream WeaponRandomStream(RandomSeed);
+	float WeaponSpread = 2.0f;
+	if (IsAiming == true)
+		WeaponSpread = .5f;
+	const float TotalSpread = WeaponSpread + CurrentFiringSpread;
+	//if (MyPawn && MyPawn->IsTargeting()) //조종하고있으면
+	//{
+	//	FinalSpread *= InstantConfig.TargetingSpreadMod;
+	//}
+	const float ConeHalfAngle = FMath::DegreesToRadians(TotalSpread * 0.5f);
+	const FVector ShootDir = WeaponRandomStream.VRandCone(AimDir, ConeHalfAngle, ConeHalfAngle);
 
 	auto MyReplicateComponent = Cast< USoldierMotionReplicator>(ReplicateComponent);
-	MyReplicateComponent->Server_SetMuzzleRotation(temp);
+	MyReplicateComponent->Server_SetMuzzleRotation(UKismetMathLibrary::FindLookAtRotation(FVector(0,0,0), ShootDir));
+	if (IsAiming == true)
+	{
+		CurrentFiringSpread = FMath::Min(2.f, TotalSpread);
+	}
+	else
+	{
+		CurrentFiringSpread = FMath::Min(4.f, TotalSpread);
+	}
 
 }
 
@@ -321,7 +358,9 @@ void ASoldier::Attack()
 	{
 		return;
 	}
+	IsShooting = true;
 	SetMuzzleRotation();
+	IsAttacking = false;
 	Super::Attack();
 
 }
@@ -339,7 +378,7 @@ void ASoldier::AimDownSights()
 	float Deltatime = UGameplayStatics::GetWorldDeltaSeconds(GetWorld());
 	FVector NextLoc = FMath::VInterpTo(VCurrent, VTarget, Deltatime, 15);
 	FRotator NexRot = FMath::RInterpTo(RCurrent, RTarget, Deltatime, 15);
-
+	CrosshairWidget->SetVisibility(ESlateVisibility::Hidden);
 	ADSCam_->SetWorldLocationAndRotation(NextLoc, NexRot);
 
 }
@@ -357,7 +396,8 @@ void ASoldier::UnAim()
 	FRotator NexRot = FMath::RInterpTo(RCurrent, RTarget, Deltatime, 15);
 
 	ADSCam_->SetWorldLocationAndRotation(NextLoc, NexRot);
-
+	if(CrosshairWidget!=nullptr)
+		CrosshairWidget->SetVisibility(ESlateVisibility::Visible);
 	if (FollowCamera->GetComponentLocation().Equals(ADSCam_->GetComponentLocation(), 0.01))
 	{
 		ADSCam_->Deactivate();
@@ -406,6 +446,7 @@ void ASoldier::WeaponPrimaryReleased()
 
 	if (EquippedItem == nullptr)
 		return;
+	IsShooting = false;
 	Cast<USoldierMotionReplicator>(ReplicateComponent)->Server_SendAttackStop();
 
 }
@@ -434,7 +475,7 @@ void ASoldier::EquipItem(AObject_Master* Item, bool EquipAndHold)
 			PrimaryWeapon = weapon;//전체
 			EquippedItem->Player = this;//전체
 			EquippedItem->GetSkeletalMesh()->SetCollisionEnabled(ECollisionEnabled::NoCollision);
-			EquippedItem->AttachToPlayer(this ,"GripPoint");//전체
+			EquippedItem->AttachToPlayer(this ,"hand_rSocket");//전체
 			IsItemEquipped = true;//전체
 			bUseControllerRotationYaw= true;
 			//자연스럽게 원하는 방향으로 회전

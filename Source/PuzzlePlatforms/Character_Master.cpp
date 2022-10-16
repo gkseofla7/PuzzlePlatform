@@ -19,6 +19,7 @@
 #include "UI/PlayerHPBarWidget.h"
 #include "MyPlayerState.h"
 #include "PlayersComponent/PointOfInterestComponent.h"
+#include "UI/FPSTargetWidget.h"
 
 #include "HeadMountedDisplayFunctionLibrary.h"
 #include "Camera/CameraComponent.h"
@@ -204,8 +205,10 @@ void ACharacter_Master::PossessedBy(AController* NewController)//이것도 결국 서�
 	SetPlayerStat();
 	if (IsPlayerControlled())
 	{
+
 		PointOfInterestComponent->AddPOI();
 		SetIcon();
+		//AddCrosshairWidget();
 	}
 
 }
@@ -218,6 +221,7 @@ void 	ACharacter_Master::OnRep_PlayerState()
 	SetPlayerStat();
 	PointOfInterestComponent->AddPOI();
 	SetIcon();
+	//AddCrosshairWidget();
 }
 
 void ACharacter_Master::SetPlayerStat()
@@ -239,7 +243,7 @@ void ACharacter_Master::SetPlayerStat()
 		MyController->SetWidget(MyPlayerState->CharacterStat);//내 mainwidget
 		PlayerInfoHUDWidget = MyController->PlayerInfoHUDWidget;
 		ReplicateComponent->Server_BindCharacterStatToWidget();//각 플레이어 머리 위 widget
-
+		CrosshairWidget = PlayerInfoHUDWidget->WBCrosshair;
 	}
 	else// 나 외 다른 플레이어들은
 	{
@@ -365,6 +369,7 @@ void ACharacter_Master::MoveRight(float Value)
 void ACharacter_Master::Attack()
 {
 	//만약 종족이 두개있다면..?
+	
 	if (IsAttacking == true || UsingSkill == true)
 	{
 		return;
