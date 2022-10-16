@@ -91,5 +91,5 @@ public:
 	FText PlayerName;
 	bool JoinClicked= false;
 	UPROPERTY(EditAnywhere , BlueprintReadWrite)
-	int CharacterIndex = 1;// 1번이면 Soldier 2번이면 Warrior 
+	int CharacterIndex = 2;// 1번이면 Soldier 2번이면 Warrior 
 };

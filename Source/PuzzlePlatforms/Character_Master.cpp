@@ -256,7 +256,9 @@ void ACharacter_Master::SetPlayerStat()
 
 void ACharacter_Master::BindCharacterStatToWidget()
 {
+	
 	auto MyPlayerState = Cast<AMyPlayerState>(GetPlayerState());
+	ABCHECK(MyPlayerState!=nullptr)
 	auto CharacterWidget = Cast< UPlayerHPBarWidget>(HPBarWidget->GetUserWidgetObject());
 
 	CharacterWidget->BindCharacterStat(MyPlayerState->CharacterStat);

@@ -326,7 +326,7 @@ void AWarrior::PlayersDied()
 	if (HasAuthority())
 	{
 		FTimerHandle DestroyTimerHandler;
-		EquippedItem->Destroy();
+		//EquippedItem->Destroy();
 		GetWorld()->GetTimerManager().SetTimer(DestroyTimerHandler, this, &ACharacter_Master::DestroyPlayer, 10, false);
 	}
 	if (IsLocallyControlled())

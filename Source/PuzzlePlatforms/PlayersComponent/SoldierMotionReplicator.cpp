@@ -84,6 +84,8 @@ void USoldierMotionReplicator::NetMulticast_WeaponReload_Implementation()
 	Soldier->IsReloading = true;
 
 	FTimerHandle WaitHandle;
+	if (Soldier->EquippedItem == nullptr)
+		return;
 	Soldier->EquippedItem->Reload();
 	float WaitTime = Soldier->EquippedItem->ReloadDelay; //시간을 설정하고
 	GetWorld()->GetTimerManager().SetTimer(WaitHandle, FTimerDelegate::CreateLambda([&]()
