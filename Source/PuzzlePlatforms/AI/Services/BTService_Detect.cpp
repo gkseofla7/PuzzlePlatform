@@ -20,7 +20,7 @@ UBTService_Detect::UBTService_Detect()
 void UBTService_Detect::TickNode(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory, float DeltaSeconds)
 {
 	Super::TickNode(OwnerComp, NodeMemory, DeltaSeconds);
-	if (OwnerComp.GetBlackboardComponent()->GetValueAsBool(ANPCAIController::IsHitKey) == true)
+	if (OwnerComp.GetBlackboardComponent()->GetValueAsBool(ANPCAIController::IsHitKey) == true)//맞으면 무조건 따라감~, 일정 시간 벗어나면 안따라가게설정함
 		return;
 	APawn* ControllingPawn =OwnerComp.GetAIOwner()->GetPawn();
 	if (ControllingPawn == nullptr)
@@ -42,7 +42,7 @@ void UBTService_Detect::TickNode(UBehaviorTreeComponent& OwnerComp, uint8* NodeM
 
 
 
-	if (bResult)
+	if (bResult)//범위 내에 몬스터 없으면~ 초기화! 근데 범위 멀면 어찌하냐,,
 	{
 
 		//if (OverlapResults.Num() == 0)//지금 아무도 없으면

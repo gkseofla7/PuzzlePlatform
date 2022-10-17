@@ -33,11 +33,15 @@ public:
 	UPROPERTY()
 		class UArcherAnimInstance* MyAnim;
 	float AttackRange = 500;
+	UPROPERTY()
 	class ACharacter_Master* Target;
 	TSubclassOf<class AArrowMaster> ArrowMasterClass;
+	UPROPERTY()
 	UMaterialInterface* ImpactedArcherMaterial = nullptr;
+	UPROPERTY()
 	UMaterialInterface* ArcherMaterial = nullptr;
-
+	UPROPERTY()
 	UMaterialInterface* ImpactedArcherBodyMaterial = nullptr;
+	UPROPERTY()
 	UMaterialInterface* ArcherBodyMaterial = nullptr;
 };

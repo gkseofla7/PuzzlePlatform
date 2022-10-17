@@ -7,6 +7,7 @@
 #include "Engine/StaticMesh.h"
 #include "Components/CapsuleComponent.h"
 #include "../Character_Master.h"
+#include "../AI/NPC_Master.h"
 // Sets default values
 AArrowMaster::AArrowMaster()
 {
@@ -39,15 +40,13 @@ void AArrowMaster::Tick(float DeltaTime)
 
 void AArrowMaster::OnOverlapBegin(class UPrimitiveComponent* OverlappedComp, class AActor* OtherActor, class UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
-	FString s_a = OtherActor->GetName();
-	FString s = OtherComp->GetName();
-
-
 	if (OtherActor && (OtherActor != this) && OtherComp)
 	{
+		if (Cast<ANPC_Master>(OtherActor) != nullptr)
+			return;
 		if (HasAuthority())
 		{
-
+			
 			auto MyCharacter = Cast<ACharacter_Master>(OtherActor);
 			if (MyCharacter != nullptr)
 			{
@@ -62,6 +61,7 @@ void AArrowMaster::OnOverlapBegin(class UPrimitiveComponent* OverlappedComp, cla
 		{
 			UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), ImpactParticles, GetTransform());
 		}
-		this->Destroy();
+		if(HasAuthority())
+			this->Destroy();
 	}
 }

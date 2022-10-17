@@ -18,6 +18,7 @@
 #include "Kismet/KismetMathLibrary.h"
 #include "Net/UnrealNetwork.h"
 #include "BrainComponent.h"
+#include "BehaviorTree/BlackboardComponent.h"
 
 // Sets default values
 ANPC_Master::ANPC_Master()
@@ -123,6 +124,8 @@ void ANPC_Master::Attack()
 float ANPC_Master::TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent,
 	AController* EventInstigator, AActor* DamageCauser)
 {
+	if (Cast< ANPC_Master>(DamageCauser) != nullptr)
+		return 0.f;//같은팀이면 패스~
 	UE_LOG(LogTemp, Warning, TEXT("Damaged holyground"));
 	if (bDead == true)
 		return 0;
@@ -137,7 +140,8 @@ float ANPC_Master::TakeDamage(float DamageAmount, FDamageEvent const& DamageEven
 	auto Player = Cast< ACharacter_Master>(DamageCauser);
 	MonsterStat->IncreaseHP(-FinalDamage);
 	Cast<ANPCAIController>(GetController())->SetTargetKey(Player);
-	Cast<ANPCAIController>(GetController())->SetIsHitKey(true);
+	Cast<ANPCAIController>(GetController())->SetIsHitKeyTrue();//주변애들도 이거 셋팅해줌~
+	GetHelpedFromOthers(Player);
 	auto Archer = Cast<ANPC_Archer>(this);
 	if (Archer != nullptr)
 	{
@@ -157,6 +161,57 @@ float ANPC_Master::TakeDamage(float DamageAmount, FDamageEvent const& DamageEven
 
 
 	return FinalDamage;
+}
+
+void ANPC_Master::GetHelpedFromOthers(ACharacter_Master * Target)
+{
+
+	UWorld* World = GetWorld();
+	FVector Center = GetActorLocation();//내위치
+	float DetectRadius = 2000.f;//내주변 범위..! 도와줘, 테스트 차원에서 크게 잡음
+
+	TArray<FOverlapResult> OverlapResults;
+	FCollisionQueryParams CollisionQueryParam(NAME_None, false, this);
+	bool bResult = World->OverlapMultiByChannel(OverlapResults,
+		Center, FQuat::Identity,
+		ECollisionChannel::ECC_EngineTraceChannel2,
+		FCollisionShape::MakeSphere(DetectRadius),
+		CollisionQueryParam
+	);//channel objecttype profile
+
+	if (bResult)//범위 내에 몬스터 없으면~ 초기화! 근데 범위 멀면 어찌하냐,,
+	{
+
+		for (auto const& OverlapResult : OverlapResults)//이미 존재하면 걔로 계속감
+		{
+			ANPCAIController* MyController = Cast<ANPCAIController>(GetController());
+			auto Current = MyController->GetBlackboardComponent()->GetValueAsObject(ANPCAIController::TargetKey);
+			//bool same = false;
+			ANPC_Master* Monster = Cast< ANPC_Master>(OverlapResult.GetActor());
+
+			if (Monster != nullptr)
+			{
+				ANPCAIController* MonsterController = Cast<ANPCAIController>(Monster->GetController());
+				auto MonsterTarget = MonsterController->GetBlackboardComponent()->GetValueAsObject(ANPCAIController::TargetKey);
+				if (MonsterTarget != nullptr)
+					continue;//이미 때리는애 있으면 패스~
+
+
+				auto Archer = Cast<ANPC_Archer>(Monster);
+				if (Archer != nullptr)
+				{
+					Archer->NetMulticast_SetTarget(Target);
+				}
+				MonsterController->GetBlackboardComponent()->SetValueAsObject(ANPCAIController::TargetKey, Target);
+				MonsterController->SetIsHitKeyTrue();
+				
+
+				//DrawDebugSphere(World, Center, DetectRadius, 16, FColor::Green, false, 0.2f);
+
+
+			}
+		}
+	}
 }
 
 void ANPC_Master::ChangeDamageColor()

@@ -23,15 +23,18 @@ public:
 	//void NetMulticast_SetTargetKey(class ACharacter_Master* PlayerTarget);
 	void SetTargetKey(class ACharacter_Master* PlayerTarget);
 	void SetHomePosKey(FVector NewPos);
-	void SetIsHitKey(bool NewIsHit);
-	void SetIsAttackingKey(bool NewIsAttackingKey);
 
+	void SetIsAttackingKey(bool NewIsAttackingKey);
+	
+	void SetIsHitKeyTrue();
 	void SetTargetLocationKey(FVector NewTargetLocationKey);
 	void PauseLogic();
 	void ResumeLogic();
 	//UFUNCTION(NetMulticast, Reliable, WithValidation)
 	//	void NetMulticast_SetHomePosKey(FVector NewPos);
-
+private:
+	UFUNCTION()
+	void SetIsHitKey_Implementation(bool NewIsHit);
 
 private:
 	UPROPERTY()

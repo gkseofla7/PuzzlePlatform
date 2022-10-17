@@ -43,9 +43,11 @@ public:
 	void DestroyMonster();
 	virtual void ChangeDamageColor();
 	UFUNCTION(NetMulticast, Reliable, WithValidation)
-		void NetMulticast_DamageImpact(float Damage);
+	void NetMulticast_DamageImpact(float Damage);
 	void Destroyed() override;
 	void SpawnLoot(int Quantity);
+
+	void GetHelpedFromOthers(class ACharacter_Master* Target);
 
 public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
@@ -56,10 +58,12 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Stat)
 	class UMonsterStatComponent* MonsterStat;//약간 애들
 
-
-		class UWidgetComponent* HPBarWidget;
+	UPROPERTY()
+	class UWidgetComponent* HPBarWidget;
 	bool bDead = false;
+	UPROPERTY()
 	AActor * AttackedPlayer;
+	UPROPERTY()
 	class UParticleSystem* ParticleTemplate;
 	TSubclassOf<class ACharDamageText> CharDamageTextClass;
 	TSubclassOf<class ASoulItem> SoulItemtClass;

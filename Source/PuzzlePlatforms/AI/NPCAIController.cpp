@@ -67,6 +67,8 @@ void ANPCAIController::OnPossess(APawn* InPawn)
 		}
 	}
 }
+
+
 void ANPCAIController::OnUnPossess()
 {
 	Super::OnUnPossess();
@@ -81,7 +83,16 @@ void ANPCAIController::SetTargetKey(ACharacter_Master* PlayerTarget)
 	GetBlackboardComponent()->SetValueAsObject(ANPCAIController::TargetKey, PlayerTarget);
 }
 
-void ANPCAIController::SetIsHitKey(bool NewIsHit)
+void ANPCAIController::SetIsHitKeyTrue()
+{
+	SetIsHitKey_Implementation(true);
+	FTimerHandle TimerHandler;
+	FTimerDelegate TimerDel;
+	TimerDel.BindUFunction(this, FName("SetIsHitKey_Implementation"), false);
+	GetWorld()->GetTimerManager().SetTimer(TimerHandler, TimerDel, 5.f, false);
+}
+
+void ANPCAIController::SetIsHitKey_Implementation(bool NewIsHit)
 {
 	GetBlackboardComponent()->SetValueAsBool(ANPCAIController::IsHitKey, NewIsHit);
 }
@@ -101,6 +112,8 @@ void ANPCAIController::SetTargetLocationKey(FVector NewTargetLocationKey)
 {
 	GetBlackboardComponent()->SetValueAsVector(ANPCAIController::TargetLocationKey, NewTargetLocationKey);
 }
+
+
 
 void ANPCAIController::PauseLogic()
 {
