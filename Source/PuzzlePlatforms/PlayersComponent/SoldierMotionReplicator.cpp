@@ -165,6 +165,8 @@ void USoldierMotionReplicator::Server_SendAttackStop_Implementation()
 
 
 
+
+
 void USoldierMotionReplicator::Server_SendGetItem_Implementation(class AObject_Master* NewWeapon)
 {
 	Multicast_SendGetItem(NewWeapon);
@@ -182,6 +184,26 @@ void USoldierMotionReplicator::Multicast_SendGetItem_Implementation(class AObjec
 
 }
 
+void USoldierMotionReplicator::Server_SetIsAiming_Implementation(bool NewIsAiming)
+{
+	NetMulticast_SetIsAiming(NewIsAiming);
+}
+bool USoldierMotionReplicator::Server_SetIsAiming_Validate(bool NewIsAiming)
+{
+	return true;
+}
+void USoldierMotionReplicator::NetMulticast_SetIsAiming_Implementation(bool NewIsAiming)
+{
+	auto MyOwner = Cast<ASoldier>(GetOwner());
+	ABCHECK(MyOwner != nullptr);
+	MyOwner->SetIsAiming(NewIsAiming);
+
+}
+
+bool USoldierMotionReplicator::NetMulticast_SetIsAiming_Validate(bool NewIsAiming)
+{
+	return true;
+}
 
 
 void USoldierMotionReplicator::DisableActor(bool toHide)

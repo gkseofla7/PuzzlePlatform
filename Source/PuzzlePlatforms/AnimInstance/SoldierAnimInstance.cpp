@@ -69,3 +69,5 @@ void USoldierAnimInstance::PlayDeathMontage()
 	UE_LOG(LogTemp, Warning, TEXT("PlayDeathMontage"));
 	Montage_Play(DeathMontage, 1.0);
 }
+
+

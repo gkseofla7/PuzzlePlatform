@@ -118,8 +118,10 @@ void ASoldier::SetupPlayerInputComponent(class UInputComponent* PlayerInputCompo
 	PlayerInputComponent->BindAction("WeaponSecondary", IE_Released, this, &ASoldier::WeaponSecondaryReleased);
 	PlayerInputComponent->BindAction("WeaponReload", IE_Pressed, this, &ASoldier::WeaponReload);
 	PlayerInputComponent->BindAction("Interact", IE_Pressed, this, &ASoldier::InteractPressed);
-
+	PlayerInputComponent->BindAction("Sprint", IE_Pressed, this, &ASoldier::Sprint);
+	PlayerInputComponent->BindAction("Sprint", IE_Released, this, &ASoldier::UnSprint);
 }
+
 
 
 void ASoldier::SetFPSHudWidget()
@@ -687,13 +689,31 @@ void ASoldier::WeaponSecondaryPressed()
 	if (CanAim == false)
 		return;
 	if (EquippedItem != nullptr)
-		IsAiming = true;
+		Cast<USoldierMotionReplicator>(ReplicateComponent)->Server_SetIsAiming(true);
 
 }
 void ASoldier::WeaponSecondaryReleased()
 {
 	if (EquippedItem != nullptr)
-		IsAiming = false;
+	{
+		Cast<USoldierMotionReplicator>(ReplicateComponent)->Server_SetIsAiming(false);
+	}
+
+}
+
+void ASoldier::SetIsAiming(bool NewIsAiming)
+{
+	auto Anim = Cast<USoldierAnimInstance>(MyAnim);
+
+	ABCHECK(Anim != nullptr);
+	Anim->IsAiming = NewIsAiming;
+	if (IsLocallyControlled())
+	{
+		IsAiming = NewIsAiming;
+
+	}
+
+
 }
 
 //void ASoldier::Multicast_SetGun_Implementation(AWeapon_Master* weapon)

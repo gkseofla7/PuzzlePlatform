@@ -50,6 +50,10 @@ public:
 		void Multicast_SendGetItem(class AObject_Master* NewWeapon);
 	UFUNCTION(Server, Reliable, WithValidation)
 		void Server_RespawnPawn(APlayerController* NewController);
+	UFUNCTION(Server, Reliable, WithValidation)
+		void Server_SetIsAiming(bool NewIsAiming);
+	UFUNCTION(NetMulticast, Reliable, WithValidation)
+		void NetMulticast_SetIsAiming(bool NewIsAiming);
 
 	UFUNCTION(BlueprintCallable, Category = "Disable")
 		void DisableActor(bool toHide);

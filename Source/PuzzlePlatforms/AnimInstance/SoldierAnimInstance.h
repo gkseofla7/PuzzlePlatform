@@ -51,6 +51,9 @@ public:
 	float ClientTimeBetweenLastUpdates = 0;
 	float ClientTimeSinceUpdate = 0;
 	FRotator StartControllerRotator;
+	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly)
+		bool IsAiming = false;
+
 
 public:
 

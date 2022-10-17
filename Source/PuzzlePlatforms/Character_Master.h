@@ -127,8 +127,8 @@ public:
 	bool bDead = false;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	int CharacterNum = 0;
-	float GeneralWalkSpeed = 600;
-	float SteamPackWalkSpeed = 1000;
+	float GeneralWalkSpeed = 400;
+	float SteamPackWalkSpeed = 600	;
 	bool ChangeIcon = false;
 
 };

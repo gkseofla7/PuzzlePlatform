@@ -54,6 +54,7 @@ public:
 
 	void PlayersDied();
 	void RespawnCharacter();
+	void SetIsAiming(bool NewIsAiming);
 protected:
 	virtual void PostInitializeComponents() override;
 	virtual void BeginPlay() override;
@@ -80,6 +81,8 @@ private:
 	void SetCurrentTarget( AActor* Target);
 	void EndTarget();
 	void BeginTarget();
+
+
 public:
 	//Classes
 	TSubclassOf<class AWeapon_Master>WeaponMasterClass;
