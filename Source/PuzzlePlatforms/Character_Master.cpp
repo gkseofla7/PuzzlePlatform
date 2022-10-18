@@ -406,11 +406,15 @@ float ACharacter_Master::TakeDamage(float DamageAmount, FDamageEvent const& Dama
 void ACharacter_Master::Sprint()
 {
 	ReplicateComponent->Server_SetMaxWalkSpeed(SteamPackWalkSpeed);
+	IsSprinting = true;
+	PlayerInfoHUDWidget->WBCrosshair->SetVisibility(ESlateVisibility::Hidden);
 }
 
 void ACharacter_Master::UnSprint()
 {
 	ReplicateComponent->Server_SetMaxWalkSpeed(GeneralWalkSpeed);
+	IsSprinting = false;
+	PlayerInfoHUDWidget->WBCrosshair->SetVisibility(ESlateVisibility::Visible);
 }
 
 FRotator ACharacter_Master::GetMuzzleRotation()

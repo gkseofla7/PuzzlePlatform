@@ -72,6 +72,7 @@ public:
 
 
 public:
+	UPROPERTY()
 	class ACharacter_Master* CharacterRef;
 	//ReplicatedUsing = OnRep_HP,
 	UPROPERTY(EditAnywhere, Transient)

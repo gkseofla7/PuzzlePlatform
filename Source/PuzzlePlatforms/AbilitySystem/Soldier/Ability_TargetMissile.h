@@ -40,10 +40,13 @@ public:
 		class UTargetMissileMovementComponent* MissileMovementComponent;
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
 		class UTargetMissileReplicateComponent* MissileReplicateComponent;
+	UPROPERTY()
 	class ASoldier* SoldierRef;
+	UPROPERTY()
 	class AActor* TargetPlayer;
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
 		USceneComponent* MeshOffsetRoot;
+	UPROPERTY()
 	class UParticleSystem* ParticleTemplate;
 
 	bool bActive = false;

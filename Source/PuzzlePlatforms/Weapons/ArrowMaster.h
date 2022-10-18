@@ -35,6 +35,7 @@ private:
 public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Gameplay)
 		class UParticleSystem* ImpactParticles;
-	class NPC_Archer* Shooter;
+	UPROPERTY()
+	class ANPC_Archer* Shooter;
 
 };

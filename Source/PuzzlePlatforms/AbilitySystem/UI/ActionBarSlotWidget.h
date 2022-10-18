@@ -37,6 +37,7 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	bool IsAvailable = true;
 	bool IsManaAvailable = true;
+	UPROPERTY()
 	class ACharacter_Master* Owner;
 	FTimerHandle CooldownTimerHandler;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)

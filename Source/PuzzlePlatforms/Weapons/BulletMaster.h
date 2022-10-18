@@ -38,5 +38,6 @@ public:
 		class UParticleSystem* ImpactParticles;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 		class ATurret * TurretRef;
+	UPROPERTY()
 	class ASoldier* Shooter;
 };

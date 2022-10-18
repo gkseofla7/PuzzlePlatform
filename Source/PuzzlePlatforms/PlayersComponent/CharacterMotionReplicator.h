@@ -62,5 +62,6 @@ public:
 		void NetMulticast_SetUsingSkill(bool NewUsingSkill);
 
 public:
+	UPROPERTY()
 	class ACharacter_Master* PlayerRef;
 };

@@ -32,6 +32,7 @@ public:
 	AActor* Owner;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 		bool IsStatic;
+	UPROPERTY()
 	TSubclassOf<UActorComponent> PointOfInterestComponentClass;
 	UPROPERTY(meta = (BindWidget),BlueprintReadWrite)
 		class UImage* CustomImage;

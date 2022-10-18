@@ -91,18 +91,18 @@ public:
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
 		float Direction;
 		FVector MissileVelocity;
-
-		class AWeapon_Master* Gun;
+	UPROPERTY()
+	class AWeapon_Master* Gun;
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
-		class AWeapon_Master* EquippedItem;
+	class AWeapon_Master* EquippedItem;
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
-		class AWeapon_Master* PrimaryWeapon;
+	class AWeapon_Master* PrimaryWeapon;
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
-		class AWeapon_Master* SecondaryWeapon;
+	class AWeapon_Master* SecondaryWeapon;
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
-		class UFPSHudWidget* HudWidget;
+	class UFPSHudWidget* HudWidget;
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
-		ECamInUse CamInUse = ECamInUse::TE_TPCam;
+	ECamInUse CamInUse = ECamInUse::TE_TPCam;
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
 		bool IsItemEquipped;
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
@@ -123,10 +123,13 @@ public:
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
 	bool ShowPath = false;
 	bool ShowTarget = false;
-
+	UPROPERTY()
 	TSubclassOf<class AMissile>MissileClass;
+	UPROPERTY()
 	TSubclassOf<class ATargetMarker>TargetMarkerClass;
+	UPROPERTY()
 	UStaticMesh* SplineStaticMesh;
+	UPROPERTY()
 	class UMaterial* SplineStaticMaterial;
 	FOnSkillReleased OnSkillReleased;
 	//Variable
@@ -144,7 +147,9 @@ public:
 	float SteamPackAcceleration = 4000;
 	const float TargetingRange = 10000;
 	const float TargetingConeAngle = 40;
+	UPROPERTY()
 	AActor* CurrentTarget;
+	UPROPERTY()
 	class ATargetMarker* TargetMarker;
 
 //Component

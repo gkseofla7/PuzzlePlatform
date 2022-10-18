@@ -67,7 +67,7 @@ public:
 
 	//FTargetMissileMove LastMove;
 
-
+	UPROPERTY()
 	AActor* Target;
 	float TargetingConeAngle = 40;
 	bool bActivate = false;;

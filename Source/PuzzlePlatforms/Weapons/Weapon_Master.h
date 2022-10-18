@@ -99,35 +99,35 @@ public:
 	
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Ammo")
-		int ClipAmmo;
+	int ClipAmmo;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Ammo")
-		int BagAmmo;
+	int BagAmmo;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Ammo")
-		int MaxClipAmmo;
+	int MaxClipAmmo;
 	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Ammo")
-		int MaxBagAmmo;
+	int MaxBagAmmo;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Ammo")
-		int AmmoCost = 1;
+	int AmmoCost = 1;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Ammo")
-		int AmmoNeeded;
+	int AmmoNeeded;
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
-		bool SteamPack = false;
+	bool SteamPack = false;
 	/** Sound to play each time we fire */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Gameplay)
-		class USoundBase* FireSound;
+	class USoundBase* FireSound;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Gameplay)
-		class UParticleSystem* MuzzlesParticle;
+	class UParticleSystem* MuzzlesParticle;
 
 
 
 
 private:
-
+	UPROPERTY()
 	TSubclassOf<class ABulletMaster>BulletMasterClass;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Camera, meta = (AllowPrivateAccess = "true"))
-		class UCameraComponent* Camera_;
+	class UCameraComponent* Camera_;
 
 	//class ASoldier* PlayerRef;
 

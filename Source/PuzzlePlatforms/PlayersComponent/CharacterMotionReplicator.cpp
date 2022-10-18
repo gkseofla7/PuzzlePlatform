@@ -29,7 +29,6 @@ void UCharacterMotionReplicator::BeginPlay()
 
 void UCharacterMotionReplicator::Server_SetMaxWalkSpeed_Implementation(float NewWalkSpeed)
 {
-	UE_LOG(LogTemp, Warning, TEXT("SERVER SteamPack"));
 	NetMulticast_SetMaxWalkSpeed(NewWalkSpeed);
 }
 

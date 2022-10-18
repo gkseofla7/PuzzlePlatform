@@ -24,5 +24,6 @@ public:
 		float Zoom = 0.5;
 	UPROPERTY(meta = (BindWidget), BlueprintReadWrite)
 	class UOverlay* MapOverlay;
+	UPROPERTY()
 	TSubclassOf<class UPointOfInterestWidget> PointOfInterestWidgetClass;
 };

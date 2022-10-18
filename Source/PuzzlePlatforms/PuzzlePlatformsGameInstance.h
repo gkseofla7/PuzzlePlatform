@@ -59,13 +59,21 @@ public:
 
 
 private:
+	UPROPERTY()
 	TSubclassOf<class UUserWidget>MenuClass;
+	UPROPERTY()
 	TSubclassOf<class UUserWidget>CloseMenuClass;
+	UPROPERTY()
 	TSubclassOf<class UUserWidget> SetNameMenuClass;
+	UPROPERTY()
 	TSubclassOf<class UUserWidget> NewHUDWidgetClass;
+	UPROPERTY()
 	TSubclassOf<class UPlayerInfoWidget> PlayerInfoHUDWidgetClass;
+	UPROPERTY()
 	class UMainMenu* Menu;
+	UPROPERTY()
 	class UQuitMenu* QuitMenu;
+	UPROPERTY()
 	class USetNameMenu* SetNameMenu;
 
 	IOnlineSessionPtr SessionInterface;
@@ -76,7 +84,7 @@ private:
 	UPROPERTY()
 	UDataTable* NearMonsterTable;
 	UPROPERTY()
-		UDataTable* ArcherDataTable;
+	UDataTable* ArcherDataTable;
 
 	void OnCreateSessionComplete(FName SessionName, bool Success);
 	void OnDestroySessionComplete(FName SessionName, bool Success);
@@ -86,7 +94,7 @@ private:
 
 	void CreateSession();
 public:
-
+	UPROPERTY()
 	class UPlayerInfoWidget* PlayerInfoWidget;
 	FText PlayerName;
 	bool JoinClicked= false;

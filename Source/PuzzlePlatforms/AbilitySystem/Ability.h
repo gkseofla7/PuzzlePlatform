@@ -54,9 +54,9 @@ public:
 		class ACharacter_Master* PlayerRef;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 		class UPlayerInfoWidget* HudUI;
-
+	UPROPERTY()
 	class UAnimInstance_Master* AnimRef;
-
+	UPROPERTY()
 	class UCastBarWidget* CastBar;
 
 	//FCastSuccessDeleagate CastSuccessDeleagate;

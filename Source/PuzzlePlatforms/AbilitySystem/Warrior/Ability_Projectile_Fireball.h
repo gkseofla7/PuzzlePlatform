@@ -41,8 +41,9 @@ public:
 public:
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
 		class UPlayerAnimInstance* AsPlayerAnimInstance;
-
+	UPROPERTY()
 	class UParticleSystem* ParticleTemplate;
+	UPROPERTY()
 	class UParticleSystem* BigFireParticleTemplate;
 
 };

@@ -21,6 +21,6 @@ public:
 
 	void SpawnSoldierBot();
 
-
+	UPROPERTY()
 	TSubclassOf<class ABot>BotClass;
 };

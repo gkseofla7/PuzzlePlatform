@@ -337,7 +337,7 @@ void ASoldier::SetMuzzleRotation()
 
 void ASoldier::SteamPack()
 {
-	Sprint();
+	ReplicateComponent->Server_SetMaxWalkSpeed(SteamPackWalkSpeed);
 	if (EquippedItem == nullptr)
 		return;
 
@@ -348,7 +348,7 @@ void ASoldier::SteamPack()
 
 void ASoldier::UnSteamPack()
 {
-	UnSprint();
+	ReplicateComponent->Server_SetMaxWalkSpeed(GeneralWalkSpeed);
 	if (EquippedItem != nullptr)
 		EquippedItem->SteamPack = false;
 
@@ -357,6 +357,10 @@ void ASoldier::UnSteamPack()
 void ASoldier::Attack()
 {
 	if (EquippedItem == nullptr || CanAim == false)
+	{
+		return;
+	}
+	if (IsSprinting == true)
 	{
 		return;
 	}

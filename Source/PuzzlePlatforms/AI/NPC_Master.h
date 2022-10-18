@@ -66,6 +66,7 @@ public:
 	UPROPERTY()
 	class UParticleSystem* ParticleTemplate;
 	TSubclassOf<class ACharDamageText> CharDamageTextClass;
+	UPROPERTY()
 	TSubclassOf<class ASoulItem> SoulItemtClass;
 	
 

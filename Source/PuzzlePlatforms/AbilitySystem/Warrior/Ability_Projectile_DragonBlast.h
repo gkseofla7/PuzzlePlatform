@@ -35,5 +35,6 @@ public:
 	bool Toggle = false;
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
 	TArray<AActor*> SweepArray;
+	UPROPERTY()
 	TSubclassOf<class AAbility>  Ability_Buff_Heal_Class;
 };

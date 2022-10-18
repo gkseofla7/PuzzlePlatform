@@ -31,7 +31,7 @@ public:
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
 	TArray<class UActionBarSlotWidget*> ActionBarSlotArray;
-
+	UPROPERTY()
 	class ACharacter_Master*  PlayerRef;
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
 	class UMyCharacterStatComponent* CurrentCharacterStat;

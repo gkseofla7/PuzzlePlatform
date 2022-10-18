@@ -31,7 +31,7 @@ public:
 	void ChangeOriginalColor();
 public:
 	UPROPERTY()
-		class UArcherAnimInstance* MyAnim;
+	class UArcherAnimInstance* MyAnim;
 	float AttackRange = 500;
 	UPROPERTY()
 	class ACharacter_Master* Target;

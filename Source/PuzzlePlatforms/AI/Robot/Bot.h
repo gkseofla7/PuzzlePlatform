@@ -30,7 +30,9 @@ public:
 public:
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
 	USkeletalMeshComponent* GunComponent;
+	UPROPERTY()
 	AActor* PlayerRef;
+	UPROPERTY()
 	AActor* PlayerRefKey;
 	float PlayerRange = 500;
 };

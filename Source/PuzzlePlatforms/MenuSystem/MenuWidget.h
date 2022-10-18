@@ -26,5 +26,6 @@ public:
 	
 
 protected:
+
 	IMenuInterface* MenuInterface;
 };

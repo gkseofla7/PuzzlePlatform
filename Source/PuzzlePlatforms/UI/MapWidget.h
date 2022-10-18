@@ -21,6 +21,7 @@ public:
 public:
 	UPROPERTY(meta = (BindWidget), BlueprintReadWrite)
 		class UOverlay* BigMapOverlay;
+	UPROPERTY()
 	TSubclassOf<class UPointOfInterestWidget> PointOfInterestWidgetClass;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 		float Dimensions = 35000;

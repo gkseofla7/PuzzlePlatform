@@ -102,8 +102,9 @@ public:
 		class UWidgetComponent* HPBarWidget;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 		class UPointOfInterestComponent* PointOfInterestComponent;
-
+	UPROPERTY()
 	class UPlayerInfoWidget* PlayerInfoHUDWidget;
+	UPROPERTY()
 	ACharacter_Master* TargetPlayer;
 	UPROPERTY(BlueprintAssignable, BlueprintCallable)
 	FInterruptCastingDeleagate InterruptCasting;
@@ -116,6 +117,7 @@ public:
 	bool SkillAvailable = true;
 	bool MouseCursorToggle = false;
 	bool IsDashing = false;
+	bool IsSprinting = false;
 	bool IsAttacking = false;
 	bool UsingSkill = false;
 	UPROPERTY(Replicated)

@@ -34,7 +34,8 @@ public:
 public:
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
 		UStaticMeshComponent* MissileComponent; 
+	UPROPERTY()
 	class ASoldier* SoldierRef;
-
+	UPROPERTY()
 	class UParticleSystem* ParticleTemplate;
 };

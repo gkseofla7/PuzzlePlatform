@@ -23,7 +23,9 @@ public:
 
 
 public:
+	UPROPERTY()
 	TSubclassOf<class ACharacter_Master> BPSoldierClass;
+	UPROPERTY()
 	TSubclassOf<class ACharacter_Master> BPWarriorClass;
 };
 

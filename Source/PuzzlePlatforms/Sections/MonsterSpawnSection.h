@@ -33,5 +33,6 @@ public:
 	TSubclassOf< class ANPC_Master>NPC_MasterClass2;
 	FTimerHandle SpawnNPCTimerHandle = {};
 	bool Toggle = true;
+	UPROPERTY()
 	TArray<class ANPC_Master*> Monsters;
 };
