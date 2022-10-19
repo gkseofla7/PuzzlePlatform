@@ -27,26 +27,27 @@ public:
 
 	// Called to bind functionality to input
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
-
 	virtual void Attack();
+	float TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent,
+		AController* EventInstigator, AActor* DamageCauser);
 	//void AttackCheck();
 
 	//UFUNCTION()
 	//	virtual void EndAnimation(UAnimMontage* Montage, bool bInterrupted);
 
-	virtual float TakeDamage(float DamageAmount, struct FDamageEvent const& DamageEvent,
-		class AController* EventInstigator, AActor* DamageCauser) override;
-	virtual void PlayImpactMontage();
-	void DamageImpact(float Damage);
+	//virtual float TakeDamage(float DamageAmount, struct FDamageEvent const& DamageEvent,
+	//	class AController* EventInstigator, AActor* DamageCauser) override;
+	UFUNCTION(NetMulticast, Reliable, WithValidation)
+		void NetMulticast_SetTarget(class ACharacter_Master* NewTarget);
+
 	virtual void Die();
 
 	void DestroyMonster();
 	virtual void ChangeDamageColor();
-	UFUNCTION(NetMulticast, Reliable, WithValidation)
-	void NetMulticast_DamageImpact(float Damage);
+
 	void Destroyed() override;
 	void SpawnLoot(int Quantity);
-
+	void DamageImpact(float Damage);
 	void GetHelpedFromOthers(class ACharacter_Master* Target);
 
 public:
@@ -57,9 +58,8 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Stat)
 	class UMonsterStatComponent* MonsterStat;//약간 애들
-
 	UPROPERTY()
-	class UWidgetComponent* HPBarWidget;
+	class UWidgetComponent* HPBarWidget;//이것도 겹침
 	bool bDead = false;
 	UPROPERTY()
 	AActor * AttackedPlayer;
@@ -67,7 +67,8 @@ public:
 	class UParticleSystem* ParticleTemplate;
 	TSubclassOf<class ACharDamageText> CharDamageTextClass;
 	UPROPERTY()
-	TSubclassOf<class ASoulItem> SoulItemtClass;
-	
+	TSubclassOf<class ASoulItem> SoulItemtClass;//이거 겹침
+	UPROPERTY()
+		class ACharacter_Master* Target;
 
 };

@@ -4,10 +4,11 @@
 #include "NPC_Archer.h"
 #include "MonsterStatComponent.h"
 #include "EnumMonsterType.h"
-#include "NPCAIController.h"
+#include "NPCMobAIController.h"
 #include "ArcherAnimInstance.h"
 #include "../Character_Master.h"
 #include "../Weapons/ArrowMaster.h"
+#include "../Character_Master.h"
 
 #include "BehaviorTree/BlackboardComponent.h"
 #include "Kismet/KismetMathLibrary.h"
@@ -56,8 +57,8 @@ void ANPC_Archer::BeginPlay()
 	MonsterStat->CustomInitializeComponent(EMonsterEnum::TE_Archer);
 	if (HasAuthority())
 	{
-		auto AIController = Cast< ANPCAIController>(GetController());
-		AIController->GetBlackboardComponent()->SetValueAsFloat(ANPCAIController::AttackRangeKey, AttackRange);
+		auto AIController = Cast< ANPCMobAIController>(GetController());
+		AIController->GetBlackboardComponent()->SetValueAsFloat(ANPCMobAIController::AttackRangeKey, AttackRange);
 		MyAnim->OnArrowShotDelegate.AddUObject(this, &ANPC_Archer::ArrowShot);
 	}
 
@@ -117,15 +118,6 @@ bool ANPC_Archer::NetMulticast_Attack_Validate()
 	return true;
 }
 
-void ANPC_Archer::NetMulticast_SetTarget_Implementation(class ACharacter_Master* NewTarget)
-{
-	Target = NewTarget;
-}
-
-bool ANPC_Archer::NetMulticast_SetTarget_Validate(class ACharacter_Master* NewTarget)
-{
-	return true;
-}
 
 void ANPC_Archer::EndAnimation(UAnimMontage* Montage, bool bInterrupted)
 {
@@ -135,7 +127,7 @@ void ANPC_Archer::EndAnimation(UAnimMontage* Montage, bool bInterrupted)
 	}
 	if (HasAuthority() && Montage == MyAnim->ImpactMontage)
 	{
-		auto AIController = Cast< ANPCAIController>(GetController());
+		auto AIController = Cast< ANPCMobAIController>(GetController());
 		AIController->ResumeLogic();
 	}
 }

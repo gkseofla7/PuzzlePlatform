@@ -3,36 +3,38 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "NPC_Mob.h"
-#include "NPC_Goblin.generated.h"
+#include "NPC_Master.h"
+#include "NPC_Boss.generated.h"
 
 /**
  * 
  */
 UCLASS()
-class PUZZLEPLATFORMS_API ANPC_Goblin : public ANPC_Mob
+class PUZZLEPLATFORMS_API ANPC_Boss : public ANPC_Master
 {
 	GENERATED_BODY()
-	
-
 public:
-	ANPC_Goblin();
+	ANPC_Boss();
 	void BeginPlay();
+	void Tick(float DeltaTime);
+	virtual float TakeDamage(float DamageAmount, struct FDamageEvent const& DamageEvent,
+		class AController* EventInstigator, AActor* DamageCauser) override;
+	
 	virtual void Attack();
-	void AttackCheck();
-	virtual void PlayImpactMontage();
 	UFUNCTION(NetMulticast, Reliable, WithValidation)
 		void NetMulticast_Attack();
-
 	UFUNCTION()
 		virtual void EndAnimation(UAnimMontage* Montage, bool bInterrupted);
 	virtual void ChangeDamageColor() override;
 	void ChangeOriginalColor();
-	virtual void Die() override;
-public:
+	void Shot();
+	void FireBlast();
 	UPROPERTY()
-		class UGoblinAnimInstance* MyAnim;
-	float AttackRange = 200;
+	class UIggyScorchAnimInstance* MyAnim;
+
+	float AttackRange = 400;
 	UMaterialInterface* ImpactedGoblinMaterial = nullptr;
 	UMaterialInterface* GoblinMaterial = nullptr;
+	UPROPERTY()
+	TSubclassOf<class AScorchBomb> ScorchBombClass;
 };

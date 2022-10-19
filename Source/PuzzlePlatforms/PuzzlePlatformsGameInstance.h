@@ -85,6 +85,8 @@ private:
 	UDataTable* NearMonsterTable;
 	UPROPERTY()
 	UDataTable* ArcherDataTable;
+	UPROPERTY()
+	UDataTable* IggyScorchDataTable;
 
 	void OnCreateSessionComplete(FName SessionName, bool Success);
 	void OnDestroySessionComplete(FName SessionName, bool Success);

@@ -70,12 +70,10 @@ void UBTService_Detect::TickNode(UBehaviorTreeComponent& OwnerComp, uint8* NodeM
 				}
 				if (Target == nullptr)//처음 걸린 애면
 					Target = Player;
-				auto Archer = Cast<ANPC_Archer>(ControllingPawn);
-				if (Archer != nullptr)
-				{
-					Archer->NetMulticast_SetTarget(Target);
-				}
-				
+				auto Monster = Cast<ANPC_Master>(ControllingPawn);
+				Monster->NetMulticast_SetTarget(Target);
+
+
 				//DrawDebugSphere(World, Center, DetectRadius, 16, FColor::Green, false, 0.2f);
 
 				DrawDebugPoint(World, Player->GetActorLocation(), 10.f, FColor::Blue, false, 0.2f);

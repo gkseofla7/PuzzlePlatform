@@ -16,7 +16,6 @@ class PUZZLEPLATFORMS_API ANPCAIController : public AAIController
 public:
 	ANPCAIController();
 	virtual void OnPossess(APawn* InPawn) override;
-	virtual void OnUnPossess() override;
 
 
 	//UFUNCTION(NetMulticast, Reliable, WithValidation)
@@ -25,9 +24,8 @@ public:
 	void SetHomePosKey(FVector NewPos);
 
 	void SetIsAttackingKey(bool NewIsAttackingKey);
-	
 	void SetIsHitKeyTrue();
-	void SetTargetLocationKey(FVector NewTargetLocationKey);
+
 	void PauseLogic();
 	void ResumeLogic();
 	//UFUNCTION(NetMulticast, Reliable, WithValidation)
@@ -36,7 +34,7 @@ private:
 	UFUNCTION()
 	void SetIsHitKey_Implementation(bool NewIsHit);
 
-private:
+protected:
 	UPROPERTY()
 		class UBehaviorTree* BTAsset;
 	UPROPERTY()

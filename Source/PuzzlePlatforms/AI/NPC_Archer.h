@@ -3,14 +3,14 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "NPC_Master.h"
+#include "NPC_Mob.h"
 #include "NPC_Archer.generated.h"
 
 /**
  * 
  */
 UCLASS()
-class PUZZLEPLATFORMS_API ANPC_Archer : public ANPC_Master
+class PUZZLEPLATFORMS_API ANPC_Archer : public ANPC_Mob
 {
 	GENERATED_BODY()
 
@@ -22,8 +22,7 @@ public:
 	virtual void PlayImpactMontage() override;
 	UFUNCTION(NetMulticast, Reliable, WithValidation)
 		void NetMulticast_Attack();
-	UFUNCTION(NetMulticast, Reliable, WithValidation)
-		void NetMulticast_SetTarget(class ACharacter_Master* NewTarget);
+
 	void ArrowShot();
 	UFUNCTION()
 		virtual void EndAnimation(UAnimMontage* Montage, bool bInterrupted);
@@ -33,8 +32,8 @@ public:
 	UPROPERTY()
 	class UArcherAnimInstance* MyAnim;
 	float AttackRange = 500;
+
 	UPROPERTY()
-	class ACharacter_Master* Target;
 	TSubclassOf<class AArrowMaster> ArrowMasterClass;
 	UPROPERTY()
 	UMaterialInterface* ImpactedArcherMaterial = nullptr;

@@ -2,12 +2,13 @@
 
 #include "../PuzzlePlatforms.h"
 #include "NPC_Master.h"
-#include "NPCAIController.h"
 #include "GoblinAnimInstance.h"
 #include "MonsterStatComponent.h"
 #include "../UI/HPBarWidget.h"
 #include "../Character_Master.h"
+#include "NPCAIController.h"
 #include "NPC_Archer.h"
+
 #include "../MyPlayerState.h"
 #include "../PlayersComponent/MyCharacterStatComponent.h"
 #include "../Etc/CharDamageText.h"
@@ -42,7 +43,7 @@ ANPC_Master::ANPC_Master()
 		SoulItemtClass = SoulItemtBPClass.Class;
 	}
 
-	AIControllerClass = ANPCAIController::StaticClass();
+
 	AutoPossessAI = EAutoPossessAI::PlacedInWorldOrSpawned;
 	MonsterStat = CreateDefaultSubobject<UMonsterStatComponent>(TEXT("MonsterStat"));
 
@@ -97,6 +98,30 @@ void ANPC_Master::Tick(float DeltaTime)
 
 }
 
+float ANPC_Master::TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent,
+	AController* EventInstigator, AActor* DamageCauser)
+{
+	if (Cast< ANPC_Master>(DamageCauser) != nullptr)
+		return 0.f;//같은팀이면 패스~
+	if (bDead == true)
+		return 0;
+	if (!HasAuthority())
+		return 0;
+
+	//ABCHECK(MotionReplicator != nullptr)
+
+	float FinalDamage = Super::TakeDamage(DamageAmount, DamageEvent, EventInstigator, DamageCauser);
+	auto Player = Cast< ACharacter_Master>(DamageCauser);
+	AttackedPlayer = DamageCauser;
+
+	MonsterStat->IncreaseHP(-FinalDamage);
+	if(Player!= nullptr)
+		Cast<ANPCAIController>(GetController())->SetTargetKey(Player);
+	Cast<ANPCAIController>(GetController())->SetIsHitKeyTrue();//주변애들도 이거 셋팅해줌~
+
+	return FinalDamage;
+}
+
 // Called to bind functionality to input
 void ANPC_Master::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 {
@@ -106,64 +131,22 @@ void ANPC_Master::SetupPlayerInputComponent(UInputComponent* PlayerInputComponen
 
 void ANPC_Master::Attack()
 {
-	//NetMulticast_Attack();
+
 }
 
-
-
-
-
-
-//void ANPC_Master::EndAnimation(UAnimMontage* Montage, bool bInterrupted)
-//{
-//
-//
-//}
-
-
-float ANPC_Master::TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent,
-	AController* EventInstigator, AActor* DamageCauser)
+void ANPC_Master::NetMulticast_SetTarget_Implementation(class ACharacter_Master* NewTarget)
 {
-	if (Cast< ANPC_Master>(DamageCauser) != nullptr)
-		return 0.f;//같은팀이면 패스~
-	UE_LOG(LogTemp, Warning, TEXT("Damaged holyground"));
-	if (bDead == true)
-		return 0;
-	if (!HasAuthority())
-		return 0;
-
-	//ABCHECK(MotionReplicator != nullptr)
-
-	float FinalDamage = Super::TakeDamage(DamageAmount, DamageEvent, EventInstigator, DamageCauser);
-
-	AttackedPlayer = DamageCauser;
-	auto Player = Cast< ACharacter_Master>(DamageCauser);
-	MonsterStat->IncreaseHP(-FinalDamage);
-	Cast<ANPCAIController>(GetController())->SetTargetKey(Player);
-	Cast<ANPCAIController>(GetController())->SetIsHitKeyTrue();//주변애들도 이거 셋팅해줌~
-	GetHelpedFromOthers(Player);
-	auto Archer = Cast<ANPC_Archer>(this);
-	if (Archer != nullptr)
-	{
-		Archer->NetMulticast_SetTarget(Player);
-	}
-	
-
-
-	if (DamageCauser != nullptr)
-	{
-		FVector OposDir = (GetActorLocation() - DamageCauser->GetActorLocation()).GetSafeNormal();
-		LaunchCharacter(OposDir * 1000, false, false);
-	}
-
-
-	NetMulticast_DamageImpact(FinalDamage);
-
-
-	return FinalDamage;
+	Target = NewTarget;
 }
 
-void ANPC_Master::GetHelpedFromOthers(ACharacter_Master * Target)
+bool ANPC_Master::NetMulticast_SetTarget_Validate(class ACharacter_Master* NewTarget)
+{
+	return true;
+}
+
+
+
+void ANPC_Master::GetHelpedFromOthers(ACharacter_Master* NewTarget)
 {
 
 	UWorld* World = GetWorld();
@@ -187,10 +170,11 @@ void ANPC_Master::GetHelpedFromOthers(ACharacter_Master * Target)
 			ANPCAIController* MyController = Cast<ANPCAIController>(GetController());
 			auto Current = MyController->GetBlackboardComponent()->GetValueAsObject(ANPCAIController::TargetKey);
 			//bool same = false;
-			ANPC_Master* Monster = Cast< ANPC_Master>(OverlapResult.GetActor());
+			ANPC_Master* Monster = Cast< ANPC_Master>(OverlapResult.GetActor());//보스는 제외해야됨
 
 			if (Monster != nullptr)
 			{
+
 				ANPCAIController* MonsterController = Cast<ANPCAIController>(Monster->GetController());
 				auto MonsterTarget = MonsterController->GetBlackboardComponent()->GetValueAsObject(ANPCAIController::TargetKey);
 				if (MonsterTarget != nullptr)
@@ -200,11 +184,11 @@ void ANPC_Master::GetHelpedFromOthers(ACharacter_Master * Target)
 				auto Archer = Cast<ANPC_Archer>(Monster);
 				if (Archer != nullptr)
 				{
-					Archer->NetMulticast_SetTarget(Target);
+					Archer->NetMulticast_SetTarget(NewTarget);
 				}
 				MonsterController->GetBlackboardComponent()->SetValueAsObject(ANPCAIController::TargetKey, Target);
 				MonsterController->SetIsHitKeyTrue();
-				
+
 
 				//DrawDebugSphere(World, Center, DetectRadius, 16, FColor::Green, false, 0.2f);
 
@@ -233,35 +217,11 @@ void ANPC_Master::DamageImpact(float Damage)
 	UGameplayStatics::SpawnEmitterAttached(ParticleTemplate, GetCapsuleComponent());
 }
 
-void ANPC_Master::NetMulticast_DamageImpact_Implementation(float Damage)
-{
-
-	DamageImpact(Damage);
-	ChangeDamageColor();//이건 각각 정의해 줘야됨
-	if (HasAuthority())
-	{
-		auto AIController = Cast< ANPCAIController>(GetController());
-
-		//Montage 실행 및 비헤이비어 트리 정지
-		if (bDead == true)
-			return;
-		AIController->PauseLogic();
-
-	}
-	if(bDead == false)
-		PlayImpactMontage();//이것도 각자
-}
-
-bool ANPC_Master::NetMulticast_DamageImpact_Validate(float Damage)
-{
-	return true;
-}
 
 
-void ANPC_Master::PlayImpactMontage()
-{
-	
-}
+
+
+
 
 
 void ANPC_Master::Die()

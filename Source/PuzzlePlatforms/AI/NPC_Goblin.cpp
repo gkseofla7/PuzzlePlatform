@@ -5,7 +5,7 @@
 #include "GoblinAnimInstance.h"
 #include "MonsterStatComponent.h"
 #include "EnumMonsterType.h"
-#include "NPCAIController.h"
+#include "NPCMobAIController.h"
 
 #include "DrawDebugHelpers.h"
 
@@ -17,12 +17,7 @@ ANPC_Goblin::ANPC_Goblin()
 {
 	PrimaryActorTick.bCanEverTick = true;
 	bReplicates = true;
-	//static ConstructorHelpers::FClassFinder<ANPCAIController> AIControllerBPClass(TEXT("/Game/AI/NPC/NPC_AI_Controller"));
-	//if (AIControllerBPClass.Class != NULL)
-	//{
-	//	AIControllerClass = AIControllerBPClass.Class;
-	//}
-	//AIControllerClass = ANPCAIController::StaticClass();
+
 	static ConstructorHelpers::FClassFinder<UAnimInstance> NPC_ANIM((TEXT("/Game/Animation/BP_GoblinAnim")));
 	if (NPC_ANIM.Succeeded())
 	{
@@ -58,8 +53,8 @@ void ANPC_Goblin::BeginPlay()
 
 	if (HasAuthority())
 	{
-		auto AIController = Cast< ANPCAIController>(GetController());
-		AIController->GetBlackboardComponent()->SetValueAsFloat(ANPCAIController::AttackRangeKey, AttackRange);
+		auto AIController = Cast< ANPCMobAIController>(GetController());
+		AIController->GetBlackboardComponent()->SetValueAsFloat(ANPCMobAIController::AttackRangeKey, AttackRange);
 	}
 }
 
@@ -141,7 +136,7 @@ void ANPC_Goblin::EndAnimation(UAnimMontage* Montage, bool bInterrupted)
 	
 	if (HasAuthority()&&Montage == MyAnim->ImpactMontage)
 	{
-		auto AIController = Cast< ANPCAIController>(GetController());
+		auto AIController = Cast< ANPCMobAIController>(GetController());
 		AIController->ResumeLogic();
 	}
 

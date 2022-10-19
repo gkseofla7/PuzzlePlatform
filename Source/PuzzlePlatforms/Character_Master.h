@@ -35,7 +35,6 @@ public:
 	virtual void AddControllerYawInput(float Val);
 	UFUNCTION(BlueprintImplementableEvent, BlueprintCallable)
 		void SetIcon();
-	/** Base turn rate, in deg/sec. Other scaling may affect final turn rate. */
 
 	void UpdateStat();//이거 hp의 경우엔 서버에도 해줘야됨;
 	FRotator GetMuzzleRotation();
@@ -76,6 +75,7 @@ public:
 		class AController* EventInstigator, AActor* DamageCauser) override;
 
 public:
+	UPROPERTY()
 	TSubclassOf<class UCameraShakeBase>CameraShakeClass;
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
 		class USphereComponent* NearObjectCollisionDetector;
@@ -114,12 +114,7 @@ public:
 	UPROPERTY()
 		class UAnimInstance_Master* MyAnim;
 	FTimerHandle StatResetHandle;
-	bool SkillAvailable = true;
-	bool MouseCursorToggle = false;
-	bool IsDashing = false;
-	bool IsSprinting = false;
-	bool IsAttacking = false;
-	bool UsingSkill = false;
+
 	UPROPERTY(Replicated)
 	int Level;//입장과 동시에 Replicated 됨 단 서버쪽에서는 아니겠지..ㅋㅋ
 	UPROPERTY(EditAnywhere)
@@ -132,6 +127,14 @@ public:
 	float GeneralWalkSpeed = 400;
 	float SteamPackWalkSpeed = 600	;
 	bool ChangeIcon = false;
+
+	bool IsInRespawnSection = false;
+	bool SkillAvailable = true;
+	bool MouseCursorToggle = false;
+	bool IsDashing = false;
+	bool IsSprinting = false;
+	bool IsAttacking = false;
+	bool UsingSkill = false;
 
 };
 

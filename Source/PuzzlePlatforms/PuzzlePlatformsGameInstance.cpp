@@ -47,6 +47,12 @@ UPuzzlePlatformsGameInstance::UPuzzlePlatformsGameInstance(const FObjectInitiali
 		ABCHECK(NearMonsterTable->GetRowMap().Num() > 0);
 	}
 
+	static ConstructorHelpers::FObjectFinder<UDataTable> IggyScorchDataTableAsset(TEXT("/Game/GameData/IggyScorchData"));
+	if (IggyScorchDataTableAsset.Succeeded()) {
+		IggyScorchDataTable = IggyScorchDataTableAsset.Object;
+		ABCHECK(NearMonsterTable->GetRowMap().Num() > 0);
+	}
+
 	static ConstructorHelpers::FClassFinder< UUserWidget> NEWUI_HUD_C(TEXT("/Game/AbilitySystem/HeadsUpDisplay"));
 	if (NEWUI_HUD_C.Succeeded())
 	{
@@ -116,6 +122,8 @@ FMonsterData* UPuzzlePlatformsGameInstance::GetMonsterData(int32 Level, EMonster
 	case EMonsterEnum::TE_Archer:
 		return ArcherDataTable->FindRow<FMonsterData>(*FString::FromInt(Level), TEXT(""));
 		//break;
+	case EMonsterEnum::TE_IggyScorch:
+		return IggyScorchDataTable->FindRow<FMonsterData>(*FString::FromInt(Level), TEXT(""));
 	default:
 		break;
 	}

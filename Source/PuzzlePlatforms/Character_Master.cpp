@@ -184,11 +184,7 @@ void ACharacter_Master::PostInitializeComponents()
 void ACharacter_Master::BeginPlay()
 {
 	Super::BeginPlay();
-	if (IsLocallyControlled())//체력 주기적으로 회복
-	{
-		FTimerHandle TimerHandler;
-		GetWorld()->GetTimerManager().SetTimer(TimerHandler, this, &ACharacter_Master::UpdateStat, 7, true);
-	}
+
 	auto LobbyGameMode = Cast< AMyLobbyGameMode>(UGameplayStatics::GetGameMode(GetWorld()));
 	if (LobbyGameMode != nullptr)//Lobby에서 안보이게 하려고
 	{
@@ -239,6 +235,12 @@ void ACharacter_Master::SetPlayerStat()
 	CharacterStatRef->CharacterRef = this;
 	if (IsLocallyControlled() && IsPlayerControlled())//새로입장 or 리스폰 모두에게 내 정보 뿌려줌	
 	{
+
+		FTimerHandle TimerHandler;
+		GetWorld()->GetTimerManager().SetTimer(TimerHandler, this, &ACharacter_Master::UpdateStat, 2, true);
+
+		IsInRespawnSection = true;
+
 		auto MyController = Cast<AMyPlayerController>(GetController());
 		MyController->SetWidget(MyPlayerState->CharacterStat);//내 mainwidget
 		PlayerInfoHUDWidget = MyController->PlayerInfoHUDWidget;
@@ -308,12 +310,23 @@ void ACharacter_Master::AddControllerYawInput(float Val)
 }
 void ACharacter_Master::UpdateStat()
 {
+
+	float AddValue = .5f;
+	if (IsInRespawnSection == true)
+	{
+		AddValue = 5.f;
+	}
 	if (CharacterStatRef == nullptr)
 		return;
+
 	if (CharacterStatRef->CurrentHP < CharacterStatRef->CurrentStatData->MaxHP)
-		CharacterStatRef->Server_SetHP(CharacterStatRef->CurrentHP + .5);
-	if (CharacterStatRef->CurrentHP < CharacterStatRef->CurrentStatData->MaxMP)
-		CharacterStatRef->Server_SetMP(CharacterStatRef->CurrentMP+.5);
+		CharacterStatRef->Server_SetHP(CharacterStatRef->CurrentHP + AddValue);
+	if (CharacterStatRef->CurrentMP < CharacterStatRef->CurrentStatData->MaxMP)
+	{
+
+		CharacterStatRef->Server_SetMP(CharacterStatRef->CurrentMP + AddValue);
+	}
+
 }
 
 

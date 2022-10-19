@@ -12,6 +12,7 @@ enum class EMonsterEnum : uint8
 {
 	TE_Goblin UMETA(DisplayName = "Goblin"),
 	TE_Archer UMETA(DisplayName = "Archer"),
+	TE_IggyScorch UMETA(DisplayName = "IggyScorch"),
 };
 
 

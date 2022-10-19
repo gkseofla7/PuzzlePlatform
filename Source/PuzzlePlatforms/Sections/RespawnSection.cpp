@@ -2,17 +2,23 @@
 
 
 #include "RespawnSection.h"
+#include "../Character_Master.h"
 
 #include "Components/SphereComponent.h"
 #include "NavigationSystem.h"
+#include "Kismet/GameplayStatics.h"
 
 // Sets default values
 ARespawnSection::ARespawnSection()
+	:Super()
 {
  	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 	RecoverySpace = CreateDefaultSubobject<USphereComponent>(TEXT("RecoverySpace"));
 	RecoverySpace->SetupAttachment(RootComponent);
+
+	RecoverySpace->OnComponentBeginOverlap.AddDynamic(this, &ARespawnSection::OnOverlapBegin);
+	RecoverySpace->OnComponentEndOverlap.AddDynamic(this, &ARespawnSection::OnOverlapEnd);
 }
 
 // Called when the game starts or when spawned
@@ -63,4 +69,41 @@ FTransform ARespawnSection::GetRandomTransform()
 	}
 	else
 		return OutTransform;
+}
+
+void ARespawnSection::OnOverlapBegin(class UPrimitiveComponent* OverlappedComp, class AActor* OtherActor, class UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
+{
+	UE_LOG(LogTemp, Warning, TEXT("Hello"));
+
+	UE_LOG(LogTemp, Warning, TEXT("OverlapBegin %s, %s %s"), *OverlappedComp->GetName(), *OtherActor->GetName(), *OtherComp->GetName());
+
+	if (HasAuthority() == true)
+	{
+		auto Player = Cast<ACharacter_Master>(OtherActor);
+		if (Player != nullptr)
+		{
+			if (Player->TeamNum == TeamNum)//快府评捞搁
+			{
+				Player->IsInRespawnSection = true;
+			}
+		}
+	}
+}
+
+void ARespawnSection::OnOverlapEnd(class UPrimitiveComponent* OverlappedComp, class AActor* OtherActor, class UPrimitiveComponent* OtherComp, int32 OtherBodyIndex)
+{
+
+	UE_LOG(LogTemp, Warning, TEXT("OverlapEnd %s, %s %s"), *OverlappedComp->GetName(), *OtherActor->GetName(), *OtherComp->GetName());
+
+	if (HasAuthority() == true)
+	{
+		auto Player = Cast<ACharacter_Master>(OtherActor);
+		if (Player != nullptr)
+		{
+			if (Player->TeamNum == TeamNum)//快府评捞搁
+			{
+				Player->IsInRespawnSection = false;
+			}
+		}
+	}
 }

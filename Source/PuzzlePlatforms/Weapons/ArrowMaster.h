@@ -33,7 +33,7 @@ private:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (AllowPrivateAccess = "true"))
 		class UCapsuleComponent* Capsule;
 public:
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Gameplay)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 		class UParticleSystem* ImpactParticles;
 	UPROPERTY()
 	class ANPC_Archer* Shooter;
