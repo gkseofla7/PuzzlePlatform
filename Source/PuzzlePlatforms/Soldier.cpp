@@ -199,17 +199,17 @@ void ASoldier::Tick(float DeltaTime)
 		//FPredictProjectilePathResult PredictResult;
 		TArray<AActor*> Ignores;
 		Ignores.Add(this);
-		PredictParam.StartLocation = RocketMouthTransform.GetLocation();
-		PredictParam.LaunchVelocity = MissileVelocity;
-		PredictParam.ProjectileRadius = 20.;
-		PredictParam.bTraceWithCollision = true;
-		PredictParam.ObjectTypes = ObjectTypes;
-		PredictParam.SimFrequency = 15;
-		//PredictParam.DrawDebugType = EDrawDebugTrace::ForDuration;
-		//PredictParam.DrawDebugTime = .1;
-		PredictParam.MaxSimTime = 10;
-		PredictParam.ActorsToIgnore = Ignores;
-		PredictParam.OverrideGravityZ = 0.;
+		//PredictParam.StartLocation = RocketMouthTransform.GetLocation();
+		//PredictParam.LaunchVelocity = MissileVelocity;
+		//PredictParam.ProjectileRadius = 20.;
+		//PredictParam.bTraceWithCollision = true;
+		//PredictParam.ObjectTypes = ObjectTypes;
+		//PredictParam.SimFrequency = 15;
+		////PredictParam.DrawDebugType = EDrawDebugTrace::ForDuration;
+		////PredictParam.DrawDebugTime = .1;
+		//PredictParam.MaxSimTime = 10;
+		//PredictParam.ActorsToIgnore = Ignores;
+		//PredictParam.OverrideGravityZ = 0.;
 		//결국 시작값, 이동등을 정해서 위치 경로 예측
 		FHitResult OutHit;
 		TArray< FVector > OutPathPositions;

@@ -23,6 +23,13 @@ UIggyScorchAnimInstance::UIggyScorchAnimInstance()
 		FireBlastMontage = FireBlastMontageAsset.Object;
 	}
 
+	static ConstructorHelpers::FObjectFinder<UAnimMontage> MeteorMontageAsset(TEXT(
+		"/Game/Animation/IggyScorch/Montagne/IggyScorch_MeteorMontage"
+	));
+	if (MeteorMontageAsset.Succeeded())
+	{
+		MeteorMontage = MeteorMontageAsset.Object;
+	}
 	StartRotator = FRotator(0, 0, 0);
 	EndRotator = FRotator(0, 0, -30);
 
@@ -63,7 +70,7 @@ void UIggyScorchAnimInstance::PlayFireBlastMontage()
 void UIggyScorchAnimInstance::PlayMateorMontage()
 {
 	UE_LOG(LogTemp, Warning, TEXT("PlayMateor"));
-	PlayFireBlastMontage();
+	Montage_Play(MeteorMontage, 1.0);
 	CurrentTimeForMeteor = 0;
 	bMateor = true;
 	bMateorStart = true;
@@ -80,6 +87,11 @@ void UIggyScorchAnimInstance::AnimNotify_Shot()
 	
 }
 
+void UIggyScorchAnimInstance::AnimNotify_DownCheck()
+{
+	CurrentTimeForMeteor = 0;
+	bMateorStart = false;
+}
 
 void UIggyScorchAnimInstance::AnimNotify_FireStart()
 {
@@ -94,11 +106,15 @@ void UIggyScorchAnimInstance::AnimNotify_FireStart()
 void UIggyScorchAnimInstance::AnimNotify_FireEnd()
 {
 	auto BossRef = Cast<ANPC_Boss>(GetOwningActor());
-	CurrentTimeForMeteor = 0;
-	bMateorStart = false;
+
 	ABCHECK(BossRef != nullptr);
 	if (BossRef->HasAuthority())
 	{
 		BossRef->ActivateParticle(false);
 	}
+}
+
+void UIggyScorchAnimInstance::AnimNotify_FireMeteor()
+{
+	OnFireMeteorDelegate.Broadcast();
 }

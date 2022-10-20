@@ -10,6 +10,7 @@
  * 
  */
 DECLARE_MULTICAST_DELEGATE(FOnShotDelegate);
+//DECLARE_MULTICAST_DELEGATE(FOnFireMeteorDelegate);
 UCLASS()
 class PUZZLEPLATFORMS_API UIggyScorchAnimInstance : public UAnimInstance
 {
@@ -27,11 +28,17 @@ public:
 		void AnimNotify_FireStart();
 	UFUNCTION()
 		void AnimNotify_FireEnd();
+	UFUNCTION()
+		void AnimNotify_FireMeteor();
+	UFUNCTION()
+		void AnimNotify_DownCheck();
 public:
 	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly, Category = Attack)
 		UAnimMontage* AttackMontage;
 	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly, Category = Attack)
 		UAnimMontage* FireBlastMontage;
+	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly, Category = Attack)
+		UAnimMontage* MeteorMontage;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 		float Speed;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
@@ -39,6 +46,7 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 		FRotator AimRotation;
 	FOnShotDelegate OnShotDelegate;
+	FOnShotDelegate OnFireMeteorDelegate;
 	float TotalTimeForMeteor = 0.7f;
 	float CurrentTimeForMeteor = 0.f;
 	FRotator StartRotator;

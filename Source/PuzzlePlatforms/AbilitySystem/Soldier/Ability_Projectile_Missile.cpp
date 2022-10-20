@@ -29,6 +29,7 @@ void AAbility_Projectile_Missile::BeginPlay()
 	{
 
 		SoldierRef = Cast<ASoldier>(PlayerRef);
+		SoldierRef->Direction = 0;
 		SoldierRef->ShowPath = true;
 		//SoldierRef->SetUsingSkill(true);
 		SoldierRef->GridSphere->SetVisibility(true, true);
