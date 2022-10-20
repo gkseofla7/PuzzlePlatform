@@ -16,16 +16,36 @@ class PUZZLEPLATFORMS_API UIggyScorchAnimInstance : public UAnimInstance
 	GENERATED_BODY()
 public:
 	UIggyScorchAnimInstance();
-	void UpdateAnimation(float DeltaSeconds, bool bNeedsValidRootMotion, EUpdateAnimationFlag UpdateFlag);
+	
 	void PlayAttackMontage();
+	void PlayFireBlastMontage();
+	void PlayMateorMontage();
+	void 	NativeUpdateAnimation(float DeltaSeconds);
 	UFUNCTION()
 	void AnimNotify_Shot();
+	UFUNCTION()
+		void AnimNotify_FireStart();
+	UFUNCTION()
+		void AnimNotify_FireEnd();
 public:
 	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly, Category = Attack)
 		UAnimMontage* AttackMontage;
-
+	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly, Category = Attack)
+		UAnimMontage* FireBlastMontage;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 		float Speed;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+		bool FullBody = true;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+		FRotator AimRotation;
 	FOnShotDelegate OnShotDelegate;
+	float TotalTimeForMeteor = 0.7f;
+	float CurrentTimeForMeteor = 0.f;
+	FRotator StartRotator;
+	FRotator EndRotator;
+
+	bool bMateor = false;
+	bool bMateorStart = false;
+
 	
 };

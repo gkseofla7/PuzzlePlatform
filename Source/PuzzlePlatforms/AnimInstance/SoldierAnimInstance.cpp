@@ -40,7 +40,6 @@ void USoldierAnimInstance::NativeUpdateAnimation(float DeltaSeconds)
 		IsReloading = Player->IsReloading;
 
 
-		CalculateDirection(Player->GetVelocity(), Player->GetActorRotation());
 		CurrenPawnSpeed = Player->GetVelocity().Size();
 		Direction = CalculateDirection(Player->GetVelocity(), Player->GetActorRotation());
 		if ((Player->IsLocallyControlled() && Player->IsPlayerControlled())||(Player->HasAuthority()&&Player->IsPlayerControlled()))

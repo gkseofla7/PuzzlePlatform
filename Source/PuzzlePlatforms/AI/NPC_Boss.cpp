@@ -11,8 +11,14 @@
 #include "BehaviorTree/BlackboardData.h"
 #include "BehaviorTree/BlackboardComponent.h"
 #include "Kismet/KismetMathLibrary.h"
+#include "Particles/ParticleSystemComponent.h"
 ANPC_Boss::ANPC_Boss()
 {
+	static ConstructorHelpers::FObjectFinder<USkeletalMesh>MeshAsset(TEXT("/Game/ParagonIggyScorch/Characters/Heroes/IggyScorch/Meshes/IggyScorch"));
+	USkeletalMesh* Asset = MeshAsset.Object;
+	GetMesh()->SetSkeletalMesh(Asset);
+	ParticleComponent = CreateDefaultSubobject<UParticleSystemComponent>(TEXT("ParticleComponent"));
+	ParticleComponent->SetupAttachment(GetMesh(),"FX_FlameBreath");
 	static ConstructorHelpers::FClassFinder<UAnimInstance> NPC_ANIM((TEXT("/Game/Animation/IggyScorch/IggyScorch_AnimBP")));
 	if (NPC_ANIM.Succeeded())
 	{
@@ -79,11 +85,20 @@ void ANPC_Boss::Shot()
 	}
 }
 
-
-void ANPC_Boss::FireBlast()
+void ANPC_Boss::ActivateParticle(bool NewActivate)
 {
+	if (NewActivate == true)
+	{
+		ParticleComponent->Activate(true);
+	}
+	else
+	{
+		ParticleComponent->Deactivate();
+	}
 
 }
+
+
 
 float ANPC_Boss::TakeDamage(float DamageAmount, struct FDamageEvent const& DamageEvent,
 	class AController* EventInstigator, AActor* DamageCauser)
@@ -98,7 +113,10 @@ void ANPC_Boss::Attack()
 
 void ANPC_Boss::NetMulticast_Attack_Implementation()
 {
-	MyAnim->PlayAttackMontage();
+	//¿©±â¼­ È®·ü
+	//MyAnim->PlayFireBlastMontage();
+	MyAnim->PlayMateorMontage();
+	//MyAnim->PlayAttackMontage();
 }
 
 bool ANPC_Boss::NetMulticast_Attack_Validate()
@@ -118,8 +136,10 @@ void ANPC_Boss::ChangeOriginalColor()
 
 void ANPC_Boss::EndAnimation(UAnimMontage* Montage, bool bInterrupted)
 {
-	if (Montage == MyAnim->AttackMontage)
+	MyAnim->bMateor = false;
+	if (Montage == MyAnim->AttackMontage || Montage == MyAnim->FireBlastMontage)
 	{
+		MyAnim->FullBody = true;
 		OnAttackEnd.Broadcast();
 	}
 

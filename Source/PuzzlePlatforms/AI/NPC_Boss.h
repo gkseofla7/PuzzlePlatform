@@ -28,7 +28,7 @@ public:
 	virtual void ChangeDamageColor() override;
 	void ChangeOriginalColor();
 	void Shot();
-	void FireBlast();
+	void ActivateParticle(bool NewActivate);
 	UPROPERTY()
 	class UIggyScorchAnimInstance* MyAnim;
 
@@ -37,4 +37,6 @@ public:
 	UMaterialInterface* GoblinMaterial = nullptr;
 	UPROPERTY()
 	TSubclassOf<class AScorchBomb> ScorchBombClass;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+		class UParticleSystemComponent* ParticleComponent;
 };
