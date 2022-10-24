@@ -100,6 +100,7 @@ void UIggyScorchAnimInstance::AnimNotify_FireStart()
 	if (BossRef->HasAuthority())
 	{
 		BossRef->ActivateParticle(true);
+		BossRef->StartFireBlast();
 	}
 }
 
@@ -111,10 +112,16 @@ void UIggyScorchAnimInstance::AnimNotify_FireEnd()
 	if (BossRef->HasAuthority())
 	{
 		BossRef->ActivateParticle(false);
+		BossRef->EndFireBlast();
 	}
 }
 
 void UIggyScorchAnimInstance::AnimNotify_FireMeteor()
 {
 	OnFireMeteorDelegate.Broadcast();
+}
+
+void UIggyScorchAnimInstance::AnimNotify_MeteorRandom()
+{
+	OnFireRandomMeteorDelegate.Broadcast();
 }

@@ -15,7 +15,7 @@ class PUZZLEPLATFORMS_API ANPCBossAIController : public ANPCAIController
 	GENERATED_BODY()
 public:
 	ANPCBossAIController();
-
+	void SetStopMovingKey(bool NewStopMovingKey);
 public:
-
+	static const FName StopMovingKey;
 };

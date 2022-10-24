@@ -22,13 +22,19 @@ public:
 	
 	virtual void Attack();
 	UFUNCTION(NetMulticast, Reliable, WithValidation)
-		void NetMulticast_Attack();
+		void NetMulticast_Attack(float RandomValue);
 	UFUNCTION()
 		virtual void EndAnimation(UAnimMontage* Montage, bool bInterrupted);
 	virtual void ChangeDamageColor() override;
 	void ChangeOriginalColor();
 	void Shot();
-	void Meteor();
+	void MeteorTarget();
+	void Meteor(FVector MeteorLocationLocation);
+	void StartFireBlast();
+	void EndFireBlast();
+	void FireBlast();
+
+	void MeteorRandom();
 	void ActivateParticle(bool NewActivate);
 	UPROPERTY()
 	class UIggyScorchAnimInstance* MyAnim;
@@ -40,6 +46,13 @@ public:
 	TSubclassOf<class AScorchBomb> ScorchBombClass;
 	UPROPERTY()
 	TSubclassOf<class AMeteor> MeteorClass;
+	UPROPERTY()
+	TSubclassOf<class AMeteor_Target> MeteorTargetClass;
+	FTimerHandle FireBlastTimer;
+
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 		class UParticleSystemComponent* ParticleComponent;
+
+	UPROPERTY()
+	TSubclassOf<class AAbility>  Ability_Buff_Fire_Class;
 };

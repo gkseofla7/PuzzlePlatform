@@ -7,13 +7,18 @@
 #include "../Character_Master.h"
 #include "../Weapons/ScorchBomb.h"
 #include "../Weapons/Meteor.h"
+#include "../Weapons/Meteor_Target.h"
+#include "Kismet/KismetMathLibrary.h"
+#include "../AbilitySystem/Ability.h"
 
 #include "IggyScorchAnimInstance.h"
 #include "BehaviorTree/BlackboardData.h"
 #include "BehaviorTree/BlackboardComponent.h"
 #include "Kismet/KismetMathLibrary.h"
 #include "Particles/ParticleSystemComponent.h"
+#include "Components/DecalComponent.h"
 #include "GameFramework/ProjectileMovementComponent.h"
+
 ANPC_Boss::ANPC_Boss()
 {
 	static ConstructorHelpers::FObjectFinder<USkeletalMesh>MeshAsset(TEXT("/Game/ParagonIggyScorch/Characters/Heroes/IggyScorch/Meshes/IggyScorch"));
@@ -34,6 +39,16 @@ ANPC_Boss::ANPC_Boss()
 	ConstructorHelpers::FClassFinder<AMeteor> MeteorBPClass(TEXT("/Game/Weapons/Projectiles/BP_Meteor"));
 	if (!ensure(MeteorBPClass.Class != nullptr)) return;
 	MeteorClass = MeteorBPClass.Class;
+
+	static ConstructorHelpers::FClassFinder<AAbility> Ability_Buff_Fire_BPClass(TEXT("/Game/AbilitySystem/Buff/BP_Ability_Buff_Fire"));
+	if (Ability_Buff_Fire_BPClass.Succeeded())
+	{
+		Ability_Buff_Fire_Class = Ability_Buff_Fire_BPClass.Class;
+
+		//EquippedItem->Get
+	}
+
+
 }
 
 void ANPC_Boss::BeginPlay()
@@ -47,7 +62,8 @@ void ANPC_Boss::BeginPlay()
 		MyAnim->OnMontageEnded.AddDynamic(this, &ANPC_Boss::EndAnimation);
 		
 		MyAnim->OnShotDelegate.AddUObject(this, &ANPC_Boss::Shot);
-		MyAnim->OnFireMeteorDelegate.AddUObject(this, &ANPC_Boss::Meteor);
+		MyAnim->OnFireMeteorDelegate.AddUObject(this, &ANPC_Boss::MeteorTarget);
+		MyAnim->OnFireRandomMeteorDelegate.AddUObject(this, &ANPC_Boss::MeteorRandom);
 
 	}
 
@@ -74,6 +90,8 @@ void ANPC_Boss::Tick(float DeltaTime)
 void ANPC_Boss::Shot()
 {
 	UE_LOG(LogTemp, Warning, TEXT("Shot"));
+	if (HasAuthority() != true)
+		return;
 	if (Target != nullptr)
 	{
 		//Multicast_SetMuzzleRotation();
@@ -93,52 +111,81 @@ void ANPC_Boss::Shot()
 	}
 }
 
-void ANPC_Boss::Meteor()
+void ANPC_Boss::MeteorRandom()
 {
-	int n = 5;//총 5번만~
-	float t = 5.f;
-	float g = -9.81f;//m/s기준이니
+	if (HasAuthority() != true)
+		return;
+	FVector RandomLocation = Target->GetActorLocation();
+	UKismetMathLibrary::RandomInteger(150);
+	RandomLocation.X += UKismetMathLibrary::RandomInteger(300)-150.;
+	RandomLocation.Y += UKismetMathLibrary::RandomInteger(300) - 150.;
+	RandomLocation.Z -= 90.f;
+
+	Meteor(RandomLocation);
+}
+
+void ANPC_Boss::MeteorTarget()
+{
+	if (HasAuthority() != true)
+		return;
+	FVector TargetLocation = Target->GetActorLocation();
+	TargetLocation.Z -= 90.f;
+	Meteor(TargetLocation);
+}
+
+void ANPC_Boss::Meteor(FVector MeteorLocation)
+{
+	float t = 3.f;
+	float g = 9.81f;//m/s기준이니
 	g = g * 100;//cm/s 로 바꿔줌
 	FVector StartLocation = GetMesh()->GetSocketLocation("FX_FlameBreath");
 	//TArray<AActor*> Players;
 
-	TArray<TEnumAsByte<EObjectTypeQuery> > ObjectTypes;//
-	UClass* ActorClassFilter = AActor::StaticClass();
-	TArray<AActor*> ActorsToIgnore;// TArray<AActor*>& OutActors)
-	ObjectTypes.Add(EObjectTypeQuery::ObjectTypeQuery7);//아마 이게 Character
-	ObjectTypes.Add(EObjectTypeQuery::ObjectTypeQuery3);//아마 이게 Pawn
-	TArray<AActor*> OutActors;
-	UKismetSystemLibrary::SphereOverlapActors(GetWorld(), GetActorLocation(), 1000., ObjectTypes, ActorClassFilter, ActorsToIgnore, OutActors);
-	UE_LOG(LogTemp, Warning, TEXT("OverlapActors : %d"), OutActors.Num());
-	for (int i = 0; i < OutActors.Num(); i++)
+	float Vx = (MeteorLocation.X - StartLocation.X) / t;
+	float Vy = (MeteorLocation.Y - StartLocation.Y) / t;
+	float Vz = (MeteorLocation.Z - StartLocation.Z + g * t * t / 2) / t;
+	FVector MeteorVelocity = FVector(Vx, Vy, Vz);
+
+	//Meteor(MeteorVelocity, MeteorLocation);
+	FTransform MeteorTransform;
+	FActorSpawnParameters SpawnInfo;
+	SpawnInfo.Owner = Cast<AActor>(this);
+	MeteorTransform.SetLocation(GetMesh()->GetSocketTransform("FX_FlameBreath").GetLocation());
+	MeteorTransform.SetRotation(GetMesh()->GetSocketTransform("FX_FlameBreath").GetRotation());
+	FTransform MeteorTargetTransform;
+
+	//ArrowTransform.SetScale3D(BulletScale);
+	AActor* Meteor = GetWorld()->SpawnActor<AMeteor>(MeteorClass, MeteorTransform, SpawnInfo);
+
+	if (Meteor == nullptr)
 	{
-		if (Cast<ACharacter_Master>(OutActors[i]) == nullptr)
-			continue;
-		float Vx = (OutActors[i]->GetActorLocation().X - StartLocation.X) / t;
-		float Vy = (OutActors[i]->GetActorLocation().Y - StartLocation.Y) / t;
-		float Vz = (OutActors[i]->GetActorLocation().Z - StartLocation.Z - g * t * t) / t;
-		UE_LOG(LogTemp, Warning, TEXT("Velocity : %f, %f, %f"), Vx, Vy, Vz);
-		FVector MeteorVelocity = FVector(Vx, Vy, Vz);
-
-		FTransform MeteorTransform;
-		FActorSpawnParameters SpawnInfo;
-		SpawnInfo.Owner = Cast<AActor>(this);
-		MeteorTransform.SetLocation(GetMesh()->GetSocketTransform("FX_FlameBreath").GetLocation());
-
-		auto DirRot = UKismetMathLibrary::MakeRotFromX(MeteorVelocity);
-		MeteorTransform.SetRotation(GetMesh()->GetSocketTransform("FX_FlameBreath").GetRotation());
-
-		//ArrowTransform.SetScale3D(BulletScale);
-		AActor* Meteor = GetWorld()->SpawnActor<AMeteor>(MeteorClass, MeteorTransform, SpawnInfo);
-		if (Meteor == nullptr)
-		{
-			UE_LOG(LogTemp, Warning, TEXT("Meteor Nullptr"));
-			return;
-		}
-		AMeteor* MyMeteor = Cast<AMeteor>(Meteor);
-		MyMeteor->ProjectileComponent->Velocity = MeteorVelocity;
+		UE_LOG(LogTemp, Warning, TEXT("Meteor Nullptr"));
+		return;
 	}
+	AMeteor* MyMeteor = Cast<AMeteor>(Meteor);
+	MyMeteor->ProjectileComponent->Velocity = MeteorVelocity;
+	MyMeteor->DecalComponent->SetWorldLocation(MeteorLocation);
+
+	//TArray<TEnumAsByte<EObjectTypeQuery> > ObjectTypes;//
+	//UClass* ActorClassFilter = AActor::StaticClass();
+	//TArray<AActor*> ActorsToIgnore;// TArray<AActor*>& OutActors)
+	//ObjectTypes.Add(EObjectTypeQuery::ObjectTypeQuery7);//아마 이게 Character
+	//ObjectTypes.Add(EObjectTypeQuery::ObjectTypeQuery3);//아마 이게 Pawn
+	//TArray<AActor*> OutActors;
+	//UKismetSystemLibrary::SphereOverlapActors(GetWorld(), GetActorLocation(), 1000., ObjectTypes, ActorClassFilter, ActorsToIgnore, OutActors);
+	//UE_LOG(LogTemp, Warning, TEXT("OverlapActors : %d"), OutActors.Num());
+	//for (int i = 0; i < OutActors.Num(); i++)
+	//{
+	//	if (Cast<ACharacter_Master>(OutActors[i]) == nullptr)
+	//		continue;
+
+
+	//}
 }
+
+
+
+
 
 void ANPC_Boss::ActivateParticle(bool NewActivate)
 {
@@ -163,18 +210,83 @@ float ANPC_Boss::TakeDamage(float DamageAmount, struct FDamageEvent const& Damag
 
 void ANPC_Boss::Attack()
 {
-	NetMulticast_Attack();
+	float RandomValue =UKismetMathLibrary::RandomFloatInRange(0.f, 1.f);
+	UE_LOG(LogTemp, Warning, TEXT("RandomValue : %f"), RandomValue);
+	NetMulticast_Attack(RandomValue);
 }
 
-void ANPC_Boss::NetMulticast_Attack_Implementation()
+void ANPC_Boss::NetMulticast_Attack_Implementation(float RandomValue)
 {
 	//여기서 확률
-	//MyAnim->PlayFireBlastMontage();
-	MyAnim->PlayMateorMontage();
-	//MyAnim->PlayAttackMontage();
+	if (RandomValue < .75f)//일반공격
+	{
+		MyAnim->PlayAttackMontage();
+	}
+	else if (RandomValue < .9f)
+	{
+		MyAnim->PlayFireBlastMontage();
+	}
+	else
+	{
+		if (HasAuthority())
+		{
+			auto MyController = Cast< ANPCBossAIController>(GetController());
+			MyController->SetStopMovingKey(true);
+		}
+		MyAnim->PlayMateorMontage();
+	}
+
+
 }
 
-bool ANPC_Boss::NetMulticast_Attack_Validate()
+void ANPC_Boss::StartFireBlast()
+{
+	UE_LOG(LogTemp, Warning, TEXT("FireBlast!"));
+	GetWorld()->GetTimerManager().SetTimer(FireBlastTimer, this, &ANPC_Boss::FireBlast, .5, true);
+}
+void ANPC_Boss::EndFireBlast()
+{
+	UE_LOG(LogTemp, Warning, TEXT("EndFireBlast!"));
+	GetWorld()->GetTimerManager().ClearTimer(FireBlastTimer);
+}
+void ANPC_Boss::FireBlast()
+{
+	FHitResult HitResult;
+	FCollisionQueryParams Params(NAME_None, false, this);
+
+	float lAttackRange = 200.f;
+	float AttackRadius = 100.f;
+	TArray< struct FHitResult > OutHits;
+
+	bool bResult = GetWorld()->SweepMultiByChannel(
+		OutHits,
+		GetActorLocation(),
+		GetActorLocation() + GetActorForwardVector() * lAttackRange,
+		FQuat::Identity,
+		ECollisionChannel::ECC_GameTraceChannel2,
+		FCollisionShape::MakeSphere(AttackRadius),
+		Params);
+
+	if (bResult )
+	{
+		for (int i = 0; i < OutHits.Num(); i++)
+		{
+			auto Player = Cast<ACharacter_Master>(OutHits[i].Actor);
+			if (Player != nullptr)
+			{
+
+				FDamageEvent DamageEvent;
+				Player->TakeDamage(5.f, DamageEvent, nullptr, this);//계속 영향주게해야됨
+				Player->ReplicateComponent->AbilitySpawn(Ability_Buff_Fire_Class);
+			}
+		
+
+		}
+		
+	}
+}
+
+bool ANPC_Boss::NetMulticast_Attack_Validate(float RandomValue)
 {
 	return true;
 }
@@ -196,6 +308,14 @@ void ANPC_Boss::EndAnimation(UAnimMontage* Montage, bool bInterrupted)
 	{
 		MyAnim->FullBody = true;
 		OnAttackEnd.Broadcast();
+	}
+	if (Montage == MyAnim->MeteorMontage)
+	{
+		if (HasAuthority())
+		{
+			auto MyController = Cast< ANPCBossAIController>(GetController());
+			MyController->SetStopMovingKey(false);
+		}
 	}
 
 

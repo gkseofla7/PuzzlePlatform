@@ -31,6 +31,8 @@ public:
 	UFUNCTION()
 		void AnimNotify_FireMeteor();
 	UFUNCTION()
+		void AnimNotify_MeteorRandom();
+	UFUNCTION()
 		void AnimNotify_DownCheck();
 public:
 	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly, Category = Attack)
@@ -47,6 +49,7 @@ public:
 		FRotator AimRotation;
 	FOnShotDelegate OnShotDelegate;
 	FOnShotDelegate OnFireMeteorDelegate;
+	FOnShotDelegate OnFireRandomMeteorDelegate;
 	float TotalTimeForMeteor = 0.7f;
 	float CurrentTimeForMeteor = 0.f;
 	FRotator StartRotator;

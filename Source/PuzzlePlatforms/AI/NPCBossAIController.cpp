@@ -6,7 +6,7 @@
 #include "BehaviorTree/BehaviorTree.h"
 #include "BehaviorTree/BlackboardData.h"
 #include "BehaviorTree/BlackboardComponent.h"
-
+const FName ANPCBossAIController::StopMovingKey(TEXT("StopMoving"));
 ANPCBossAIController::ANPCBossAIController()
 {
 	static ConstructorHelpers::FObjectFinder<UBlackboardData> BBObject(TEXT("/Game/AI/BossNPC/BB_BossNPC"));
@@ -20,4 +20,9 @@ ANPCBossAIController::ANPCBossAIController()
 	{
 		BTAsset = BTObject.Object;
 	}
+}
+
+void ANPCBossAIController::SetStopMovingKey(bool NewStopMovingKey)
+{
+	GetBlackboardComponent()->SetValueAsBool(ANPCBossAIController::StopMovingKey, NewStopMovingKey);
 }
