@@ -26,6 +26,10 @@ public:
 		void OnOverlapBegin(class UPrimitiveComponent* OverlappedComp, class AActor* OtherActor, class UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
 	UFUNCTION(NetMulticast, Reliable, WithValidation)
 	void NetMulticast_Spark(FVector Location);
+	UFUNCTION(NetMulticast, Reliable, WithValidation)
+		void NetMulticast_SetSpeed(FVector NewVelocity);
+	UFUNCTION(NetMulticast, Reliable, WithValidation)
+		void NetMulticast_SetDecalLocation(FVector NewLocation);
 	void ActiveDecal();
 public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)

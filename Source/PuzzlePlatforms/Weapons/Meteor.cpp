@@ -110,3 +110,21 @@ bool AMeteor::NetMulticast_Spark_Validate(FVector Location)
 {
 	return true;
 }
+
+
+void AMeteor::NetMulticast_SetSpeed_Implementation(FVector NewVelocity)
+{
+	ProjectileComponent->Velocity = NewVelocity;
+}
+bool AMeteor::NetMulticast_SetSpeed_Validate(FVector NewVelocity)
+{
+	return true;
+}
+void AMeteor::NetMulticast_SetDecalLocation_Implementation(FVector NewLocation)
+{
+	DecalComponent->SetWorldLocation(NewLocation);
+}
+bool AMeteor::NetMulticast_SetDecalLocation_Validate(FVector NewLocation)
+{
+	return true;
+}

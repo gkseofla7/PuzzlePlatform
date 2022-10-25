@@ -89,7 +89,6 @@ void ANPC_Boss::Tick(float DeltaTime)
 
 void ANPC_Boss::Shot()
 {
-	UE_LOG(LogTemp, Warning, TEXT("Shot"));
 	if (HasAuthority() != true)
 		return;
 	if (Target != nullptr)
@@ -107,7 +106,6 @@ void ANPC_Boss::Shot()
 
 		//ArrowTransform.SetScale3D(BulletScale);
 		GetWorld()->SpawnActor<AScorchBomb>(ScorchBombClass, BombTransform,SpawnInfo );
-
 	}
 }
 
@@ -157,14 +155,9 @@ void ANPC_Boss::Meteor(FVector MeteorLocation)
 	//ArrowTransform.SetScale3D(BulletScale);
 	AActor* Meteor = GetWorld()->SpawnActor<AMeteor>(MeteorClass, MeteorTransform, SpawnInfo);
 
-	if (Meteor == nullptr)
-	{
-		UE_LOG(LogTemp, Warning, TEXT("Meteor Nullptr"));
-		return;
-	}
 	AMeteor* MyMeteor = Cast<AMeteor>(Meteor);
-	MyMeteor->ProjectileComponent->Velocity = MeteorVelocity;
-	MyMeteor->DecalComponent->SetWorldLocation(MeteorLocation);
+	MyMeteor->NetMulticast_SetSpeed(MeteorVelocity);
+	MyMeteor->NetMulticast_SetDecalLocation(MeteorLocation);
 
 	//TArray<TEnumAsByte<EObjectTypeQuery> > ObjectTypes;//
 	//UClass* ActorClassFilter = AActor::StaticClass();
@@ -211,7 +204,6 @@ float ANPC_Boss::TakeDamage(float DamageAmount, struct FDamageEvent const& Damag
 void ANPC_Boss::Attack()
 {
 	float RandomValue =UKismetMathLibrary::RandomFloatInRange(0.f, 1.f);
-	UE_LOG(LogTemp, Warning, TEXT("RandomValue : %f"), RandomValue);
 	NetMulticast_Attack(RandomValue);
 }
 
@@ -255,7 +247,7 @@ void ANPC_Boss::FireBlast()
 	FCollisionQueryParams Params(NAME_None, false, this);
 
 	float lAttackRange = 200.f;
-	float AttackRadius = 100.f;
+	float AttackRadius = 200.f;
 	TArray< struct FHitResult > OutHits;
 
 	bool bResult = GetWorld()->SweepMultiByChannel(

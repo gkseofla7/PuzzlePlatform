@@ -97,9 +97,9 @@ void UIggyScorchAnimInstance::AnimNotify_FireStart()
 {
 	auto BossRef = Cast<ANPC_Boss>(GetOwningActor());
 	ABCHECK(BossRef != nullptr);
+	BossRef->ActivateParticle(true);
 	if (BossRef->HasAuthority())
 	{
-		BossRef->ActivateParticle(true);
 		BossRef->StartFireBlast();
 	}
 }
@@ -109,9 +109,9 @@ void UIggyScorchAnimInstance::AnimNotify_FireEnd()
 	auto BossRef = Cast<ANPC_Boss>(GetOwningActor());
 
 	ABCHECK(BossRef != nullptr);
+	BossRef->ActivateParticle(false);
 	if (BossRef->HasAuthority())
 	{
-		BossRef->ActivateParticle(false);
 		BossRef->EndFireBlast();
 	}
 }

@@ -23,6 +23,7 @@ public:
 	virtual void Attack();
 	UFUNCTION(NetMulticast, Reliable, WithValidation)
 		void NetMulticast_Attack(float RandomValue);
+
 	UFUNCTION()
 		virtual void EndAnimation(UAnimMontage* Montage, bool bInterrupted);
 	virtual void ChangeDamageColor() override;

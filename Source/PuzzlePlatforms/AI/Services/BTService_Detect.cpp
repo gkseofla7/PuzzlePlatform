@@ -38,7 +38,7 @@ void UBTService_Detect::TickNode(UBehaviorTreeComponent& OwnerComp, uint8* NodeM
 		ECollisionChannel::ECC_EngineTraceChannel2,
 		FCollisionShape::MakeSphere(DetectRadius),
 		CollisionQueryParam
-		);//channel objecttype profile
+		);//DetectRadius 여기서 설정
 
 
 
@@ -65,28 +65,27 @@ void UBTService_Detect::TickNode(UBehaviorTreeComponent& OwnerComp, uint8* NodeM
 				if (Current == Player)//일단 nullptr이 아닌건 위에서 확보
 				{
 					//아직 player가 범위 안에 있음
-					//UE_LOG(LogTemp, Warning, TEXT("Player is still in the Range"));
 					return;
 				}
 				if (Target == nullptr)//처음 걸린 애면
+				{
 					Target = Player;
-				auto Monster = Cast<ANPC_Master>(ControllingPawn);
-				Monster->NetMulticast_SetTarget(Target);
 
+				}
 
 				//DrawDebugSphere(World, Center, DetectRadius, 16, FColor::Green, false, 0.2f);
-
-				DrawDebugPoint(World, Player->GetActorLocation(), 10.f, FColor::Blue, false, 0.2f);
-				DrawDebugLine(World, ControllingPawn->GetActorLocation(),
-					Player->GetActorLocation(), FColor::Blue, false, 0.2f);
+				//DrawDebugPoint(World, Player->GetActorLocation(), 10.f, FColor::Blue, false, 0.2f);
+				//DrawDebugLine(World, ControllingPawn->GetActorLocation(),
+				//	Player->GetActorLocation(), FColor::Blue, false, 0.2f);
 				
 			}
 		}
 
 		if (Target != nullptr)
 		{
+			auto Monster = Cast<ANPC_Master>(ControllingPawn);
+			Monster->NetMulticast_SetTarget(Target);
 			OwnerComp.GetBlackboardComponent()->SetValueAsObject(ANPCAIController::TargetKey, Target);
-			//UE_LOG(LogTemp, Warning, TEXT("Go to the Before Player"));
 			return;
 		}
 		else
@@ -95,13 +94,6 @@ void UBTService_Detect::TickNode(UBehaviorTreeComponent& OwnerComp, uint8* NodeM
 		}
 
 	}
-
-	//DrawDebugSphere(World, Center, DetectRadius, 16, FColor::Red, false, 0.2f);
-
-
-	//UE_LOG(LogTemp, Warning, TEXT("Setting Nullptr"));
-	
-
 
 }
 
