@@ -2,7 +2,7 @@
 
 #pragma once
 
-#include "CoreMinimal.h"
+#include "../PuzzlePlatforms.h"
 #include "GameFramework/Character.h"
 #include "NPC_Master.generated.h"
 

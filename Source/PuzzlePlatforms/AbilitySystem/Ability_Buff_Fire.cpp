@@ -20,9 +20,9 @@ void AAbility_Buff_Fire::BeginPlay()
 
 void AAbility_Buff_Fire::TickBuff()
 {
+	Super::TickBuff();
 	if (HasAuthority())
 	{
-		UE_LOG(LogTemp,Warning, TEXT("Give Damage %f"), DamageAmount)
 		UGameplayStatics::ApplyDamage(PlayerRef, DamageAmount, PlayerRef->GetController(), this, UDamageType::StaticClass());
 	}
 }

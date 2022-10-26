@@ -15,14 +15,11 @@ void AAbility_Buff_Heal::BeginPlay()
 	Super::BeginPlay();
 	auto warrior = Cast<AWarrior>(PlayerRef);
 
-	//AsPlayerAnimInstance = Cast<UPlayerAnimInstance>(warrior->GetMesh()->GetAnimInstance());
-	//AsPlayerAnimInstance->OnActivateSpell.AddUObject(this, &AAbility_AoE::ActivateEffect);
-
-	//AsPlayerAnimInstance->PlayAoEAttackMontage();
 }
 
 void AAbility_Buff_Heal::TickBuff()
 {
+	Super::TickBuff();
 	auto MyStat = PlayerRef->CharacterStatRef;
 	MyStat->Server_SetHP(HealthUp + MyStat->CurrentHP);
 }

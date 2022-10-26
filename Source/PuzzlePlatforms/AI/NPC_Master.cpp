@@ -168,6 +168,7 @@ void ANPC_Master::GetHelpedFromOthers(ACharacter_Master* NewTarget)
 		for (auto const& OverlapResult : OverlapResults)//이미 존재하면 걔로 계속감
 		{
 			ANPCAIController* MyController = Cast<ANPCAIController>(GetController());
+			ABCHECK(MyController != nullptr);
 			auto Current = MyController->GetBlackboardComponent()->GetValueAsObject(ANPCAIController::TargetKey);
 			//bool same = false;
 			ANPC_Master* Monster = Cast< ANPC_Master>(OverlapResult.GetActor());//보스는 제외해야됨
@@ -272,6 +273,5 @@ void ANPC_Master::SpawnLoot(int Quantity)
 void ANPC_Master::DestroyMonster()
 {
 	Destroy();
-	HPBarWidget->DestroyComponent();
 }
 

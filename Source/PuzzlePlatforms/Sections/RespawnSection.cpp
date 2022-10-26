@@ -77,17 +77,16 @@ void ARespawnSection::OnOverlapBegin(class UPrimitiveComponent* OverlappedComp, 
 
 	UE_LOG(LogTemp, Warning, TEXT("OverlapBegin %s, %s %s"), *OverlappedComp->GetName(), *OtherActor->GetName(), *OtherComp->GetName());
 
-	if (HasAuthority() == true)
+	
+	auto Player = Cast<ACharacter_Master>(OtherActor);
+	if (Player != nullptr&& Player->IsLocallyControlled())
 	{
-		auto Player = Cast<ACharacter_Master>(OtherActor);
-		if (Player != nullptr)
+		if (Player->TeamNum == TeamNum)//¿ì¸®ÆÀÀÌ¸é
 		{
-			if (Player->TeamNum == TeamNum)//¿ì¸®ÆÀÀÌ¸é
-			{
-				Player->IsInRespawnSection = true;
-			}
+			Player->IsInRespawnSection = true;
 		}
 	}
+	
 }
 
 void ARespawnSection::OnOverlapEnd(class UPrimitiveComponent* OverlappedComp, class AActor* OtherActor, class UPrimitiveComponent* OtherComp, int32 OtherBodyIndex)
@@ -95,15 +94,14 @@ void ARespawnSection::OnOverlapEnd(class UPrimitiveComponent* OverlappedComp, cl
 
 	UE_LOG(LogTemp, Warning, TEXT("OverlapEnd %s, %s %s"), *OverlappedComp->GetName(), *OtherActor->GetName(), *OtherComp->GetName());
 
-	if (HasAuthority() == true)
+
+	auto Player = Cast<ACharacter_Master>(OtherActor);
+	if (Player != nullptr&& Player->IsLocallyControlled())
 	{
-		auto Player = Cast<ACharacter_Master>(OtherActor);
-		if (Player != nullptr)
+		if (Player->TeamNum == TeamNum)//¿ì¸®ÆÀÀÌ¸é
 		{
-			if (Player->TeamNum == TeamNum)//¿ì¸®ÆÀÀÌ¸é
-			{
-				Player->IsInRespawnSection = false;
-			}
+			Player->IsInRespawnSection = false;
 		}
 	}
+	
 }

@@ -14,14 +14,7 @@ void AAbility_Buff_Master::BeginPlay()
 	Super::BeginPlay();
 
 	bReplicates = true;
-	if (HasAuthority())
-	{
-		UE_LOG(LogTemp, Warning, TEXT("Server : Dash1"));
-	}
-	else
-	{
-		UE_LOG(LogTemp, Warning, TEXT("Client : Dash1"));
-	}
+
 	AbilityRoot->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 	ClearDuplicates();
 
@@ -67,7 +60,13 @@ void AAbility_Buff_Master::ClearBuff()
 
 void AAbility_Buff_Master::TickBuff()
 {
-
+	if (HasAuthority())
+	{
+		if (PlayerRef->bDead == true)
+		{
+			Destroy();
+		}
+	}
 }
 
 void AAbility_Buff_Master::ClearDuplicates()

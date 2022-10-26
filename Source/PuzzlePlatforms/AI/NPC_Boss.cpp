@@ -204,6 +204,8 @@ float ANPC_Boss::TakeDamage(float DamageAmount, struct FDamageEvent const& Damag
 void ANPC_Boss::Attack()
 {
 	float RandomValue =UKismetMathLibrary::RandomFloatInRange(0.f, 1.f);
+	UE_LOG(LogTemp, Warning, TEXT("Attack"));
+
 	NetMulticast_Attack(RandomValue);
 }
 
@@ -300,6 +302,7 @@ void ANPC_Boss::EndAnimation(UAnimMontage* Montage, bool bInterrupted)
 	{
 		MyAnim->FullBody = true;
 		OnAttackEnd.Broadcast();
+		UE_LOG(LogTemp, Warning, TEXT("End Animation "));
 	}
 	if (Montage == MyAnim->MeteorMontage)
 	{

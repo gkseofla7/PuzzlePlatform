@@ -58,6 +58,10 @@ void UBTService_Detect::TickNode(UBehaviorTreeComponent& OwnerComp, uint8* NodeM
 			//bool same = false;
 			ACharacter_Master* Player = Cast< ACharacter_Master>(OverlapResult.GetActor());
 			AController* Controller =nullptr;
+			if (Player!= nullptr&&Player->bDead == true)//이미 죽은 애면
+			{
+				continue;
+			}
 			if(Player)
 				Controller=Player->GetController();
 			if (Player && Controller&&Controller->IsPlayerController())

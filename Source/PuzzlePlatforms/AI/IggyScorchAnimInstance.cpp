@@ -56,19 +56,30 @@ void UIggyScorchAnimInstance::NativeUpdateAnimation(float DeltaSeconds)
 
 void UIggyScorchAnimInstance::PlayAttackMontage()
 {
+	if (Montage_IsPlaying(nullptr) == true)
+	{
+		return;
+	}
 	Montage_Play(AttackMontage, 1.0);
 	FullBody = false;
 }
 
 void UIggyScorchAnimInstance::PlayFireBlastMontage()
 {
-
+	if (Montage_IsPlaying(nullptr) == true)
+	{
+		return;
+	}
 	Montage_Play(FireBlastMontage, 1.0);
 	FullBody = false;
 }
 
 void UIggyScorchAnimInstance::PlayMateorMontage()
 {
+	if (Montage_IsPlaying(nullptr) == true)
+	{
+		return;
+	}
 	UE_LOG(LogTemp, Warning, TEXT("PlayMateor"));
 	Montage_Play(MeteorMontage, 1.0);
 	CurrentTimeForMeteor = 0;
