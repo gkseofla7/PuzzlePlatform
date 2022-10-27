@@ -65,6 +65,8 @@ public:
 	bool AnimationEnd = false;
 	bool NeedToDestroy = false;
 	int32 AbilityLevel = 0;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	int AbilityMaxLevel;
 
 
 };

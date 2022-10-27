@@ -26,5 +26,5 @@ private:
 	TWeakObjectPtr<class UTurretStatComponent> CurrentTurretStat;
 	TWeakObjectPtr<class UMonsterStatComponent> CurrentMonsterStat;
 	UPROPERTY()
-		class UProgressBar* HPProgressBar;
+	class UProgressBar* HPProgressBar;
 };

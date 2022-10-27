@@ -26,7 +26,7 @@ void ABulletMaster::BeginPlay()
 {
 	Super::BeginPlay();
 	Capsule->OnComponentBeginOverlap.AddDynamic(this, &ABulletMaster::OnOverlapBegin);
-
+	Shooter = Cast<ASoldier>(GetInstigator());
 	//Capsule->OnComponentHit.AddDynamic(this, &ABulletMaster::OnHit);
 	
 }
@@ -68,6 +68,7 @@ void ABulletMaster::OnOverlapBegin(class UPrimitiveComponent* OverlappedComp, cl
 
 	if (OtherActor == Shooter)
 		return;
+	//UE_LOG(LogTemp, Warning, TEXT("Attacking Actor : %s"), *Shooter->GetName());
 	if (OtherActor && (OtherActor != this) && OtherComp)
 	{
 		if (HasAuthority())

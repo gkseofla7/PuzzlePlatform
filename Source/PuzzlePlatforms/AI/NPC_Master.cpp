@@ -47,16 +47,16 @@ ANPC_Master::ANPC_Master()
 	AutoPossessAI = EAutoPossessAI::PlacedInWorldOrSpawned;
 	MonsterStat = CreateDefaultSubobject<UMonsterStatComponent>(TEXT("MonsterStat"));
 
-	HPBarWidget = CreateDefaultSubobject<UWidgetComponent>(TEXT("HPBarWidget"));
-	HPBarWidget->SetupAttachment(GetMesh());
+	HPWidget = CreateDefaultSubobject<UWidgetComponent>(TEXT("MonsterHPWidget"));
+	HPWidget->SetupAttachment(GetMesh());
 
-	HPBarWidget->SetRelativeLocation(FVector(0.f, 0.f, 180.f));
-	HPBarWidget->SetWidgetSpace(EWidgetSpace::World);
-	static ConstructorHelpers::FClassFinder<UUserWidget> UI_HUD(TEXT("/Game/PuzzlePlatforms/Widget/WBP_HPBar"));
-	if (UI_HUD.Succeeded())
+	HPWidget->SetRelativeLocation(FVector(0.f, 0.f, 180.f));
+	HPWidget->SetWidgetSpace(EWidgetSpace::World);
+	static ConstructorHelpers::FClassFinder<UUserWidget> UI_HPHUD(TEXT("/Game/PuzzlePlatforms/Widget/WBP_HPBar_2"));
+	if (UI_HPHUD.Succeeded())
 	{
-		HPBarWidget->SetWidgetClass(UI_HUD.Class);
-		HPBarWidget->SetDrawSize(FVector2D(150.f, 50.f));
+		HPWidget->SetWidgetClass(UI_HPHUD.Class);
+		HPWidget->SetDrawSize(FVector2D(150.f, 50.f));
 	}
 
 	static ConstructorHelpers::FObjectFinder<UParticleSystem> ParticleAsset(TEXT("/Game/InfinityBladeEffects/Effects/FX_Mobile/Fire/combat/P_FireBall_Powerup"));
@@ -65,18 +65,23 @@ ANPC_Master::ANPC_Master()
 		ParticleTemplate = ParticleAsset.Object;
 	}
 }
-
+void ANPC_Master::PostInitializeComponents()
+{
+	Super::PostInitializeComponents();
+	HPWidget->InitWidget();
+	auto MonsterWidget = Cast< UHPBarWidget>(HPWidget->GetUserWidgetObject());
+	if (nullptr != MonsterWidget)
+	{
+		MonsterWidget->BindMonsterStat(MonsterStat);
+	}
+}
 
 // Called when the game starts or when spawned
 void ANPC_Master::BeginPlay()
 {
 	Super::BeginPlay();
 
-	auto MonsterWidget = Cast< UHPBarWidget>(HPBarWidget->GetUserWidgetObject());
-	if (nullptr != MonsterWidget)
-	{
-		MonsterWidget->BindMonsterStat(MonsterStat);
-	}
+
 
 }
 
@@ -92,7 +97,7 @@ void ANPC_Master::Tick(float DeltaTime)
 		return;
 	auto Dir = PlayerController->GetPawn()->GetActorLocation() - GetActorLocation();
 	auto DirRot = UKismetMathLibrary::MakeRotFromX(Dir);
-	HPBarWidget->SetWorldRotation(DirRot);
+	HPWidget->SetWorldRotation(DirRot);
 
 	
 
@@ -241,6 +246,7 @@ void ANPC_Master::Destroyed()
 {
 	if (HasAuthority())
 	{
+		UE_LOG(LogTemp, Warning, TEXT("Destroyed"));
 		auto MyPlayer = Cast<ACharacter_Master>(AttackedPlayer);
 		if (MyPlayer != nullptr)
 		{

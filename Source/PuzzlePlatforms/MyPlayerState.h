@@ -32,7 +32,7 @@ public:
 		void Server_SetSkillPoints(int NewSkillPoint);
 	UFUNCTION(NetMulticast, Reliable, WithValidation)
 		void NetMulticast_SetSkillPoints(int NewSkillPoint);
-
+	//void SetMaxLevel();
 
 
 public:
@@ -42,6 +42,8 @@ public:
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
 		TArray<int> SpellsUpgrade;
+	UPROPERTY(BlueprintReadWrite, EditAnywhere)
+		TArray<int> SpellsMaxUpgrade;
 	int SkillPoints = 5;
 
 

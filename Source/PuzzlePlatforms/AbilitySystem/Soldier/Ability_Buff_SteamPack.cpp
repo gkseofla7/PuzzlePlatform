@@ -57,4 +57,5 @@ void AAbility_Buff_SteamPack::SetAbilityLevel()
 			AbilityLevel = Cast< AMyPlayerState>(PlayerRef->GetPlayerState())->SpellsUpgrade[i];
 		}
 	}
+
 }

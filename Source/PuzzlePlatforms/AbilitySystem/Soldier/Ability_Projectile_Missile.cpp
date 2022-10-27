@@ -143,4 +143,25 @@ void AAbility_Projectile_Missile::SetAbilityLevel()
 			AbilityLevel = Cast< AMyPlayerState>(PlayerRef->GetPlayerState())->SpellsUpgrade[i];
 		}
 	}
+
+	if (AbilityLevel == 1)
+	{
+		DamageAmount = 30.;//0.5초당 2
+	}
+	else if (AbilityLevel == 2)
+	{
+		DamageAmount = 50;
+	}
+	else if (AbilityLevel == 3)
+	{
+		DamageAmount = 100;
+	}
+	else if (AbilityLevel == 4)
+	{
+		DamageAmount = 150;
+	}
+	else if (AbilityLevel == 5)//5를 맥스로
+	{
+		DamageAmount = 250;
+	}
 }

@@ -7,6 +7,7 @@
 #include "../ActorAbilities.h"
 #include "SpellbookSlot_UI.h"
 #include "../../MyPlayerState.h"
+#include "../Ability.h"
 
 #include "Kismet/GameplayStatics.h"
 #include "Components/ScrollBox.h"

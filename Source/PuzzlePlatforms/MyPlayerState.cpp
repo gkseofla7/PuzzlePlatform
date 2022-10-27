@@ -7,6 +7,8 @@
 #include "DataTable/MyPlayerData.h"
 #include "MyPlayerController.h"
 #include "MyLobbyGameMode.h"
+#include "AbilitySystem/ActorAbilities.h"
+#include "AbilitySystem/Ability.h"
 
 AMyPlayerState::AMyPlayerState()
 {
@@ -41,6 +43,22 @@ void AMyPlayerState::BeginPlay()//어차피 각각 자기꺼 시킴
 
 }
 
+//void AMyPlayerState::SetMaxLevel()
+//{
+//	if (SpellsMaxUpgrade.Num() != 0)
+//		return;
+//	auto MyCharacter = Cast<ACharacter_Master>(GetPawn());
+//	if(MyCharacter!=nullptr)
+//	{
+//		TArray<TSubclassOf<AAbility>> Spells = MyCharacter->ActorAbilitiesComponent->PlayerSpells;
+//		for (int i = 0; i < Spells.Num(); i++)
+//		{
+//			auto ability = Cast<AAbility>(Spells[i]->GetDefaultObject());
+//			SpellsMaxUpgrade.Add(ability->AbilityMaxLevel);
+//
+//		}
+//	}
+//}
 
 
 

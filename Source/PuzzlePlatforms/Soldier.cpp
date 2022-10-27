@@ -582,6 +582,7 @@ void ASoldier::Die()
 
 void ASoldier::PlayersDied()
 {
+
 	GetMesh()->SetCollisionEnabled(ECollisionEnabled::PhysicsOnly);
 	GetMesh()->SetCollisionObjectType(ECollisionChannel::ECC_PhysicsBody);
 	//GetMesh()->SetSimulatePhysics(true);
@@ -598,9 +599,9 @@ void ASoldier::PlayersDied()
 	}
 	if (IsLocallyControlled())
 	{
+		HudWidget->RemoveFromViewport();//포인터는 알아서 지워지나..?
 		FTimerHandle TimerHandler;
 		GetWorld()->GetTimerManager().SetTimer(TimerHandler, this, &ASoldier::RespawnCharacter, 5, false);
-		
 	}
 }
 

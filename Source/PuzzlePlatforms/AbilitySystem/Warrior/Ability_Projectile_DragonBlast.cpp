@@ -158,4 +158,25 @@ void AAbility_Projectile_DragonBlast::SetAbilityLevel()
 			AbilityLevel = Cast< AMyPlayerState>(PlayerRef->GetPlayerState())->SpellsUpgrade[i];
 		}
 	}
+
+	if (AbilityLevel == 1)
+	{
+		DamageAmount = 40.;
+	}
+	else if (AbilityLevel == 2)
+	{
+		DamageAmount = 70;
+	}
+	else if (AbilityLevel == 3)
+	{
+		DamageAmount = 150;
+	}
+	else if (AbilityLevel == 4)
+	{
+		DamageAmount = 200;
+	}
+	else if (AbilityLevel == 5)//5¸¦ ¸Æ½º·Î
+	{
+		DamageAmount = 300;
+	}
 }

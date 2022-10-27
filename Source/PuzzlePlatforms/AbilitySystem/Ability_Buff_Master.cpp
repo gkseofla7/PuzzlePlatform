@@ -23,7 +23,7 @@ void AAbility_Buff_Master::BeginPlay()
 void AAbility_Buff_Master::Tick(float DeltaTime)
 {
 	TimeSpend += DeltaTime;
-	if (TimeSpend > 10.)
+	if (TimeSpend > 10.)//일단 모든 버프 10초로 고정했는데 나중 바꿀예정
 	{
 		Destroy();
 	}

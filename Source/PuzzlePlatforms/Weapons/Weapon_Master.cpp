@@ -126,16 +126,21 @@ void AWeapon_Master::Shot()
         BulletTransform.SetRotation(MuzzleRotation_.Quaternion());
         //BulletTransform.SetScale3D(BulletScale);
 
+        FActorSpawnParameters Params;
+        FActorSpawnParameters SpawnInfo;
 
-       ABulletMaster* bullet =  GetWorld()->SpawnActor<ABulletMaster>(BulletMasterClass, BulletTransform);
-       if (bullet != nullptr)
-       {
-           bullet->Shooter = Soldier;
-       }
-       else
-       {
-           UE_LOG(LogTemp, Warning, TEXT("nullptr"));
-       }
+        SpawnInfo.Owner = GetOwner();
+        SpawnInfo.Instigator = Cast<APawn>(Soldier);
+        auto bullet = GetWorld()->SpawnActor<ABulletMaster>(BulletMasterClass, BulletTransform, SpawnInfo);
+
+       //if (bullet != nullptr)
+       //{
+       //    bullet->Shooter = Soldier;
+       //}
+       //else
+       //{
+       //    UE_LOG(LogTemp, Warning, TEXT("Here nullptr"));
+       //}
        Multicast_SetClipAmmo(ClipAmmo - AmmoCost);//모든 애들 총알 관리함~
 
 

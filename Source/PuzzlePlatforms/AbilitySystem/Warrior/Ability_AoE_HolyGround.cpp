@@ -11,15 +11,13 @@
 
 AAbility_AoE_HolyGround::AAbility_AoE_HolyGround()
 {
-	DecalComponent = CreateDefaultSubobject<UDecalComponent>(TEXT("DECAL"));
-	DecalComponent->SetupAttachment(RootComponent);
+
 	
 }
 
 void AAbility_AoE_HolyGround::ActivateEffect_Implementation()
 {
 	Super::ActivateEffect_Implementation();
-	//DecalComponent->SetVisibility(true);
 	
 
 
@@ -46,32 +44,9 @@ void AAbility_AoE_HolyGround::ActivateEffect_Implementation()
 		}
 
 	}
-	SetLifeSpan(LifeSpan);
 
-
-//	FTimerHandle TimerHandler;
-	
-	//GetWorld()->GetTimerManager().SetTimer(TimerHandler, this, &AAbility_AoE_HolyGround::TickEffect, DoTTimer, true);
-//	GetWorldTimerManager().SetTimer(TimerHandler,1.,false);
-	//UKismetSystemLibrary::K2_SetTimerDelegate()
 }
 
-void AAbility_AoE_HolyGround::TickEffect()
-{
-	//¿©±â¼­ Èú
-	TArray<AActor*>OverlappingActors;
-
-	AbilityRoot->GetOverlappingActors(OverlappingActors, ACharacter_Master::StaticClass());
-
-	//if (HasAuthority())
-	//{
-	//	for (auto Actors : OverlappingActors)
-	//	{
-	//		UGameplayStatics::ApplyDamage(Actors, DamageAmount, PlayerRef->GetController(), PlayerRef, UDamageType::StaticClass());
-
-	//	}
-	//}
-}
 
 void AAbility_AoE_HolyGround::SetAbilityLevel()
 {
@@ -84,5 +59,25 @@ void AAbility_AoE_HolyGround::SetAbilityLevel()
 		{
 			AbilityLevel = Cast< AMyPlayerState>(PlayerRef->GetPlayerState())->SpellsUpgrade[i];
 		}
+	}
+	if (AbilityLevel == 1)
+	{
+		DamageAmount = 15.;
+	}
+	else if (AbilityLevel == 2)
+	{
+		DamageAmount = 40;
+	}
+	else if (AbilityLevel == 3)
+	{
+		DamageAmount = 80;
+	}
+	else if (AbilityLevel == 4)
+	{
+		DamageAmount = 140;
+	}
+	else if (AbilityLevel == 5)//5¸¦ ¸Æ½º·Î
+	{
+		DamageAmount = 200;
 	}
 }

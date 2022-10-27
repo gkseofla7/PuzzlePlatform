@@ -17,6 +17,6 @@ public:
 		AAbility_Buff_Heal();
 		virtual void BeginPlay() override;
 		virtual void TickBuff() override;
-
+		virtual void SetAbilityLevel();
 		float HealthUp = 2.;
 };

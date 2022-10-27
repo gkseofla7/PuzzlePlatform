@@ -50,11 +50,13 @@ void USpellbookSlot_UI::UpgradeSkill()
 	auto MyPlayerState = Cast<AMyPlayerState>(PlayerRef->GetPlayerState());
 	if (MyPlayerState->SkillPoints <= 0)//SkillPoint가 1이상일때만
 		return;
+	auto ability = AbilityClass.GetDefaultObject();
+	if (MyPlayerState->SpellsUpgrade[SlotNum] == ability->AbilityMaxLevel)//해당 스킬의 최대 업글 레벨인데 이건 바꿔줘야됨
+		return;
 
 	MyPlayerState->Server_SpellsUpgrade(SlotNum);//아 한발짝 느리구나..ㅋㅋ
 	//MyPlayerState->Server_SetSkillPoints(MyPlayerState->SkillPoints - 1);
 	DisableBar->SetPercent(0.);
-	UE_LOG(LogTemp, Warning, TEXT("Client :GetSpellsUpgrade %d"), MyPlayerState->SpellsUpgrade[SlotNum]);
 	
 
 }
@@ -68,6 +70,12 @@ void USpellbookSlot_UI::SetSkillPoint()//모든 UI가 실행됨
 	if (MyPlayerState == nullptr) return;
 
 	FString FS_Level = FString::Printf(TEXT("%d"), MyPlayerState->SpellsUpgrade[SlotNum]);
+
+	auto ability = AbilityClass.GetDefaultObject();
+	if (ability->AbilityMaxLevel == MyPlayerState->SpellsUpgrade[SlotNum])
+	{
+		FS_Level = FString::Printf(TEXT("Max"));
+	}
 	T_UpgradeNum->SetText(FText::FromString(FS_Level));
 
 	SpellbookRef->SetSkillPoints(MyPlayerState->SkillPoints);

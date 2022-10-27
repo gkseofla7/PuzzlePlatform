@@ -209,6 +209,25 @@ void AAbility_Projectile_Fireball::SetAbilityLevel()
 			AbilityLevel = Cast< AMyPlayerState>(PlayerRef->GetPlayerState())->SpellsUpgrade[i];
 		}
 	}
-
+	if (AbilityLevel == 1)
+	{
+		DamageAmount = 25.;
+	}
+	else if (AbilityLevel == 2)
+	{
+		DamageAmount = 50;
+	}
+	else if (AbilityLevel == 3)
+	{
+		DamageAmount = 75;
+	}
+	else if (AbilityLevel == 4)
+	{
+		DamageAmount = 120;
+	}
+	else if (AbilityLevel == 5)//5¸¦ ¸Æ½º·Î
+	{
+		DamageAmount = 150;
+	}
 
 }

@@ -16,7 +16,7 @@ class PUZZLEPLATFORMS_API ANPC_Master : public ACharacter
 public:
 	// Sets default values for this character's properties
 	ANPC_Master();
-
+	void PostInitializeComponents();
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
@@ -58,8 +58,8 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Stat)
 	class UMonsterStatComponent* MonsterStat;//약간 애들
-	UPROPERTY()
-	class UWidgetComponent* HPBarWidget;//이것도 겹침
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	class UWidgetComponent* HPWidget;//이것도 겹침
 	bool bDead = false;
 	UPROPERTY()
 	AActor * AttackedPlayer;

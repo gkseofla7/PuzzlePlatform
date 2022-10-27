@@ -17,11 +17,10 @@ public:
 	AAbility_AoE_HolyGround();
 	//virtual void CastAbility_Implementation() override;
 	virtual void ActivateEffect_Implementation() override;
-	void TickEffect();
+
 	virtual void SetAbilityLevel() override;
 public:
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	class UDecalComponent* DecalComponent;
+
 
 	float LifeSpan = 5;
 	float DoTTimer = 5;
