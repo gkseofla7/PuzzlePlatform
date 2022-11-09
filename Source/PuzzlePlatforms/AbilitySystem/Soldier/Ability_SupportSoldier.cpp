@@ -17,7 +17,7 @@ void AAbility_SupportSoldier::BeginPlay()
 {
 	Super::BeginPlay();
 
-	PlayerRef->SetUsingSkill(false);
+	PlayerRef->SetbUsingSkill(false);
 	if (HasAuthority())
 	{
 		SpawnSoldierBot();

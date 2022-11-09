@@ -23,7 +23,7 @@ public:
 	void SetTargetKey(class ACharacter_Master* PlayerTarget);
 	void SetHomePosKey(FVector NewPos);
 
-	void SetIsAttackingKey(bool NewIsAttackingKey);
+	void SetbIsAttackingKey(bool NewbIsAttackingKey);
 	void SetIsHitKeyTrue();
 
 	void PauseLogic();
@@ -53,7 +53,7 @@ public:
 	static const FName TargetLocationKey;
 	static const FName AttackRangeKey;
 	static const FName IsHitKey;
-	static const FName IsAttackingKey;
+	static const FName bIsAttackingKey;
 	static const FName IsAttackedKey;
 	int i = 0;
 

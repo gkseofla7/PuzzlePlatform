@@ -170,44 +170,44 @@ bool UCharacterMotionReplicator::NetMulticast_SetTargetPlayer_Validate(ACharacte
 
 
 
-void UCharacterMotionReplicator::Server_SetUsingSkill_Implementation(bool NewUsingSkill)
+void UCharacterMotionReplicator::Server_SetbUsingSkill_Implementation(bool NewbUsingSkill)
 {
-	NetMulticast_SetUsingSkill(NewUsingSkill);
+	NetMulticast_SetbUsingSkill(NewbUsingSkill);
 }
 
-void UCharacterMotionReplicator::NetMulticast_SetUsingSkill_Implementation(bool NewUsingSkill)
+void UCharacterMotionReplicator::NetMulticast_SetbUsingSkill_Implementation(bool NewbUsingSkill)
 {
-	PlayerRef->UsingSkill = NewUsingSkill;
-	PlayerRef->MyAnim->UsingSkill = NewUsingSkill;
+	PlayerRef->bUsingSkill = NewbUsingSkill;
+	PlayerRef->MyAnim->bUsingSkill = NewbUsingSkill;
 }
 
-bool UCharacterMotionReplicator::Server_SetUsingSkill_Validate(bool NewUsingSkill)
-{
-	return true;
-}
-
-bool UCharacterMotionReplicator::NetMulticast_SetUsingSkill_Validate(bool NewUsingSkill)
+bool UCharacterMotionReplicator::Server_SetbUsingSkill_Validate(bool NewbUsingSkill)
 {
 	return true;
 }
 
-
-void UCharacterMotionReplicator::Server_SetIsAttacking_Implementation(bool NewIsAttacking)
-{
-	NetMulticast_SetIsAttacking(NewIsAttacking);
-}
-
-void UCharacterMotionReplicator::NetMulticast_SetIsAttacking_Implementation(bool NewIsAttacking)
-{
-	PlayerRef->IsAttacking = NewIsAttacking;
-	PlayerRef->MyAnim->IsAttacking = NewIsAttacking;
-}
-bool UCharacterMotionReplicator::Server_SetIsAttacking_Validate(bool NewIsAttacking)
+bool UCharacterMotionReplicator::NetMulticast_SetbUsingSkill_Validate(bool NewbUsingSkill)
 {
 	return true;
 }
 
-bool UCharacterMotionReplicator::NetMulticast_SetIsAttacking_Validate(bool NewIsAttacking)
+
+void UCharacterMotionReplicator::Server_SetbIsAttacking_Implementation(bool NewbIsAttacking)
+{
+	NetMulticast_SetbIsAttacking(NewbIsAttacking);
+}
+
+void UCharacterMotionReplicator::NetMulticast_SetbIsAttacking_Implementation(bool NewbIsAttacking)
+{
+	PlayerRef->bIsAttacking = NewbIsAttacking;
+	PlayerRef->MyAnim->bIsAttacking = NewbIsAttacking;
+}
+bool UCharacterMotionReplicator::Server_SetbIsAttacking_Validate(bool NewbIsAttacking)
+{
+	return true;
+}
+
+bool UCharacterMotionReplicator::NetMulticast_SetbIsAttacking_Validate(bool NewbIsAttacking)
 {
 	return true;
 }

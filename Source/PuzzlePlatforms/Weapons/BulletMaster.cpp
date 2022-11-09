@@ -2,12 +2,14 @@
 
 
 #include "BulletMaster.h"
+#include "../Character_Master.h"
 #include "../Soldier.h"
 #include "../Turret/Turret.h"
+#include "../PlayersComponent/MyCharacterStatComponent.h"
 
 #include "Engine/StaticMesh.h"
 #include "Components/CapsuleComponent.h"
-#include "../Character_Master.h"
+
 // Sets default values
 ABulletMaster::ABulletMaster()
 {
@@ -25,6 +27,7 @@ ABulletMaster::ABulletMaster()
 void ABulletMaster::BeginPlay()
 {
 	Super::BeginPlay();
+	SetLifeSpan(3.f);
 	Capsule->OnComponentBeginOverlap.AddDynamic(this, &ABulletMaster::OnOverlapBegin);
 	Shooter = Cast<ASoldier>(GetInstigator());
 	//Capsule->OnComponentHit.AddDynamic(this, &ABulletMaster::OnHit);
@@ -65,10 +68,9 @@ void ABulletMaster::OnHit(UPrimitiveComponent* HitComponent, AActor* OtherActor,
 
 void ABulletMaster::OnOverlapBegin(class UPrimitiveComponent* OverlappedComp, class AActor* OtherActor, class UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
-
+	ABCHECK(Shooter != nullptr);
 	if (OtherActor == Shooter)
 		return;
-	//UE_LOG(LogTemp, Warning, TEXT("Attacking Actor : %s"), *Shooter->GetName());
 	if (OtherActor && (OtherActor != this) && OtherComp)
 	{
 		if (HasAuthority())
@@ -99,16 +101,10 @@ void ABulletMaster::OnOverlapBegin(class UPrimitiveComponent* OverlappedComp, cl
 						return;
 					}
 				}
-
-				//여기서 컨트롤러가..ㅋㅋ 다른 서버쪽 기준 컨트롤러로 돼있을텐데
-
-
 			}
 			FDamageEvent DamageEvent;
-			//OtherActor->TakeDamage(10.0f, DamageEvent, MyCharacter->GetController(), Shooter);
-			OtherActor->TakeDamage(10.0f, DamageEvent,nullptr, Shooter);
-			//UGameplayStatics::ApplyDamage(MyCharacter, 10,nullptr, nullptr,UDamageType::);
-			//MyCharacter->ApplyDamage();
+			OtherActor->TakeDamage(Shooter->CharacterStatRef->AttackDamage, DamageEvent,nullptr, Shooter);
+
 		}
 		if (ImpactParticles)
 		{

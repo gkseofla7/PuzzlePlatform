@@ -52,14 +52,14 @@ public:
 	UFUNCTION(NetMulticast, Reliable, WithValidation)
 		void NetMulticast_SetTargetPlayer(class ACharacter_Master* NewTarget);
 	UFUNCTION(Server, Reliable, WithValidation)
-	void Server_SetIsAttacking(bool NewIsAttacking);
+	void Server_SetbIsAttacking(bool NewbIsAttacking);
 	UFUNCTION(NetMulticast, Reliable, WithValidation)
-		void NetMulticast_SetIsAttacking(bool NewIsAttacking);
+		void NetMulticast_SetbIsAttacking(bool NewbIsAttacking);
 
 	UFUNCTION(Server, Reliable, WithValidation)
-		void Server_SetUsingSkill(bool NewUsingSkill);
+		void Server_SetbUsingSkill(bool NewbUsingSkill);
 	UFUNCTION(NetMulticast, Reliable, WithValidation)
-		void NetMulticast_SetUsingSkill(bool NewUsingSkill);
+		void NetMulticast_SetbUsingSkill(bool NewbUsingSkill);
 
 public:
 	UPROPERTY()

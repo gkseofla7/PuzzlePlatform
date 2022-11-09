@@ -53,6 +53,7 @@ public:
 			;
 	}
 	FMyCharacterrData* GetMyCharacterData(int32 Level);
+	FMyCharacterrData* GetSoldierData(int32 Level);
 	FMonsterData* GetMonsterData(int32 Level, EMonsterEnum MonsterEnuml);
 	//FMyCharacterrData* GetMyCharacterData(int32 Level);
 
@@ -81,6 +82,8 @@ private:
 	TOptional<FText>HostName;
 	UPROPERTY()
 	UDataTable* MyCharacterTable;
+	UPROPERTY()
+	UDataTable* SoldierDataTable;
 	UPROPERTY()
 	UDataTable* NearMonsterTable;
 	UPROPERTY()

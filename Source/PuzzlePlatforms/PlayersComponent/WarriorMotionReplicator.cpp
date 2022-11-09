@@ -85,7 +85,7 @@ bool UWarriorMotionReplicator::Server_SendAttack_Validate()
 
 void UWarriorMotionReplicator::NetMulticast_SendAttack_Implementation()
 {
-	//if (MyAnim->IsAttacking == false)
+	//if (MyAnim->bIsAttacking == false)
 //{
 
 
@@ -94,7 +94,7 @@ void UWarriorMotionReplicator::NetMulticast_SendAttack_Implementation()
 	CurrentCombo++;
 	if (CurrentCombo == 4)
 		CurrentCombo = 1;
-	//MyAnim->IsAttacking = true;
+	//MyAnim->bIsAttacking = true;
 	PlaySwordAttackMontage();
 	MyAnim->JumpToAttackMontageSection(CurrentCombo);
 
@@ -137,7 +137,7 @@ void UWarriorMotionReplicator::Server_SendDash_Implementation()
 
 void UWarriorMotionReplicator::NetMulticast_SendDash_Implementation()
 {
-	WarriorRef->IsDashing = true;
+	WarriorRef->bIsDashing = true;
 	MyAnim->PlayDashMontage();
 	WarriorRef->ParticleSystemComponent->SetVisibility(true);
 	WarriorRef->ParticleSystemComponent->Activate(true);
@@ -216,7 +216,7 @@ void UWarriorMotionReplicator::OnAttackMontageEnded(UAnimMontage* Montage, bool 
 	}
 	else
 	{
-		WarriorRef->SetIsAttacking(false);
+		WarriorRef->SetbIsAttacking(false);
 	}
 }
 

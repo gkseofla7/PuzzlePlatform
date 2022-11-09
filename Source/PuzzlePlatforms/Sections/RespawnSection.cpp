@@ -83,7 +83,7 @@ void ARespawnSection::OnOverlapBegin(class UPrimitiveComponent* OverlappedComp, 
 	{
 		if (Player->TeamNum == TeamNum)//快府评捞搁
 		{
-			Player->IsInRespawnSection = true;
+			Player->bIsInRespawnSection = true;
 		}
 	}
 	
@@ -100,7 +100,7 @@ void ARespawnSection::OnOverlapEnd(class UPrimitiveComponent* OverlappedComp, cl
 	{
 		if (Player->TeamNum == TeamNum)//快府评捞搁
 		{
-			Player->IsInRespawnSection = false;
+			Player->bIsInRespawnSection = false;
 		}
 	}
 	

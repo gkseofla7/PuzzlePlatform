@@ -31,7 +31,7 @@ void AAbility_Projectile_Missile::BeginPlay()
 		SoldierRef = Cast<ASoldier>(PlayerRef);
 		SoldierRef->Direction = 0;
 		SoldierRef->ShowPath = true;
-		//SoldierRef->SetUsingSkill(true);
+		//SoldierRef->SetbUsingSkill(true);
 		SoldierRef->GridSphere->SetVisibility(true, true);
 		SoldierRef->GetMesh()->bPauseAnims = true;
 		PlayerRef->OnSkillReleased.AddUObject(this, &AAbility_Projectile_Missile::ActivateEffect);//등록하는애들만
@@ -46,12 +46,12 @@ void AAbility_Projectile_Missile::ActivateEffect_Implementation()
 	if (PlayerRef->IsLocallyControlled() == false)
 		return;//애초에 여기에 올일은 없음
 
-	PlayerRef->SetUsingSkill(false);
+	PlayerRef->SetbUsingSkill(false);
 	SoldierRef->ClearPointsArray();
 	SoldierRef->GridSphere->SetVisibility(false, true);
 	SoldierRef->GetMesh()->bPauseAnims = false;
 	SoldierRef->ShowPath = false;
-	//SoldierRef->SetUsingSkill(false);
+	//SoldierRef->SetbUsingSkill(false);
 	Server_SetVisibility();
 	Server_DetachAbilityFromPlayer();//모두 일단 띄어냄
 	Server_SetVelocity(SoldierRef->MissileVelocity);

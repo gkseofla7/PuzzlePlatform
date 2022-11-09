@@ -20,7 +20,7 @@ const FName ANPCAIController::TargetKey(TEXT("Target"));
 
 const FName ANPCAIController::AttackRangeKey(TEXT("AttackRange"));
 const FName ANPCAIController::IsHitKey(TEXT("IsHit"));
-const FName ANPCAIController::IsAttackingKey(TEXT("IsAttacking"));
+const FName ANPCAIController::bIsAttackingKey(TEXT("bIsAttacking"));
 
 ANPCAIController::ANPCAIController()
 {
@@ -36,7 +36,7 @@ void ANPCAIController::OnPossess(APawn* InPawn)
 		
 		MyPawn = Cast<ANPC_Master>(InPawn);
 		Blackboard->SetValueAsVector(HomePosKey, InPawn->GetActorLocation());
-		Blackboard->SetValueAsBool(ANPCAIController::IsAttackingKey, true);
+		Blackboard->SetValueAsBool(ANPCAIController::bIsAttackingKey, true);
 		if (!RunBehaviorTree(BTAsset))
 		{
 			UE_LOG(LogTemp, Warning, TEXT("AIController couln't run behavior tree!"));
@@ -70,9 +70,9 @@ void ANPCAIController::SetIsHitKey_Implementation(bool NewIsHit)
 }
 
 
-void ANPCAIController::SetIsAttackingKey(bool NewIsAttackingKey)
+void ANPCAIController::SetbIsAttackingKey(bool NewbIsAttackingKey)
 {
-	GetBlackboardComponent()->SetValueAsBool(ANPCAIController::IsAttackingKey, NewIsAttackingKey);
+	GetBlackboardComponent()->SetValueAsBool(ANPCAIController::bIsAttackingKey, NewbIsAttackingKey);
 }
 
 void ANPCAIController::PauseLogic()

@@ -272,7 +272,7 @@ void ASoldier::OnRep_ControlRotation()//서버에서 진행 안하니..?
 
 void ASoldier::AddControllerPitchInput(float Val)
 {
-	if (IsDashing == false)
+	if (bIsDashing == false)
 	{
 		Super::AddControllerPitchInput(Val);
 		if (ShowPath == true)
@@ -360,13 +360,13 @@ void ASoldier::Attack()
 	{
 		return;
 	}
-	if (IsSprinting == true)
+	if (bIsSprinting == true)
 	{
 		return;
 	}
 	IsShooting = true;
 	SetMuzzleRotation();
-	IsAttacking = false;
+	bIsAttacking = false;
 	Super::Attack();
 
 }

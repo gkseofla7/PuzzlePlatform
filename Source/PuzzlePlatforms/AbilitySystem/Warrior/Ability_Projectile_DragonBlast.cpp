@@ -37,7 +37,7 @@ void AAbility_Projectile_DragonBlast::BeginPlay()
 	bReplicates = true;
 	AsPlayerAnimInstance = Cast<UPlayerAnimInstance>(warrior->GetMesh()->GetAnimInstance());
 	AsPlayerAnimInstance->Montage_JumpToSection(FName("Defualt"), AsPlayerAnimInstance->SwordBlastMontage);
-	//AsPlayerAnimInstance->IsAttacking = true;
+	//AsPlayerAnimInstance->bIsAttacking = true;
 	if (PlayerRef->IsLocallyControlled())
 	{
 		AsPlayerAnimInstance->OnFireDragonBlastDelegate.AddUObject(this, &AAbility_Projectile::ActivateEffect);

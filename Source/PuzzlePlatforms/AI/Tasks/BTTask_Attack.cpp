@@ -11,7 +11,7 @@
 UBTTask_Attack::UBTTask_Attack()
 {
 	bNotifyTick = true;
-	//IsAttacking = false;
+	//bIsAttacking = false;
 }
 
 EBTNodeResult::Type UBTTask_Attack::ExecuteTask(UBehaviorTreeComponent& OwnerComp,
@@ -22,17 +22,17 @@ EBTNodeResult::Type UBTTask_Attack::ExecuteTask(UBehaviorTreeComponent& OwnerCom
 	auto Monster = Cast<ANPC_Master>(OwnerComp.GetAIOwner()->GetPawn());
 	if (Monster == nullptr)
 		return EBTNodeResult::Failed;
-	UE_LOG(LogTemp, Warning, TEXT("StartIsAttacking "));
-	Controller->SetIsAttackingKey(true);
+	UE_LOG(LogTemp, Warning, TEXT("StartbIsAttacking "));
+	Controller->SetbIsAttackingKey(true);
 	Monster->Attack();
-	//IsAttacking = true;
-	OwnerComp.GetBlackboardComponent()->SetValueAsBool(ANPCAIController::IsAttackingKey, true);
+	//bIsAttacking = true;
+	OwnerComp.GetBlackboardComponent()->SetValueAsBool(ANPCAIController::bIsAttackingKey, true);
 	FString tmp = Monster->GetName();
 	Monster->OnAttackEnd.Clear();//애초에 여기서 부르면 안되네,,ㅋㅋ
 	Monster->OnAttackEnd.AddLambda([Controller]()-> void {
 		//계속 실행됨;;
-		UE_LOG(LogTemp, Warning, TEXT("FinishIsAttacking %s"), *Controller->GetPawn()->GetName());
-		Controller->SetIsAttackingKey(false);
+		UE_LOG(LogTemp, Warning, TEXT("FinishbIsAttacking %s"), *Controller->GetPawn()->GetName());
+		Controller->SetbIsAttackingKey(false);
 		
 		
 		});
@@ -42,9 +42,9 @@ EBTNodeResult::Type UBTTask_Attack::ExecuteTask(UBehaviorTreeComponent& OwnerCom
 void UBTTask_Attack::TickTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory, float DeltaSeconds)
 {
 	Super::TickTask(OwnerComp, NodeMemory, DeltaSeconds);
-	bool IsAttacking = OwnerComp.GetBlackboardComponent()->GetValueAsBool(ANPCAIController::IsAttackingKey);
+	bool bIsAttacking = OwnerComp.GetBlackboardComponent()->GetValueAsBool(ANPCAIController::bIsAttackingKey);
 	//이게 false 되면??
-	if (!IsAttacking)
+	if (!bIsAttacking)
 	{//때리면 되돌림
 		auto Monster = Cast<ANPC_Master>(OwnerComp.GetAIOwner()->GetPawn());
 

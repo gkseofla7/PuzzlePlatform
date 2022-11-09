@@ -80,25 +80,25 @@ void AWarrior::Tick(float DeltaTime)
 void AWarrior::Attack()
 {
 	//만약 종족이 두개있다면..?
-	if (IsAttacking == true || UsingSkill == true)
+	if (bIsAttacking == true || bUsingSkill == true)
 	{
 		if(bNextAttackStart == true)
 			bNextAttack = true;
 		return;
 	}
-	SetIsAttacking(true);
+	SetbIsAttacking(true);
 
 	if (ReplicateComponent != nullptr)
 		ReplicateComponent->Server_SendAttack();
 
 }
 
-void AWarrior::SetIsAttacking(bool NewIsAttacking)
+void AWarrior::SetbIsAttacking(bool NewbIsAttacking)
 {
-	IsAttacking = NewIsAttacking;
-	MyAnim->IsAttacking = NewIsAttacking;
+	bIsAttacking = NewbIsAttacking;
+	MyAnim->bIsAttacking = NewbIsAttacking;
 	auto WarriorReplicateComponent = Cast< UWarriorMotionReplicator>(ReplicateComponent);
-	if (NewIsAttacking == true)//속도 바꿔주고~
+	if (NewbIsAttacking == true)//속도 바꿔주고~
 	{
 		WarriorReplicateComponent->Server_SetSpeed(300.);//걸을때
 	}
@@ -288,7 +288,7 @@ void AWarrior::EndAnimation(UAnimMontage* Montage, bool bInterrupted)
 	if (Montage == Anim->DashMontage)
 	{
 		UE_LOG(LogTemp, Warning, TEXT("DashMontageEnd"));
-		IsDashing = false;
+		bIsDashing = false;
 		ParticleSystemComponent->SetVisibility(false);
 		ParticleSystemComponent->Deactivate();
 		GetMesh()->SetVisibility(true);

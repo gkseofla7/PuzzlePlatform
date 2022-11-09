@@ -25,6 +25,6 @@ protected:
 private:
 	TWeakObjectPtr<class UTurretStatComponent> CurrentTurretStat;
 	TWeakObjectPtr<class UMonsterStatComponent> CurrentMonsterStat;
-	UPROPERTY()
-	class UProgressBar* HPProgressBar;
+	UPROPERTY(meta = (BindWidget))
+	class UProgressBar* PB_HPBar;
 };

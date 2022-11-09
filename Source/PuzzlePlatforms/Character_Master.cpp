@@ -239,7 +239,7 @@ void ACharacter_Master::SetPlayerStat()
 		FTimerHandle TimerHandler;
 		GetWorld()->GetTimerManager().SetTimer(TimerHandler, this, &ACharacter_Master::UpdateStat, 2, true);
 
-		IsInRespawnSection = true;
+		bIsInRespawnSection = true;
 
 		auto MyController = Cast<AMyPlayerController>(GetController());
 		MyController->SetWidget(MyPlayerState->CharacterStat);//내 mainwidget
@@ -277,7 +277,7 @@ void ACharacter_Master::Tick(float DeltaTime)
 		SetIcon();
 	}
 	if(PlayerInfoHUDWidget !=nullptr)
-		SkillAvailable = !(PlayerInfoHUDWidget->CastBar_UI->WhileBuffering);
+		bSkillAvailable = !(PlayerInfoHUDWidget->CastBar_UI->WhileBuffering);
 	if (!IsLocallyControlled())
 	{
 		auto MyController = UGameplayStatics::GetPlayerController(GetWorld(), 0);
@@ -296,14 +296,14 @@ void ACharacter_Master::Tick(float DeltaTime)
 
 void ACharacter_Master::AddControllerPitchInput(float Val)
 {
-	if (IsDashing == false)
+	if (bIsDashing == false)
 	{
 		Super::AddControllerPitchInput(Val);
 	}
 }
 void ACharacter_Master::AddControllerYawInput(float Val)
 {
-	if (IsDashing == false)
+	if (bIsDashing == false)
 	{
 		Super::AddControllerYawInput(Val);
 	}
@@ -312,7 +312,7 @@ void ACharacter_Master::UpdateStat()
 {
 
 	float AddValue = .5f;
-	if (IsInRespawnSection == true)
+	if (bIsInRespawnSection == true)
 	{
 		AddValue = 5.f;
 	}
@@ -333,21 +333,21 @@ void ACharacter_Master::UpdateStat()
 
 void ACharacter_Master::TurnAtRate(float Rate)
 {
-	if (IsDashing == true)
+	if (bIsDashing == true)
 		return;
 	AddControllerYawInput(Rate * BaseTurnRate * GetWorld()->GetDeltaSeconds());
 }
 
 void ACharacter_Master::LookUpAtRate(float Rate)
 {
-	if (IsDashing == true)
+	if (bIsDashing == true)
 		return;
 	AddControllerPitchInput(Rate * BaseLookUpRate * GetWorld()->GetDeltaSeconds());
 }
 
 void ACharacter_Master::MoveForward(float Value)
 {
-	if (UsingSkill == true)
+	if (bUsingSkill == true)
 	{
 
 		return;
@@ -366,7 +366,7 @@ void ACharacter_Master::MoveForward(float Value)
 
 void ACharacter_Master::MoveRight(float Value)
 {
-	if (UsingSkill == true)
+	if (bUsingSkill == true)
 		return;
 	if ( (Controller != nullptr) && (Value != 0.0f) )
 	{
@@ -385,11 +385,11 @@ void ACharacter_Master::Attack()
 {
 	//만약 종족이 두개있다면..?
 	
-	if (IsAttacking == true || UsingSkill == true)
+	if (bIsAttacking == true || bUsingSkill == true)
 	{
 		return;
 	}
-	IsAttacking = true;
+	bIsAttacking = true;
 	if(ReplicateComponent != nullptr)
 		ReplicateComponent->Server_SendAttack();
 
@@ -419,14 +419,14 @@ float ACharacter_Master::TakeDamage(float DamageAmount, FDamageEvent const& Dama
 void ACharacter_Master::Sprint()
 {
 	ReplicateComponent->Server_SetMaxWalkSpeed(SteamPackWalkSpeed);
-	IsSprinting = true;
+	bIsSprinting = true;
 	PlayerInfoHUDWidget->WBCrosshair->SetVisibility(ESlateVisibility::Hidden);
 }
 
 void ACharacter_Master::UnSprint()
 {
 	ReplicateComponent->Server_SetMaxWalkSpeed(GeneralWalkSpeed);
-	IsSprinting = false;
+	bIsSprinting = false;
 	PlayerInfoHUDWidget->WBCrosshair->SetVisibility(ESlateVisibility::Visible);
 }
 
@@ -455,16 +455,16 @@ FRotator ACharacter_Master::GetMuzzleRotation()
 	return temp;
 }
 
-void ACharacter_Master::Skill1Clicked()
+void ACharacter_Master::Skill1Clicked() 
 {
-	if (SkillAvailable == false)
+	if (bSkillAvailable == false)
 		return;
 	auto Slot_UI = PlayerInfoHUDWidget->ActionBar_UI->ActionBarSlot_UI;
 	if (Slot_UI == nullptr)
 		return;
 	if (Slot_UI->IsAvailable==false||Slot_UI->IsManaAvailable ==false )
 		return;
-	if (UsingSkill == true)
+	if (bUsingSkill == true)
 		return;
 	auto SlotClass = PlayerInfoHUDWidget->ActionBar_UI->ActionBarSlot_UI->AbilityClass;
 	if (SlotClass == nullptr)
@@ -475,7 +475,7 @@ void ACharacter_Master::Skill1Clicked()
 }
 void ACharacter_Master::Skill2Clicked()
 {
-	if (SkillAvailable == false)
+	if (bSkillAvailable == false)
 		return;
 
 	auto Slot_UI = PlayerInfoHUDWidget->ActionBar_UI->ActionBarSlot_UI_1;
@@ -492,7 +492,7 @@ void ACharacter_Master::Skill2Clicked()
 }
 void ACharacter_Master::Skill3Clicked()
 {
-	if (SkillAvailable == false)
+	if (bSkillAvailable == false)
 		return;
 
 	auto Slot_UI = PlayerInfoHUDWidget->ActionBar_UI->ActionBarSlot_UI_2;
@@ -509,7 +509,7 @@ void ACharacter_Master::Skill3Clicked()
 }
 void ACharacter_Master::Skill4Clicked()
 {
-	if (SkillAvailable == false)
+	if (bSkillAvailable == false)
 		return;
 
 	auto Slot_UI = PlayerInfoHUDWidget->ActionBar_UI->ActionBarSlot_UI_3;
@@ -527,7 +527,7 @@ void ACharacter_Master::Skill4Clicked()
 }
 void ACharacter_Master::Skill5Clicked()
 {
-	if (SkillAvailable == false)
+	if (bSkillAvailable == false)
 		return;
 
 	auto Slot_UI = PlayerInfoHUDWidget->ActionBar_UI->ActionBarSlot_UI_4;
@@ -548,15 +548,15 @@ void ACharacter_Master::SkillReleased()
 	OnSkillReleased.Broadcast();
 }
 
-void ACharacter_Master::SetIsAttacking(bool NewIsAttacking)
+void ACharacter_Master::SetbIsAttacking(bool NewbIsAttacking)
 {
-	ReplicateComponent->Server_SetIsAttacking(NewIsAttacking);
+	ReplicateComponent->Server_SetbIsAttacking(NewbIsAttacking);
 }
 
-void ACharacter_Master::SetUsingSkill(bool NewUsingSkill)
+void ACharacter_Master::SetbUsingSkill(bool NewbUsingSkill)
 {
 
-	ReplicateComponent->Server_SetUsingSkill(NewUsingSkill);
+	ReplicateComponent->Server_SetbUsingSkill(NewbUsingSkill);
 }
 
 void ACharacter_Master::Die()
@@ -580,21 +580,21 @@ void ACharacter_Master::OpenSkillTree()
 	auto controller = Cast<AMyPlayerController>(GetController());
 	ABCHECK(controller != nullptr);
 	ABCHECK(PlayerInfoHUDWidget != nullptr);
-	if (MouseCursorToggle == false)
+	if (bMouseCursorToggle == false)
 	{
 		PlayerInfoHUDWidget->ToggleSpellBook();
 		controller->SetInputModeGameAndUI();
-		MouseCursorToggle = true;
+		bMouseCursorToggle = true;
 	}
 	else
 	{
 		PlayerInfoHUDWidget->ToggleSpellBook();
 		controller->SetInputModeGame();
-		MouseCursorToggle = false;
+		bMouseCursorToggle = false;
 	}
 }
 
-void ACharacter_Master::OpenMap()
+void ACharacter_Master::OpenMap() 
 {
 	auto controller = Cast<AMyPlayerController>(GetController());
 	auto PlayerWidget = controller->PlayerInfoHUDWidget;
@@ -613,18 +613,18 @@ void ACharacter_Master::OpenMap()
 //void ACharacter_Master::SeeMouseCursur()
 //{
 //	auto controller = Cast<AMyPlayerController>(GetController());
-//	if (MouseCursorToggle == false)
+//	if (bMouseCursorToggle == false)
 //	{
 //		HeadsUpDisplayRef->ToggleSpellBook();
 //		controller->SetInputModeGameAndUI();
 //
-//		MouseCursorToggle = true;
+//		bMouseCursorToggle = true;
 //	}
 //	else
 //	{
 //		HeadsUpDisplayRef->ToggleSpellBook();
 //		controller->SetInputModeGame();
-//		MouseCursorToggle = false;
+//		bMouseCursorToggle = false;
 //	}
 //}
 //void ACharacter_Master::SetTargetPlayerWithLineTrace()

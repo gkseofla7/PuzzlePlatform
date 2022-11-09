@@ -15,7 +15,7 @@ class PUZZLEPLATFORMS_API UAnimInstance_Master : public UAnimInstance
 	GENERATED_BODY()
 public:
 	UPROPERTY(VisibleDefaultsOnly, BlueprintReadWrite, Category = Attack)
-	bool IsAttacking = false;
+	bool bIsAttacking = false;
 	UPROPERTY(VisibleDefaultsOnly, BlueprintReadWrite, Category = Attack)
-	bool UsingSkill = false;
+	bool bUsingSkill = false;
 };

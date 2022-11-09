@@ -37,9 +37,9 @@ void AAbility::BeginPlay()
 	AnimRef = Cast<UAnimInstance_Master>(PlayerRef->GetMesh()->GetAnimInstance());
 	auto IsBuff = Cast<AAbility_Buff_Master>(this);
 	SetAbilityLevel();
-	//AnimRef->IsAttacking = true;
+	//AnimRef->bIsAttacking = true;
 	if(IsBuff== nullptr)
-		PlayerRef->SetUsingSkill(true);
+		PlayerRef->SetbUsingSkill(true);
 	if (PlayerRef->IsLocallyControlled() == true)
 	{
 		AnimRef->OnMontageEnded.AddDynamic(this, &AAbility::EndAnimation);
@@ -105,8 +105,8 @@ void AAbility::DetachAbilityFromPlayer()
 void AAbility::EndAnimation(UAnimMontage* Montage, bool bInterrupted)
 {
 	//UE_LOG(LogTemp, Warning, TEXT("EndAnimation"));
-	//PlayerRef->SetIsAttacking(false);
-	PlayerRef->SetUsingSkill(false);
+	//PlayerRef->SetbIsAttacking(false);
+	PlayerRef->SetbUsingSkill(false);
 	AnimationEnd = true;
 	if (NeedToDestroy == true)
 	{

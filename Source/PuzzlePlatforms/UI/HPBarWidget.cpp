@@ -28,8 +28,6 @@ void UHPBarWidget::BindMonsterStat(UMonsterStatComponent* NewMonsterStat)
 void UHPBarWidget::NativeConstruct()
 {
 	Super::NativeConstruct();
-	HPProgressBar = Cast<UProgressBar>(GetWidgetFromName(TEXT("PB_HPBar")));//이런방법이 있구만~
-	ABCHECK(nullptr != HPProgressBar);
 	UpdateHPWidget();
 }
 
@@ -37,16 +35,16 @@ void UHPBarWidget::UpdateHPWidget()
 {
 	if (CurrentMonsterStat.IsValid())
 	{
-		if (nullptr != HPProgressBar)
+		if (nullptr != PB_HPBar)
 		{
-			HPProgressBar->SetPercent(CurrentMonsterStat->GetHPRatio());
+			PB_HPBar->SetPercent(CurrentMonsterStat->GetHPRatio());
 		}
 	}
 	else if (CurrentTurretStat.IsValid())
 	{
-		if (nullptr != HPProgressBar)
+		if (nullptr != PB_HPBar)
 		{
-			HPProgressBar->SetPercent(CurrentTurretStat->GetHPRatio());
+			PB_HPBar->SetPercent(CurrentTurretStat->GetHPRatio());
 		}
 	}
 }

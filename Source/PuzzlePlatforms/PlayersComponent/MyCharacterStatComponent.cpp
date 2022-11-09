@@ -94,7 +94,15 @@ void UMyCharacterStatComponent::SetLevel(float NewLevel)
 
 	auto MyGameInstance = Cast<UPuzzlePlatformsGameInstance>(UGameplayStatics::GetGameInstance(GetWorld()));
 	ABCHECK(MyGameInstance != nullptr);
-	CurrentStatData = MyGameInstance->GetMyCharacterData(NewLevel);//모든애들 가져옴, 꼭 이래야될까..?ㅋㅋ
+	if (MyGameInstance->CharacterIndex == 1)
+	{
+		CurrentStatData = MyGameInstance->GetSoldierData(NewLevel);//모든애들 가져옴, 꼭 이래야될까..?ㅋㅋ
+	}
+	else if (MyGameInstance->CharacterIndex == 2)
+	{
+		CurrentStatData = MyGameInstance->GetMyCharacterData(NewLevel);//모든애들 가져옴, 꼭 이래야될까..?ㅋㅋ
+	}
+
 	if (NewLevel == 1)
 	{
 		CurrentExp = 0;//0으로 초기화

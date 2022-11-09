@@ -12,6 +12,14 @@
 #include "Character_Master.generated.h"
 
 
+enum ECharacterType
+{
+
+	Soldier,
+	Warrior
+}; 
+
+
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FInterruptCastingDeleagate);
 DECLARE_MULTICAST_DELEGATE(FOnSkillReleased);
 
@@ -50,8 +58,8 @@ public:
 	void OpenMap();
 	void Sprint();
 	void UnSprint();
-	void SetIsAttacking(bool NewIsAttacking);
-	void SetUsingSkill(bool NewUsingSkill);
+	void SetbIsAttacking(bool NewbIsAttacking);
+	void SetbUsingSkill(bool NewbUsingSkill);
 	void DestroyPlayer();
 	void UnvisiblePlayer();
 	virtual void Attack();
@@ -128,13 +136,13 @@ public:
 	float SteamPackWalkSpeed = 600	;
 	bool ChangeIcon = false;
 
-	bool IsInRespawnSection = false;
-	bool SkillAvailable = true;
-	bool MouseCursorToggle = false;
-	bool IsDashing = false;
-	bool IsSprinting = false;
-	bool IsAttacking = false;
-	bool UsingSkill = false;
-
+	bool bIsInRespawnSection = false;
+	bool bSkillAvailable = true;
+	bool bMouseCursorToggle = false;
+	bool bIsDashing = false;
+	bool bIsSprinting = false;
+	bool bIsAttacking = false;
+	bool bUsingSkill = false;
+	ECharacterType CharacterType;
 };
 

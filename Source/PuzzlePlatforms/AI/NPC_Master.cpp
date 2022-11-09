@@ -246,12 +246,12 @@ void ANPC_Master::Destroyed()
 {
 	if (HasAuthority())
 	{
-		UE_LOG(LogTemp, Warning, TEXT("Destroyed"));
 		auto MyPlayer = Cast<ACharacter_Master>(AttackedPlayer);
 		if (MyPlayer != nullptr)
 		{
 			int quantity = UKismetMathLibrary::RandomIntegerInRange(1, 3);
 			SpawnLoot(quantity);
+
 		}
 
 	}
@@ -278,6 +278,13 @@ void ANPC_Master::SpawnLoot(int Quantity)
 
 void ANPC_Master::DestroyMonster()
 {
+	auto MonsterWidget = Cast< UHPBarWidget>(HPWidget->GetUserWidgetObject());
+	//MonsterWidget->RemoveFromParent();
+	//if (nullptr != MonsterWidget)
+	//{
+	//	MonsterWidget->BindMonsterStat(nullptr);
+	//}
+
 	Destroy();
 }
 

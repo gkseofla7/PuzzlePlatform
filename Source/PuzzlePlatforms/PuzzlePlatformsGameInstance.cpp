@@ -35,6 +35,12 @@ UPuzzlePlatformsGameInstance::UPuzzlePlatformsGameInstance(const FObjectInitiali
 		ABCHECK(MyCharacterTable->GetRowMap().Num() > 0);
 	}
 
+	static ConstructorHelpers::FObjectFinder<UDataTable> DTSoldierDataTable(TEXT("/Game/PlayerData/SoldierData"));
+	if (DTSoldierDataTable.Succeeded()) {
+		SoldierDataTable = DTSoldierDataTable.Object;
+		ABCHECK(SoldierDataTable->GetRowMap().Num() > 0);
+	}
+
 	static ConstructorHelpers::FObjectFinder<UDataTable> NearMonsterTableAsset(TEXT("/Game/GameData/GoblinData"));
 	if (NearMonsterTableAsset.Succeeded()) {
 		NearMonsterTable = NearMonsterTableAsset.Object;
@@ -111,6 +117,12 @@ FMyCharacterrData* UPuzzlePlatformsGameInstance::GetMyCharacterData(int32 Level)
 {
 	return MyCharacterTable->FindRow<FMyCharacterrData>(*FString::FromInt(Level), TEXT(""));
 }
+
+FMyCharacterrData* UPuzzlePlatformsGameInstance::GetSoldierData(int32 Level)
+{
+	return SoldierDataTable->FindRow<FMyCharacterrData>(*FString::FromInt(Level), TEXT(""));
+}
+
 
 FMonsterData* UPuzzlePlatformsGameInstance::GetMonsterData(int32 Level, EMonsterEnum MonsterEnum)
 {

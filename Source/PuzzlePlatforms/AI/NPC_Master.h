@@ -65,10 +65,11 @@ public:
 	AActor * AttackedPlayer;
 	UPROPERTY()
 	class UParticleSystem* ParticleTemplate;
+	UPROPERTY()
 	TSubclassOf<class ACharDamageText> CharDamageTextClass;
 	UPROPERTY()
 	TSubclassOf<class ASoulItem> SoulItemtClass;//ÀÌ°Å °ãÄ§
 	UPROPERTY()
-		class ACharacter_Master* Target;
+	class ACharacter_Master* Target;
 
 };

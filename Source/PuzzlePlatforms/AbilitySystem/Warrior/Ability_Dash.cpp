@@ -18,6 +18,6 @@ void AAbility_Dash::BeginPlay()
 
 	Warrior->Dash();
 
-	PlayerRef->SetUsingSkill(false);
+	PlayerRef->SetbUsingSkill(false);
 	Destroy();
 }

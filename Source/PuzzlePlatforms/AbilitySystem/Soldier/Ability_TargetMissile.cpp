@@ -47,7 +47,7 @@ void AAbility_TargetMissile::ActivateEffect_Implementation()
 
 	PlayerRef->OnSkillReleased.Clear();//Release하는 순간 초기화
 
-	SoldierRef->SetUsingSkill(false);
+	SoldierRef->SetbUsingSkill(false);
 	SoldierRef->GetMesh()->bPauseAnims = false;
 	SoldierRef->ShowTarget = false;
 	if (SoldierRef->CurrentTarget == nullptr)

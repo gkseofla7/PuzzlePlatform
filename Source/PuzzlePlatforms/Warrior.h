@@ -50,7 +50,7 @@ public:
 	void RespawnCharacter();
 	UFUNCTION(Server, Reliable, WithValidation)
 	void Server_RespawnPawn(APlayerController* NewController);
-	void SetIsAttacking(bool NewIsAttacking);
+	void SetbIsAttacking(bool NewbIsAttacking);
 	virtual void Attack();
 private:	
 	//UPROPERTY()

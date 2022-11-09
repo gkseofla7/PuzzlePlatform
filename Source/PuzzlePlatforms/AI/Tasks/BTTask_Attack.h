@@ -28,5 +28,5 @@ protected:
 
 
 public:
-	//bool IsAttacking = false;
+	//bool bIsAttacking = false;
 };

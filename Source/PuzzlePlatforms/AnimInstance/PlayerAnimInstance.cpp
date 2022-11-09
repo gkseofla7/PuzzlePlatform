@@ -69,7 +69,7 @@ UPlayerAnimInstance::UPlayerAnimInstance()
 	}
 
 #pragma endregion MontageAssetsSetting
-	IsAttacking = false;
+	bIsAttacking = false;
 }
 
 void UPlayerAnimInstance::NativeUpdateAnimation(float DeltaSeconds) 
