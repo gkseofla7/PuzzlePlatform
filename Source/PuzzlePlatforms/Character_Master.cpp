@@ -604,8 +604,10 @@ void ACharacter_Master::OpenMap()
 	
 
 }
-
-
+ TArray<TSubclassOf<class AAbility>> ACharacter_Master::GetPlayerSpells()
+{
+	 return ActorAbilitiesComponent->PlayerSpells;
+}
 
 
 

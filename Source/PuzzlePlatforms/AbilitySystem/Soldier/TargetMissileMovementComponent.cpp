@@ -1,5 +1,3 @@
-// Fill out your copyright notice in the Description page of Project Settings.
-
 
 #include "TargetMissileMovementComponent.h"
 #include "Kismet/KismetMathLibrary.h"
@@ -25,7 +23,7 @@ void UTargetMissileMovementComponent::TickComponent(float DeltaTime, ELevelTick 
 
 	if (Missile->bActive == false)//쏠때 움직임
 		return;
-	if (GetOwnerRole() == ROLE_Authority )//서버일때
+	if (GetOwnerRole() == ROLE_Authority)//서버일때
 	{
 		SimulateMove(DeltaTime);
 	}
@@ -55,7 +53,7 @@ void UTargetMissileMovementComponent::SimulateMove(float DeltaTime)//애초에 서버
 void UTargetMissileMovementComponent::UpdateForce()
 {
 	FVector AirResistance = -Velocity.SizeSquared() * DragCoefficient * Velocity.GetSafeNormal();
-	FVector Force = MaxDrivingForce  * GetOwner()->GetActorForwardVector();
+	FVector Force = MaxDrivingForce * GetOwner()->GetActorForwardVector();
 
 	TotalForce = Force + AirResistance;
 }
@@ -68,7 +66,7 @@ void UTargetMissileMovementComponent::ApplyRotation(float DeltaTime)
 	float MaxAngle = dx / MinTurningRadius;
 	float RotationAngle = MaxAngle;//최대각도
 	auto DirectionToTarget = UKismetMathLibrary::GetDirectionUnitVector(GetOwner()->GetActorLocation(), Target->GetActorLocation());
-	
+
 	auto NormalAxis = UKismetMathLibrary::Cross_VectorVector(GetOwner()->GetActorForwardVector(), DirectionToTarget);
 	auto DotValue = FVector::DotProduct(GetOwner()->GetActorForwardVector(), DirectionToTarget);
 	float TargetDegree = UKismetMathLibrary::DegAcos(DotValue);//현재 가야되는 방향 각도
@@ -76,11 +74,11 @@ void UTargetMissileMovementComponent::ApplyRotation(float DeltaTime)
 	{
 		RotationAngle = -RotationAngle;
 	}
-	if (abs(TargetDegree )< abs(RotationAngle))//회전각도가 목표각보다 더크면
+	if (abs(TargetDegree) < abs(RotationAngle))//회전각도가 목표각보다 더크면
 	{
 		RotationAngle = TargetDegree;
 	}
-	
+
 	FQuat  RotationDelta(NormalAxis, RotationAngle);//따로 Axis를 구해서 회전시킴
 
 	Velocity = RotationDelta.RotateVector(Velocity);

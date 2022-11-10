@@ -4,6 +4,7 @@
 
 #include "PuzzlePlatforms.h"
 #include "GameFramework/PlayerState.h"
+#include "AbilitySystem/UI/PlayerStateSpellbookInterface.h"
 #include "MyPlayerState.generated.h"
 
 /**
@@ -11,7 +12,7 @@
  */
 DECLARE_MULTICAST_DELEGATE(FOnSkillPointChangedDelegate);
 UCLASS()
-class PUZZLEPLATFORMS_API AMyPlayerState : public APlayerState
+class PUZZLEPLATFORMS_API AMyPlayerState : public APlayerState, public IPlayerStateSpellbookInterface
 {
 	GENERATED_BODY()
 
@@ -32,6 +33,7 @@ public:
 		void Server_SetSkillPoints(int NewSkillPoint);
 	UFUNCTION(NetMulticast, Reliable, WithValidation)
 		void NetMulticast_SetSkillPoints(int NewSkillPoint);
+	virtual int GetSkillPoints() override;
 	//void SetMaxLevel();
 
 

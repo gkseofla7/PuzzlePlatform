@@ -86,7 +86,7 @@ void AAbility_TargetMissile::OnOverlapBegin(class UPrimitiveComponent* Overlappe
 
 	if (OtherActor == PlayerRef)
 		return;
-	//UE_LOG(LogTemp, Warning, TEXT("Hit %s, %s %s"), *OverlappedComp->GetName(), *OtherActor->GetName(), *OtherComp->GetName());
+	UE_LOG(LogTemp, Warning, TEXT("Hit %s, %s %s"), *OverlappedComp->GetName(), *OtherActor->GetName(), *OtherComp->GetName());
 
 	if (HasAuthority() == true)
 	{

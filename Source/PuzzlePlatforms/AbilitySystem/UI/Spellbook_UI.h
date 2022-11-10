@@ -4,6 +4,8 @@
 
 #include "CoreMinimal.h"
 #include "Blueprint/UserWidget.h"
+#include "CharacterSpellbookInterface.h"
+#include "PlayerStateSpellbookInterface.h"
 #include "Spellbook_UI.generated.h"
 
 /**
@@ -26,5 +28,6 @@ public:
 	class UWrapBox* Container;
 	UPROPERTY(meta = (BindWidget), BlueprintReadWrite)
 		class UTextBlock* T_SkillPoints;
-	
+	ICharacterSpellbookInterface* CharacterInterface;
+	IPlayerStateSpellbookInterface* PlayerStateInterface;
 };

@@ -60,7 +60,10 @@ void AMyPlayerState::BeginPlay()//어차피 각각 자기꺼 시킴
 //	}
 //}
 
-
+int AMyPlayerState::GetSkillPoints()
+{
+	return SkillPoints;
+}
 
 
 int32 AMyPlayerState::GetGameScore() const

@@ -7,6 +7,7 @@
 
 #include "PlayersComponent/SoldierMotionReplicator.h"
 #include "PlayersComponent/CharacterMotionReplicator.h"
+#include "AbilitySystem/UI/CharacterSpellbookInterface.h"
 
 
 #include "Character_Master.generated.h"
@@ -14,7 +15,6 @@
 
 enum ECharacterType
 {
-
 	Soldier,
 	Warrior
 }; 
@@ -23,31 +23,27 @@ enum ECharacterType
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FInterruptCastingDeleagate);
 DECLARE_MULTICAST_DELEGATE(FOnSkillReleased);
 
-UCLASS(config=Game, BlueprintType)
-class ACharacter_Master : public ACharacter
+UCLASS(config=Game, Abstract, BlueprintType)
+class ACharacter_Master : public ACharacter, public ICharacterSpellbookInterface
 {
 protected:
 	GENERATED_BODY()
 
 public:
 	ACharacter_Master();
+protected:
 	virtual void PossessedBy(AController* NewController) override;
 	virtual void PostInitializeComponents() override;
 	virtual void BeginPlay() override;
 	virtual void Tick(float DeltaTime) override;
-	virtual void MoveForward(float Value);
+
 	virtual void MoveRight(float Value);
-	void TurnAtRate(float Rate);
-	void LookUpAtRate(float Rate);
 	virtual void AddControllerPitchInput(float Val);
 	virtual void AddControllerYawInput(float Val);
-	UFUNCTION(BlueprintImplementableEvent, BlueprintCallable)
-		void SetIcon();
-
-	void UpdateStat();//이거 hp의 경우엔 서버에도 해줘야됨;
-	FRotator GetMuzzleRotation();
-	void BindCharacterStatToWidget();
-
+	
+private:
+	void TurnAtRate(float Rate);
+	void LookUpAtRate(float Rate);
 	void Skill1Clicked();
 	void Skill2Clicked();
 	void Skill3Clicked();
@@ -56,6 +52,16 @@ public:
 	void SkillReleased();
 	void OpenSkillTree();
 	void OpenMap();
+public:
+
+	UFUNCTION(BlueprintImplementableEvent, BlueprintCallable)
+	void SetIcon();
+	virtual TArray<TSubclassOf<class AAbility>> GetPlayerSpells() override;
+	virtual float TakeDamage(float DamageAmount, struct FDamageEvent const& DamageEvent,
+		class AController* EventInstigator, AActor* DamageCauser) override;
+	void UpdateStat();//이거 hp의 경우엔 서버에도 해줘야됨;
+	FRotator GetMuzzleRotation();
+	void BindCharacterStatToWidget();
 	void Sprint();
 	void UnSprint();
 	void SetbIsAttacking(bool NewbIsAttacking);
@@ -79,10 +85,10 @@ public:
 	/** Returns FollowCamera subobject **/
 	FORCEINLINE class UCameraComponent* GetFollowCamera() const { return FollowCamera; }
 
-	virtual float TakeDamage(float DamageAmount, struct FDamageEvent const& DamageEvent,
-		class AController* EventInstigator, AActor* DamageCauser) override;
+
 
 public:
+	virtual void MoveForward(float Value);
 	UPROPERTY()
 	TSubclassOf<class UCameraShakeBase>CameraShakeClass;
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))

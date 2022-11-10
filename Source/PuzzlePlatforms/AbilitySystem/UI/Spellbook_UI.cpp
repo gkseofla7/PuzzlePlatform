@@ -33,16 +33,17 @@ void 	USpellbook_UI::NativeConstruct()
 
 void USpellbook_UI::CustomInitialize()
 {
-	auto PlayerRef = Cast<ACharacter_Master>(UGameplayStatics::GetPlayerCharacter(GetWorld(), 0));
-	if (PlayerRef == nullptr)
+	auto myCharacter = UGameplayStatics::GetPlayerCharacter(GetWorld(), 0);
+	CharacterInterface = Cast<ICharacterSpellbookInterface>(myCharacter);
+	PlayerStateInterface = Cast< IPlayerStateSpellbookInterface>(myCharacter->GetPlayerState());
+	if (CharacterInterface == nullptr || PlayerStateInterface==nullptr)
 	{
 		UE_LOG(LogTemp, Warning, TEXT("No PlayerRef"))
 			return;
 	}
+	auto SpellsRef = CharacterInterface->GetPlayerSpells();
 
-	auto SpellsRef = PlayerRef->ActorAbilitiesComponent->PlayerSpells;
-	auto MyPlayerState = Cast<AMyPlayerState>(PlayerRef->GetPlayerState());
-	SetSkillPoints(MyPlayerState->SkillPoints);
+	SetSkillPoints(PlayerStateInterface->GetSkillPoints());
 
 	for (int i = 0; i < SpellsRef.Num(); i++)
 	{

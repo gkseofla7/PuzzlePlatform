@@ -24,7 +24,7 @@ AAbility_Projectile_Missile::AAbility_Projectile_Missile()
 void AAbility_Projectile_Missile::BeginPlay()
 {
 	Super::BeginPlay();
-	DamageAmount = 50;
+	DamageAmount = 10;
 	if (PlayerRef->IsLocallyControlled() == true)//조종하는사람만
 	{
 
@@ -113,7 +113,17 @@ void AAbility_Projectile_Missile::OnOverlapBegin(class UPrimitiveComponent* Over
 			if (OutActors[i] != nullptr)
 			{
 				UGameplayStatics::ApplyDamage(OutActors[i], DamageAmount, PlayerRef->GetController(), PlayerRef, UDamageType::StaticClass());
-
+				ACharacter* myCharacter = Cast<ACharacter>(OutActors[i]);
+				//if(myCharacter!= nullptr)
+				//{
+				//	FVector impulse = myCharacter->GetActorLocation() - GetActorLocation();
+				//	impulse = 1000 * impulse;
+				//	//myCharacter->GetMesh()->SetSimulatePhysics(true);
+				//	myCharacter->GetMesh()->AddImpulseAtLocation(impulse, myCharacter->GetActorLocation());//Chracter가 아니면..
+				//	
+				//	
+				//}
+				
 			}
 		}
 		Destroy();
