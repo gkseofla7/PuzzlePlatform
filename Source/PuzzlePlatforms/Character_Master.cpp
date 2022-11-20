@@ -170,10 +170,6 @@ void ACharacter_Master::SetupPlayerInputComponent(class UInputComponent* PlayerI
 }
 
 
-
-
-
-
 void ACharacter_Master::PostInitializeComponents()
 {
 	Super::PostInitializeComponents();
@@ -298,7 +294,9 @@ void ACharacter_Master::AddControllerPitchInput(float Val)
 {
 	if (bIsDashing == false)
 	{
+
 		Super::AddControllerPitchInput(Val);
+		Pitch = Val;
 	}
 }
 void ACharacter_Master::AddControllerYawInput(float Val)
@@ -306,6 +304,7 @@ void ACharacter_Master::AddControllerYawInput(float Val)
 	if (bIsDashing == false)
 	{
 		Super::AddControllerYawInput(Val);
+		Yaw = Val;
 	}
 }
 void ACharacter_Master::UpdateStat()

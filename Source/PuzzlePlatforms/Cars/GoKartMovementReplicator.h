@@ -99,9 +99,9 @@ private:
 	FVector ClientStartVelocity;
 	float ClientTimeSinceUpdate;//어디까지했는지
 	float ClientTimeBetweenLastUpdates;//총범위
-	FTransform ClientStartTransform;
+	FRotator ClientStartRotator;
 	TArray<struct FGoKartMove> UnacknowledgeMoves;
-
+	FTransform ClientStartTransform;
 
 
 

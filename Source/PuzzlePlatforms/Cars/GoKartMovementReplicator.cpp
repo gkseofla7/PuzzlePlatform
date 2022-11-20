@@ -83,7 +83,7 @@ void UGoKartMovementReplicator::UpdateServerState(FGoKartMove Move)
 {
 	//여기서 
 	ServerState.LastMove = Move;
-	ServerState.Transform = GetOwner()->GetTransform();
+	ServerState.Transform = GetOwner()->GetActorTransform();
 	ServerState.Velocity = OurMovementComponent->GetVelocity();
 }
 
@@ -211,16 +211,13 @@ bool UGoKartMovementReplicator::Server_SendMove_Validate(FGoKartMove Move)
 
 void UGoKartMovementReplicator::OnRep_ServerState()//약간 모두한테 실행되는듯?
 {//State가 바뀌면 자동 모두에게 실행됨
-
 	switch (GetOwnerRole())
 	{
 	case ROLE_AutonomousProxy:
 		AutonomousProxy_OnRep_ServerState();
 		break;
 	case ROLE_SimulatedProxy:
-		//UE_LOG(LogTemp, Warning, TEXT("On Rep ServerState %f *************************"), ClientTimeSinceUpdate);
 		SimulatedProxy_OnRep_ServerState();
-
 		break;
 	default:
 		break;

@@ -42,23 +42,24 @@ void USoldierAnimInstance::NativeUpdateAnimation(float DeltaSeconds)
 
 		CurrenPawnSpeed = Player->GetVelocity().Size();
 		Direction = CalculateDirection(Player->GetVelocity(), Player->GetActorRotation());
-		if ((Player->IsLocallyControlled() && Player->IsPlayerControlled())||(Player->HasAuthority()&&Player->IsPlayerControlled()))
-		{
-			AimRotation = Player->ControlRotation;
-		}
-		else// 그 외애들은
-		{
+		AimRotation = Player->ControlRotation;
+		//if ((Player->IsLocallyControlled() && Player->IsPlayerControlled())||(Player->HasAuthority()&&Player->IsPlayerControlled()))
+		//{
+		//	AimRotation = Player->ControlRotation;
+		//}
+		//else// 그 외애들은
+		//{
 
-			ClientTimeSinceUpdate += DeltaSeconds;
-			if (ClientTimeBetweenLastUpdates < KINDA_SMALL_NUMBER) return;
+		//	ClientTimeSinceUpdate += DeltaSeconds;
+		//	if (ClientTimeBetweenLastUpdates < KINDA_SMALL_NUMBER) return;
 
-			float LerpRatio = ClientTimeSinceUpdate / ClientTimeBetweenLastUpdates;
+		//	float LerpRatio = ClientTimeSinceUpdate / ClientTimeBetweenLastUpdates;
 
-			if (LerpRatio > 1)
-				LerpRatio = 1;
+		//	if (LerpRatio > 1)
+		//		LerpRatio = 1;
 
-			AimRotation = FQuat::Slerp(StartControllerRotator.Quaternion(), Player->ControlRotation.Quaternion(), LerpRatio).Rotator();
-		}
+		//	AimRotation = FQuat::Slerp(StartControllerRotator.Quaternion(), Player->ControlRotation.Quaternion(), LerpRatio).Rotator();
+		//}
 
 	}
 }

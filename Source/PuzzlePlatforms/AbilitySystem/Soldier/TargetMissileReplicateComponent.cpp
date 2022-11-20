@@ -94,7 +94,11 @@ void UTargetMissileReplicateComponent::ClientTick(float DeltaTime)
 	float LerpRatio = ClientTimeSinceUpdate / ClientTimeBetweenLastUpdates;
 
 	if (LerpRatio > 1)
+	{
 		LerpRatio = 1;
+
+	}
+		
 
 	FHermitCubicSplines Spline = CreateSpline();
 
@@ -114,6 +118,8 @@ FHermitCubicSplines UTargetMissileReplicateComponent::CreateSpline()
 	Spline.TargetLocatioin = ServerState.Transform.GetLocation();
 
 	Spline.TargetDerivative = ServerState.Velocity * VelocityToDeriavative;
+	//UE_LOG(LogTemp, Warning, TEXT("Start Speed %f"), Spline.StartDerivative.Size());
+	//UE_LOG(LogTemp, Warning, TEXT("End Speed %f"), Spline.TargetDerivative.Size());
 	
 	return Spline;
 }
@@ -131,6 +137,7 @@ void UTargetMissileReplicateComponent::InterpolateVelocity(FHermitCubicSplines S
 	float VelocityToDeriavative = ClientTimeBetweenLastUpdates * 100;
 	FVector NewDerivative = Spline.InterpolateDerivative(LerpRatio);
 	FVector NewVelocity = NewDerivative / VelocityToDeriavative;
+	UE_LOG(LogTemp, Warning, TEXT("Speed %f"), NewVelocity.Size());
 	OurMovementComponent->SetVelocity(NewVelocity);
 }
 
@@ -154,6 +161,7 @@ void UTargetMissileReplicateComponent::OnRep_ServerState()//약간 모두한테 실행되
 
 		ClientTimeBetweenLastUpdates = ClientTimeSinceUpdate;
 		ClientTimeSinceUpdate = 0;
+		UE_LOG(LogTemp, Warning, TEXT("ClientTimeBetweenLastUpdates %f"), ClientTimeBetweenLastUpdates);
 		if (MeshOffsetRoot != nullptr)
 		{
 			ClientStartTransform.SetLocation(MeshOffsetRoot->GetComponentLocation());

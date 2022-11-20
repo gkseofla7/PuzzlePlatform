@@ -8,7 +8,7 @@
 #include "MyPlayerController.h"
 #include "PuzzlePlatformsGameMode.h"
 #include "UI/FPSTargetWidget.h"
-
+#include "PlayersComponent/ControlRotationReplicator.h"
 #include "Missile/TargetMarker.h"
 #include "Missile/TargetableComponent.h"
 
@@ -24,6 +24,8 @@
 #include "UObject/ConstructorHelpers.h"
 #include "GameFramework/ProjectileMovementComponent.h"
 #include "Kismet/KismetSystemLibrary.h"
+#include "GameFramework/GameStateBase.h"
+
 
 #include "Net/UnrealNetwork.h"
 
@@ -65,6 +67,8 @@ ASoldier::ASoldier()
 	SplinePathComponent->SetupAttachment(RocketHolderComponent);
 	ADSCam_ = CreateDefaultSubobject<UCameraComponent>(TEXT("ADSCam"));
 	ADSCam_->SetupAttachment(GetMesh());
+	ControlRotationReplicator = CreateDefaultSubobject< UControlRotationReplicator>(TEXT("ControlRotationReplicator"));
+
 #pragma endregion ComponentSetting
 	//변수 초기화
 	GeneralCameraPosition = FVector(0, 90, 90);
@@ -80,12 +84,12 @@ ASoldier::ASoldier()
 	TeamNum = 1;
 }
 
-void ASoldier::GetLifetimeReplicatedProps(TArray< FLifetimeProperty >& OutLifetimeProps) const
-{
-	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
-	DOREPLIFETIME(ASoldier, ControlRotation);
-
-}
+//void ASoldier::GetLifetimeReplicatedProps(TArray< FLifetimeProperty >& OutLifetimeProps) const
+//{
+//	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
+//	//DOREPLIFETIME(ASoldier, ControlRotation);
+//
+//}
 
 void ASoldier::PostInitializeComponents()
 {
@@ -122,7 +126,13 @@ void ASoldier::SetupPlayerInputComponent(class UInputComponent* PlayerInputCompo
 	PlayerInputComponent->BindAction("Sprint", IE_Released, this, &ASoldier::UnSprint);
 }
 
+void ASoldier::SimulateControllerRotation(FControlRotation NewControlRotation)
+{
+	AddControllerPitchInput(NewControlRotation.Pitch);
+	AddControllerYawInput(NewControlRotation.Yaw);
 
+	SimulateRotationAnimation(GetControlRotation());
+}
 
 void ASoldier::SetFPSHudWidget()
 {
@@ -153,26 +163,22 @@ void ASoldier::Tick(float DeltaTime)
 		}
 	}
 
-	if (EquippedItem!=nullptr &&IsLocallyControlled() && IsPlayerControlled())
+
+
+	if (EquippedItem!=nullptr )//&&IsLocallyControlled() && IsPlayerControlled()
 	{
-		ControlRotation = GetControlRotation();
-		//float A = 360.0 - ControlRotation.Vector().X;
-		float A = 360.0 - ControlRotation.Pitch;
-		//float B = ControlRotation.Vector().Y* -1;
-		float B = ControlRotation.Pitch;
-		//float C = ControlRotation.Vector().Z;
-		float C = ControlRotation.Yaw;
-		float tmp = 0;
-		if (B >= 180)
+		if (GetLocalRole() == ROLE_AutonomousProxy)//일단 서버 아니고 자기꺼 있을때 자기꺼 움직이고 서버한테 정보보냄
 		{
-			tmp = A / 3;
+			LastControlRotation = CreateControlRotation(DeltaTime);
+			SimulateRotationAnimation(GetControlRotation());
 		}
-		else
+		//We are the server and in control of the pawn
+		if (GetLocalRole() == ROLE_Authority && IsLocallyControlled() && IsPlayerControlled())//서버고 자기꺼일때 
 		{
-			tmp = B * (-1) / 3;
+			LastControlRotation = CreateControlRotation(DeltaTime);
+			SimulateRotationAnimation(GetControlRotation());
 		}
-		ControlRotation = FRotator(0, 0, tmp);;
-		Cast< USoldierMotionReplicator>(ReplicateComponent)->Server_SetControllRotation(ControlRotation);
+
 	}
 	if (IsAiming)
 	{
@@ -258,6 +264,40 @@ void ASoldier::Tick(float DeltaTime)
 
 }
 
+void ASoldier::SimulateRotationAnimation(FRotator NewRotator)
+{
+	if (!HasAuthority())
+	{
+		UE_LOG(LogTemp, Warning, TEXT("SimulateRotationAnimation"));
+	}
+
+	float A = 360.0 - NewRotator.Pitch;
+
+	float B = NewRotator.Pitch;
+	float tmp = 0;
+	if (B >= 180)
+	{
+		tmp = A / 3;
+	}
+	else
+	{
+		tmp = B * (-1) / 3;
+	}
+
+	ControlRotation = FRotator(0, 0, tmp);;
+	//Cast< USoldierMotionReplicator>(ReplicateComponent)->Server_SetControllRotation(ControlRotation);
+}
+
+struct FControlRotation ASoldier::CreateControlRotation(float DeltaTime)
+{
+
+	FControlRotation Rotation;
+	Rotation.DeltaTime = DeltaTime;
+	Rotation.Pitch = Pitch;
+	Rotation.Yaw = Yaw;
+	Rotation.Time = GetOwner()->GetWorld()->GetGameState()->GetServerWorldTimeSeconds();
+	return Rotation;
+}
 
 
 void ASoldier::OnRep_ControlRotation()//서버에서 진행 안하니..?

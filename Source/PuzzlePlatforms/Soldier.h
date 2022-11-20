@@ -10,6 +10,21 @@
  * 
  */
 
+USTRUCT()
+struct FControlRotation
+{
+	GENERATED_BODY()
+
+	UPROPERTY()
+	float Pitch;
+	UPROPERTY()
+	float Yaw;
+	UPROPERTY()
+	float DeltaTime;
+	UPROPERTY()
+	float Time;
+};
+
 
 UENUM(BlueprintType)
 enum class ECamInUse : uint8
@@ -55,6 +70,8 @@ public:
 	void PlayersDied();
 	void RespawnCharacter();
 	void SetIsAiming(bool NewIsAiming);
+	void SimulateControllerRotation(FControlRotation ControlRotation);
+	void SimulateRotationAnimation(FRotator NewRotator);
 protected:
 	virtual void PostInitializeComponents() override;
 	virtual void BeginPlay() override;
@@ -73,7 +90,7 @@ private:
 
 
 
-
+	FControlRotation CreateControlRotation(float DeltaTime);
 	void AimMissile();
 	void UnAimMissile();
 	void WearItem();
@@ -167,12 +184,15 @@ public:
 		class UCameraComponent* ADSCam_;
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
 		class UTargetableComponent* TargetableComponent;
+	UPROPERTY(BlueprintReadWrite, EditAnywhere)
+		class UControlRotationReplicator* ControlRotationReplicator;
 	TSubclassOf<class AObject_Master> GunClass;
-	UPROPERTY(ReplicatedUsing = OnRep_ControlRotation)
-		FRotator ControlRotation;
+	//UPROPERTY(ReplicatedUsing = OnRep_ControlRotation)
+	FRotator ControlRotation;
 	bool IsShooting = false;
 	float CurrentFiringSpread = 0.f;
 	float CurrentSpread;
 
+	FControlRotation LastControlRotation;
 
 };

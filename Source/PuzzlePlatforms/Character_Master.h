@@ -73,6 +73,7 @@ public:
 	void SetPlayerStat();
 	void 	OnRep_PlayerState() override;
 
+
 	UFUNCTION(BlueprintImplementableEvent)
 		void AddCrosshairWidget();
 
@@ -150,5 +151,9 @@ public:
 	bool bIsAttacking = false;
 	bool bUsingSkill = false;
 	ECharacterType CharacterType;
+	float Pitch;
+	float Yaw;
+
+
 };
 
