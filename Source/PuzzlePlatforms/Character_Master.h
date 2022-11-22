@@ -153,7 +153,7 @@ public:
 	ECharacterType CharacterType;
 	float Pitch;
 	float Yaw;
-
+	TQueue<TTuple<FVector,float>> LocationHistory;
 
 };
 

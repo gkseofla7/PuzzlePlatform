@@ -145,7 +145,7 @@ void USoldierMotionReplicator::Server_SendAttack_Implementation()
 	{
 		return;
 	}
-	MyOwner->EquippedItem->StartFire();
+	MyOwner->EquippedItem->StartFire();//결국엔 서버에서 싸줌
 
 	IsFiring = true;
 

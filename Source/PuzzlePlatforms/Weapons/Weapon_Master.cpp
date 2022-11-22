@@ -108,18 +108,36 @@ bool AWeapon_Master::Multicast_AmmoCheck_Validate()
     return true;
 }
 
+void AWeapon_Master::PlayShotLocally()
+{
+    if (FireSound != NULL)//소리 다른애들한테도 해줘야됨
+    {
+        UGameplayStatics::PlaySoundAtLocation(this, FireSound, GetActorLocation());
+    }
+    if (MuzzlesParticle)
+    {
+        UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), MuzzlesParticle, SkeletalMeshComponent->GetSocketTransform(FName("Muzzle")));
+    }
+}
+
 void AWeapon_Master::Shot()
 {
+    PlayShotLocally();
+    Server_Shot();
     
-    FString name = GetName();
-    auto Soldier = Cast<ASoldier>(Player);
-    AmmoCheck();
+}
 
-    if ( CanFire== true && ClipEmpty == false && Reloading == false)
+
+void AWeapon_Master::Server_Shot_Implementation()
+{
+    NetMulticast_PlayShotLocally();
+    auto Soldier = Cast<ASoldier>(Player);
+    AmmoCheck();//이건 서버에서 해줘야됨
+    if (CanFire == true && ClipEmpty == false && Reloading == false)
     {
-       Multicast_SetMuzzleRotation();//이걸 조종하는애 가져옴
+        Multicast_SetMuzzleRotation();//이걸 조종하는애 가져옴
         FVector BulletScale;
-       // BulletScale.Set(0.1, 0.1, 0.1);
+        // BulletScale.Set(0.1, 0.1, 0.1);
         FTransform BulletTransform;
         FVector Dir = GetOwner()->GetActorForwardVector();
         BulletTransform.SetLocation(SkeletalMeshComponent->GetSocketTransform("Muzzle").GetLocation());
@@ -133,29 +151,25 @@ void AWeapon_Master::Shot()
         SpawnInfo.Instigator = Cast<APawn>(Soldier);
         auto bullet = GetWorld()->SpawnActor<ABulletMaster>(BulletMasterClass, BulletTransform, SpawnInfo);
 
-       //if (bullet != nullptr)
-       //{
-       //    bullet->Shooter = Soldier;
-       //}
-       //else
-       //{
-       //    UE_LOG(LogTemp, Warning, TEXT("Here nullptr"));
-       //}
-       Multicast_SetClipAmmo(ClipAmmo - AmmoCost);//모든 애들 총알 관리함~
-
-
-
-        if (FireSound != NULL)//소리 다른애들한테도 해줘야됨
-        {
-            UGameplayStatics::PlaySoundAtLocation(this, FireSound, GetActorLocation());
-        }
-        if (MuzzlesParticle)
-        {
-            UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), MuzzlesParticle, SkeletalMeshComponent->GetSocketTransform(FName("Muzzle")));
-        }
-       
-
+        Multicast_SetClipAmmo(ClipAmmo - AmmoCost);//모든 애들 총알 관리함~
     }
+}
+
+bool AWeapon_Master::Server_Shot_Validate()
+{
+    return true;
+}
+
+void AWeapon_Master::NetMulticast_PlayShotLocally_Implementation()
+{
+    if (Player->IsLocallyControlled() != true)
+    {
+        PlayShotLocally();
+    }
+}
+bool AWeapon_Master::NetMulticast_PlayShotLocally_Validate()
+{
+    return true;
 }
 
 void AWeapon_Master::Multicast_SetClipAmmo_Implementation(float NewClipAmmo)

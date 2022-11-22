@@ -98,7 +98,8 @@ private:
 	void SetCurrentTarget( AActor* Target);
 	void EndTarget();
 	void BeginTarget();
-
+	void StartFire();
+	void StopFire();
 
 public:
 	//Classes
@@ -135,8 +136,6 @@ public:
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
 		TArray<class USplineMeshComponent*> PointsArray;
 
-	UFUNCTION()
-		void OnRep_ControlRotation();
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
 	bool ShowPath = false;
 	bool ShowTarget = false;

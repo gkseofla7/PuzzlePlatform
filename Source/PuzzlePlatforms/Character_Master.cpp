@@ -36,6 +36,7 @@
 #include "Components/DecalComponent.h"
 #include "Components/WidgetComponent.h"
 #include "Camera/CameraShakeBase.h"
+#include "GameFramework/GameStateBase.h"
 
 
 #include "ImageUtils.h"
@@ -267,6 +268,23 @@ void ACharacter_Master::BindCharacterStatToWidget()
 void ACharacter_Master::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
+	if (HasAuthority())
+	{
+		float time = GetWorld()->GetGameState()->GetServerWorldTimeSeconds();
+		LocationHistory.Enqueue(MakeTuple<FVector, float>(GetActorLocation(), GetWorld()->GetGameState()->GetServerWorldTimeSeconds()));
+
+		while (!LocationHistory.IsEmpty())
+		{
+			if (LocationHistory.Peek()->Value + 2 > time)//시간이 2초 넘어감
+			{
+				LocationHistory.Pop();
+			}
+			else
+			{
+				break;
+			}
+		}
+	}
 	if (ChangeIcon == false)
 	{
 		ChangeIcon = true;
@@ -294,7 +312,6 @@ void ACharacter_Master::AddControllerPitchInput(float Val)
 {
 	if (bIsDashing == false)
 	{
-
 		Super::AddControllerPitchInput(Val);
 		Pitch = Val;
 	}
@@ -383,7 +400,6 @@ void ACharacter_Master::MoveRight(float Value)
 void ACharacter_Master::Attack()
 {
 	//만약 종족이 두개있다면..?
-	
 	if (bIsAttacking == true || bUsingSkill == true)
 	{
 		return;
@@ -470,7 +486,8 @@ void ACharacter_Master::Skill1Clicked()
 		return;
 	CharacterStatRef->Server_SetMP(CharacterStatRef->CurrentMP-SlotClass.GetDefaultObject()->AbilityDetails.Cost);
 	PlayerInfoHUDWidget->ActionBar_UI->ActionBarSlot_UI->StartCooldown();
-	ReplicateComponent->Server_Skill1Clicked(SlotClass);
+	float time = GetWorld()->GetGameState()->GetServerWorldTimeSeconds();
+	ReplicateComponent->Server_SkillClicked(SlotClass, time);
 }
 void ACharacter_Master::Skill2Clicked()
 {
@@ -487,7 +504,8 @@ void ACharacter_Master::Skill2Clicked()
 		return;
 	CharacterStatRef->Server_SetMP(CharacterStatRef->CurrentMP - SlotClass.GetDefaultObject()->AbilityDetails.Cost);
 	PlayerInfoHUDWidget->ActionBar_UI->ActionBarSlot_UI_1->StartCooldown();
-	ReplicateComponent->Server_Skill2Clicked(SlotClass);
+	float time = GetWorld()->GetGameState()->GetServerWorldTimeSeconds();
+	ReplicateComponent->Server_SkillClicked(SlotClass, time);
 }
 void ACharacter_Master::Skill3Clicked()
 {
@@ -504,7 +522,8 @@ void ACharacter_Master::Skill3Clicked()
 		return;
 	CharacterStatRef->Server_SetMP(CharacterStatRef->CurrentMP - SlotClass.GetDefaultObject()->AbilityDetails.Cost);
 	PlayerInfoHUDWidget->ActionBar_UI->ActionBarSlot_UI_2->StartCooldown();
-	ReplicateComponent->Server_Skill3Clicked(SlotClass);
+	float time = GetWorld()->GetGameState()->GetServerWorldTimeSeconds();
+	ReplicateComponent->Server_SkillClicked(SlotClass, time);
 }
 void ACharacter_Master::Skill4Clicked()
 {
@@ -522,7 +541,8 @@ void ACharacter_Master::Skill4Clicked()
 	CharacterStatRef->Server_SetMP(CharacterStatRef->CurrentMP - SlotClass.GetDefaultObject()->AbilityDetails.Cost);
 
 	PlayerInfoHUDWidget->ActionBar_UI->ActionBarSlot_UI_3->StartCooldown();
-	ReplicateComponent->Server_Skill4Clicked(SlotClass);
+	float time = GetWorld()->GetGameState()->GetServerWorldTimeSeconds();
+	ReplicateComponent->Server_SkillClicked(SlotClass, time);
 }
 void ACharacter_Master::Skill5Clicked()
 {
@@ -539,7 +559,8 @@ void ACharacter_Master::Skill5Clicked()
 		return;
 	CharacterStatRef->Server_SetMP(CharacterStatRef->CurrentMP - SlotClass.GetDefaultObject()->AbilityDetails.Cost);
 	PlayerInfoHUDWidget->ActionBar_UI->ActionBarSlot_UI_4->StartCooldown();
-	ReplicateComponent->Server_Skill5Clicked(SlotClass);
+	float time = GetWorld()->GetGameState()->GetServerWorldTimeSeconds();
+	ReplicateComponent->Server_SkillClicked(SlotClass, time);
 }
 
 void ACharacter_Master::SkillReleased()

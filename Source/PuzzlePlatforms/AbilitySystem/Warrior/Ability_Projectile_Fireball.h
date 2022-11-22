@@ -20,7 +20,7 @@ protected:
 	virtual void CastAbility_Implementation() override;
 	virtual void ActivateEffect_Implementation() override;
 public:
-
+	void PlayNextAnim();
 	UFUNCTION(NetMulticast, Reliable, WithValidation)
 		void NetMulticast_Spark(FVector Location);
 	UFUNCTION(NetMulticast, Reliable, WithValidation)
@@ -45,5 +45,6 @@ public:
 	class UParticleSystem* ParticleTemplate;
 	UPROPERTY()
 	class UParticleSystem* BigFireParticleTemplate;
+	bool bNextAnim = false;
 
 };

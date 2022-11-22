@@ -84,67 +84,43 @@ void UCharacterMotionReplicator::DisableActor(bool toHide)
 }
 
 
-void UCharacterMotionReplicator::Server_Skill1Clicked_Implementation(TSubclassOf<AAbility>AbilityClass)
+void UCharacterMotionReplicator::Server_SkillClicked_Implementation(TSubclassOf<AAbility>AbilityClass, float time)
 {
-	AbilitySpawn(AbilityClass);
+	AbilitySpawn(AbilityClass, time);
 }
 
-void UCharacterMotionReplicator::Server_Skill2Clicked_Implementation(TSubclassOf<AAbility>AbilityClass)
-{
-	AbilitySpawn(AbilityClass);
-}
-
-
-void UCharacterMotionReplicator::Server_Skill3Clicked_Implementation(TSubclassOf<AAbility>AbilityClass)
-{
-	AbilitySpawn(AbilityClass);
-}
-
-void UCharacterMotionReplicator::Server_Skill4Clicked_Implementation(TSubclassOf<AAbility>AbilityClass)
-{
-	AbilitySpawn(AbilityClass);
-
-}
-void UCharacterMotionReplicator::Server_Skill5Clicked_Implementation(TSubclassOf<AAbility>AbilityClass)
-{
-	AbilitySpawn(AbilityClass);
-
-}
-
-bool UCharacterMotionReplicator::Server_Skill1Clicked_Validate(TSubclassOf<AAbility>AbilityClass)
-{
-	return true;
-}
-bool UCharacterMotionReplicator::Server_Skill2Clicked_Validate(TSubclassOf<AAbility>AbilityClass)
-{
-	return true;
-}
-bool UCharacterMotionReplicator::Server_Skill3Clicked_Validate(TSubclassOf<AAbility>AbilityClass)
+bool UCharacterMotionReplicator::Server_SkillClicked_Validate(TSubclassOf<AAbility>AbilityClass, float time)
 {
 	return true;
 }
 
-bool UCharacterMotionReplicator::Server_Skill4Clicked_Validate(TSubclassOf<AAbility>AbilityClass)
-{
-	return true;
-}
-
-bool UCharacterMotionReplicator::Server_Skill5Clicked_Validate(TSubclassOf<AAbility>AbilityClass)
-{
-	return true;
-}
-void UCharacterMotionReplicator::AbilitySpawn(TSubclassOf<AAbility>AbilityClass)
+void UCharacterMotionReplicator::AbilitySpawn(TSubclassOf<AAbility>AbilityClass, float time)
 {
 	FTransform PlayerTransform = GetOwner()->GetActorTransform();
-	FActorSpawnParameters Params;
 	FActorSpawnParameters SpawnInfo;
-
+	SpawnInfo.Owner = GetOwner();
+	SpawnInfo.Instigator = Cast<APawn>(GetOwner());
+	auto ability = GetWorld()->SpawnActor<AAbility>(AbilityClass, PlayerTransform, SpawnInfo);
+	//NetMulticast_AbilityCustomInitialize(ability, time);
+}
+void UCharacterMotionReplicator::AbilitySpawn(TSubclassOf<class AAbility>AbilityClass)
+{
+	FTransform PlayerTransform = GetOwner()->GetActorTransform();
+	FActorSpawnParameters SpawnInfo;
 	SpawnInfo.Owner = GetOwner();
 	SpawnInfo.Instigator = Cast<APawn>(GetOwner());
 	auto ability = GetWorld()->SpawnActor<AAbility>(AbilityClass, PlayerTransform, SpawnInfo);
 }
 
+void UCharacterMotionReplicator::NetMulticast_AbilityCustomInitialize_Implementation(AAbility* ability, float time)
+{
+	//ability->Time = time;
+}
 
+bool UCharacterMotionReplicator::NetMulticast_AbilityCustomInitialize_Validate(AAbility* ability, float time)
+{
+	return true;
+}
 
 void UCharacterMotionReplicator::Server_SetTargetPlayer_Implementation(ACharacter_Master* NewTarget)
 {

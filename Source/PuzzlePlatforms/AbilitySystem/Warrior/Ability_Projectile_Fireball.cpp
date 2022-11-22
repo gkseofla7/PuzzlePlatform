@@ -44,36 +44,66 @@ void AAbility_Projectile_Fireball::BeginPlay()
 	AsPlayerAnimInstance->Montage_JumpToSection(FName("Defualt"), AsPlayerAnimInstance->FireballAttackMontage);
 	if(PlayerRef->IsLocallyControlled())
 	{ 
+		PlayerRef->OnSkillReleased.AddUObject(this, &AAbility_Projectile_Fireball::PlayNextAnim);//등록하는애들만
 		AsPlayerAnimInstance->OnFireBall.AddUObject(this, &AAbility_Projectile::ActivateEffect);
 	}
-
 	//AsPlayerAnimInstance->OnFireBall.AddUObject(this, &AAbility_Projectile::DetachAbilityFromPlayer);
 	AsPlayerAnimInstance->PlayFireballAttackMontage();
 	//AsPlayerAnimInstance->OnFireBall.Add()
 
 }
 
-void AAbility_Projectile_Fireball::CastAbility_Implementation()
+void AAbility_Projectile_Fireball::CastAbility_Implementation()//이때 서버의 시간 등록됨
 {
 	Super::CastAbility_Implementation();
 
-	Server_PlayNextAnimation();
-	//AsPlayerAnimInstance->PlayFireballAttackMontage();
+	if (bNextAnim == true)
+	{
+		PlayNextAnim();
+	}
+	else
+	{
+		bNextAnim = true;
+	}
 
+
+}
+
+void AAbility_Projectile_Fireball::PlayNextAnim()
+{
+	if (bNextAnim == true)
+	{
+		AsPlayerAnimInstance->Montage_JumpToSection(FName("EndCast"), AsPlayerAnimInstance->FireballAttackMontage);
+		Server_PlayNextAnimation();
+	}
+	else
+	{
+		bNextAnim = true;
+	}
 }
 
 void AAbility_Projectile_Fireball::ActivateEffect_Implementation()
 {
 
-	if (PlayerRef->IsLocallyControlled() == false)
+	if (PlayerRef->IsLocallyControlled() == false)//자기 자신만 진행
 		return;
 
 	//즉 클라이언트에서만 진행
 	Super::ActivateEffect_Implementation();
+	FVector FireballLocation = GetActorLocation();
+	FVector FireballVelocity = PlayerRef->GetMuzzleRotation().Vector() * 1500;
+	{
+		DetachFromActor(FDetachmentTransformRules::KeepWorldTransform);
+		AbilityRoot->SetWorldLocation(FireballLocation);
+		ProjectileMovement_->Velocity = FireballVelocity;
+		ParticleSystemComponent->SetTemplate(BigFireParticleTemplate);
+		ProjectileMovement_->Activate();
+		ParticleSystemComponent->Activate();
+	}
 
 	Server_DetachAbilityFromPlayer();//모두 일단 띄어냄
-	Server_SetLocation(GetActorLocation());
-	Server_SetVelocity(PlayerRef->GetMuzzleRotation().Vector() * 1500);
+	Server_SetLocation(FireballLocation);
+	Server_SetVelocity(FireballVelocity);
 	Server_SetFireballParticle();
 	Server_Activate();
 	//초기값 위치 다 맞춤
@@ -94,6 +124,8 @@ bool AAbility_Projectile_Fireball::Server_SetFireballParticle_Validate()
 
 void AAbility_Projectile_Fireball::NetMulticast_SetFireballParticle_Implementation()
 {
+	if (PlayerRef->IsLocallyControlled() == true)
+		return;
 	ParticleSystemComponent->SetTemplate(BigFireParticleTemplate);
 }
 
@@ -101,10 +133,6 @@ bool AAbility_Projectile_Fireball::NetMulticast_SetFireballParticle_Validate()
 {
 	return true;
 }
-
-
-
-
 
 
 void AAbility_Projectile_Fireball::NetMulticast_Spark_Implementation(FVector Location)
@@ -131,9 +159,9 @@ void AAbility_Projectile_Fireball::NetMulticast_PlayNextAnimation_Implementation
 {
 
 	ABCHECK(AsPlayerAnimInstance != nullptr);
-	if (HasAuthority() == true)
+	if (PlayerRef->IsLocallyControlled())
 	{
-		UE_LOG(LogTemp, Warning, TEXT("SERVER Shot"));
+		return;
 	}
 	AsPlayerAnimInstance->Montage_JumpToSection(FName("EndCast"), AsPlayerAnimInstance->FireballAttackMontage);
 }
@@ -162,6 +190,8 @@ bool AAbility_Projectile_Fireball::NetMulticast_DeactivateParticle_Validate()
 
 void AAbility_Projectile_Fireball::OnOverlapBegin(class UPrimitiveComponent* OverlappedComp, class AActor* OtherActor, class UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
+	if (NeedToDestroy == true)
+		return;
 	if (OtherActor == PlayerRef)
 		return;
 	UE_LOG(LogTemp, Warning, TEXT("Hit %s, %s %s") ,*OverlappedComp->GetName(),*OtherActor->GetName(), *OtherComp->GetName());

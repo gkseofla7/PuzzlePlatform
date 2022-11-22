@@ -67,6 +67,7 @@ public:
 	int32 AbilityLevel = 0;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	int AbilityMaxLevel;
+	float Time;
 
 
 };

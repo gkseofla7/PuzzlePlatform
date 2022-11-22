@@ -24,6 +24,7 @@ AAbility_TargetMissile::AAbility_TargetMissile()
 	{
 		ParticleTemplate = ParticleAsset.Object;
 	}
+
 }
 void AAbility_TargetMissile::BeginPlay()
 {

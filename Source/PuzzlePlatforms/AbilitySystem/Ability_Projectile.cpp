@@ -49,6 +49,8 @@ void AAbility_Projectile::Server_SetVelocity_Implementation(FVector NewVelocity)
 
 void AAbility_Projectile::NetMulticast_SetVelocity_Implementation(FVector NewVelocity)
 {
+	if (PlayerRef->IsLocallyControlled() == true)
+		return;
 	ProjectileMovement_->Velocity = NewVelocity;
 }
 
@@ -71,8 +73,9 @@ void AAbility_Projectile::Server_SetLocation_Implementation(FVector NewLocation)
 
 void AAbility_Projectile::NetMulticast_SetLocation_Implementation(FVector NewLocation)
 {
+	if (PlayerRef->IsLocallyControlled() == true)
+		return;
 	AbilityRoot->SetWorldLocation(NewLocation);
-
 }
 
 void AAbility_Projectile::Server_Activate_Implementation()
@@ -82,6 +85,8 @@ void AAbility_Projectile::Server_Activate_Implementation()
 
 void AAbility_Projectile::NetMulticast_Activate_Implementation()
 {
+	if (PlayerRef->IsLocallyControlled() == true)
+		return;
 	ProjectileMovement_->Activate();
 	ParticleSystemComponent->Activate();
 }
@@ -93,6 +98,8 @@ void AAbility_Projectile::Server_DetachAbilityFromPlayer_Implementation()
 
 void AAbility_Projectile::NetMulticast_DetachAbilityFromPlayer_Implementation()
 {
+	if (PlayerRef->IsLocallyControlled() == true)
+		return;
 	DetachFromActor(FDetachmentTransformRules::KeepWorldTransform);
 }
 

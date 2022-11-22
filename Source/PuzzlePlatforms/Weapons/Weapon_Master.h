@@ -49,6 +49,12 @@ public:
 
 	UFUNCTION(BlueprintCallable)
 		void Shot();
+	UFUNCTION(Server, Reliable, WithValidation)
+		void Server_Shot();
+	UFUNCTION(NetMulticast, Reliable, WithValidation)
+		void NetMulticast_PlayShotLocally();
+	void PlayShotLocally();
+
 
 	UFUNCTION(BlueprintCallable)
 		void Reload();

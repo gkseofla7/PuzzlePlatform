@@ -108,7 +108,7 @@ void UControlRotationReplicator::Server_SendControlRotation_Implementation(FCont
 	//ClientSimulatedTime += Move.DeltaTime;
 	ASoldier* MySoldier = Cast<ASoldier>(GetOwner());
 	MySoldier->SimulateControllerRotation(ControlRotation);
-
+	MySoldier->SimulateRotationAnimation(MySoldier->GetController()->GetControlRotation());
 	//UE_LOG(LogTemp, Warning, TEXT("Time %f"), ControlRotation.Time);
 	UpdateServerState(ControlRotation);
 }
@@ -155,18 +155,25 @@ void UControlRotationReplicator::SimulatedProxy_OnRep_ServerState()//여기서는 초
 void UControlRotationReplicator::AutonomousProxy_OnRep_ServerState()
 {
 	ASoldier* MySoldier = Cast<ASoldier>(GetOwner());
-	MySoldier->GetController()->SetControlRotation(ServerState.ControlRotator);
+
+	//UE_LOG(LogTemp, Warning, TEXT("Before Rotation %f"), MySoldier->GetController()->GetControlRotation().Pitch);
 	FControlRotation MyControlRotation;
 	MyControlRotation.Pitch = ServerState.Pitch;
 	MyControlRotation.Yaw = ServerState.Yaw;
 	MyControlRotation.Time = ServerState.Time;
 
 	ClearAcknowledgeControlRotations(MyControlRotation);
-
+	
+	//UE_LOG(LogTemp, Warning, TEXT("ServerState Change"));
 	//UE_LOG(LogTemp, Warning, TEXT("Num : %d"), UnacknowledgeControlRotations.Num());
+	MySoldier->GetController()->SetControlRotation(ServerState.ControlRotator);
+	//UE_LOG(LogTemp, Warning, TEXT("Server Rotation %f"), MySoldier->GetController()->GetControlRotation().Pitch);
 	for (const FControlRotation& ControlRotation : UnacknowledgeControlRotations)//결국엔 클라에서 나오는거였냐..ㅋ
 	{
+		//UE_LOG(LogTemp, Warning, TEXT("Pitch %f"), ControlRotation.Pitch);
 		MySoldier->SimulateControllerRotation(ControlRotation);
 	}
+
+	//UE_LOG(LogTemp, Warning, TEXT("After Rotation %f"), MySoldier->GetController()->GetControlRotation().Pitch);
 
 }

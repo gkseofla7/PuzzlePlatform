@@ -128,10 +128,11 @@ void ASoldier::SetupPlayerInputComponent(class UInputComponent* PlayerInputCompo
 
 void ASoldier::SimulateControllerRotation(FControlRotation NewControlRotation)
 {
+	//아 애초에 없구나.. 컨트롤러가
 	AddControllerPitchInput(NewControlRotation.Pitch);
 	AddControllerYawInput(NewControlRotation.Yaw);
 
-	SimulateRotationAnimation(GetControlRotation());
+	
 }
 
 void ASoldier::SetFPSHudWidget()
@@ -169,8 +170,10 @@ void ASoldier::Tick(float DeltaTime)
 	{
 		if (GetLocalRole() == ROLE_AutonomousProxy)//일단 서버 아니고 자기꺼 있을때 자기꺼 움직이고 서버한테 정보보냄
 		{
+			//UE_LOG(LogTemp, Warning, TEXT("Rotation %f"), GetController()->GetControlRotation().Pitch);
 			LastControlRotation = CreateControlRotation(DeltaTime);
 			SimulateRotationAnimation(GetControlRotation());
+			UE_LOG(LogTemp, Warning, TEXT("Tick Rotation %f"), GetController()->GetControlRotation().Pitch);
 		}
 		//We are the server and in control of the pawn
 		if (GetLocalRole() == ROLE_Authority && IsLocallyControlled() && IsPlayerControlled())//서버고 자기꺼일때 
@@ -205,17 +208,19 @@ void ASoldier::Tick(float DeltaTime)
 		//FPredictProjectilePathResult PredictResult;
 		TArray<AActor*> Ignores;
 		Ignores.Add(this);
-		//PredictParam.StartLocation = RocketMouthTransform.GetLocation();
-		//PredictParam.LaunchVelocity = MissileVelocity;
-		//PredictParam.ProjectileRadius = 20.;
-		//PredictParam.bTraceWithCollision = true;
-		//PredictParam.ObjectTypes = ObjectTypes;
-		//PredictParam.SimFrequency = 15;
-		////PredictParam.DrawDebugType = EDrawDebugTrace::ForDuration;
-		////PredictParam.DrawDebugTime = .1;
-		//PredictParam.MaxSimTime = 10;
-		//PredictParam.ActorsToIgnore = Ignores;
-		//PredictParam.OverrideGravityZ = 0.;
+		{
+			//PredictParam.StartLocation = RocketMouthTransform.GetLocation();
+			//PredictParam.LaunchVelocity = MissileVelocity;
+			//PredictParam.ProjectileRadius = 20.;
+			//PredictParam.bTraceWithCollision = true;
+			//PredictParam.ObjectTypes = ObjectTypes;
+			//PredictParam.SimFrequency = 15;
+			////PredictParam.DrawDebugType = EDrawDebugTrace::ForDuration;
+			////PredictParam.DrawDebugTime = .1;
+			//PredictParam.MaxSimTime = 10;
+			//PredictParam.ActorsToIgnore = Ignores;
+			//PredictParam.OverrideGravityZ = 0.;
+		}
 		//결국 시작값, 이동등을 정해서 위치 경로 예측
 		FHitResult OutHit;
 		TArray< FVector > OutPathPositions;
@@ -266,10 +271,6 @@ void ASoldier::Tick(float DeltaTime)
 
 void ASoldier::SimulateRotationAnimation(FRotator NewRotator)
 {
-	if (!HasAuthority())
-	{
-		UE_LOG(LogTemp, Warning, TEXT("SimulateRotationAnimation"));
-	}
 
 	float A = 360.0 - NewRotator.Pitch;
 
@@ -295,26 +296,20 @@ struct FControlRotation ASoldier::CreateControlRotation(float DeltaTime)
 	Rotation.DeltaTime = DeltaTime;
 	Rotation.Pitch = Pitch;
 	Rotation.Yaw = Yaw;
-	Rotation.Time = GetOwner()->GetWorld()->GetGameState()->GetServerWorldTimeSeconds();
+	Rotation.Time = GetWorld()->GetGameState()->GetServerWorldTimeSeconds();
 	return Rotation;
 }
-
-
-void ASoldier::OnRep_ControlRotation()//서버에서 진행 안하니..?
-{
-	auto Anim = Cast<USoldierAnimInstance>(MyAnim);
-	Anim->ClientTimeBetweenLastUpdates = Anim->ClientTimeSinceUpdate;
-	Anim->ClientTimeSinceUpdate = 0;
-
-	Anim->StartControllerRotator = Anim->AimRotation;
-}
-
 
 void ASoldier::AddControllerPitchInput(float Val)
 {
 	if (bIsDashing == false)
 	{
+		//FRotator bf = GetController()->GetControlRotation();
+		//UE_LOG(LogTemp, Warning, TEXT("Before Rotation %f"),bf.Pitch);
+		//UE_LOG(LogTemp, Warning, TEXT("Add : %f"), Val);
 		Super::AddControllerPitchInput(Val);
+		Pitch = Val;
+		//UE_LOG(LogTemp, Warning, TEXT("After Rotation %f"), GetController()->GetControlRotation().Pitch);
 		if (ShowPath == true)
 		{
 			float NewDirection = 0;
@@ -406,10 +401,33 @@ void ASoldier::Attack()
 	}
 	IsShooting = true;
 	SetMuzzleRotation();
-	bIsAttacking = false;
-	Super::Attack();
+	//먼저 클라이언트에서 쏠 수 있게
+	StartFire();
+	//if (ReplicateComponent != nullptr)//여기서 바로 말고..
+	//	ReplicateComponent->Server_SendAttack();
+}
+
+void ASoldier::WeaponPrimaryReleased()
+{
+	StopFire();
+}
+
+void ASoldier::StartFire()
+{
+	EquippedItem->StartFire();//클라에서 신호
+}
+
+void ASoldier::StopFire()
+{
+	if (EquippedItem == nullptr)
+		return;
+	IsShooting = false;
+	EquippedItem->StopFire();
+	//Cast<USoldierMotionReplicator>(ReplicateComponent)->Server_SendAttackStop();
 
 }
+
+
 
 void ASoldier::AimDownSights()
 {
@@ -487,15 +505,7 @@ void ASoldier::UnAimMissile()
 }
 
 
-void ASoldier::WeaponPrimaryReleased()
-{
 
-	if (EquippedItem == nullptr)
-		return;
-	IsShooting = false;
-	Cast<USoldierMotionReplicator>(ReplicateComponent)->Server_SendAttackStop();
-
-}
 
 
 void ASoldier::WeaponReload()

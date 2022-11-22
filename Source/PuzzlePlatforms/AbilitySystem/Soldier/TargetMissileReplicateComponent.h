@@ -18,6 +18,8 @@ struct FTargetMissileState
 		FTransform Transform;
 	UPROPERTY()
 		FVector Velocity;
+	UPROPERTY()
+		FVector Accelerator;
 };
 
 struct FHermitCubicSplines

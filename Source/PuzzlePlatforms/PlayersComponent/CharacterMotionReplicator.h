@@ -29,17 +29,12 @@ public:
 	UFUNCTION(NetMulticast, Reliable, WithValidation)
 		void  NetMulticast_BindCharacterStatToWidget();
 	virtual void DisableActor(bool toHide);
+	void AbilitySpawn(TSubclassOf<class AAbility>AbilityClass, float time);
 	void AbilitySpawn(TSubclassOf<class AAbility>AbilityClass);
 	UFUNCTION(Server, Reliable, WithValidation)
-		void Server_Skill1Clicked(TSubclassOf<AAbility>AbilityClass);
-	UFUNCTION(Server, Reliable, WithValidation)
-		void Server_Skill2Clicked(TSubclassOf<AAbility>AbilityClass);
-	UFUNCTION(Server, Reliable, WithValidation)
-		void Server_Skill3Clicked(TSubclassOf<AAbility>AbilityClass);
-	UFUNCTION(Server, Reliable, WithValidation)
-		void Server_Skill4Clicked(TSubclassOf<AAbility>AbilityClass);
-	UFUNCTION(Server, Reliable, WithValidation)
-		void Server_Skill5Clicked(TSubclassOf<AAbility>AbilityClass);
+		void Server_SkillClicked(TSubclassOf<AAbility>AbilityClass, float time);
+	UFUNCTION(NetMulticast, Reliable, WithValidation)
+		void  NetMulticast_AbilityCustomInitialize(AAbility* ability, float time);
 
 
 	UFUNCTION(Server, Reliable, WithValidation)

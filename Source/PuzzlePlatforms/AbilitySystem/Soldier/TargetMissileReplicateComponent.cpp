@@ -118,8 +118,7 @@ FHermitCubicSplines UTargetMissileReplicateComponent::CreateSpline()
 	Spline.TargetLocatioin = ServerState.Transform.GetLocation();
 
 	Spline.TargetDerivative = ServerState.Velocity * VelocityToDeriavative;
-	//UE_LOG(LogTemp, Warning, TEXT("Start Speed %f"), Spline.StartDerivative.Size());
-	//UE_LOG(LogTemp, Warning, TEXT("End Speed %f"), Spline.TargetDerivative.Size());
+
 	
 	return Spline;
 }
