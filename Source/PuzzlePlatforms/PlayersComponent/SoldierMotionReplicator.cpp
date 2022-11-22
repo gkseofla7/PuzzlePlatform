@@ -70,33 +70,34 @@ bool USoldierMotionReplicator::NetMulticast_SetMuzzleRotation_Validate(FRotator 
 
 void USoldierMotionReplicator::Server_WeaponReload_Implementation()
 {
-	NetMulticast_WeaponReload();
+	auto Soldier = Cast<ASoldier>(GetOwner());
+	if (Soldier->EquippedItem == nullptr)
+		return;
+	NetMulticast_SetIsReloading(true);
+	Soldier->EquippedItem->Reload();
 }
 bool USoldierMotionReplicator::Server_WeaponReload_Validate()
 {
 	return true;
 }
 
-void USoldierMotionReplicator::NetMulticast_WeaponReload_Implementation()
+void USoldierMotionReplicator::Server_WeaponReloadEnd_Implementation()
 {
-	auto Soldier = Cast<ASoldier>(GetOwner());
-	Soldier->CanAim = false;
-	Soldier->IsReloading = true;
-
-	FTimerHandle WaitHandle;
-	if (Soldier->EquippedItem == nullptr)
-		return;
-	Soldier->EquippedItem->Reload();
-	float WaitTime = Soldier->EquippedItem->ReloadDelay; //시간을 설정하고
-	GetWorld()->GetTimerManager().SetTimer(WaitHandle, FTimerDelegate::CreateLambda([&]()
-		{
-			auto Soldier = Cast<ASoldier>(GetOwner());
-			Soldier->IsReloading = false;
-			Soldier->CanAim = true;
-		}), WaitTime, false); //반복도 여기서 추가 변수를 선언해 설정가능
+	NetMulticast_SetIsReloading(false);
 }
 
-bool USoldierMotionReplicator::NetMulticast_WeaponReload_Validate()
+bool USoldierMotionReplicator::Server_WeaponReloadEnd_Validate()
+{
+	return true;
+}
+
+void USoldierMotionReplicator::NetMulticast_SetIsReloading_Implementation(bool bIsReloading)
+{
+	auto Soldier = Cast<ASoldier>(GetOwner());
+	Soldier->IsReloading = bIsReloading;
+}
+
+bool USoldierMotionReplicator::NetMulticast_SetIsReloading_Validate(bool bIsReloading)
 {
 	return true;
 }

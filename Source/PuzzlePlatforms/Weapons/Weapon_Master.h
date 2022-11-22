@@ -58,14 +58,16 @@ public:
 
 	UFUNCTION(BlueprintCallable)
 		void Reload();
+	UFUNCTION(Client, Reliable, WithValidation)
+		void Client_UpdateAmmo(float ServerAmmo);
 	UFUNCTION(NetMulticast, Reliable, WithValidation)
-		void Multicast_SetClipAmmo(float NewClipAmmo);
+		void Multicast_SetAmmo(float NewClipAmmo, float NewBagAmmo);
 	UFUNCTION(NetMulticast, Reliable, WithValidation)
 		void Multicast_SetMuzzleRotation();
 	UFUNCTION(NetMulticast, Reliable, WithValidation)
 		void Multicast_AmmoCheck();
 
-
+	void SpendRound();
 	void SetMuzzleRotation(FRotator NewRotator) { MuzzleRotation_ = NewRotator; }
 
 
@@ -134,7 +136,7 @@ private:
 	TSubclassOf<class ABulletMaster>BulletMasterClass;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Camera, meta = (AllowPrivateAccess = "true"))
 	class UCameraComponent* Camera_;
-
+	int32 Sequence;
 	//class ASoldier* PlayerRef;
 
 };

@@ -38,8 +38,10 @@ public:
 		void NetMulticast_SetMuzzleRotation(FRotator NewRotator);
 	UFUNCTION(Server, Reliable, WithValidation)
 		void Server_WeaponReload();
+	UFUNCTION(Server, Reliable, WithValidation)
+		void Server_WeaponReloadEnd();
 	UFUNCTION(NetMulticast, Reliable, WithValidation)
-		void NetMulticast_WeaponReload();
+		void NetMulticast_SetIsReloading(bool bIsReloading);
 	UFUNCTION(Server, Reliable, WithValidation)
 		void Server_SendAttack() override;
 	UFUNCTION(Server, Reliable, WithValidation)

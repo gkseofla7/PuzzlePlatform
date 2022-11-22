@@ -60,11 +60,6 @@ void AWeapon_Master::FireModeSwitch()
 
 void AWeapon_Master::AmmoCheck()
 {
-    Multicast_AmmoCheck();
-}
-
-void AWeapon_Master::Multicast_AmmoCheck_Implementation()
-{
     AmmoNeeded = MaxClipAmmo - ClipAmmo;
     if (AmmoNeeded <= BagAmmo)
     {
@@ -103,6 +98,11 @@ void AWeapon_Master::Multicast_AmmoCheck_Implementation()
     ClipEmpty = (ClipAmmo <= 0);
 }
 
+void AWeapon_Master::Multicast_AmmoCheck_Implementation()
+{
+    AmmoCheck();
+}
+
 bool AWeapon_Master::Multicast_AmmoCheck_Validate()
 {
     return true;
@@ -118,23 +118,41 @@ void AWeapon_Master::PlayShotLocally()
     {
         UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), MuzzlesParticle, SkeletalMeshComponent->GetSocketTransform(FName("Muzzle")));
     }
+
 }
 
 void AWeapon_Master::Shot()
 {
-    PlayShotLocally();
-    Server_Shot();
-    
-}
-
-
-void AWeapon_Master::Server_Shot_Implementation()
-{
-    NetMulticast_PlayShotLocally();
-    auto Soldier = Cast<ASoldier>(Player);
     AmmoCheck();//이건 서버에서 해줘야됨
     if (CanFire == true && ClipEmpty == false && Reloading == false)
     {
+        PlayShotLocally();
+        SpendRound();
+        Server_Shot();
+    }
+
+}
+void AWeapon_Master::SpendRound()
+{
+    ClipAmmo = FMath::Clamp(ClipAmmo - AmmoCost, 0, MaxClipAmmo);
+    if (HasAuthority())
+    {
+        Client_UpdateAmmo(ClipAmmo);
+    }
+    else
+    {
+        ++Sequence;
+    }
+}
+
+void AWeapon_Master::Server_Shot_Implementation()
+{
+
+    auto Soldier = Cast<ASoldier>(Player);
+    Multicast_AmmoCheck();
+    if (CanFire == true && ClipEmpty == false && Reloading == false)
+    {
+        NetMulticast_PlayShotLocally();
         Multicast_SetMuzzleRotation();//이걸 조종하는애 가져옴
         FVector BulletScale;
         // BulletScale.Set(0.1, 0.1, 0.1);
@@ -150,9 +168,21 @@ void AWeapon_Master::Server_Shot_Implementation()
         SpawnInfo.Owner = GetOwner();
         SpawnInfo.Instigator = Cast<APawn>(Soldier);
         auto bullet = GetWorld()->SpawnActor<ABulletMaster>(BulletMasterClass, BulletTransform, SpawnInfo);
-
-        Multicast_SetClipAmmo(ClipAmmo - AmmoCost);//모든 애들 총알 관리함~
+        SpendRound();//총알
+       // Multicast_SetClipAmmo(ClipAmmo - AmmoCost);//모든 애들 총알 관리함~
     }
+}
+
+void AWeapon_Master::Client_UpdateAmmo_Implementation(float ServerAmmo)
+{
+    ClipAmmo = ServerAmmo;
+    --Sequence;
+    ClipAmmo -= Sequence;
+}
+
+bool AWeapon_Master::Client_UpdateAmmo_Validate(float ServerAmmo)
+{
+    return true;
 }
 
 bool AWeapon_Master::Server_Shot_Validate()
@@ -172,12 +202,13 @@ bool AWeapon_Master::NetMulticast_PlayShotLocally_Validate()
     return true;
 }
 
-void AWeapon_Master::Multicast_SetClipAmmo_Implementation(float NewClipAmmo)
+void AWeapon_Master::Multicast_SetAmmo_Implementation(float NewClipAmmo, float NewBagAmmo)
 {
     ClipAmmo = NewClipAmmo;
+    BagAmmo = NewBagAmmo;
 }
 
-bool AWeapon_Master::Multicast_SetClipAmmo_Validate(float NewClipAmmo)
+bool AWeapon_Master::Multicast_SetAmmo_Validate(float NewClipAmmo, float NewBagAmmo)
 {
     return true;
 }
@@ -218,14 +249,12 @@ bool AWeapon_Master::Multicast_SetMuzzleRotation_Validate()
 //{
 //    return true;
 //}
-void AWeapon_Master::Reload()
+void AWeapon_Master::Reload()//서버에서만 동작
 {
     AmmoCheck();
     if (CanReload)
     {
-        Reloading = true;
-
-
+        //Reloading = true;
         //UKismetSystemLibrary::Delay(GetWorld(), ReloadDelay);
 
         FTimerHandle WaitHandle;
@@ -234,17 +263,15 @@ void AWeapon_Master::Reload()
             {      
                 if (UseRemainingAmmo == true)
                 {
-                    Multicast_SetClipAmmo(ClipAmmo + BagAmmo);
-                    BagAmmo = 0;
+                    Multicast_SetAmmo(ClipAmmo + BagAmmo, 0);
                     AmmoNeeded = 0;
-                    Reloading = false;
+                    //Reloading = false;
                 }
-                    else
+                else
                 {
-                    Multicast_SetClipAmmo(ClipAmmo + AmmoNeeded);
-                    BagAmmo -= AmmoNeeded;
+                    Multicast_SetAmmo(ClipAmmo + AmmoNeeded, BagAmmo-AmmoNeeded);
                     AmmoNeeded = 0;
-                    Reloading = false;
+                    //Reloading = false;
                 }
 
             }), WaitTime, false); //반복도 여기서 추가 변수를 선언해 설정가능

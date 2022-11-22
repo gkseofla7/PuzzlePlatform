@@ -131,6 +131,7 @@ public:
 		class AObject_Master* PickupItem;
 
 
+
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
 		float RocketSpeed = 1000;
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)

@@ -13,6 +13,7 @@
 #include "Missile/TargetableComponent.h"
 
 
+
 #include "PlayersComponent/SoldierMotionReplicator.h"
 #include "AnimInstance/SoldierAnimInstance.h"
 #include "Kismet/KismetMathLibrary.h"
@@ -25,7 +26,7 @@
 #include "GameFramework/ProjectileMovementComponent.h"
 #include "Kismet/KismetSystemLibrary.h"
 #include "GameFramework/GameStateBase.h"
-
+#include "Components/BoxComponent.h"
 
 #include "Net/UnrealNetwork.h"
 
@@ -82,6 +83,8 @@ ASoldier::ASoldier()
 
 	}
 	TeamNum = 1;
+
+
 }
 
 //void ASoldier::GetLifetimeReplicatedProps(TArray< FLifetimeProperty >& OutLifetimeProps) const
@@ -97,6 +100,7 @@ void ASoldier::PostInitializeComponents()
 
 	MyAnim = Cast<USoldierAnimInstance>(GetMesh()->GetAnimInstance());
 	ABCHECK(nullptr != MyAnim);
+
 
 
 }
@@ -173,7 +177,6 @@ void ASoldier::Tick(float DeltaTime)
 			//UE_LOG(LogTemp, Warning, TEXT("Rotation %f"), GetController()->GetControlRotation().Pitch);
 			LastControlRotation = CreateControlRotation(DeltaTime);
 			SimulateRotationAnimation(GetControlRotation());
-			UE_LOG(LogTemp, Warning, TEXT("Tick Rotation %f"), GetController()->GetControlRotation().Pitch);
 		}
 		//We are the server and in control of the pawn
 		if (GetLocalRole() == ROLE_Authority && IsLocallyControlled() && IsPlayerControlled())//서버고 자기꺼일때 
@@ -516,7 +519,19 @@ void ASoldier::WeaponReload()
 
 	if (EquippedItem->CanReload == true && MyIsFiring == false && IsReloading == false && IsItemEquipped == true)
 	{
+		CanAim = false;
+		IsReloading = true;
+		Cast<USoldierMotionReplicator>(ReplicateComponent)->NetMulticast_SetIsReloading(true);
 		Cast<USoldierMotionReplicator>(ReplicateComponent)->Server_WeaponReload();
+		FTimerHandle WaitHandle;
+		
+		float WaitTime = EquippedItem->ReloadDelay; //시간을 설정하고
+		GetWorld()->GetTimerManager().SetTimer(WaitHandle, FTimerDelegate::CreateLambda([&]()
+			{
+				IsReloading = false;
+				Cast<USoldierMotionReplicator>(ReplicateComponent)->Server_WeaponReloadEnd();
+				CanAim = true;
+			}), WaitTime, false); //반복도 여기서 추가 변수를 선언해 설정가능
 	}
 }
 
