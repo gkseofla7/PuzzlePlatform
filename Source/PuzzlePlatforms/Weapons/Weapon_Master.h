@@ -50,23 +50,22 @@ public:
 
 	UFUNCTION(BlueprintCallable)
 		void Shot();
-	UFUNCTION(Server, Reliable, WithValidation)
-		void Server_Shot();
-	UFUNCTION(NetMulticast, Reliable, WithValidation)
-		void NetMulticast_PlayShotLocally();
+
+	void Shot_Implementation(FRotator MuzzleRotator);
 	void PlayShotLocally();
 
-
+	UFUNCTION(Server, Reliable, WithValidation)
+		void ServerShot(FRotator MuzzleRotator);
+	UFUNCTION(NetMulticast, Reliable)
+		void MulticastShot(FRotator MuzzleRotator);
 	UFUNCTION(BlueprintCallable)
 		void Reload();
 	UFUNCTION(Client, Reliable, WithValidation)
 		void Client_UpdateAmmo(float ServerAmmo);
 	UFUNCTION(NetMulticast, Reliable, WithValidation)
 		void Multicast_SetAmmo(float NewClipAmmo, float NewBagAmmo);
-	UFUNCTION(NetMulticast, Reliable, WithValidation)
-		void Multicast_SetMuzzleRotation();
-	UFUNCTION(NetMulticast, Reliable, WithValidation)
-		void Multicast_AmmoCheck();
+
+
 
 	void SpendRound();
 	void SetMuzzleRotation(FRotator NewRotator) { MuzzleRotation_ = NewRotator; }
@@ -139,8 +138,10 @@ protected:
 		UPROPERTY()
 			class AMyPlayerController* OwnerController;
 private:
-	UPROPERTY()
+	UPROPERTY(EditAnywhere)
 	TSubclassOf<class ABulletMaster>BulletMasterClass;
+	UPROPERTY(EditAnywhere)
+	TSubclassOf<class ABulletMaster>ServerSideRewindBulletMasterClass;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Camera, meta = (AllowPrivateAccess = "true"))
 	class UCameraComponent* Camera_;
 	int32 Sequence;

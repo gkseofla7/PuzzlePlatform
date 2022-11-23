@@ -40,7 +40,7 @@ void UPlayerHPBarWidget::NativeTick(const FGeometry& MyGeometry, float InDeltaTi
 
 void UPlayerHPBarWidget::UpdateHPBar()
 {
-	if (CurrentCharacterStat.IsValid())
+	if (CurrentCharacterStat.IsValid())//	if (CurrentCharacterStat!=nullptr)
 	{
 		if (nullptr != PB_HPBar)
 		{
@@ -53,6 +53,7 @@ void UPlayerHPBarWidget::UpdateHPBar()
 
 void UPlayerHPBarWidget::UpdateMPBar()
 {
+
 	if (CurrentCharacterStat.IsValid())
 	{
 
@@ -66,6 +67,7 @@ void UPlayerHPBarWidget::UpdateMPBar()
 
 void UPlayerHPBarWidget::UpdateLevelText()
 {
+	//
 	if (CurrentCharacterStat.IsValid())
 	{
 		if (nullptr != T_Level)
@@ -79,6 +81,7 @@ void UPlayerHPBarWidget::UpdateLevelText()
 
 void UPlayerHPBarWidget::UpdateNameText()
 {
+	//
 	if (CurrentCharacterStat.IsValid())
 	{
 		if (nullptr != T_Name)

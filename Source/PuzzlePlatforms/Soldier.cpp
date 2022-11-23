@@ -364,7 +364,7 @@ void ASoldier::SetMuzzleRotation()
 	const FVector ShootDir = WeaponRandomStream.VRandCone(AimDir, ConeHalfAngle, ConeHalfAngle);
 
 	auto MyReplicateComponent = Cast< USoldierMotionReplicator>(ReplicateComponent);
-	MyReplicateComponent->Server_SetMuzzleRotation(UKismetMathLibrary::FindLookAtRotation(FVector(0,0,0), ShootDir));
+
 	if (IsAiming == true)
 	{
 		CurrentFiringSpread = FMath::Min(2.f, TotalSpread);
@@ -373,7 +373,60 @@ void ASoldier::SetMuzzleRotation()
 	{
 		CurrentFiringSpread = FMath::Min(4.f, TotalSpread);
 	}
+	MyReplicateComponent->Server_SetMuzzleRotation(UKismetMathLibrary::FindLookAtRotation(FVector(0, 0, 0), ShootDir));
 
+}
+
+FRotator ASoldier::GetMuzzleRotation()
+{
+	if (EquippedItem == nullptr)
+		return FRotator();
+
+	UCameraComponent* CurrentCam = FollowCamera;
+	if (IsAiming)
+		CurrentCam = ADSCam_;
+
+	const float WeaponRange = 20000.f;
+	const FVector StartTrace = CurrentCam->GetComponentLocation();
+	FVector EndTrace = (CurrentCam->GetForwardVector() * WeaponRange) + StartTrace;
+	FVector Start = EquippedItem->GetSkeletalMesh()->GetSocketLocation("Muzzle");
+	//FVector Target = AimObejctFPP->GetComponentLocation();
+	FHitResult Hit;
+	FCollisionQueryParams QueryParams = FCollisionQueryParams(SCENE_QUERY_STAT(WeaponTrace), false, this);
+	if (GetWorld()->LineTraceSingleByChannel(Hit, StartTrace, EndTrace, ECC_Visibility, QueryParams))
+	{
+		EndTrace = Hit.ImpactPoint;
+
+	}
+
+	FRotator temp = UKismetMathLibrary::FindLookAtRotation(Start, EndTrace);
+	FVector AimDir = (EndTrace - Start).GetSafeNormal();
+	const int32 RandomSeed = FMath::Rand();
+	FRandomStream WeaponRandomStream(RandomSeed);
+	float WeaponSpread = 2.0f;
+	if (IsAiming == true)
+		WeaponSpread = .5f;
+	const float TotalSpread = WeaponSpread + CurrentFiringSpread;
+	//if (MyPawn && MyPawn->IsTargeting()) //조종하고있으면
+	//{
+	//	FinalSpread *= InstantConfig.TargetingSpreadMod;
+	//}
+	const float ConeHalfAngle = FMath::DegreesToRadians(TotalSpread * 0.5f);
+	const FVector ShootDir = WeaponRandomStream.VRandCone(AimDir, ConeHalfAngle, ConeHalfAngle);
+
+	auto MyReplicateComponent = Cast< USoldierMotionReplicator>(ReplicateComponent);
+
+	if (IsAiming == true)
+	{
+		CurrentFiringSpread = FMath::Min(2.f, TotalSpread);
+	}
+	else
+	{
+		CurrentFiringSpread = FMath::Min(4.f, TotalSpread);
+	}
+	FRotator Output = UKismetMathLibrary::FindLookAtRotation(FVector(0, 0, 0), ShootDir);
+	//UE_LOG(LogTemp, Warning, TEXT("Set Muzzle Rotation : %f, %f, %f"),Output.Pitch, Output.Yaw, Output.Roll);
+	return Output;
 }
 
 void ASoldier::SteamPack()

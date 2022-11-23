@@ -51,6 +51,7 @@ public:
 	virtual void Attack() override;
 	UFUNCTION(BlueprintCallable)
 	void SetMuzzleRotation();
+	FRotator GetMuzzleRotation();
 	UFUNCTION(BlueprintCallable)
 		void AimDownSights();
 	UFUNCTION(BlueprintCallable)

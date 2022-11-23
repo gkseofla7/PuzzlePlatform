@@ -60,7 +60,7 @@ public:
 	virtual float TakeDamage(float DamageAmount, struct FDamageEvent const& DamageEvent,
 		class AController* EventInstigator, AActor* DamageCauser) override;
 	void UpdateStat();//이거 hp의 경우엔 서버에도 해줘야됨;
-	FRotator GetMuzzleRotation();
+	virtual FRotator GetMuzzleRotation();
 	void BindCharacterStatToWidget();
 	void Sprint();
 	void UnSprint();

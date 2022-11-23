@@ -98,43 +98,116 @@ void AWeapon_Master::AmmoCheck()
     ClipEmpty = (ClipAmmo <= 0);
 }
 
-void AWeapon_Master::Multicast_AmmoCheck_Implementation()
+
+void AWeapon_Master::Shot()//클라이언트에서 나감~
 {
-    AmmoCheck();
+    auto Soldier = Cast<ASoldier>(Player);
+    FRotator MuzzleRotator = Soldier->GetMuzzleRotation();
+    if (!Soldier->HasAuthority())    Shot_Implementation(MuzzleRotator);
+
+    ServerShot(MuzzleRotator);
 }
 
-bool AWeapon_Master::Multicast_AmmoCheck_Validate()
+void AWeapon_Master::ServerShot_Implementation(FRotator MuzzleRotator)
+{
+    MulticastShot(MuzzleRotator);
+}
+
+bool AWeapon_Master::ServerShot_Validate(FRotator MuzzleRotator)
 {
     return true;
 }
 
-void AWeapon_Master::PlayShotLocally()
+void AWeapon_Master::MulticastShot_Implementation(FRotator MuzzleRotator)
 {
-    if (FireSound != NULL)//소리 다른애들한테도 해줘야됨
-    {
-        UGameplayStatics::PlaySoundAtLocation(this, FireSound, GetActorLocation());
-    }
-    if (MuzzlesParticle)
-    {
-        UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), MuzzlesParticle, SkeletalMeshComponent->GetSocketTransform(FName("Muzzle")));
-    }
-
+    if (Player && Player->IsLocallyControlled() && !Player->HasAuthority()) return;
+    Shot_Implementation(MuzzleRotator);
 }
 
-void AWeapon_Master::Shot()
+
+
+void AWeapon_Master::Shot_Implementation(FRotator MuzzleRotator)
 {
     AmmoCheck();//이건 서버에서 해줘야됨
     if (CanFire == true && ClipEmpty == false && Reloading == false)
     {
-        PlayShotLocally();
-        SpendRound();
-        Server_Shot();
-    }
+        SpendRound();//총알하나 쏘고~
+        auto Soldier = Cast<ASoldier>(Player);
+        FRotator MuzzleRotator = Soldier->GetMuzzleRotation();
+        if (FireSound != NULL)//소리 다른애들한테도 해줘야됨
+        {
+            UGameplayStatics::PlaySoundAtLocation(this, FireSound, GetActorLocation());
+        }
+        if (MuzzlesParticle)
+        {
+            UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), MuzzlesParticle, SkeletalMeshComponent->GetSocketTransform(FName("Muzzle")));
+        }
+        FTransform BulletTransform;
+        BulletTransform.SetLocation(SkeletalMeshComponent->GetSocketTransform("Muzzle").GetLocation());
+        BulletTransform.SetRotation(MuzzleRotator.Quaternion());
+        FActorSpawnParameters Params;
+        FActorSpawnParameters SpawnInfo;
+        SpawnInfo.Owner = GetOwner();
+        SpawnInfo.Instigator = Cast<APawn>(Soldier);
+        ABulletMaster* SpawnedProjectile = nullptr;
+        if (bUseServerSideRewind)
+        {
 
+            if (Soldier->HasAuthority())
+            {
+                if (Soldier->IsLocallyControlled())//서버에 Player면 replicate projectile 사용할 필요 X
+                {
+                    //일반 replicated 총알만듬
+                    SpawnedProjectile = GetWorld()->SpawnActor<ABulletMaster>(BulletMasterClass, BulletTransform, SpawnInfo);
+                    SpawnedProjectile->bUseServerSideRewind = false;
+                    SpawnedProjectile->Damage = Damage;
+                    SpawnedProjectile->Shooter = Soldier;
+                    //여기서 먼저 어느 방향 어느 위치인지 보내줘야됨
+                }
+                else// server, not locally controlled - spawn non-replicated projectile, no SSR
+                {
+                    SpawnedProjectile = GetWorld()->SpawnActor<ABulletMaster>(ServerSideRewindBulletMasterClass, BulletTransform, SpawnInfo);
+                    SpawnedProjectile->bUseServerSideRewind = false;
+                    SpawnedProjectile->Shooter = Soldier;
+                }
+            }
+            else//client에서는?
+            {
+                if (Soldier->IsLocallyControlled())
+                {
+                    SpawnedProjectile = GetWorld()->SpawnActor<ABulletMaster>(ServerSideRewindBulletMasterClass, BulletTransform, SpawnInfo);
+                    SpawnedProjectile->bUseServerSideRewind = true;
+                    SpawnedProjectile->TraceStart = SkeletalMeshComponent->GetSocketTransform("Muzzle").GetLocation();
+                    SpawnedProjectile->InitialVelocity = SpawnedProjectile->GetActorForwardVector() * SpawnedProjectile->InitialSpeed;
+                    SpawnedProjectile->Damage = Damage;
+                    SpawnedProjectile->Shooter = Soldier;
+                }
+                else// Client, not locally controlled -spawn non-replicated projectile, no SSR
+                {
+                    SpawnedProjectile = GetWorld()->SpawnActor<ABulletMaster>(ServerSideRewindBulletMasterClass, BulletTransform, SpawnInfo);
+                    SpawnedProjectile->bUseServerSideRewind = false;
+                    SpawnedProjectile->Shooter = Soldier;
+                }
+            }
+        }
+        else//Weapon not using SSR
+        {
+            if (Soldier->HasAuthority())
+            {
+
+                SpawnedProjectile = GetWorld()->SpawnActor<ABulletMaster>(BulletMasterClass, BulletTransform, SpawnInfo);
+                SpawnedProjectile->bUseServerSideRewind = false;
+                SpawnedProjectile->Damage = Damage;
+                SpawnedProjectile->Shooter = Soldier;
+            }
+        }
+    }
 }
 void AWeapon_Master::SpendRound()
 {
+    UE_LOG(LogTemp, Warning, TEXT("Before Bullet %d"), ClipAmmo);
     ClipAmmo = FMath::Clamp(ClipAmmo - AmmoCost, 0, MaxClipAmmo);
+    UE_LOG(LogTemp, Warning, TEXT("After Bullet %d"), ClipAmmo);
     if (HasAuthority())
     {
         Client_UpdateAmmo(ClipAmmo);
@@ -145,36 +218,15 @@ void AWeapon_Master::SpendRound()
     }
 }
 
-void AWeapon_Master::Server_Shot_Implementation()
-{
 
-    auto Soldier = Cast<ASoldier>(Player);
-    Multicast_AmmoCheck();
-    if (CanFire == true && ClipEmpty == false && Reloading == false)
-    {
-        NetMulticast_PlayShotLocally();
-        Multicast_SetMuzzleRotation();//이걸 조종하는애 가져옴
-        FVector BulletScale;
-        // BulletScale.Set(0.1, 0.1, 0.1);
-        FTransform BulletTransform;
-        FVector Dir = GetOwner()->GetActorForwardVector();
-        BulletTransform.SetLocation(SkeletalMeshComponent->GetSocketTransform("Muzzle").GetLocation());
-        BulletTransform.SetRotation(MuzzleRotation_.Quaternion());
-        //BulletTransform.SetScale3D(BulletScale);
-
-        FActorSpawnParameters Params;
-        FActorSpawnParameters SpawnInfo;
-
-        SpawnInfo.Owner = GetOwner();
-        SpawnInfo.Instigator = Cast<APawn>(Soldier);
-        auto bullet = GetWorld()->SpawnActor<ABulletMaster>(BulletMasterClass, BulletTransform, SpawnInfo);
-        SpendRound();//총알
-       // Multicast_SetClipAmmo(ClipAmmo - AmmoCost);//모든 애들 총알 관리함~
-    }
-}
 
 void AWeapon_Master::Client_UpdateAmmo_Implementation(float ServerAmmo)
 {
+    if (HasAuthority())
+    {
+        return;
+    }
+    
     ClipAmmo = ServerAmmo;
     --Sequence;
     ClipAmmo -= Sequence;
@@ -185,22 +237,6 @@ bool AWeapon_Master::Client_UpdateAmmo_Validate(float ServerAmmo)
     return true;
 }
 
-bool AWeapon_Master::Server_Shot_Validate()
-{
-    return true;
-}
-
-void AWeapon_Master::NetMulticast_PlayShotLocally_Implementation()
-{
-    if (Player->IsLocallyControlled() != true)
-    {
-        PlayShotLocally();
-    }
-}
-bool AWeapon_Master::NetMulticast_PlayShotLocally_Validate()
-{
-    return true;
-}
 
 void AWeapon_Master::Multicast_SetAmmo_Implementation(float NewClipAmmo, float NewBagAmmo)
 {
@@ -212,43 +248,8 @@ bool AWeapon_Master::Multicast_SetAmmo_Validate(float NewClipAmmo, float NewBagA
 {
     return true;
 }
-void AWeapon_Master::Multicast_SetMuzzleRotation_Implementation()
-{
-    auto Soldier = Cast<ASoldier>(Player);
-    if (Soldier == nullptr)
-        return;
-    if (Soldier->IsLocallyControlled() == false)
-        return;
-    Soldier->SetMuzzleRotation();
-}
-
-bool AWeapon_Master::Multicast_SetMuzzleRotation_Validate()
-{
-    return true;
-}
 
 
-//void AWeapon_Master::Multicast_SendShot_Implementation()
-//{
-//    if (GetOwner()->HasAuthority())
-//        return;
-//
-//    UE_LOG(LogTemp, Warning, TEXT("Multicast shot!!"));
-//    FVector BulletScale;
-//    // BulletScale.Set(0.1, 0.1, 0.1);
-//    FTransform BulletTransform;
-//
-//    BulletTransform.SetLocation(SkeletalMeshComponent->GetSocketTransform("Muzzle").GetLocation());
-//    BulletTransform.SetRotation(MuzzleRotation_.Quaternion());
-//    //BulletTransform.SetScale3D(BulletScale);
-//
-//
-//    GetWorld()->SpawnActor<ABulletMaster>(BulletMasterClass, BulletTransform);
-//}
-//bool AWeapon_Master::Multicast_SendShot_Validate()
-//{
-//    return true;
-//}
 void AWeapon_Master::Reload()//서버에서만 동작
 {
     AmmoCheck();

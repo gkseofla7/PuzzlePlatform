@@ -347,7 +347,8 @@ void ACharacter_Master::BindCharacterStatToWidget()
 	auto MyPlayerState = Cast<AMyPlayerState>(GetPlayerState());
 	ABCHECK(MyPlayerState!=nullptr)
 	auto CharacterWidget = Cast< UPlayerHPBarWidget>(HPBarWidget->GetUserWidgetObject());
-
+	if (CharacterWidget == nullptr)
+		return;
 	CharacterWidget->BindCharacterStat(MyPlayerState->CharacterStat);
 	CharacterWidget->SetNameText(FText::FromString(MyPlayerState->GetPlayerName()));
 }
