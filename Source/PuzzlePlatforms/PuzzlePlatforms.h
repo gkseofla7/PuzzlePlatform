@@ -12,3 +12,4 @@ DECLARE_LOG_CATEGORY_EXTERN(PuzzlePlatforms, Log, All);
 #define ABLOG_S(Verbosity) UE_LOG(PuzzlePlatforms, Verbosity, TEXT("%s"), *ABLOG_CALLINFO)
 #define ABLOG(Verbosity, Format, ...) UE_LOG(PuzzlePlatforms, Verbosity, TEXT("%s%s"), *ABLOG_CALLINFO, *FString::Printf(Format, ##__VA_ARGS__))
 
+#define ECC_HitBox ECollisionChannel::ECC_GameTraceChannel8

@@ -52,6 +52,24 @@ void AMyPlayerController::BeginPlay()
 	auto GameMode = Cast< AMyLobbyGameMode>(UGameplayStatics::GetGameMode(GetWorld()));
 }
 
+void AMyPlayerController::Tick(float DeltaTime)
+{
+	Super::Tick(DeltaTime);
+
+	CheckTimeSync(DeltaTime);
+}
+
+
+void AMyPlayerController::CheckTimeSync(float DeltaTime)
+{
+	TimeSyncRunningTime += DeltaTime;
+	if (IsLocalController() && TimeSyncRunningTime > TimeSyncFrequency)//5초마다 한번씩
+	{
+		ServerRequestServerTime(GetWorld()->GetTimeSeconds());
+		TimeSyncRunningTime = 0.f;
+	}
+}
+
 void AMyPlayerController::ServerRequestServerTime_Implementation(float TimeOfClientRequest)
 {
 	float ServerTimeOfReceipt = GetWorld()->GetTimeSeconds();
@@ -93,6 +111,12 @@ void AMyPlayerController::SetInputModeGame()
 
 	SetInputMode(InputMode);
 	SetShowMouseCursor(false);
+}
+
+float AMyPlayerController::GetServerTime()
+{
+	if (HasAuthority()) return GetWorld()->GetTimeSeconds();
+	else return GetWorld()->GetTimeSeconds() + ClientServerDelta;
 }
 
 //

@@ -26,13 +26,15 @@ public:
 	void BindWidget(class UMyCharacterStatComponent* NewCharacterStat);
 	//class UPlayerInfoWidget* GetHudWidget() const;
 	//void PossessCharacter();
+	void CheckTimeSync(float DeltaTime);
+	float GetServerTime();
 	UFUNCTION(Server, Reliable)
 		void ServerRequestServerTime(float TimeOfClientRequest);
 	UFUNCTION(Client, Reliable)
 		void ClientReportServerTime(float TimeOfClientRequest, float TimeServerReceivedClientRequest);
 protected:
 	virtual void BeginPlay() override;
-
+	void Tick(float DeltaTime);
 
 	//UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = UI)
 	//	TSubclassOf<class UUserWidget> NewHUDWidgetClass;
@@ -48,6 +50,8 @@ public:
 	float ClientServerDelta;
 	bool HasWidget = false;
 	float SingleTripTime = 0.f;
+	float TimeSyncRunningTime = 0.f;
+	float TimeSyncFrequency = 5.f;
 
 	//UPROPERTY()
 	//	class UUserWidget* NewHUDWidget;

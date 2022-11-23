@@ -167,7 +167,7 @@ void AWeapon_Master::Shot_Implementation(FRotator MuzzleRotator)
                 else// server, not locally controlled - spawn non-replicated projectile, no SSR
                 {
                     SpawnedProjectile = GetWorld()->SpawnActor<ABulletMaster>(ServerSideRewindBulletMasterClass, BulletTransform, SpawnInfo);
-                    SpawnedProjectile->bUseServerSideRewind = false;
+                    SpawnedProjectile->bUseServerSideRewind = true;
                     SpawnedProjectile->Shooter = Soldier;
                 }
             }

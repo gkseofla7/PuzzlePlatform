@@ -3,6 +3,8 @@
 
 #include "BulletMaster.h"
 #include "../Character_Master.h"
+#include "../MyPlayerController.h"
+#include "../PlayersComponent/LagCompensationComponent.h"
 #include "../Soldier.h"
 #include "../Turret/Turret.h"
 #include "../PlayersComponent/MyCharacterStatComponent.h"
@@ -37,22 +39,22 @@ void ABulletMaster::BeginPlay()
 	Capsule->OnComponentBeginOverlap.AddDynamic(this, &ABulletMaster::OnOverlapBegin);
 	Shooter = Cast<ASoldier>(GetInstigator());
 	//Capsule->OnComponentHit.AddDynamic(this, &ABulletMaster::OnHit);
-	FPredictProjectilePathParams PathParams;
-	PathParams.bTraceWithChannel = true;
-	PathParams.bTraceWithCollision = true;
-	PathParams.DrawDebugTime = 5.f;
-	PathParams.DrawDebugType = EDrawDebugTrace::ForDuration;
-	PathParams.LaunchVelocity = GetActorForwardVector() * InitialSpeed;
-	PathParams.MaxSimTime = 4.f;
-	//PathParams.OverrideGravityZ = 10;
-	PathParams.ProjectileRadius = 5.f;
-	PathParams.SimFrequency = 30.f;
-	PathParams.StartLocation = GetActorLocation();
-	PathParams.TraceChannel = ECollisionChannel::ECC_Visibility;
-	PathParams.ActorsToIgnore.Add(this);
+	//FPredictProjectilePathParams PathParams;
+	//PathParams.bTraceWithChannel = true;
+	//PathParams.bTraceWithCollision = true;
+	//PathParams.DrawDebugTime = 5.f;
+	//PathParams.DrawDebugType = EDrawDebugTrace::ForDuration;
+	//PathParams.LaunchVelocity = GetActorForwardVector() * InitialSpeed;
+	//PathParams.MaxSimTime = 4.f;
+	////PathParams.OverrideGravityZ = 10;
+	//PathParams.ProjectileRadius = 5.f;
+	//PathParams.SimFrequency = 30.f;
+	//PathParams.StartLocation = GetActorLocation();
+	//PathParams.TraceChannel = ECollisionChannel::ECC_Visibility;
+	//PathParams.ActorsToIgnore.Add(this);
 
 
-	FPredictProjectilePathResult PathResult;
+	//FPredictProjectilePathResult PathResult;
 	//UGameplayStatics::PredictProjectilePath(this, PathParams, PathResult);
 }
 #if WITH_EDITOR
@@ -105,53 +107,60 @@ void ABulletMaster::OnHit(UPrimitiveComponent* HitComponent, AActor* OtherActor,
 
 void ABulletMaster::OnOverlapBegin(class UPrimitiveComponent* OverlappedComp, class AActor* OtherActor, class UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
+	Shooter = Shooter == nullptr ? Cast<ASoldier>(GetOwner()) : Shooter;
 	ABCHECK(Shooter != nullptr);
 	if (OtherActor == Shooter)
 		return;
-	
-	
-	//UE_LOG(LogTemp, Warning, TEXT("Debug Sphere"));
+
 	if (OtherActor && (OtherActor != this) && OtherComp)
 	{
-		
-		if (HasAuthority())
-		{
-			
-			auto MyCharacter = Cast<ACharacter>(OtherActor);
-			if (MyCharacter != nullptr)
-			{
-				auto Player = Cast<ACharacter_Master>(MyCharacter);
-				if (Player != nullptr)
-				{//걍 같은 팀이면 안맞게함
-					if (Shooter!=nullptr&&Player->TeamNum == Shooter->TeamNum)
-					{
-						if (ImpactParticles)
-						{
-							UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), ImpactParticles, GetTransform());
-						}
-						this->Destroy();
-						return;
-					}
-					if (TurretRef != nullptr && Player->TeamNum == TurretRef->TeamNum)
-					{
-						if (ImpactParticles)
-						{
-							UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), ImpactParticles, GetTransform());
-						}
-						this->Destroy();
-						return;
-					}
-				}
-			}
-			FDamageEvent DamageEvent;
-			OtherActor->TakeDamage(Shooter->CharacterStatRef->AttackDamage, DamageEvent,nullptr, Shooter);
-
-		}
 		if (ImpactParticles)
 		{
 			UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), ImpactParticles, GetTransform());
 		}
-		//DrawDebugSphere(GetWorld(), GetActorLocation(), 10.f, 10, FColor::Orange, true);
+		bool bIsMyTeam = CheckOurTeam(OtherActor);
+
+		auto OwnerCharacter = Cast<ACharacter_Master>(GetOwner());
+		if (OwnerCharacter != nullptr)
+		{
+			AMyPlayerController* OwnerController = Cast< AMyPlayerController>(OwnerCharacter->Controller);
+			if (OwnerController)
+			{
+				if (OwnerCharacter->HasAuthority() && !bUseServerSideRewind)
+				{
+	/*				FDamageEvent DamageEvent;
+					OtherActor->TakeDamage(Shooter->CharacterStatRef->AttackDamage, DamageEvent, nullptr, Shooter);*/
+					UGameplayStatics::ApplyDamage(OtherActor, Damage, OwnerController, this, UDamageType::StaticClass());
+					Destroy();
+					return;
+				}
+				ACharacter_Master* HitCharacter = Cast<ACharacter_Master>(OtherActor);
+				if (bUseServerSideRewind && OwnerCharacter->GetLagCompensation() && OwnerCharacter->IsLocallyControlled()&& HitCharacter)
+				{
+					OwnerCharacter->GetLagCompensation()->ProjectileServerScoreRequest(
+						HitCharacter,
+						TraceStart,
+						InitialVelocity,
+						OwnerController->GetServerTime() - OwnerController->SingleTripTime//현재 서버의 시간에서 오는데 걸린시간 뺌
+					);
+				}
+			}
+		}		
 		this->Destroy();
 	}
+}
+
+bool ABulletMaster::CheckOurTeam(AActor* Actor)
+{
+	auto Character_Master = Cast<ACharacter_Master>(Actor);
+	if (Character_Master != nullptr)
+	{
+		if (Shooter != nullptr && Character_Master->TeamNum == Shooter->TeamNum || (TurretRef!=nullptr && TurretRef->TeamNum == Character_Master->TeamNum))
+			return true;
+		else
+			return false;
+	}
+
+	return false;
+
 }

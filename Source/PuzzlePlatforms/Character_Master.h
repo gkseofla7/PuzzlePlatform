@@ -164,7 +164,8 @@ public:
 		UBoxComponent* foot_l;
 	UPROPERTY(VisibleAnywhere)
 		class ULagCompensationComponent* LagCompensation;
-
+	UPROPERTY(BlueprintReadWrite, EditAnywhere)
+		class AWeapon_Master* EquippedItem;
 
 	FTimerHandle StatResetHandle;
 
