@@ -120,7 +120,6 @@ ACharacter_Master::ACharacter_Master()
 	static ConstructorHelpers::FClassFinder<UUserWidget> UI_HUD(TEXT("/Game/PuzzlePlatforms/Widget/WBP_PlayerHPBar"));
 	if (UI_HUD.Succeeded())
 	{
-		HPBarWidget->SetWidgetClass(UI_HUD.Class);
 		HPBarWidget->SetDrawSize(FVector2D(150.f, 50.f));
 	}
 
@@ -357,23 +356,7 @@ void ACharacter_Master::BindCharacterStatToWidget()
 void ACharacter_Master::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
-	if (HasAuthority())
-	{
-		float time = GetWorld()->GetGameState()->GetServerWorldTimeSeconds();
-		LocationHistory.Enqueue(MakeTuple<FVector, float>(GetActorLocation(), GetWorld()->GetGameState()->GetServerWorldTimeSeconds()));
 
-		while (!LocationHistory.IsEmpty())
-		{
-			if (LocationHistory.Peek()->Value + 2 > time)//시간이 2초 넘어감
-			{
-				LocationHistory.Pop();
-			}
-			else
-			{
-				break;
-			}
-		}
-	}
 	if (ChangeIcon == false)
 	{
 		ChangeIcon = true;

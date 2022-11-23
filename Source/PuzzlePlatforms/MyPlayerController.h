@@ -26,7 +26,10 @@ public:
 	void BindWidget(class UMyCharacterStatComponent* NewCharacterStat);
 	//class UPlayerInfoWidget* GetHudWidget() const;
 	//void PossessCharacter();
-
+	UFUNCTION(Server, Reliable)
+		void ServerRequestServerTime(float TimeOfClientRequest);
+	UFUNCTION(Client, Reliable)
+		void ClientReportServerTime(float TimeOfClientRequest, float TimeServerReceivedClientRequest);
 protected:
 	virtual void BeginPlay() override;
 
@@ -42,8 +45,9 @@ public:
 		class UPlayerInfoWidget* PlayerInfoHUDWidget;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = UI)
 		TSubclassOf<class UPlayerInfoWidget> PlayerInfoHUDWidgetClass;
-
+	float ClientServerDelta;
 	bool HasWidget = false;
+	float SingleTripTime = 0.f;
 
 	//UPROPERTY()
 	//	class UUserWidget* NewHUDWidget;

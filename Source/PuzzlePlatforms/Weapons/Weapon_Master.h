@@ -33,7 +33,8 @@ class PUZZLEPLATFORMS_API AWeapon_Master : public AObject_Master
 	GENERATED_BODY()
 
 public:
-
+	friend class ACharacter_Master;
+	friend class ASoldier;
 	virtual void Tick(float Deltatime);
 	AWeapon_Master();
 	//void CustomInitialize(class ASoldier* NewPlayer);
@@ -128,15 +129,26 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Gameplay)
 	class UParticleSystem* MuzzlesParticle;
 
+	UPROPERTY(EditAnywhere)
+	bool bUseServerSideRewind = false;
 
-
-
+	FORCEINLINE float GetDamage() const { return Damage; }
+protected:
+		UPROPERTY()
+			class ACharacter_Master* OwnerCharacter;
+		UPROPERTY()
+			class AMyPlayerController* OwnerController;
 private:
 	UPROPERTY()
 	TSubclassOf<class ABulletMaster>BulletMasterClass;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Camera, meta = (AllowPrivateAccess = "true"))
 	class UCameraComponent* Camera_;
 	int32 Sequence;
+
+
+
+	UPROPERTY(EditAnywhere)
+	float Damage = 2.f;
 	//class ASoldier* PlayerRef;
 
 };

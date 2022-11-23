@@ -76,7 +76,7 @@ public:
 
 	UFUNCTION(BlueprintImplementableEvent)
 		void AddCrosshairWidget();
-
+	FORCEINLINE class ULagCompensationComponent* GetLagCompensation() const { return LagCompensation; }
 protected:
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
@@ -191,7 +191,7 @@ public:
 	ECharacterType CharacterType;
 	float Pitch;
 	float Yaw;
-	TQueue<TTuple<FVector,float>> LocationHistory;
+
 
 };
 

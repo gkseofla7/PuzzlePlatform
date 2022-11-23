@@ -27,6 +27,7 @@
 #include "Kismet/KismetSystemLibrary.h"
 #include "GameFramework/GameStateBase.h"
 #include "Components/BoxComponent.h"
+#include "DrawDebugHelpers.h"
 
 #include "Net/UnrealNetwork.h"
 
@@ -112,7 +113,6 @@ void ASoldier::BeginPlay()
 	FActorSpawnParameters SpawnParams;
 	bUseControllerRotationYaw = true;
 	GetCharacterMovement()->bOrientRotationToMovement = false;
-
 	
 }
 
@@ -167,7 +167,10 @@ void ASoldier::Tick(float DeltaTime)
 			CrosshairWidget->crosshair_spread = CurrentSpread;
 		}
 	}
-
+	//if (IsLocallyControlled() && IsPlayerControlled())
+	//{
+	//	DrawDebugBox(GetWorld(), GetActorLocation(), FVector(100, 100, 100), FColor::Purple, true, -1, 0, 10);
+	//}
 
 
 	if (EquippedItem!=nullptr )//&&IsLocallyControlled() && IsPlayerControlled()
@@ -542,6 +545,8 @@ void ASoldier::EquipItem(AObject_Master* Item, bool EquipAndHold)
 		auto weapon = Cast<AWeapon_Master>(Item);
 		if (weapon != nullptr)
 		{
+			weapon->OwnerCharacter = this;
+			weapon->OwnerController = Cast< AMyPlayerController>(Controller);
 			EquippedItem = weapon;//요건 전체
 			PrimaryWeapon = weapon;//전체
 			EquippedItem->Player = this;//전체
