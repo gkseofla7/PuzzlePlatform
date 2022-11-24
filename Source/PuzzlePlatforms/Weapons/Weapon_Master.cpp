@@ -126,14 +126,13 @@ void AWeapon_Master::MulticastShot_Implementation(FRotator MuzzleRotator)
 
 
 
-void AWeapon_Master::Shot_Implementation(FRotator MuzzleRotator)
+void AWeapon_Master::Shot_Implementation(FRotator MuzzleRotator)//모두 실행
 {
-    AmmoCheck();//이건 서버에서 해줘야됨
+    AmmoCheck();
     if (CanFire == true && ClipEmpty == false && Reloading == false)
     {
         SpendRound();//총알하나 쏘고~
         auto Soldier = Cast<ASoldier>(Player);
-        FRotator MuzzleRotator = Soldier->GetMuzzleRotation();
         if (FireSound != NULL)//소리 다른애들한테도 해줘야됨
         {
             UGameplayStatics::PlaySoundAtLocation(this, FireSound, GetActorLocation());
@@ -205,9 +204,7 @@ void AWeapon_Master::Shot_Implementation(FRotator MuzzleRotator)
 }
 void AWeapon_Master::SpendRound()
 {
-    UE_LOG(LogTemp, Warning, TEXT("Before Bullet %d"), ClipAmmo);
     ClipAmmo = FMath::Clamp(ClipAmmo - AmmoCost, 0, MaxClipAmmo);
-    UE_LOG(LogTemp, Warning, TEXT("After Bullet %d"), ClipAmmo);
     if (HasAuthority())
     {
         Client_UpdateAmmo(ClipAmmo);

@@ -331,7 +331,7 @@ FServerSideRewindResult ULagCompensationComponent::ProjectileConfirmHit(const FF
 	EnabledCharacterMeshCollision(HitCharacter, ECollisionEnabled::QueryAndPhysics);
 	return FServerSideRewindResult{ false, false };
 }
-
+//DrawDebugSphere(GetWorld(), EndLoc, 4.f, 12, FColor::Orange, true);
 void ULagCompensationComponent::CacheBoxPositions(ACharacter_Master* HitCharacter, FFramePackage& OutFramePackage)
 {
 	if (HitCharacter == nullptr) return;

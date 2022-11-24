@@ -124,9 +124,9 @@ void ABulletMaster::OnOverlapBegin(class UPrimitiveComponent* OverlappedComp, cl
 		if (OwnerCharacter != nullptr)
 		{
 			AMyPlayerController* OwnerController = Cast< AMyPlayerController>(OwnerCharacter->Controller);
-			if (OwnerController)
+			if (OwnerController)//컨트롤러가 없으면? Client인데 주체없음~
 			{
-				if (OwnerCharacter->HasAuthority() && !bUseServerSideRewind)
+				if (OwnerCharacter->HasAuthority() && !bUseServerSideRewind)//서버면서 Locally control에서만 || 리와인드 안쓸때만 
 				{
 	/*				FDamageEvent DamageEvent;
 					OtherActor->TakeDamage(Shooter->CharacterStatRef->AttackDamage, DamageEvent, nullptr, Shooter);*/
@@ -136,7 +136,7 @@ void ABulletMaster::OnOverlapBegin(class UPrimitiveComponent* OverlappedComp, cl
 				}
 				ACharacter_Master* HitCharacter = Cast<ACharacter_Master>(OtherActor);
 				if (bUseServerSideRewind && OwnerCharacter->GetLagCompensation() && OwnerCharacter->IsLocallyControlled()&& HitCharacter)
-				{
+				{//serversiderewind 쓰고 직접쓰는 캐릭터일때만
 					OwnerCharacter->GetLagCompensation()->ProjectileServerScoreRequest(
 						HitCharacter,
 						TraceStart,
