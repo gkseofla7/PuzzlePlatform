@@ -105,7 +105,7 @@ void UTargetMissileReplicateComponent::ClientTick(float DeltaTime)
 	InterpolateLocation(Spline, LerpRatio);
 	InterpolateVelocity(Spline, LerpRatio);
 	InterpolateRotation(LerpRatio);
-
+	//현재 위치가 정해지고
 }
 
 FHermitCubicSplines UTargetMissileReplicateComponent::CreateSpline()
@@ -154,9 +154,11 @@ void UTargetMissileReplicateComponent::InterpolateRotation(float LerpRatio)
 void UTargetMissileReplicateComponent::OnRep_ServerState()//약간 모두한테 실행되는듯?
 {
 	if (!GetOwner()->HasAuthority())//서버가 주인, 모든 다른 애들은 다 Simulated
-	{
+	{//서버로부터 상태를 받음
 
 		if (OurMovementComponent == nullptr) return;
+
+		//서버의 상태 저장됨
 
 		ClientTimeBetweenLastUpdates = ClientTimeSinceUpdate;
 		ClientTimeSinceUpdate = 0;

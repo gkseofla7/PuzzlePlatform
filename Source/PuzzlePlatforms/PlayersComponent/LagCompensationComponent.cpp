@@ -58,7 +58,7 @@ void ULagCompensationComponent::ServerScoreRequest_Implementation(ACharacter_Mas
 	}
 }
 
-void ULagCompensationComponent::ProjectileServerScoreRequest_Implementation(
+void ULagCompensationComponent::ProjectileServerScoreRequest_Implementation(//이게 시작
 	ACharacter_Master* HitCharacter,
 	const FVector_NetQuantize& TraceStart,
 	const FVector_NetQuantize100& InitialVelocity,
@@ -91,8 +91,8 @@ FServerSideRewindResult ULagCompensationComponent::ServerSideRewind(class AChara
 }
 
 FServerSideRewindResult ULagCompensationComponent::ProjectileServerSideRewind(class ACharacter_Master* HitCharacter, const FVector_NetQuantize& TraceStart, const FVector_NetQuantize100& InitialVelocity, float HitTime)
-{
-	FFramePackage FrameToCheck = GetFrameToCheck(HitCharacter, HitTime);//맞은 시간에 서버에서의 위치
+{//클라이언트에서 물체를 맞추면 해당 Actor의 대한 정보, 총을 쏜 위치, 속도, 맞은 시간을 건내줌
+	FFramePackage FrameToCheck = GetFrameToCheck(HitCharacter, HitTime);//맞은 시간에 서버에서의 Frame 정보를 가져옴, 박스들에 대한 정보를 갖고잇음
 	return ProjectileConfirmHit(FrameToCheck, HitCharacter, TraceStart, InitialVelocity,HitTime);// 그 시간에 Projectile 위치랑 맞는지 확인
 }
 
@@ -116,12 +116,12 @@ FFramePackage ULagCompensationComponent::GetFrameToCheck(ACharacter_Master* HitC
 		//너무 오래됨, 렉이 너무심하니 SSR 실행X
 		return FFramePackage();
 	}
-	if (OldestHistoryTime == HitTime)
+	if (OldestHistoryTime == HitTime)//너무 오래되면
 	{
 		FrameToCheck = History.GetTail()->GetValue();
 		bShouldInterploate = false;
 	}
-	if (NewestHistoryTime <= HitTime)
+	if (NewestHistoryTime <= HitTime)//최신꺼보다 앞이면
 	{
 		FrameToCheck = History.GetHead()->GetValue();
 		bShouldInterploate = false;
@@ -410,8 +410,8 @@ void ULagCompensationComponent::SaveFramePackage()
 
 		}
 		FFramePackage ThisFrame;
-		SaveFramePackage(ThisFrame);
-		FrameHistory.AddHead(ThisFrame);
+		SaveFramePackage(ThisFrame);//현재 박스들의 위치들을 패키지에 넣어줌
+		FrameHistory.AddHead(ThisFrame);//프레임을 리스트에 넣음
 
 		//ShowFramePackage(ThisFrame, FColor::Red);
 	}

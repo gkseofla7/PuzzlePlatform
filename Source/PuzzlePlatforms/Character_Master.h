@@ -115,7 +115,7 @@ public:
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
 		class UParticleSystemComponent* ParticleSystemComponent;
 	UPROPERTY(VisibleAnywhere, Category = UI)
-		class UWidgetComponent* HPBarWidget;
+		class UWidgetComponent* HPBarWidgetComponent;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 		class UPointOfInterestComponent* PointOfInterestComponent;
 	UPROPERTY()

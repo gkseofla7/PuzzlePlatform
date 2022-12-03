@@ -50,6 +50,7 @@ bool  UCharacterMotionReplicator::NetMulticast_SetMaxWalkSpeed_Validate(float Ne
 
 void UCharacterMotionReplicator::Server_BindCharacterStatToWidget_Implementation()
 {
+
 	NetMulticast_BindCharacterStatToWidget();
 }
 

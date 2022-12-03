@@ -108,28 +108,26 @@ ACharacter_Master::ACharacter_Master()
 	ParticleSystemComponent = CreateDefaultSubobject<UParticleSystemComponent>(TEXT("ParticleSystemComponent"));
 	ParticleSystemComponent->SetupAttachment(RootComponent);
 
-	HPBarWidget = CreateDefaultSubobject<UWidgetComponent>(TEXT("HPBarWidget"));
+	HPBarWidgetComponent = CreateDefaultSubobject<UWidgetComponent>(TEXT("HpbarwidgetHash"));
+	HPBarWidgetComponent->SetupAttachment(GetMesh());
+	HPBarWidgetComponent->SetRelativeLocation(FVector(0.f, 0.f, 220.f));
+	HPBarWidgetComponent->SetWidgetSpace(EWidgetSpace::World);
 
-	HPBarWidget->SetupAttachment(GetMesh());
-
-	PointOfInterestComponent = CreateDefaultSubobject<UPointOfInterestComponent>(TEXT("PointOfInterestComponent"));
-	
-
-	HPBarWidget->SetRelativeLocation(FVector(0.f, 0.f, 220.f));
-	HPBarWidget->SetWidgetSpace(EWidgetSpace::World);
 	static ConstructorHelpers::FClassFinder<UUserWidget> UI_HUD(TEXT("/Game/PuzzlePlatforms/Widget/WBP_PlayerHPBar"));
 	if (UI_HUD.Succeeded())
 	{
-		HPBarWidget->SetDrawSize(FVector2D(150.f, 50.f));
+		HPBarWidgetComponent->SetWidgetClass(UI_HUD.Class);
+		HPBarWidgetComponent->SetDrawSize(FVector2D(150.f, 50.f));
 	}
 
+	PointOfInterestComponent = CreateDefaultSubobject<UPointOfInterestComponent>(TEXT("PointOfInterestComponent"));
 	static ConstructorHelpers::FClassFinder<UCameraShakeBase> CameraShakeBPClass(TEXT("/Game/Etcs/BP_PlayerCameraShake"));
 	if (CameraShakeBPClass.Succeeded())
 	{
 		CameraShakeClass = CameraShakeBPClass.Class;
 	}
 	LagCompensation = CreateDefaultSubobject< ULagCompensationComponent>(TEXT("LagCompensationComponent"));
-
+#pragma region BoxInitialize
 	// Hit Boxes for server-side rewind
 	head = CreateDefaultSubobject<UBoxComponent>(TEXT("head"));
 	head->SetupAttachment(GetMesh(), FName("head"));
@@ -206,6 +204,7 @@ ACharacter_Master::ACharacter_Master()
 			Box.Value->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 		}
 	}
+#pragma endregion BoxInitialize
 }
 
 void ACharacter_Master::GetLifetimeReplicatedProps(TArray< FLifetimeProperty >& OutLifetimeProps) const
@@ -250,6 +249,7 @@ void ACharacter_Master::SetupPlayerInputComponent(class UInputComponent* PlayerI
 void ACharacter_Master::PostInitializeComponents()
 {
 	Super::PostInitializeComponents();
+
 	if (LagCompensation)
 	{
 		LagCompensation->Character = this;
@@ -264,11 +264,12 @@ void ACharacter_Master::PostInitializeComponents()
 void ACharacter_Master::BeginPlay()
 {
 	Super::BeginPlay();
-
+	HPBarWidgetComponent->InitWidget();
 	auto LobbyGameMode = Cast< AMyLobbyGameMode>(UGameplayStatics::GetGameMode(GetWorld()));
+	
 	if (LobbyGameMode != nullptr)//Lobby에서 안보이게 하려고
 	{
-		auto CharacterWidget = Cast< UPlayerHPBarWidget>(HPBarWidget->GetUserWidgetObject());
+		auto CharacterWidget = Cast< UPlayerHPBarWidget>(HPBarWidgetComponent->GetUserWidgetObject());
 		CharacterWidget->SetVisibility(ESlateVisibility::Hidden);
 	}
 
@@ -293,7 +294,7 @@ void ACharacter_Master::PossessedBy(AController* NewController)//이것도 결국 서�
 void 	ACharacter_Master::OnRep_PlayerState()
 {
 	Super::OnRep_PlayerState();
-
+	
 	SetPlayerStat();
 	PointOfInterestComponent->AddPOI();
 	SetIcon();
@@ -308,8 +309,34 @@ void ACharacter_Master::SetPlayerStat()
 		return;
 
 	CharacterStatRef = MyPlayerState->CharacterStat;
-	if (HasAuthority())
+
+	//if (HasAuthority())
+	//{
+	//	if (IsLocallyControlled())
+	//	{
+	//		UE_LOG(LogTemp, Warning, TEXT("Server Locally : SetPlayerStat %s"), *GetPlayerState()->GetName());
+	//	}
+	//	else
+	//	{
+	//		UE_LOG(LogTemp, Warning, TEXT("Server NotLocally : SetPlayerStat %s"), *GetPlayerState()->GetName());
+	//	}
+	//	
+	//}
+	//else
+	//{
+	//	if (IsLocallyControlled() == true)
+	//	{
+	//		UE_LOG(LogTemp, Warning, TEXT("Client Locally : SetPlayerStat %s"), *GetPlayerState()->GetName());
+	//	}
+	//	else
+	//	{
+	//		UE_LOG(LogTemp, Warning, TEXT("Client NotLocally : SetPlayerStat %s"), *GetPlayerState()->GetName());
+	//	}
+	//}
+	
+	if (HasAuthority())//서버에서 먼저 입장을 하게 된다면 초기화 시킴
 	{
+
 		CharacterStatRef->Respawn();//HP MP 초기화
 	}
 	CharacterStatRef->CharacterRef = this;
@@ -324,12 +351,13 @@ void ACharacter_Master::SetPlayerStat()
 		auto MyController = Cast<AMyPlayerController>(GetController());
 		MyController->SetWidget(MyPlayerState->CharacterStat);//내 mainwidget
 		PlayerInfoHUDWidget = MyController->PlayerInfoHUDWidget;
-		ReplicateComponent->Server_BindCharacterStatToWidget();//각 플레이어 머리 위 widget
+		BindCharacterStatToWidget();
+		//ReplicateComponent->Server_BindCharacterStatToWidget();//내가 들어온 후 내 정보를 다른 모든 이에게 Binding 시킴
 		CrosshairWidget = PlayerInfoHUDWidget->WBCrosshair;
 	}
 	else// 나 외 다른 플레이어들은
 	{
-		BindCharacterStatToWidget();
+		BindCharacterStatToWidget();//이미 들어와 있는애면 그냥 걔의 PlayerState를 가져와서 Binding
 	}
 
 
@@ -338,12 +366,15 @@ void ACharacter_Master::SetPlayerStat()
 
 void ACharacter_Master::BindCharacterStatToWidget()
 {
-	
+
 	auto MyPlayerState = Cast<AMyPlayerState>(GetPlayerState());
-	ABCHECK(MyPlayerState!=nullptr)
-	auto CharacterWidget = Cast< UPlayerHPBarWidget>(HPBarWidget->GetUserWidgetObject());
-	if (CharacterWidget == nullptr)
-		return;
+
+	ABCHECK(MyPlayerState != nullptr);
+	
+
+	auto CharacterWidget =Cast< UPlayerHPBarWidget>(HPBarWidgetComponent->GetUserWidgetObject());
+
+
 	CharacterWidget->BindCharacterStat(MyPlayerState->CharacterStat);
 	CharacterWidget->SetNameText(FText::FromString(MyPlayerState->GetPlayerName()));
 }
@@ -367,10 +398,10 @@ void ACharacter_Master::Tick(float DeltaTime)
 		auto MyPawn = Cast< ACharacter_Master>(MyController->GetPawn());
 		if (MyPawn == nullptr)
 			return;
-		ABCHECK(HPBarWidget!=nullptr)
-		auto Dir = MyPawn->FollowCamera->GetComponentLocation() - HPBarWidget->GetComponentLocation();
+		ABCHECK(HPBarWidgetComponent !=nullptr)
+		auto Dir = MyPawn->FollowCamera->GetComponentLocation() - HPBarWidgetComponent->GetComponentLocation();
 		auto DirRot = UKismetMathLibrary::MakeRotFromX(Dir);
-		HPBarWidget->SetWorldRotation(DirRot);
+		HPBarWidgetComponent->SetWorldRotation(DirRot);
 
 	}
 
@@ -660,7 +691,7 @@ void ACharacter_Master::DestroyPlayer()
 void ACharacter_Master::UnvisiblePlayer()
 {
 	GetMesh()->SetVisibility(false);
-	HPBarWidget->SetVisibility(false);
+	HPBarWidgetComponent->SetVisibility(false);
 }
 
 void ACharacter_Master::OpenSkillTree()

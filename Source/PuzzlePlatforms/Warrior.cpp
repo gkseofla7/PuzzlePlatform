@@ -278,7 +278,6 @@ void AWarrior::DropDown()
 
 void AWarrior::Dash()
 {
-	UE_LOG(LogTemp, Warning, TEXT("Dash!!"));
 	Cast<UWarriorMotionReplicator>(ReplicateComponent)->Server_SendDash();
 }
 
@@ -287,7 +286,6 @@ void AWarrior::EndAnimation(UAnimMontage* Montage, bool bInterrupted)
 	auto Anim = Cast<UPlayerAnimInstance>(MyAnim);
 	if (Montage == Anim->DashMontage)
 	{
-		UE_LOG(LogTemp, Warning, TEXT("DashMontageEnd"));
 		bIsDashing = false;
 		ParticleSystemComponent->SetVisibility(false);
 		ParticleSystemComponent->Deactivate();
